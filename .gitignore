@@ -4,3 +4,7 @@ dist/
 .neon
 .env.local
 .env
+
+# Contains real internal infrastructure data (hostnames, private IPs, support
+# contacts) — kept locally for reference, not tracked in version control.
+PLMInfrastructureRegisterAgentDocumentationNMSC/PLM_Infrastructure_Register_Infrastructure_Register.csv
