@@ -8,5 +8,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string GetAllResources = "";
         }
+
+        public static class SyncRoutes
+        {
+            public const string ControllerURL = "/Api/V1/Sync";
+
+            public const string RunSync = "Run";
+        }
     }
 }

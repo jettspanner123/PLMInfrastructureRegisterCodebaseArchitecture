@@ -1,6 +1,8 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Sync.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Helpers;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Utilities;
 
@@ -9,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 string pooledConnectionUrl = ENValidatorHelper.Current.GetEnvKeyValue("DATABASE_URL");
 string npgsqlConnectionString = DatabaseConnectionStringUtility.ConvertNeonUriToNpgsqlConnectionString(pooledConnectionUrl);
@@ -18,6 +21,7 @@ builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
     options.UseNpgsql(npgsqlConnectionString));
 
 builder.Services.AddScoped<ResourcesService>();
+builder.Services.AddScoped<SyncService>();
 
 var app = builder.Build();
 
