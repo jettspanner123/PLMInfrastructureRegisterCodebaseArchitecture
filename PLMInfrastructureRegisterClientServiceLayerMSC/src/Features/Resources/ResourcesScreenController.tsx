@@ -8,6 +8,15 @@ import ResourceColumnCON from './Constants/ResourceColumnCON';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
 
 const ALL_COLUMN_KEYS: string[] = ResourceColumnCON.COLUMNS.map((column) => column.key);
+const LOCKED_COLUMN_KEYS: Set<string> = new Set(
+  ResourceColumnCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
+);
+
+function withLockedColumnsIncluded(keys: Iterable<string>): Set<string> {
+  const next = new Set(keys);
+  LOCKED_COLUMN_KEYS.forEach((key) => next.add(key));
+  return next;
+}
 
 export default function ResourcesScreenController(): React.JSX.Element {
   const [isColumnDropdownOpen, setIsColumnDropdownOpen] = useState<boolean>(false);
@@ -16,10 +25,14 @@ export default function ResourcesScreenController(): React.JSX.Element {
       ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
       ALL_COLUMN_KEYS
     );
-    return new Set(saved);
+    // Locked columns (Hostname, Environment) are always included, even if an
+    // older persisted preference somehow excluded them.
+    return withLockedColumnsIncluded(saved);
   });
 
   const handleToggleColumn = (key: string): void => {
+    if (LOCKED_COLUMN_KEYS.has(key)) return;
+
     setVisibleColumnKeys((previous) => {
       const next = new Set(previous);
       if (next.has(key)) {

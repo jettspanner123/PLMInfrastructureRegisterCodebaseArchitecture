@@ -4,12 +4,16 @@
 export interface ResourceColumnDef {
   key: string;
   label: string;
+  // Locked columns identify the row itself (hostname, environment) — hiding
+  // them would leave a row of data with no way to tell what it belongs to,
+  // so they're always visible and can't be unchecked in the column picker.
+  locked?: boolean;
 }
 
 export default class ResourceColumnCON {
   public static readonly COLUMNS: ResourceColumnDef[] = [
-    { key: 'hostname', label: 'HOSTNAME' },
-    { key: 'environmentTag', label: 'ENVIRONMENT (TAG)' },
+    { key: 'hostname', label: 'HOSTNAME', locked: true },
+    { key: 'environmentTag', label: 'ENVIRONMENT (TAG)', locked: true },
     { key: 'function', label: 'FUNCTION' },
     { key: 'status', label: 'STATUS' },
     { key: 'dailyBackupTime', label: 'Daily Backup Time (CET)' },

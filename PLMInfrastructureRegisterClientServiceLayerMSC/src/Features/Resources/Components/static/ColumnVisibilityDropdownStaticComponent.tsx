@@ -91,15 +91,17 @@ export default function ColumnVisibilityDropdownStaticComponent({
                 filteredColumns.map((column, index) => (
                   <label
                     key={column.key}
-                    className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg break-inside-avoid hover:bg-slate-100 dark:hover:bg-zinc-800/80 cursor-pointer ${
-                      index % 2 === 1 ? 'bg-slate-50 dark:bg-zinc-900/50' : ''
-                    }`}
+                    title={column.locked ? 'Always visible — identifies the row' : undefined}
+                    className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg break-inside-avoid hover:bg-slate-100 dark:hover:bg-zinc-800/80 ${
+                      column.locked ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+                    } ${index % 2 === 1 ? 'bg-slate-50 dark:bg-zinc-900/50' : ''}`}
                   >
                     <input
                       type="checkbox"
-                      checked={visibleColumnKeys.has(column.key)}
+                      checked={visibleColumnKeys.has(column.key) || column.locked === true}
+                      disabled={column.locked === true}
                       onChange={() => onToggleColumn(column.key)}
-                      className="h-3.5 w-3.5 rounded accent-[#0C2086] cursor-pointer shrink-0"
+                      className="h-3.5 w-3.5 rounded accent-[#0C2086] cursor-pointer shrink-0 disabled:cursor-not-allowed"
                     />
                     <span className="truncate text-slate-700 dark:text-zinc-300">{column.label}</span>
                   </label>
