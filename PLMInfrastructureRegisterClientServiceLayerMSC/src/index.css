@@ -90,17 +90,17 @@ body {
   mix-blend-mode: normal;
 }
 
-/* Gradient-backgrounds preference (profile dropdown toggle): strips the
-   soft gradient wash every card uses, falling back to each card's own flat
-   base background. Status icon colors are untouched - they're a signal,
-   not decoration. */
-html.no-gradients [class~="bg-gradient-to-br"] {
-  background-image: none !important;
-}
-
 /* Layout-width preference (profile dropdown toggle): lets the full,
    horizontally-scrollable Resources table use the entire viewport width
-   instead of the app shell's default constrained content column. */
-html.full-width-layout main {
+   instead of the app shell's default constrained content column. Applies to
+   every max-w-7xl container (header content + main), so the navbar's own
+   width animates in lockstep with the page content, not just the table. A
+   plain CSS max-width transition (not a view-transition wipe) animates the
+   resize itself. */
+.max-w-7xl {
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.full-width-layout .max-w-7xl {
   max-width: 100%;
 }

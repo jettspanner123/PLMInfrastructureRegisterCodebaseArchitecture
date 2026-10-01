@@ -17,7 +17,7 @@ export interface ControllBlockSharedComponentProps<T extends string> {
 // A labeled preference block: an icon (mirroring whichever option is
 // currently active) + label above a SegmentedControlSharedComponent pill.
 // Used by every toggle in the profile dropdown's Preferences & Controls
-// section (Theme Mode, Gradient Backgrounds, ...) so they all share one
+// section (Theme Mode, Table Width, ...) so they all share one
 // pill implementation instead of each hand-rolling its own.
 export default function ControllBlockSharedComponent<T extends string>({
   label,

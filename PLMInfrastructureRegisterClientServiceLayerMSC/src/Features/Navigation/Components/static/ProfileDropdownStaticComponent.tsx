@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Sun, Moon, LogOut, Sparkles, Square, Maximize2, Minimize2 } from 'lucide-react';
+import { Mail, Sun, Moon, LogOut, Maximize2, Minimize2 } from 'lucide-react';
 import ApplicationThemeCON from '../../../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../../../Constants/ApplicationLayoutWidthCON';
 import ApplicationHapticsUtility from '../../../../Utilities/ApplicationHapticsUtility';
@@ -13,8 +13,6 @@ export interface ProfileDropdownStaticComponentProps {
   onClose: () => void;
   currentTheme: string;
   onToggleTheme: () => void;
-  gradientsEnabled: boolean;
-  onToggleGradients: () => void;
   layoutWidth: string;
   onToggleLayoutWidth: () => void;
 }
@@ -24,8 +22,6 @@ export default function ProfileDropdownStaticComponent({
   onClose,
   currentTheme,
   onToggleTheme,
-  gradientsEnabled,
-  onToggleGradients,
   layoutWidth,
   onToggleLayoutWidth,
 }: ProfileDropdownStaticComponentProps): React.JSX.Element {
@@ -75,6 +71,7 @@ export default function ProfileDropdownStaticComponent({
 
             <motion.div
               ref={dropdownRef}
+              layout
               initial={{ opacity: 0, scale: 0.96, y: -6 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: -6 }}
@@ -118,21 +115,11 @@ export default function ProfileDropdownStaticComponent({
                 />
 
                 <ControllBlockSharedComponent
-                  label="Gradient Backgrounds"
-                  layoutId="gradientBackgroundsControlPill"
-                  value={gradientsEnabled ? 'on' : 'off'}
-                  onChange={() => onToggleGradients()}
-                  options={[
-                    { value: 'on', label: 'On', icon: <Sparkles className="w-3.5 h-3.5" /> },
-                    { value: 'off', label: 'Off', icon: <Square className="w-3.5 h-3.5" /> },
-                  ]}
-                />
-
-                <ControllBlockSharedComponent
                   label="Table Width"
                   layoutId="layoutWidthControlPill"
                   value={layoutWidth}
                   onChange={() => onToggleLayoutWidth()}
+                  animatedTransition={false}
                   options={[
                     {
                       value: ApplicationLayoutWidthCON.CONSTRAINED,
@@ -141,7 +128,7 @@ export default function ProfileDropdownStaticComponent({
                     },
                     {
                       value: ApplicationLayoutWidthCON.FULL_WIDTH,
-                      label: 'No Max Width',
+                      label: 'Max Width',
                       icon: <Maximize2 className="w-3.5 h-3.5" />,
                     },
                   ]}

@@ -7,8 +7,6 @@ import weplmLogo from '../../Assets/weplm.jpeg';
 export interface NavigationControllerProps {
   currentTheme: string;
   onToggleTheme: () => void;
-  gradientsEnabled: boolean;
-  onToggleGradients: () => void;
   layoutWidth: string;
   onToggleLayoutWidth: () => void;
   onNavigateHome: () => void;
@@ -18,8 +16,6 @@ export interface NavigationControllerProps {
 export default function NavigationController({
   currentTheme,
   onToggleTheme,
-  gradientsEnabled,
-  onToggleGradients,
   layoutWidth,
   onToggleLayoutWidth,
   onNavigateHome,
@@ -86,8 +82,6 @@ export default function NavigationController({
                 onClose={() => setIsProfileOpen(false)}
                 currentTheme={currentTheme}
                 onToggleTheme={onToggleTheme}
-                gradientsEnabled={gradientsEnabled}
-                onToggleGradients={onToggleGradients}
                 layoutWidth={layoutWidth}
                 onToggleLayoutWidth={onToggleLayoutWidth}
               />

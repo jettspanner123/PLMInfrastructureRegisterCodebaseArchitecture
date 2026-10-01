@@ -9,7 +9,6 @@ import {
 } from '@tanstack/react-router';
 import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
-import ApplicationGradientUtility from '../Utilities/ApplicationGradientUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
@@ -38,21 +37,6 @@ function RootLayout(): React.JSX.Element {
     setCurrentTheme(next);
   };
 
-  const [gradientsEnabled, setGradientsEnabled] = useState<boolean>(() => {
-    const saved = ApplicationGradientUtility.current.getSavedPreference();
-    ApplicationGradientUtility.current.applyPreference(saved);
-    return saved;
-  });
-
-  useEffect(() => {
-    ApplicationGradientUtility.current.applyPreference(gradientsEnabled);
-  }, [gradientsEnabled]);
-
-  const handleToggleGradients = (): void => {
-    const next = ApplicationGradientUtility.current.togglePreference(gradientsEnabled);
-    setGradientsEnabled(next);
-  };
-
   const [layoutWidth, setLayoutWidth] = useState<string>(() => {
     const saved = ApplicationLayoutWidthUtility.current.getSavedPreference();
     ApplicationLayoutWidthUtility.current.applyPreference(saved);
@@ -76,8 +60,6 @@ function RootLayout(): React.JSX.Element {
     <NavigationController
       currentTheme={currentTheme}
       onToggleTheme={handleToggleTheme}
-      gradientsEnabled={gradientsEnabled}
-      onToggleGradients={handleToggleGradients}
       layoutWidth={layoutWidth}
       onToggleLayoutWidth={handleToggleLayoutWidth}
       onNavigateHome={handleNavigateHome}

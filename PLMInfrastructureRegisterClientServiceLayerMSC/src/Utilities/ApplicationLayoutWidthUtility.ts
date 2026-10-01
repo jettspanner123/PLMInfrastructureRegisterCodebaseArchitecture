@@ -1,9 +1,8 @@
 import ApplicationLayoutWidthCON from '../Constants/ApplicationLayoutWidthCON';
 
-// Mirrors ApplicationThemeUtility/ApplicationGradientUtility's exact
-// storage/DOM-class pattern: a class on <html> that CSS reacts to (see
-// index.css's `html.full-width-layout main` rule), session-scoped with a
-// localStorage fallback for new tabs.
+// Mirrors ApplicationThemeUtility's exact storage/DOM-class pattern: a class
+// on <html> that CSS reacts to (see index.css's `html.full-width-layout
+// .max-w-7xl` rule), session-scoped with a localStorage fallback for new tabs.
 export default class ApplicationLayoutWidthUtility {
   public static current: ApplicationLayoutWidthUtility = new ApplicationLayoutWidthUtility();
 
