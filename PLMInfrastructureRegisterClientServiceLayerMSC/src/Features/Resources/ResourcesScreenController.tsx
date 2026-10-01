@@ -57,12 +57,10 @@ export default function ResourcesScreenController(): React.JSX.Element {
   };
 
   const handleClearAllColumns = (): void => {
-    const next = new Set(LOCKED_COLUMN_KEYS);
-    ApplicationUserPreferenceUtility.current.setJSONPreference(
-      ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
-      Array.from(next)
-    );
-    setVisibleColumnKeys(next);
+    // Deliberately in-memory only — unlike individual column toggles, this
+    // bulk action does not touch the persisted preference, so a reload
+    // brings back whatever was last actually saved, not this cleared state.
+    setVisibleColumnKeys(new Set(LOCKED_COLUMN_KEYS));
   };
 
   const visibleColumns = ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
