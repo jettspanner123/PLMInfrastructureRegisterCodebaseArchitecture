@@ -93,6 +93,14 @@ declare module '@tanstack/react-router' {
 }
 
 export default function ApplicationRouter(): React.JSX.Element {
+  // Applied here, before the splash-vs-router branch below, so the splash
+  // screen itself respects the saved theme too — RootLayout only mounts
+  // (and only applies/exposes the toggle) once the splash screen is gone.
+  useState(() => {
+    const saved = ApplicationThemeUtility.current.getSavedTheme();
+    ApplicationThemeUtility.current.applyTheme(saved);
+  });
+
   const [isSplashReady, setIsSplashReady] = useState<boolean>(false);
 
   if (!isSplashReady) {
