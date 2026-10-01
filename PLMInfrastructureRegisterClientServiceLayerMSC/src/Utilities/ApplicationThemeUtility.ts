@@ -1,40 +1,26 @@
 import ApplicationThemeCON from '../Constants/ApplicationThemeCON';
+import ApplicationUserPreferenceKeyCON from '../Constants/ApplicationUserPreferenceKeyCON';
+import ApplicationUserPreferenceUtility from './ApplicationUserPreferenceUtility';
 
 export default class ApplicationThemeUtility {
   public static current: ApplicationThemeUtility = new ApplicationThemeUtility();
 
-  private themeKey: string = 'plm_infrastructure_register_theme_preference';
-
   public getSavedTheme(): string {
-    if (typeof window !== 'undefined') {
-      try {
-        // Tab-scoped theme check
-        const sessionTheme = sessionStorage.getItem(this.themeKey);
-        if (sessionTheme === ApplicationThemeCON.DARK || sessionTheme === ApplicationThemeCON.LIGHT) {
-          return sessionTheme;
-        }
-
-        // Smart Bootstrap: If new tab has no sessionTheme, inherit from localStorage
-        const localTheme = localStorage.getItem(this.themeKey);
-        if (localTheme === ApplicationThemeCON.DARK || localTheme === ApplicationThemeCON.LIGHT) {
-          sessionStorage.setItem(this.themeKey, localTheme);
-          return localTheme;
-        }
-      } catch {
-        // Ignore storage access errors
-      }
+    const saved = ApplicationUserPreferenceUtility.current.getPreference(
+      ApplicationUserPreferenceKeyCON.THEME_PREFERENCE
+    );
+    if (saved === ApplicationThemeCON.DARK || saved === ApplicationThemeCON.LIGHT) {
+      return saved;
     }
     return ApplicationThemeCON.DARK; // Default to Dark Mode
   }
 
   public applyTheme(theme: string): void {
+    ApplicationUserPreferenceUtility.current.setPreference(
+      ApplicationUserPreferenceKeyCON.THEME_PREFERENCE,
+      theme
+    );
     if (typeof window === 'undefined') return;
-    try {
-      sessionStorage.setItem(this.themeKey, theme);
-      localStorage.setItem(this.themeKey, theme);
-    } catch {
-      // Ignore storage access errors
-    }
     if (theme === ApplicationThemeCON.DARK) {
       document.documentElement.classList.add('dark');
       document.body.classList.add('dark');
