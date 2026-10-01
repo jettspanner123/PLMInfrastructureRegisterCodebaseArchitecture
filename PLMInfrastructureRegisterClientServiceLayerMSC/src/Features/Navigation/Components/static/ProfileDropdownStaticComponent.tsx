@@ -37,15 +37,27 @@ export default function ProfileDropdownStaticComponent({
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
     const timeoutId = setTimeout(() => {
       document.addEventListener('mousedown', handlePointerDown);
       document.addEventListener('touchstart', handlePointerDown);
     }, 10);
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Move focus into the panel so keyboard users don't have to Tab to it.
+    dropdownRef.current?.focus();
 
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
 
@@ -71,12 +83,17 @@ export default function ProfileDropdownStaticComponent({
 
             <motion.div
               ref={dropdownRef}
+              id="profile-dropdown-panel"
+              role="dialog"
+              aria-modal="false"
+              aria-label="Profile and preferences"
+              tabIndex={-1}
               layout
               initial={{ opacity: 0, scale: 0.96, y: -6 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: -6 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed inset-x-3 top-20 sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-80 z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 text-xs select-none space-y-4"
+              className="fixed inset-x-3 top-20 sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-80 z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 text-xs select-none space-y-4 focus:outline-none"
             >
               {/* 1. Header: User Identity */}
               <div className="flex items-center gap-3 pb-3.5 border-b border-slate-100 dark:border-zinc-800/80">

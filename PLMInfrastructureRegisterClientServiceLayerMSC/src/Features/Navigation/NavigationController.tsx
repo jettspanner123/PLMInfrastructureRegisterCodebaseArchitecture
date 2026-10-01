@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ProfileDropdownStaticComponent from './Components/static/ProfileDropdownStaticComponent';
 import SegmentedControlSharedComponent from '../../Shared/Components/SegmentedControlSharedComponent';
 import NavigationCON from './Constants/NavigationCON';
@@ -21,8 +21,16 @@ export default function NavigationController({
   onNavigateHome,
   children,
 }: NavigationControllerProps): React.JSX.Element {
+  const profileButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [currentView, setCurrentView] = useState<string>('infrastructure-register');
+
+  const handleCloseProfileDropdown = (): void => {
+    setIsProfileOpen(false);
+    // Return focus to the trigger — standard disclosure-pattern behavior so
+    // keyboard users don't lose their place when the panel closes.
+    profileButtonRef.current?.focus();
+  };
 
   return (
     <div className="min-h-screen bg-(--color-canvas) text-(--color-ink)">
@@ -68,9 +76,14 @@ export default function NavigationController({
 
             <div className="relative">
               <button
+                ref={profileButtonRef}
                 type="button"
                 onClick={() => setIsProfileOpen((prev) => !prev)}
                 title={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
+                aria-haspopup="dialog"
+                aria-expanded={isProfileOpen}
+                aria-controls="profile-dropdown-panel"
+                aria-label={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
                 className="h-10 w-10 sm:h-9 sm:w-9 rounded-xl sm:rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer relative flex items-center justify-center select-none"
               >
                 <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs sm:text-[10px] font-mono">
@@ -79,7 +92,7 @@ export default function NavigationController({
               </button>
               <ProfileDropdownStaticComponent
                 isOpen={isProfileOpen}
-                onClose={() => setIsProfileOpen(false)}
+                onClose={handleCloseProfileDropdown}
                 currentTheme={currentTheme}
                 onToggleTheme={onToggleTheme}
                 layoutWidth={layoutWidth}

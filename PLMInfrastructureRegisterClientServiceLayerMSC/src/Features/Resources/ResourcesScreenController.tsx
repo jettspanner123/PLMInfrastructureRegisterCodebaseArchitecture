@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ChevronDown, Columns3, ServerOff } from 'lucide-react';
 import CardSharedComponent from '../../Shared/Components/CardSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -19,7 +19,15 @@ function withLockedColumnsIncluded(keys: Iterable<string>): Set<string> {
 }
 
 export default function ResourcesScreenController(): React.JSX.Element {
+  const columnButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isColumnDropdownOpen, setIsColumnDropdownOpen] = useState<boolean>(false);
+
+  const handleCloseColumnDropdown = (): void => {
+    setIsColumnDropdownOpen(false);
+    // Return focus to the trigger — standard disclosure-pattern behavior so
+    // keyboard users don't lose their place when the panel closes.
+    columnButtonRef.current?.focus();
+  };
   const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
     const saved = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(
       ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
@@ -73,8 +81,12 @@ export default function ResourcesScreenController(): React.JSX.Element {
 
         <div className="relative shrink-0">
           <button
+            ref={columnButtonRef}
             type="button"
             onClick={() => setIsColumnDropdownOpen((previous) => !previous)}
+            aria-haspopup="dialog"
+            aria-expanded={isColumnDropdownOpen}
+            aria-controls="column-visibility-dropdown-panel"
             className="flex items-center gap-2 h-9 px-3.5 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer text-xs font-semibold"
           >
             <Columns3 className="w-3.5 h-3.5" />
@@ -88,7 +100,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
 
           <ColumnVisibilityDropdownStaticComponent
             isOpen={isColumnDropdownOpen}
-            onClose={() => setIsColumnDropdownOpen(false)}
+            onClose={handleCloseColumnDropdown}
             visibleColumnKeys={visibleColumnKeys}
             onToggleColumn={handleToggleColumn}
             onClearAll={handleClearAllColumns}

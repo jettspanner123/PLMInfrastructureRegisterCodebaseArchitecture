@@ -19,6 +19,7 @@ export default function ColumnVisibilityDropdownStaticComponent({
   onClearAll,
 }: ColumnVisibilityDropdownStaticComponentProps): React.JSX.Element {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
@@ -30,15 +31,27 @@ export default function ColumnVisibilityDropdownStaticComponent({
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
     const timeoutId = setTimeout(() => {
       document.addEventListener('mousedown', handlePointerDown);
       document.addEventListener('touchstart', handlePointerDown);
     }, 10);
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Move focus into the panel so keyboard users don't have to Tab to it.
+    searchInputRef.current?.focus();
 
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
 
@@ -64,6 +77,10 @@ export default function ColumnVisibilityDropdownStaticComponent({
 
           <motion.div
             ref={dropdownRef}
+            id="column-visibility-dropdown-panel"
+            role="dialog"
+            aria-modal="false"
+            aria-label="Column visibility"
             initial={{ opacity: 0, scale: 0.96, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -6 }}
@@ -78,10 +95,12 @@ export default function ColumnVisibilityDropdownStaticComponent({
               <div className="relative flex-1">
                 <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 pointer-events-none" />
                 <input
+                  ref={searchInputRef}
                   type="text"
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
                   placeholder="Search columns..."
+                  aria-label="Search columns"
                   autoComplete="off"
                   className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
                 />
@@ -91,6 +110,7 @@ export default function ColumnVisibilityDropdownStaticComponent({
                 type="button"
                 onClick={onClearAll}
                 title="Uncheck all (except locked columns)"
+                aria-label="Uncheck all columns, except locked columns"
                 className="h-8 w-8 shrink-0 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
               >
                 <ListX className="w-3.5 h-3.5" />
