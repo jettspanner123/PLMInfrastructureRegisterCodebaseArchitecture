@@ -20,18 +20,22 @@ export default function ResourcesScreenController(): React.JSX.Element {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-zinc-800/80">
+              <tr className="divide-x divide-slate-200 dark:divide-zinc-800 border-b border-slate-200 dark:border-zinc-800">
                 {ResourceColumnCON.COLUMNS.map((column) => (
                   <th
                     key={column.key}
-                    className="whitespace-nowrap px-3 py-2.5 text-left font-mono font-bold uppercase tracking-wider text-[10px] text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-900/60"
+                    className="whitespace-nowrap px-3 py-2.5 text-left font-mono font-bold uppercase tracking-wider text-[10px] text-slate-900 dark:text-zinc-100 bg-slate-50 dark:bg-zinc-900/60"
                   >
                     {column.label}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody />
+            <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
+              {/* Rows render here once Sync populates Resources — each <tr> should carry
+                  the same divide-x divide-slate-200 dark:divide-zinc-800 vertical dividers
+                  as the header row, so the grid reads as one consistent spreadsheet. */}
+            </tbody>
           </table>
         </div>
       </CardSharedComponent>
