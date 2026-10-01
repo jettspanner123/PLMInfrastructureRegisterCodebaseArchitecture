@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Sun, Moon, LogOut, Sparkles, Square } from 'lucide-react';
+import { Mail, Sun, Moon, LogOut, Sparkles, Square, Maximize2, Minimize2 } from 'lucide-react';
 import ApplicationThemeCON from '../../../../Constants/ApplicationThemeCON';
+import ApplicationLayoutWidthCON from '../../../../Constants/ApplicationLayoutWidthCON';
 import ApplicationHapticsUtility from '../../../../Utilities/ApplicationHapticsUtility';
 import ConfirmationModalSharedComponent from '../../../../Shared/Components/ConfirmationModalSharedComponent';
 import ControllBlockSharedComponent from '../../../../Shared/Components/ControllBlockSharedComponent';
@@ -14,6 +15,8 @@ export interface ProfileDropdownStaticComponentProps {
   onToggleTheme: () => void;
   gradientsEnabled: boolean;
   onToggleGradients: () => void;
+  layoutWidth: string;
+  onToggleLayoutWidth: () => void;
 }
 
 export default function ProfileDropdownStaticComponent({
@@ -23,6 +26,8 @@ export default function ProfileDropdownStaticComponent({
   onToggleTheme,
   gradientsEnabled,
   onToggleGradients,
+  layoutWidth,
+  onToggleLayoutWidth,
 }: ProfileDropdownStaticComponentProps): React.JSX.Element {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = React.useState<boolean>(false);
@@ -120,6 +125,25 @@ export default function ProfileDropdownStaticComponent({
                   options={[
                     { value: 'on', label: 'On', icon: <Sparkles className="w-3.5 h-3.5" /> },
                     { value: 'off', label: 'Off', icon: <Square className="w-3.5 h-3.5" /> },
+                  ]}
+                />
+
+                <ControllBlockSharedComponent
+                  label="Table Width"
+                  layoutId="layoutWidthControlPill"
+                  value={layoutWidth}
+                  onChange={() => onToggleLayoutWidth()}
+                  options={[
+                    {
+                      value: ApplicationLayoutWidthCON.CONSTRAINED,
+                      label: 'Current',
+                      icon: <Minimize2 className="w-3.5 h-3.5" />,
+                    },
+                    {
+                      value: ApplicationLayoutWidthCON.FULL_WIDTH,
+                      label: 'No Max Width',
+                      icon: <Maximize2 className="w-3.5 h-3.5" />,
+                    },
                   ]}
                 />
               </div>

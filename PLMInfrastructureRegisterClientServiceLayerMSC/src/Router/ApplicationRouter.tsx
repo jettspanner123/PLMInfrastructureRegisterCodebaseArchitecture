@@ -10,6 +10,7 @@ import {
 import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationGradientUtility from '../Utilities/ApplicationGradientUtility';
+import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
 
@@ -52,6 +53,21 @@ function RootLayout(): React.JSX.Element {
     setGradientsEnabled(next);
   };
 
+  const [layoutWidth, setLayoutWidth] = useState<string>(() => {
+    const saved = ApplicationLayoutWidthUtility.current.getSavedPreference();
+    ApplicationLayoutWidthUtility.current.applyPreference(saved);
+    return saved;
+  });
+
+  useEffect(() => {
+    ApplicationLayoutWidthUtility.current.applyPreference(layoutWidth);
+  }, [layoutWidth]);
+
+  const handleToggleLayoutWidth = (): void => {
+    const next = ApplicationLayoutWidthUtility.current.togglePreference(layoutWidth);
+    setLayoutWidth(next);
+  };
+
   const handleNavigateHome = (): void => {
     navigate({ to: ApplicationRouteCON.ROOT });
   };
@@ -62,6 +78,8 @@ function RootLayout(): React.JSX.Element {
       onToggleTheme={handleToggleTheme}
       gradientsEnabled={gradientsEnabled}
       onToggleGradients={handleToggleGradients}
+      layoutWidth={layoutWidth}
+      onToggleLayoutWidth={handleToggleLayoutWidth}
       onNavigateHome={handleNavigateHome}
     >
       <Outlet />

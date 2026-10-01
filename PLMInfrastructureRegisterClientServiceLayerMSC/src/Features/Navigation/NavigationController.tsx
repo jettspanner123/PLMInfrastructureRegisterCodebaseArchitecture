@@ -9,6 +9,8 @@ export interface NavigationControllerProps {
   onToggleTheme: () => void;
   gradientsEnabled: boolean;
   onToggleGradients: () => void;
+  layoutWidth: string;
+  onToggleLayoutWidth: () => void;
   onNavigateHome: () => void;
   children: React.ReactNode;
 }
@@ -18,6 +20,8 @@ export default function NavigationController({
   onToggleTheme,
   gradientsEnabled,
   onToggleGradients,
+  layoutWidth,
+  onToggleLayoutWidth,
   onNavigateHome,
   children,
 }: NavigationControllerProps): React.JSX.Element {
@@ -84,6 +88,8 @@ export default function NavigationController({
                 onToggleTheme={onToggleTheme}
                 gradientsEnabled={gradientsEnabled}
                 onToggleGradients={onToggleGradients}
+                layoutWidth={layoutWidth}
+                onToggleLayoutWidth={onToggleLayoutWidth}
               />
             </div>
           </div>

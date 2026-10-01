@@ -97,3 +97,10 @@ body {
 html.no-gradients [class~="bg-gradient-to-br"] {
   background-image: none !important;
 }
+
+/* Layout-width preference (profile dropdown toggle): lets the full,
+   horizontally-scrollable Resources table use the entire viewport width
+   instead of the app shell's default constrained content column. */
+html.full-width-layout main {
+  max-width: 100%;
+}

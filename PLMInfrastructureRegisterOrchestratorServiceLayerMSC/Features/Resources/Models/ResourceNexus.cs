@@ -130,5 +130,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         public DateTime? VMDeletionDate { get; set; }
 
         public string? NewHostname { get; set; }
+
+        // Legacy column "Spinner_R2024x_AtlasCopco_Exp29Oct2026" — meaning was never
+        // confirmed with the user (likely a stray deployment label, only "N/A" or
+        // "Deployed" in the source data). Kept verbatim rather than dropped or
+        // reinterpreted, since the full table must reflect every original column.
+        public string? Spinner { get; set; }
     }
 }
