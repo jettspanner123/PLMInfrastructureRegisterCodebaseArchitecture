@@ -23,6 +23,17 @@ builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
 builder.Services.AddScoped<ResourcesService>();
 builder.Services.AddScoped<SyncService>();
 
+const string FrontendDevelopmentOriginPolicy = "FrontendDevelopmentOriginPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(FrontendDevelopmentOriginPolicy, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .WithMethods("GET");
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +43,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(FrontendDevelopmentOriginPolicy);
 
 app.MapControllers();
 
