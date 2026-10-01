@@ -133,7 +133,16 @@ export default function ColumnVisibilityDropdownStaticComponent({
                       type="checkbox"
                       checked={visibleColumnKeys.has(column.key) || column.locked === true}
                       disabled={column.locked === true}
-                      onChange={() => onToggleColumn(column.key)}
+                      onChange={() => {
+                        onToggleColumn(column.key);
+                        // Searching implies "I'm looking for this one column" —
+                        // once found and toggled, close the panel. onClose()
+                        // closing the panel also resets the search term, via
+                        // the isOpen effect above.
+                        if (searchTerm.trim().length > 0) {
+                          onClose();
+                        }
+                      }}
                       className="h-3.5 w-3.5 rounded accent-[#0C2086] cursor-pointer shrink-0 disabled:cursor-not-allowed"
                     />
                     <span className="truncate text-slate-700 dark:text-zinc-300">{column.label}</span>
