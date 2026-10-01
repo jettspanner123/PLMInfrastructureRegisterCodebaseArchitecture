@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Columns3, ServerOff } from 'lucide-react';
+import { ChevronDown, Columns3, ServerOff } from 'lucide-react';
 import CardSharedComponent from '../../Shared/Components/CardSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
@@ -57,6 +57,11 @@ export default function ResourcesScreenController(): React.JSX.Element {
           >
             <Columns3 className="w-3.5 h-3.5" />
             <span>Columns</span>
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 transition-transform duration-200 ${
+                isColumnDropdownOpen ? 'rotate-180' : ''
+              }`}
+            />
           </button>
 
           <ColumnVisibilityDropdownStaticComponent

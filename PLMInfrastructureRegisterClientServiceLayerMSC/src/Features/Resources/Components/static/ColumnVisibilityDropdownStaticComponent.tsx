@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Search } from 'lucide-react';
 import ResourceColumnCON from '../../Constants/ResourceColumnCON';
 
 export interface ColumnVisibilityDropdownStaticComponentProps {
@@ -16,6 +17,7 @@ export default function ColumnVisibilityDropdownStaticComponent({
   onToggleColumn,
 }: ColumnVisibilityDropdownStaticComponentProps): React.JSX.Element {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     if (!isOpen) return;
@@ -38,6 +40,16 @@ export default function ColumnVisibilityDropdownStaticComponent({
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen) setSearchTerm('');
+  }, [isOpen]);
+
+  const filteredColumns = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return ResourceColumnCON.COLUMNS;
+    return ResourceColumnCON.COLUMNS.filter((column) => column.label.toLowerCase().includes(term));
+  }, [searchTerm]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -56,25 +68,41 @@ export default function ColumnVisibilityDropdownStaticComponent({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute right-0 top-12 w-80 z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 text-xs select-none"
           >
-            <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1 pb-2 mb-2 border-b border-slate-100 dark:border-zinc-800/80">
+            <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1 pb-2">
               Visible Columns
             </span>
 
+            <div className="relative mb-2.5">
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 pointer-events-none" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search columns..."
+                autoComplete="off"
+                className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
+              />
+            </div>
+
             <div className="max-h-96 overflow-y-auto space-y-0.5 pr-1">
-              {ResourceColumnCON.COLUMNS.map((column) => (
-                <label
-                  key={column.key}
-                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-900/60 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={visibleColumnKeys.has(column.key)}
-                    onChange={() => onToggleColumn(column.key)}
-                    className="h-3.5 w-3.5 rounded accent-[#0C2086] cursor-pointer shrink-0"
-                  />
-                  <span className="truncate text-slate-700 dark:text-zinc-300">{column.label}</span>
-                </label>
-              ))}
+              {filteredColumns.length === 0 ? (
+                <p className="py-3 px-2 text-center text-slate-400 dark:text-zinc-500">No matching columns</p>
+              ) : (
+                filteredColumns.map((column) => (
+                  <label
+                    key={column.key}
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-900/60 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={visibleColumnKeys.has(column.key)}
+                      onChange={() => onToggleColumn(column.key)}
+                      className="h-3.5 w-3.5 rounded accent-[#0C2086] cursor-pointer shrink-0"
+                    />
+                    <span className="truncate text-slate-700 dark:text-zinc-300">{column.label}</span>
+                  </label>
+                ))
+              )}
             </div>
           </motion.div>
         </React.Fragment>
