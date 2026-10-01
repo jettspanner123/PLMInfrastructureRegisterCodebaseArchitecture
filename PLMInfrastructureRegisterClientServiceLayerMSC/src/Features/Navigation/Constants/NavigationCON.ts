@@ -9,7 +9,7 @@ export interface NavItemDef {
 }
 
 export default class NavigationCON {
-  public static readonly BRAND_TITLE: string = 'PLM Infrastructure Register';
+  public static readonly BRAND_TITLE: string = 'InfraGrid';
   public static readonly BRAND_SUBTITLE: string = 'Azure Infrastructure Register';
 
   // Top-nav capsule, ported 1:1 (visual + shared-layout-pill mechanics) from
@@ -30,7 +30,7 @@ export default class NavigationCON {
   public static readonly PROFILE_DISPLAY_EMAIL: string = 'user@theweplm.com';
   public static readonly PROFILE_DISPLAY_ROLE: string = 'USER';
 
-  public static readonly SIGN_OUT_TITLE: string = 'Sign Out of PLM Infrastructure Register';
+  public static readonly SIGN_OUT_TITLE: string = 'Sign Out of InfraGrid';
   public static readonly SIGN_OUT_SUBTITLE: string = 'Enterprise Session Termination';
   public static readonly SIGN_OUT_DESCRIPTION: string =
     'Are you sure you want to sign out of your enterprise session? You will need to log back in to access your register.';
