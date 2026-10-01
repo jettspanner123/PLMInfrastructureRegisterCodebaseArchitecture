@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SplashScreenLogoStaticComponent from './Components/static/SplashScreenLogoStaticComponent';
 import SplashScreenCON from './Constants/SplashScreenCON';
+import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 
 export interface SplashScreenControllerProps {
   onReady: () => void;
@@ -10,11 +11,13 @@ export interface SplashScreenControllerProps {
 export default function SplashScreenController({
   onReady,
 }: SplashScreenControllerProps): React.JSX.Element {
-  // No real data query exists yet for the Resources table (it's still static
-  // placeholder content) — once it fetches via TanStack Query, pre-fetch it
-  // here and replace this with its settled state (loaded or errored), same
-  // pattern SignForge uses for its own dashboard/config queries.
-  const allQueriesSettled = true;
+  // Pre-fetch Resources so they're already cached by the time the
+  // Infrastructure Register screen mounts — same pattern SignForge uses for
+  // its own dashboard/config queries.
+  const resourcesQuery = TanstackQueryClientService.current.resources.useResourcesQuery();
+
+  const allQueriesSettled =
+    !resourcesQuery.isLoading && (resourcesQuery.isFetched || resourcesQuery.isError);
 
   const [isReadyToDismiss, setIsReadyToDismiss] = useState(false);
 

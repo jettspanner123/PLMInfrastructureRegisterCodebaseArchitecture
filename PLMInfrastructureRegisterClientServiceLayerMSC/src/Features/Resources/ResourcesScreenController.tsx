@@ -4,8 +4,22 @@ import CardSharedComponent from '../../Shared/Components/CardSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
+import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
+import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import ResourceColumnCON from './Constants/ResourceColumnCON';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
+
+function getResourceCellValue(resource: ResourceInterfaceModel, key: string): React.ReactNode {
+  const value = (resource as unknown as Record<string, unknown>)[key];
+
+  if (value === null || value === undefined || value === '') {
+    return <span className="text-slate-300 dark:text-zinc-700">—</span>;
+  }
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No';
+  }
+  return String(value);
+}
 
 const ALL_COLUMN_KEYS: string[] = ResourceColumnCON.COLUMNS.map((column) => column.key);
 const LOCKED_COLUMN_KEYS: Set<string> = new Set(
@@ -19,6 +33,8 @@ function withLockedColumnsIncluded(keys: Iterable<string>): Set<string> {
 }
 
 export default function ResourcesScreenController(): React.JSX.Element {
+  const { data: resources = [], isLoading } = TanstackQueryClientService.current.resources.useResourcesQuery();
+
   const columnButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isColumnDropdownOpen, setIsColumnDropdownOpen] = useState<boolean>(false);
 
@@ -106,36 +122,48 @@ export default function ResourcesScreenController(): React.JSX.Element {
         </div>
       </div>
 
-      <CardSharedComponent className="p-0 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
-            <thead>
-              <tr className="divide-x divide-slate-200 dark:divide-zinc-800 border-b border-slate-200 dark:border-zinc-800">
-                {visibleColumns.map((column) => (
-                  <th
-                    key={column.key}
-                    className="whitespace-nowrap px-3 py-2.5 text-left font-mono font-bold uppercase tracking-wider text-[10px] text-slate-900 dark:text-zinc-100 bg-slate-50 dark:bg-zinc-900/60"
-                  >
-                    {column.label}
-                  </th>
+      {resources.length > 0 && (
+        <CardSharedComponent className="p-0 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-xs">
+              <thead>
+                <tr className="divide-x divide-slate-200 dark:divide-zinc-800 border-b border-slate-200 dark:border-zinc-800">
+                  {visibleColumns.map((column) => (
+                    <th
+                      key={column.key}
+                      className="whitespace-nowrap px-3 py-2.5 text-left font-mono font-bold uppercase tracking-wider text-[10px] text-slate-900 dark:text-zinc-100 bg-slate-50 dark:bg-zinc-900/60"
+                    >
+                      {column.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
+                {resources.map((resource) => (
+                  <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
+                    {visibleColumns.map((column) => (
+                      <td
+                        key={column.key}
+                        className="whitespace-nowrap px-3 py-2 text-slate-700 dark:text-zinc-300"
+                      >
+                        {getResourceCellValue(resource, column.key)}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
-              {/* Rows render here once Sync populates Resources — each <tr> should carry
-                  the same divide-x divide-slate-200 dark:divide-zinc-800 vertical dividers
-                  as the header row, so the grid reads as one consistent spreadsheet, and
-                  should only render cells for `visibleColumns`, in that same order. */}
-            </tbody>
-          </table>
-        </div>
-      </CardSharedComponent>
+              </tbody>
+            </table>
+          </div>
+        </CardSharedComponent>
+      )}
 
-      <EmptyStateSharedComponent
-        icon={<ServerOff className="w-6 h-6" />}
-        title="No Resources yet"
-        description="Sync hasn't run yet, so nothing has been discovered."
-      />
+      {!isLoading && resources.length === 0 && (
+        <EmptyStateSharedComponent
+          icon={<ServerOff className="w-6 h-6" />}
+          title="No Resources yet"
+          description="Sync hasn't run yet, so nothing has been discovered."
+        />
+      )}
     </div>
   );
 }
