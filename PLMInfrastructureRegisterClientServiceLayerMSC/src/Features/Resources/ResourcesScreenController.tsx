@@ -48,6 +48,15 @@ export default function ResourcesScreenController(): React.JSX.Element {
     });
   };
 
+  const handleClearAllColumns = (): void => {
+    const next = new Set(LOCKED_COLUMN_KEYS);
+    ApplicationUserPreferenceUtility.current.setJSONPreference(
+      ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
+      Array.from(next)
+    );
+    setVisibleColumnKeys(next);
+  };
+
   const visibleColumns = ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
 
   return (
@@ -82,6 +91,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
             onClose={() => setIsColumnDropdownOpen(false)}
             visibleColumnKeys={visibleColumnKeys}
             onToggleColumn={handleToggleColumn}
+            onClearAll={handleClearAllColumns}
           />
         </div>
       </div>

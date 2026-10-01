@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search } from 'lucide-react';
+import { ListX, Search } from 'lucide-react';
 import ResourceColumnCON from '../../Constants/ResourceColumnCON';
 
 export interface ColumnVisibilityDropdownStaticComponentProps {
@@ -8,6 +8,7 @@ export interface ColumnVisibilityDropdownStaticComponentProps {
   onClose: () => void;
   visibleColumnKeys: Set<string>;
   onToggleColumn: (key: string) => void;
+  onClearAll: () => void;
 }
 
 export default function ColumnVisibilityDropdownStaticComponent({
@@ -15,6 +16,7 @@ export default function ColumnVisibilityDropdownStaticComponent({
   onClose,
   visibleColumnKeys,
   onToggleColumn,
+  onClearAll,
 }: ColumnVisibilityDropdownStaticComponentProps): React.JSX.Element {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -72,16 +74,27 @@ export default function ColumnVisibilityDropdownStaticComponent({
               Visible Columns
             </span>
 
-            <div className="relative mb-2.5">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 pointer-events-none" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search columns..."
-                autoComplete="off"
-                className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
-              />
+            <div className="flex items-center gap-2 mb-2.5">
+              <div className="relative flex-1">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Search columns..."
+                  autoComplete="off"
+                  className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={onClearAll}
+                title="Uncheck all (except locked columns)"
+                className="h-8 w-8 shrink-0 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
+              >
+                <ListX className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             <div className="max-h-[65vh] overflow-y-auto pr-1 columns-2 lg:columns-3 gap-x-3">
