@@ -1,19 +1,71 @@
-import React from 'react';
-import { ServerOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { Columns3, ServerOff } from 'lucide-react';
 import CardSharedComponent from '../../Shared/Components/CardSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
+import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
+import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
 import ResourceColumnCON from './Constants/ResourceColumnCON';
+import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
+
+const ALL_COLUMN_KEYS: string[] = ResourceColumnCON.COLUMNS.map((column) => column.key);
 
 export default function ResourcesScreenController(): React.JSX.Element {
+  const [isColumnDropdownOpen, setIsColumnDropdownOpen] = useState<boolean>(false);
+  const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
+    const saved = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(
+      ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
+      ALL_COLUMN_KEYS
+    );
+    return new Set(saved);
+  });
+
+  const handleToggleColumn = (key: string): void => {
+    setVisibleColumnKeys((previous) => {
+      const next = new Set(previous);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      ApplicationUserPreferenceUtility.current.setJSONPreference(
+        ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
+        Array.from(next)
+      );
+      return next;
+    });
+  };
+
+  const visibleColumns = ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
+
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-serif-headline text-2xl font-bold text-slate-900 dark:text-white">
-          Infrastructure Register
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
-          Azure Resources tracked by this register.
-        </p>
+      <div className="flex items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-zinc-800">
+        <div>
+          <h1 className="font-serif-headline text-2xl font-bold text-slate-900 dark:text-white">
+            Infrastructure Register
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+            Azure Resources tracked by this register.
+          </p>
+        </div>
+
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsColumnDropdownOpen((previous) => !previous)}
+            className="flex items-center gap-2 h-9 px-3.5 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer text-xs font-semibold"
+          >
+            <Columns3 className="w-3.5 h-3.5" />
+            <span>Columns</span>
+          </button>
+
+          <ColumnVisibilityDropdownStaticComponent
+            isOpen={isColumnDropdownOpen}
+            onClose={() => setIsColumnDropdownOpen(false)}
+            visibleColumnKeys={visibleColumnKeys}
+            onToggleColumn={handleToggleColumn}
+          />
+        </div>
       </div>
 
       <CardSharedComponent className="p-0 overflow-hidden">
@@ -21,7 +73,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-slate-200 dark:divide-zinc-800 border-b border-slate-200 dark:border-zinc-800">
-                {ResourceColumnCON.COLUMNS.map((column) => (
+                {visibleColumns.map((column) => (
                   <th
                     key={column.key}
                     className="whitespace-nowrap px-3 py-2.5 text-left font-mono font-bold uppercase tracking-wider text-[10px] text-slate-900 dark:text-zinc-100 bg-slate-50 dark:bg-zinc-900/60"
@@ -34,7 +86,8 @@ export default function ResourcesScreenController(): React.JSX.Element {
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {/* Rows render here once Sync populates Resources — each <tr> should carry
                   the same divide-x divide-slate-200 dark:divide-zinc-800 vertical dividers
-                  as the header row, so the grid reads as one consistent spreadsheet. */}
+                  as the header row, so the grid reads as one consistent spreadsheet, and
+                  should only render cells for `visibleColumns`, in that same order. */}
             </tbody>
           </table>
         </div>
