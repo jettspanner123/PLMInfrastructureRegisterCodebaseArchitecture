@@ -1,0 +1,3598 @@
+﻿[
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"3847454\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0109",
+    "location": "southcentralus",
+    "name": "AIASNLAS0109",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas0109622_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0109",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0109/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0109/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadOnly",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 1024,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLAS0109_DataDisk_0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "StandardSSD_LRS"
+          },
+          "name": "AIASNLAS0109_DataDisk_0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        },
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 4096,
+          "lun": 1,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0109_datadisk_1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "aiasnlas0109_datadisk_1",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Delete",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0109_OsDisk_1_ebc66d19533248c5846e6d1adcd39ab8",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_LRS"
+        },
+        "name": "AIASNLAS0109_OsDisk_1_ebc66d19533248c5846e6d1adcd39ab8",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "Long Term 10 Years",
+      "Description": "3DExperience Enovia  FCS Houston-21x Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "USA273",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "TechnicalOwners": "sopan.hudekar@external.atlascopco.com;sumit.rinayat@external.atlascopco.com;bastien.garcia@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:37:38.004706+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "84fc61eb-1d78-429a-aae4-5fa1b530f6b6",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"1630696\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0106",
+    "location": "southeastasia",
+    "name": "AIASNLAS0106",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas0106543_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0106",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0106/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0106/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadOnly",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 2048,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLAS0106_DataDisk_0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "StandardSSD_LRS"
+          },
+          "name": "AIASNLAS0106_DataDisk_0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        },
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 4096,
+          "lun": 1,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0106_datadisk_1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "aiasnlas0106_datadisk_1",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Delete",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0106_OsDisk_1_b9f3290de65d443bbe9c74f6b012fb6a",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_LRS"
+        },
+        "name": "AIASNLAS0106_OsDisk_1_b9f3290de65d443bbe9c74f6b012fb6a",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  FCS Wuxi-21x Virtual",
+      "Description ": "3DExperience Enovia  FCS Wuxi-21x Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "SGP007",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "TechnicalOwners": "sopan.hudekar@external.atlascopco.com;sumit.rinayat@external.atlascopco.com;bastien.garcia@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:16.7329605+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "8ad64316-37f2-483b-b351-1879efea057c",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33980481\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0088",
+    "location": "westeurope",
+    "name": "AIASNLAS0088",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0088-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0088",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0088/extensions/AzurePerformanceDiagnosticsLinux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0088/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0088/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0088-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0088-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0088-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0088-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "AC-VM-BusinessCritical-6Month",
+      "Description": "3DExperience Enovia  index front 1-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.2152319+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "990a89c6-fba5-4efe-ba00-13783c0e4070",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33980508\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0089",
+    "location": "westeurope",
+    "name": "AIASNLAS0089",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas0089860_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0089",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0089/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0089/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLAS0089_DataDisk_0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0089_DataDisk_0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Delete",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0089_OsDisk_1_04b1dfb000d846eeaf380670113d3ef3",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0089_OsDisk_1_04b1dfb000d846eeaf380670113d3ef3",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  index front 2-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-09T16:52:47.1548307+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "2ed266f1-830f-44b1-bf50-8c0085f1e9a2",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33978611\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0090",
+    "identity": {
+      "principalId": "193e5a14-d301-479d-b6f9-8b5e0a373d30",
+      "tenantId": "556e6b1f-b49d-4278-8baf-db06eeefc8e9",
+      "type": "SystemAssigned"
+    },
+    "location": "westeurope",
+    "name": "AIASNLAS0090",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0090-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0090",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0090/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0090/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0090-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0090-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0090-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0090-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 1-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.1839875+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "4631686c-74d1-4727-b028-ec2b9c4534b0",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33978852\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0091",
+    "identity": {
+      "principalId": "a71e0f4f-1676-4e4f-85f9-c4d8cf730591",
+      "tenantId": "556e6b1f-b49d-4278-8baf-db06eeefc8e9",
+      "type": "SystemAssigned"
+    },
+    "location": "westeurope",
+    "name": "AIASNLAS0091",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0091-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0091",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0091/extensions/AzureMonitorLinuxAgent",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0091/extensions/ChangeTracking-Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0091/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0091/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0091-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0091-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0091-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0091-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 2-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:07.8714913+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "04f5a904-645e-40b0-a81f-bcdf6c3cb7de",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34097721\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0092",
+    "location": "westeurope",
+    "name": "AIASNLAS0092",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0092-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0092",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0092/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0092/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0092-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0092-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0092-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0092-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 3-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.1527342+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "26763654-e37b-4be5-a2f2-97f0b36491d1",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34097866\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0093",
+    "location": "westeurope",
+    "name": "AIASNLAS0093",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0093-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0093",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0093/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0093/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0093-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0093-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0093-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0093-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 4-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.3714956+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "fa953986-a990-4258-942b-23bf7e8a4f83",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34098265\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0094",
+    "location": "westeurope",
+    "name": "AIASNLAS0094",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0094-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0094",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0094/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0094/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0094-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0094-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0094-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0094-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 5-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.4183992+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "18855108-84b2-4333-b189-57d2d5794989",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34190836\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0095",
+    "location": "westeurope",
+    "name": "AIASNLAS0095",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0095-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0095",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0095/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0095/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0095-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0095-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0095-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0095-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 6-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:10.1371476+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "12ff42d0-6900-46c5-9809-b56a02c860d1",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34190877\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0096",
+    "location": "westeurope",
+    "name": "AIASNLAS0096",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0096-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0096",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0096/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0096/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0096-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0096-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0096-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0096-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 7-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.0956778+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "1206b25d-3e9f-4c83-8dc8-6f77b534d087",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33989136\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_E8-4ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0097",
+    "location": "westeurope",
+    "name": "AIASNLAS0097",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0097-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0097",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0097/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0097/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0097-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0097-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0097-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0097-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 1 BATCH-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.3871108+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "77b41739-e030-4f7c-88c4-4319e0f3e49c",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33989205\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D12_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0098",
+    "location": "westeurope",
+    "name": "AIASNLAS0098",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0098-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0098",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0098/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0098/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0098-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0098-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0098-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0098-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 2 BATCH-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:07.980857+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "975551b0-8da4-4ede-a9f6-8667ca94e5c6",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34097079\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D12_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0099",
+    "location": "westeurope",
+    "name": "AIASNLAS0099",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0099-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0099",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0099/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0099/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0099-datadisk-000-20240420-124602",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "aiasnlas0099-datadisk-000-20240420-124602",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0099-osdisk-20240420-124602",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "aiasnlas0099-osdisk-20240420-124602",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 3 BATCH-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.0746032+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "acdfdce4-2a73-4c87-8eb6-549461c33f19",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34047491\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D12_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0100",
+    "location": "westeurope",
+    "name": "AIASNLAS0100",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0100-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0100",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0100/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0100/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0100-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0100-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0100-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0100-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSwym 1-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.4340096+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "68276066-5c98-403c-a307-27176b688c7c",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34047483\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D12_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0101",
+    "location": "westeurope",
+    "name": "AIASNLAS0101",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0101-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0101",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0101/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0101/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0101-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0101-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0101-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0101-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSwym 2-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.3871108+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "cdbd413c-6be1-40a3-8770-0d9a1e723de8",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33978908\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D12_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0102",
+    "location": "westeurope",
+    "name": "AIASNLAS0102",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0102-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0102",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0102/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0102/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 256,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0102-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0102-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0102-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0102-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  APPS 1-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.2933808+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "d960ed3b-7c1f-443b-a6dc-613d7568530e",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33978957\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D12_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0103",
+    "location": "westeurope",
+    "name": "AIASNLAS0103",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0103-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0103",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0103/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0103/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 256,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0103-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0103-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0103-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0103-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  APPS 2-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:07.980857+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "dfac8c79-012b-4912-b25c-bc3e44ac78a0",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34097125\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0104",
+    "location": "westeurope",
+    "name": "AIASNLAS0104",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0104-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0104",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0104/extensions/AzureNetworkWatcherExtension",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0104/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0104/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0104-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0104-datadisk1",
+          "toBeDetached": false
+        },
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 16384,
+          "lun": 1,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0104-datadisk2",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0104-datadisk2",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0104-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0104-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "Long Term 10 Years",
+      "Description": "3DExperience Enovia  FCS Central 1-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.0433587+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "8d47b5ed-0f8a-43db-8e09-86773cd1ff55",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34097382\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0105",
+    "location": "westeurope",
+    "name": "AIASNLAS0105",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0105-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0105",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0105/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0105/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0105-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0105-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0105-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0105-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "Long Term 10 Years",
+      "Description": "3DExperience Enovia  FCS Central 2-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.3402413+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "694cde13-dddd-44ce-af8e-96f10cd40531",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33645922\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0107",
+    "location": "westeurope",
+    "name": "AIASNLAS0107",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0107-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0107",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0107/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0107/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0107-datadisk-000-20250823-122939",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "aiasnlas0107-datadisk-000-20250823-122939",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0107-osdisk-20250823-122939",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "aiasnlas0107-osdisk-20250823-122939",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DPassport 1-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.0277437+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "1b8abb3d-3f7a-4ca1-87c3-58c9dc0f81dc",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33645920\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0108",
+    "location": "westeurope",
+    "name": "AIASNLAS0108",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0108-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0108",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0108/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0108/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0108-datadisk-000-20250823-123103",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "aiasnlas0108-datadisk-000-20250823-123103",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0108-osdisk-20250823-123103",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "aiasnlas0108-osdisk-20250823-123103",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DPassport 2-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:07.9027451+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "20a979a7-1082-4967-bf19-28f342402855",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34044197\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0110",
+    "location": "westeurope",
+    "name": "AIASNLAS0110",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0110-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0110",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0110/extensions/AzureNetworkWatcherExtension",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0110/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0110/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "diskSizeGB": 64,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0110-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_ZRS"
+          },
+          "name": "AIASNLAS0110-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0110-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "StandardSSD_ZRS"
+        },
+        "name": "AIASNLAS0110-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  Load Balancer 1-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:08.1058555+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "bda02a66-8102-4036-acb7-671be2f2cc27",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34044376\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D4_v4"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0111",
+    "location": "westeurope",
+    "name": "AIASNLAS0111",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0111-nic01",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0111",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0111/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0111/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Empty",
+          "deleteOption": "Detach",
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0111-datadisk1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+          },
+          "name": "AIASNLAS0111-datadisk1",
+          "toBeDetached": false
+        }
+      ],
+      "imageReference": {
+        "exactVersion": "8.2.2022031401",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "8.2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0111-osdisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+        },
+        "name": "AIASNLAS0111-osdisk",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  Load Balancer 2-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-05T15:18:07.980857+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "1d06b93c-5677-4c63-b2f3-48505d5de3af",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34108023\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_E32s_v5",
+      "vmSizeProperties": {
+        "vCPUsAvailable": 32,
+        "vCPUsPerCore": 2
+      }
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0121",
+    "identity": {
+      "principalId": "e1f16942-78d0-40bd-8d2c-cce47b00775e",
+      "tenantId": "556e6b1f-b49d-4278-8baf-db06eeefc8e9",
+      "type": "SystemAssigned"
+    },
+    "licenseType": "None",
+    "location": "westeurope",
+    "name": "AIASNLAS0121",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas012121_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "linuxConfiguration": {
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0121/extensions/AzureMonitorLinuxAgent",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0121/extensions/AzurePerformanceDiagnosticsLinux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0121/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0121/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 8192,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0121-datadisk-000-20240309-100947",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "Premium_ZRS"
+          },
+          "name": "aiasnlas0121-datadisk-000-20240309-100947",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "Attach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/ac-rgp-p-app-10007216-r2021x/providers/Microsoft.Compute/disks/aiasnlas0121-osdisk-20240309-100947",
+          "resourceGroup": "ac-rgp-p-app-10007216-r2021x",
+          "storageAccountType": "Premium_ZRS"
+        },
+        "name": "aiasnlas0121-osdisk-20240309-100947",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "AC-VM-BusinessCritical-6Month",
+      "Description": "3DExperience Enovia  Index Master-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "TechnicalOwners": "sopan.hudekar@external.atlascopco.com;sumit.rinayat@external.atlascopco.com;bastien.garcia@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-19T13:09:03.0756409+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "8987f27b-1583-4ab5-8eb7-38dc9b91ab3a",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"34107952\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_E32s_v5",
+      "vmSizeProperties": {
+        "vCPUsAvailable": 32,
+        "vCPUsPerCore": 2
+      }
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0122",
+    "identity": {
+      "principalId": "6d47710a-edda-4fe6-a640-34b25db8bcb3",
+      "tenantId": "556e6b1f-b49d-4278-8baf-db06eeefc8e9",
+      "type": "SystemAssigned"
+    },
+    "licenseType": "None",
+    "location": "westeurope",
+    "name": "AIASNLAS0122",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas0122129_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "linuxConfiguration": {
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0122/extensions/AzureMonitorLinuxAgent",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0122/extensions/AzurePerformanceDiagnosticsLinux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0122/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0122/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 8192,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aiasnlas0122-datadisk-000-20240309-101009",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "Premium_ZRS"
+          },
+          "name": "aiasnlas0122-datadisk-000-20240309-101009",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "Attach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/ac-rgp-p-app-10007216-r2021x/providers/Microsoft.Compute/disks/aiasnlas0122-osdisk-20240309-101009",
+          "resourceGroup": "ac-rgp-p-app-10007216-r2021x",
+          "storageAccountType": "Premium_ZRS"
+        },
+        "name": "aiasnlas0122-osdisk-20240309-101009",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "AC-VM-BusinessCritical-6Month",
+      "Description": "3DExperience Enovia  Index Slave-21x NLD017 Virtual",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "TechnicalOwners": "sopan.hudekar@external.atlascopco.com;sumit.rinayat@external.atlascopco.com;bastien.garcia@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-05-19T14:18:37.0399534+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "bdd08b1c-58f4-4a9a-ab0f-246526f337e0",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"33659325\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D64as_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0135",
+    "identity": {
+      "principalId": "264133c0-cf26-4659-ac14-da8053f45f43",
+      "tenantId": "556e6b1f-b49d-4278-8baf-db06eeefc8e9",
+      "type": "SystemAssigned"
+    },
+    "location": "westeurope",
+    "name": "AIASNLAS0135",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/AIASNLAS0135-NIC",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "emergencyadm",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLAS0135",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "enableVMAgentPlatformUpdates": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0135/extensions/AzureMonitorLinuxAgent",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0135/extensions/AzurePerformanceDiagnosticsLinux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0135/extensions/enablevmaccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0135/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 1024,
+          "lun": 1,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLAS0135-DataDisk-0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "Premium_LRS"
+          },
+          "name": "AIASNLAS0135-DataDisk-0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "diskControllerType": "SCSI",
+      "imageReference": {
+        "exactVersion": "8.1.2022031404",
+        "offer": "RHEL",
+        "publisher": "RedHat",
+        "sku": "81gen2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0135-OSDisk",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "Premium_LRS"
+        },
+        "name": "AIASNLAS0135-OSDisk",
+        "osType": "Linux",
+        "writeAcceleratorEnabled": false
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "AC-VM-BusinessCritical-6Month",
+      "Description": "3DExperience Enovia",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2022-07-13T12:26:06.6797361+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "a90990c1-90a5-4536-b1ca-c49bb613a694",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "additionalCapabilities": {
+      "hibernationEnabled": false
+    },
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"183\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0141",
+    "location": "westeurope",
+    "name": "AIASNLAS0141",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Delete",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas0141126_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "linuxConfiguration": {
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        }
+      }
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0141/extensions/enablevmAccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0141/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLAS0141_DataDisk_0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "StandardSSD_LRS"
+          },
+          "name": "AIASNLAS0141_DataDisk_0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "diskControllerType": "SCSI",
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "Attach",
+        "deleteOption": "Detach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourcegroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLAS0141_OSDisk_1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+          "storageAccountType": "StandardSSD_LRS"
+        },
+        "name": "AIASNLAS0141_OSDisk_1",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 8-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "Technical Owners": "vigneshkumar.paramasivan@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2024-01-18T09:48:15.0294316+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "18a444fe-e55f-4497-a3f1-9e4bc0e99c7e",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "additionalCapabilities": {
+      "hibernationEnabled": false
+    },
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"215\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_D8ds_v5"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0142",
+    "licenseType": "None",
+    "location": "westeurope",
+    "name": "AIASNLAS0142",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnlas0142170_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        }
+      },
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "proximityPlacementGroup": {
+      "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/proximityPlacementGroups/AC-PPG-P-APP-10007216-R2021x",
+      "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+    },
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0142/extensions/enablevmAccess",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      },
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLAS0142/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "Standard"
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "ReadWrite",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 128,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/ac-rgp-p-app-10007216-r2021x/providers/Microsoft.Compute/disks/aiasnlas0142-datadisk-000-20250102-175816",
+            "resourceGroup": "ac-rgp-p-app-10007216-r2021x",
+            "storageAccountType": "StandardSSD_LRS"
+          },
+          "name": "aiasnlas0142-datadisk-000-20250102-175816",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "diskControllerType": "SCSI",
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "Attach",
+        "diskSizeGB": 64,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/ac-rgp-p-app-10007216-r2021x/providers/Microsoft.Compute/disks/aiasnlas0142-osdisk-20250102-175816",
+          "resourceGroup": "ac-rgp-p-app-10007216-r2021x",
+          "storageAccountType": "StandardSSD_LRS"
+        },
+        "name": "aiasnlas0142-osdisk-20250102-175816",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      "ADComputer.AdminDescription": "ATOS",
+      "Backup": "DefaultPolicy",
+      "Description": "3DExperience Enovia  3DSPACE 1-21x NLD017 Virtual ",
+      "Environment": "PROD",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2024-02-05T12:56:20.5003732+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "a54a9c18-6774-46e2-9fe5-72af90199243",
+    "zones": [
+      "1"
+    ]
+  },
+  {
+    "additionalCapabilities": {
+      "hibernationEnabled": false
+    },
+    "diagnosticsProfile": {
+      "bootDiagnostics": {
+        "enabled": true
+      }
+    },
+    "etag": "\"296\"",
+    "hardwareProfile": {
+      "vmSize": "Standard_FX8mds_v2"
+    },
+    "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLDB0007",
+    "location": "westeurope",
+    "name": "AIASNLDB0007",
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "deleteOption": "Detach",
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Network/networkInterfaces/aiasnldb0007246_z1",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021x"
+        }
+      ]
+    },
+    "osProfile": {
+      "adminUsername": "Plmadmin",
+      "allowExtensionOperations": true,
+      "computerName": "AIASNLDB0007",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false,
+        "patchSettings": {
+          "assessmentMode": "AutomaticByPlatform",
+          "automaticByPlatformSettings": {
+            "bypassPlatformSafetyChecksOnUserSchedule": true
+          },
+          "patchMode": "AutomaticByPlatform"
+        },
+        "provisionVMAgent": true
+      },
+      "requireGuestProvisionSignal": true,
+      "secrets": []
+    },
+    "provisioningState": "Succeeded",
+    "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+    "resources": [
+      {
+        "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/virtualMachines/AIASNLDB0007/extensions/MDE.Linux",
+        "resourceGroup": "AC-RGP-P-APP-10007216-R2021X"
+      }
+    ],
+    "securityProfile": {
+      "securityType": "TrustedLaunch",
+      "uefiSettings": {
+        "secureBootEnabled": true,
+        "vTpmEnabled": true
+      }
+    },
+    "storageProfile": {
+      "dataDisks": [
+        {
+          "caching": "None",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 8192,
+          "lun": 0,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLDB0007_DataDisk_0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "Premium_LRS"
+          },
+          "name": "AIASNLDB0007_DataDisk_0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        },
+        {
+          "caching": "ReadOnly",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 256,
+          "lun": 1,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLDB0007_DataDisk_1",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "Premium_LRS"
+          },
+          "name": "AIASNLDB0007_DataDisk_1",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        },
+        {
+          "caching": "ReadOnly",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 512,
+          "lun": 2,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021x/providers/Microsoft.Compute/disks/AIASNLDB0007_DataSwap0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021x",
+            "storageAccountType": "Premium_LRS"
+          },
+          "name": "AIASNLDB0007_DataSwap0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        },
+        {
+          "caching": "ReadOnly",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 256,
+          "lun": 3,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/aisnldb007_dataora_0",
+            "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+            "storageAccountType": "Premium_LRS"
+          },
+          "name": "AISNLDB007_DataOra_0",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        },
+        {
+          "caching": "ReadOnly",
+          "createOption": "Attach",
+          "deleteOption": "Detach",
+          "diskSizeGB": 256,
+          "lun": 4,
+          "managedDisk": {
+            "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/ac-rgp-p-app-10007216-r2021x/providers/Microsoft.Compute/disks/aiasnldb0007_datadisk_3",
+            "resourceGroup": "ac-rgp-p-app-10007216-r2021x",
+            "storageAccountType": "Premium_LRS"
+          },
+          "name": "AIASNLDB0007_DataDisk_3",
+          "toBeDetached": false,
+          "writeAcceleratorEnabled": false
+        }
+      ],
+      "diskControllerType": "NVMe",
+      "imageReference": {
+        "exactVersion": "8.10.7",
+        "offer": "Oracle-Linux",
+        "publisher": "Oracle",
+        "sku": "ol810-lvm-gen2",
+        "version": "latest"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "createOption": "FromImage",
+        "deleteOption": "Delete",
+        "diskSizeGB": 49,
+        "managedDisk": {
+          "id": "/subscriptions/0cbdd8c2-9831-494b-b07b-76952fb13d3a/resourceGroups/AC-RGP-P-APP-10007216-R2021X/providers/Microsoft.Compute/disks/AIASNLDB0007_OsDisk_1_e97b34b4c1124881911feffc55ae1a85",
+          "resourceGroup": "AC-RGP-P-APP-10007216-R2021X",
+          "storageAccountType": "Premium_ZRS"
+        },
+        "name": "AIASNLDB0007_OsDisk_1_e97b34b4c1124881911feffc55ae1a85",
+        "osType": "Linux"
+      }
+    },
+    "tags": {
+      " FAM": "AID",
+      " Owner": "Ilse Roegies",
+      "ADComputer.AdminDescription": "ATOS",
+      "Application Id": "APP-10008847",
+      "Application Name": "3DExperience - 2024x",
+      "ApplicationCriticality": "true",
+      "Backup": "DefaultPolicy",
+      "Description": "Oracle Databaseserver R2024x",
+      "Patch Group": "Atlascopco - LINUX PROD",
+      "SiteId": "NLD017",
+      "StartStop_ContactEmail": "sandeep.bhosale@external.atlascopco.com;ajay.shelke@external.atlascopco.com;vigneshkumar.paramasivan@external.atlascopco.com,meghana.mankar@external.atlascopco.com",
+      "Technical Owner": "ajay.shelke@external.atlascopco.com",
+      "TechnicalOwners": "Apa.enovia@atlascopco.com",
+      "environment": "Production",
+      "managementPartner": "Atos"
+    },
+    "timeCreated": "2025-08-12T13:49:25.0939397+00:00",
+    "type": "Microsoft.Compute/virtualMachines",
+    "vmId": "0feadd25-956d-4908-8c07-652daabb9226",
+    "zones": [
+      "1"
+    ]
+  }
+]

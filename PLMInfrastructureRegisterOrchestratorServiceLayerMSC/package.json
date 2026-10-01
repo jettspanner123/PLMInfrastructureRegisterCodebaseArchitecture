@@ -1,0 +1,10 @@
+{
+  "name": "@plm-infrastructure-register/server",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "dotnet watch run",
+    "build": "dotnet build",
+    "lint": "dotnet build --no-incremental"
+  }
+}

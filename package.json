@@ -1,0 +1,23 @@
+{
+  "name": "plminfrastructureregistercodebasearchitecture",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "workspaces": [
+    "PLMInfrastructureRegisterClientServiceLayerMSC",
+    "PLMInfrastructureRegisterOrchestratorServiceLayerMSC"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "clean": "turbo clean",
+    "client:dev": "turbo dev --filter=@plm-infrastructure-register/client",
+    "client:build": "turbo build --filter=@plm-infrastructure-register/client",
+    "client:lint": "turbo lint --filter=@plm-infrastructure-register/client",
+    "server:dev": "turbo dev --filter=@plm-infrastructure-register/server",
+    "server:build": "turbo build --filter=@plm-infrastructure-register/server"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.4"
+  }
+}

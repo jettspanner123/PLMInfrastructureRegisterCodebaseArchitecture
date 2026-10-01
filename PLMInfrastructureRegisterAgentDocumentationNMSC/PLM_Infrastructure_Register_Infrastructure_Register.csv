@@ -1,0 +1,621 @@
+﻿HOSTNAME,ENVIRONMENT (TAG),FUNCTION,STATUS,Daily Backup Time (CET),Cronjobs / Task scheduler,DNS,URL,PRIVATE IP ADDRESS,TYPE,SUBSCRIPTION,Spinner_R2024x_AtlasCopco_Exp29Oct2026,Auto Shutdown,Auto Shutdown Schedule,Auto Shutdown Start Time (CET),Auto Shutdown End Time (CET),RESOURCE GROUP,LOCATION,VIRTUAL NETWORK/SUBNET,PROXIMITY GROUP,OPERATING SYSTEM,SIZE,CPU,RAM,DISK 1 (OS) PERFORMANCE,DISK 2 (DATA) PERFORMANCE,DISK 3 (DATA) TYPE3,DISK 4 (DATA) TYPE4,DISK 5 (DATA) TYPE5,DISK 6 (DATA) TYPE6,Database Instance,Database Name,PUBLIC IP ADDRESS,DISKS,PLAN/VERSION,Backup Schedule,Backup Status,Infrastucture Support (Azure),Infrastucture Support Service Level (Insight),DBA Support,DBA Support Service Level,Protocol,Port,TomEE Port Connector,SMTP Enabled,SMTP Hostname,SMTP Sender,Comment,Oracle DBA Support Required,JAVA Support Required,Apache Support Required,Backup Required,OS Support(inc patching),Azure montioring setup required,Response SLA Requirement,Atos Agent Deployed,3DExperience SXI License,Monitoring healthcheck URL,VM creation date,VM deletion date,New HOSTName,Column8,Column9,Column10,Column11,Column12,Column13,Column14,Column15,Column16,Column17,Column18,Column19
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+AIASNLAS0003,Production Data Migration,Migration_prod - EDAT Extractor,Decommissioned,3.00 AM,,,,10.76.100.43,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekdays,20,6,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_E4s_v3,,,,,,,,,,,-,2,win10-21h2-ent,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,_,,,,,,,,,,,,,,,
+AIASNLAS0004,Production Data Migration,Migration_prod - EDAT Importer,Decommissioned,3.00 AM,,,,10.76.100.44,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekdays,20,6,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4ds_v5,,,,,,,,,,,-,2,20h2-ent,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,_,,,,,,,,,,,,,,,
+AIASNLAS0006,SandBox (Technical),3DX All-In-One Server,Decommissioned,N/A,N/A,N/A,,10.76.100.49,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (7PM CET),N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,N/A,N/A,Linux,Standard_D8s_v3,,,,,,,,,N/A,N/A,N/A,2,8.1,N/A,N/A,Atos,N/A,N/A,N/A,"SSH,HTTPS,HTTP","22,443,19001",N/A,Stopped,Stopped,Stopped,N/A,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,16/5,N/A,N/A,N/A,N/A,21-Dec-24,,,,,,,,,,,,,
+AIASNLAS0007,SandBox (Functional),3DX All-In-One Server,Decommissioned (27-Oct-2025),3.00 AM,"3DSpaceIndex Partial
+3DIndexer
+Tidy vault
+Tidy store","air3dspacesb221x.atlascopco.group
+air3dspacenocassb221x.atlascopco.group
+air3dpassportsb221x.atlascopco.group
+air3ddashboardsb221x.atlascopco.group
+air3dcommentsb221x.atlascopco.group
+air3dnotificationsb221x.atlascopco.group
+air3dsearchsb221x.atlascopco.group
+ir3dspaceidxsb221x.atlascopco.group
+air3dfcssb221x.atlascopco.group
+air3dswymsb221x.atlascopco.group
+air3dxpdmtrn",,10.76.100.48,Virtual machine,ac-hybrid-devtest-01,Deployed,Enabled (7PM CET),Daily,4,20:00:00 AM,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,N/A,Linux,Standard_B8ms,8 vCPU,32GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,,,,,SB23DEX2,AIASNLDB0001,N/A,2,8.1,YES,Running,Atos,,N/A,,"SSH,HTTPS,HTTP","22,443,19001",,Shutdown / DB Removed,Shutdown / DB Removed,Shutdown / DB Removed,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,16/5,,,"https://air3dspacesb221x.atlascopco.group/3dspace
+https://air3dspacenocassb221x.atlascopco.group:8070/internal
+https://air3dpassportsb221x.atlascopco.group/3dpassport
+https://air3ddashboardsb221x.atlascopco.group/3ddashboard
+https://air3dcommentsb221x.atlascopco.group/3dcomment
+https://air3dnotificationsb221x.atlascopco.group/3dnotification
+https://air3dsearchsb221x.atlascopco.group/federated
+http://air3dspaceidxsb221x.atlascopco.group:19001/admin
+https://air3dfcssb221x.atlascopco.group/fcs
+https://air3dswymsb221x.atlascopco.group/3dswym
+http://air3dxpdmtrn:8040/3DEXPERIENCEPlatformGW ",,,,,,,,,,,,,,,
+AIASNLAS0008,Implementation Development 1,3DX All-In-One Server,Running,3.00 AM,,"air3dspaceidxdev124x.atlascopco.group
+air3dsearchdev124x.atlascopco.group
+air3dspacedev124x.atlascopco.group
+air3dspacenocasdev124x.atlascopco.group
+air3dswymdev124x.atlascopco.group
+air3ddashboarddev124x.atlascopco.group
+air3dnotificationdev124x.atlascopco.group
+air3dcommentdev124x.atlascopco.group
+untrusted.air3ddashboarddev124x.atlascopco.group
+air3dfcsdev124x.atlascopco.group
+air3dpassportdev124x.atlascopco.group
+air3dindexingdev124x.atlascopco.group
+air3dxgwdev124x.atlascopco.group
+air3dxpdmgwdev124x.atlascopco.group
+air3dwidgetdev124x.atlascopco.group
+air3djobsrvdev124x.atlascopco.group
+air3dxpdmclientdev124x.atlascopco.group","https://air3dpassportdev124x.atlascopco.group/3dpassport
+http://air3dspaceidxdev124x.atlascopco.group:19001/admin
+https://air3dspacenocasdev124x.atlascopco.group/internal
+https://air3dsearchdev124x.atlascopco.group/federated
+https://air3ddashboarddev124x.atlascopco.group/3ddashboard
+https://air3dspacedev124x.atlascopco.group/3dspace
+https://air3dswymdev124x.atlascopco.group/3dswym
+https://air3dcommentdev124x.atlascopco.group/3dcomment
+https://air3dnotificationdev124x.atlascopco.group/3dnotification
+http://air3dxgwdev124x.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dxpdmgwdev124x.atlascopco.group:8050/XPDMGW
+https://air3dfcsdev124x.atlascopco.group/fcs",10.76.100.50,Virtual machine,ac-hybrid-devtest-01,Deployed,Enabled (7PM CET),Weekdays,5,19,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B12ms,12 vCPU,48GB,Standard SSD LRS 64 Size/ 500 IOPS / 100MBps throughput,Premium SSD LRS 256 Size / 1100 IOPS / 125MBps throughput,,,,,DEV3DEX1,AIASNLDB0008,-,2,8.1,YES,Running,Atos,,N/A,,"SSH,HTTPS,HTTP","22,443,19001",,Enabled,smtp.atlascopco.group,PLMADM21xDevelpment@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,Yes,,"http://AIASNLAS0008.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0008.atlascopco.group:8070/internal/servlet/fcs/ping
+http://AIASNLAS0008.atlascopco.group:8080/3dpassport/healthcheck
+http://AIASNLAS0008.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0008.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0008.atlascopco.group:9280/healthcheck
+http://AIASNLAS0008.atlascopco.group:8094/3dswym/monitoring/healthcheck
+curl -k http://AIASNLAS0008:8280/federated/manager?query=monitoring
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0009,Migration Development,3DX All-In-One Server,Decommissioned,N/A,,"air3dspaceidxdev221x.atlascopco.group
+air3dsearchdev221x.atlascopco.group
+air3dspacedev221x.atlascopco.group
+air3dspacenocasdev221x.atlascopco.group
+air3dswymdev221x.atlascopco.group
+air3ddashboarddev221x.atlascopco.group
+air3dnotificationdev221x.atlascopco.group
+air3dcommentdev221x.atlascopco.group
+untrusted.air3ddashboarddev221x.atlascopco.group
+air3dnotificationdev221x.atlascopco.group
+air3dfcsdev221x.atlascopco.group
+air3dpassportdev221x.atlascopco.group
+air3dindexingdev221x.atlascopco.group
+air3dxpdmdev221x.atlascopco.group","https://air3dspacedev221x.atlascopco.group/3dspace
+http://air3dspacenocasdev221x.atlascopco.group:8070/internal
+https://air3dpassportdev221x.atlascopco.group/3dpassport
+https://air3ddashboarddev221x.atlascopco.group/3ddashboard
+https://air3dcommentdev221x.atlascopco.group/3dcomment
+https://air3dnotificationdev221x.atlascopco.group/3dnotification
+https://air3dsearchdev221x.atlascopco.group/federated
+http://air3dspaceidxdev221x.atlascopco.group:19001/admin
+https://air3dfcsdev221x.atlascopco.group/fcs
+https://air3dswymdev221x.atlascopco.group/3dswym
+http://air3dfcsdev221x.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dfcsdev221x.atlascopco.group:8050/XPDMGW",10.76.100.58,Virtual machine,ac-hybrid-devtest-01,Deployed,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B8ms,,,,,,,,,,,-,2,8.1,N/A,N/A,Atos,,N/A,,"SSH,HTTPS,HTTP","22,443,19001",,"Enabled in mxEnv.sh
+Disabled in mxEnvCAS.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0009.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0009.atlascopco.group:8070/internal/servlet/fcs/ping
+http://AIASNLAS0009.atlascopco.group:8080/3dpassport/healthcheck
+ http://AIASNLAS0009.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0009.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+ http://AIASNLAS0009.atlascopco.group:9280/healthcheck
+http://AIASNLAS0009.atlascopco.group:8094/3dswym/monitoring/healthcheck
+http://AIASNLAS0009:8280/federated/manager?query=monitoring
+",,,,,,,,,,,,,,,
+AIASNLAS0010,Migration Development,CATIA Promigrate export client,Decommissioned,N/A,,air3dpromigexp1.atlascopco.group,,10.76.100.52,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v3,,,,,,,,,,,-,2,2019-Datacenter,N/A,N/A,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,_,,,,,,,,,,,,,,,
+AIASNLAS0011,Production Data Migration,IAT BoM in PLM extractions,Running,3.00 AM,,,,10.76.100.53,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekdays,24,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4s v3,4 vCPU,16GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 2300 IOPS / 150MBps throughput,,,,,,,-,2,2019-Datacenter / Windows Server 2019 Datacenter,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,_,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0014,21x OOTB,3DX All-In-One Server,Decommissioned (27-Oct-2025),3.00 AM,,"air3dspaceidxootb121x.atlascopco.group
+air3dsearchootb121x.atlascopco.group
+air3dspaceootb121x.atlascopco.group
+air3dspacenocasootb121x.atlascopco.group
+air3dswymootb121x.atlascopco.group
+air3ddashboardootb121x.atlascopco.group
+air3dnotificationootb121x.atlascopco.group
+air3dcommentootb121x.atlascopco.group
+untrusted.air3ddashboardootb121x.atlascopco.group
+air3dnotificationootb121x.atlascopco.group
+air3dfcsootb121x.atlascopco.group
+air3dpassportootb121x.atlascopco.group
+air3dindexingootb121x.atlascopco.group
+air3dxpdmootb121x.atlascopco.group","https://air3dspaceootb121x.atlascopco.group/3dspace
+https://air3dspacenocasootb121x.atlascopco.group:8070/internal 
+https://air3dpassportootb121x.atlascopco.group/3dpassport
+https://air3ddashboardootb121x.atlascopco.group/3ddashboard
+https://air3dcommentootb121x.atlascopco.group/3dcomment
+https://air3dnotificationootb121x.atlascopco.group/3dnotification
+https://air3dsearchootb121x.atlascopco.group/federated
+http://air3dspaceidxootb121x.atlascopco.group:19001/admin
+https://air3dfcsootb121x.atlascopco.group/fcs
+https://air3dswymootb121x.atlascopco.group/3dswym
+http://air3dgwootbsrv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dxpdmgwootbsrv.atlascopco.group:8050/XPDMGW",10.76.100.79,Virtual machine,ac-hybrid-devtest-01,Deployed,Not Enabled,N/A,20,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B8ms,8 vCPU,32GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,"SSH,HTTPS,HTTP","22,443,19001",,Password not Updated in Keystore,Password not Updated in Keystore,Password not Updated in Keystore,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,16/5,,,"https://air3dspaceootb121x.atlascopco.group/3dspace
+https://air3dspacenocasootb121x.atlascopco.group:8070/internal 
+https://air3dpassportootb121x.atlascopco.group/3dpassport
+https://air3ddashboardootb121x.atlascopco.group/3ddashboard
+https://air3dcommentootb121x.atlascopco.group/3dcomment
+https://air3dnotificationootb121x.atlascopco.group/3dnotification
+https://air3dsearchootb121x.atlascopco.group/federated
+http://air3dspaceidxootb121x.atlascopco.group:19001/admin
+https://air3dfcsootb121x.atlascopco.group/fcs
+https://air3dswymootb121x.atlascopco.group/3dswym
+http://air3dgwootbsrv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dxpdmgwootbsrv.atlascopco.group:8050/XPDMGW",,,,,,,,,,,,,,,
+AIASNLAS0015,Testing,"3DSearch,3DSpaceIndex,",Running,3.00 AM,,"air3dsearchtstsrv.atlascopco.group
+air3dspaceidxtstsrv.atlascopco.group
+air3dindexingtstsrv.atlascopco.group",http://air3dspaceidxtstsrv.atlascopco.group:19001,10.76.100.80,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B2ms,2 vCPU,8GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,"SSH,HTTP",22.19001,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0016,Testing,Load Balancer,Running,3.00 AM,,"air3dspacetst21x.atlascopco.group
+air3dspacenocastst21x.atlascopco.group
+air3dpassporttst21x.atlascopco.group
+air3ddashboardtst21x.atlascopco.group
+air3dnotificationtst21x.atlascopco.group
+air3dcommenttst21x.atlascopco.group
+air3dswymtst21x.atlascopco.group
+air3dspaceidxtst21x.atlascopco.group
+air3dsearchtst21x.atlascopco.group
+air3dfcstst21x.atlascopco.group","https://air3dspacetst21x.atlascopco.group/3dspace
+https://air3dspacenocastst21x.atlascopco.group/internal
+https://air3dpassporttst21x.atlascopco.group/3dpassport
+https://air3ddashboardtst21x.atlascopco.group/3ddashboard
+https://air3dcommenttst21x.atlascopco.group/3dcomment
+https://air3dnotificationtst21x.atlascopco.group/3dnotification
+https://air3dsearchtst21x.atlascopco.group/federated
+https://air3dfcstst21x.atlascopco.group/fcs
+https://air3dswymtst21x.atlascopco.group/3dswym",10.76.100.81,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B4ms,4 vCPU,16GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,"SSH,HTTPS",22.443,,,,,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0016.atlascopco.group/
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0017,Testing,FCS,Running,3.00 AM,,air3dfcststsrv.atlascopco.group,,10.76.100.83,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B4ms,4 vCPU,16GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0018,Testing,"3DSwym, Widget",Running,3.00 AM,,air3dswymtstsrv.atlascopco.group,,10.76.100.82,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_D4s_v4,4 vCPU,16GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard SDD LRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0019,Implementation Development 2 (24x Upgrade),3DX All-In-One Server,Running,3.00 AM,,"air3dspaceidxdev2.atlascopco.group
+air3dpassportdev2.atlascopco.group
+air3ddashboarddev2.atlascopco.group
+untrusted-air3ddashboarddev2.atlascopco.group
+air3dsearchdev2.atlascopco.group
+air3dspacedev2.atlascopco.group
+air3dspacenocasdev2.atlascopco.group
+air3dfcsdev2.atlascopco.group
+air3dswymdev2.atlascopco.group
+air3dcommentdev2.atlascopco.group
+air3dnotificationdev2.atlascopco.group
+air3dmessagingdev2.atlascopco.group
+air3dindexingdev2.atlascopco.group
+air3dxpmclientdev2.atlascopco.group
+orchestratordev2.atlascopco.group
+air3dxpdmdev2.atlascopco.group
+air3djobsrvdev2.atlascopco.group","https://air3dpassportdev2.atlascopco.group/3dpassport
+http://air3dspaceidxdev2.atlascopco.group:19001
+untrusted-air3ddashboarddev2.atlascopco.group
+https://air3dsearchdev2.atlascopco.group/federated
+https://air3ddashboarddev2.atlascopco.group/3ddashboard
+https://air3dspacedev2.atlascopco.group/3dspace
+https://air3dswymdev2.atlascopco.group/3dswym
+https://air3dcommentdev2.atlascopco.group/3dcomment
+https://air3dnotificationdev2.atlascopco.group/3dnotification
+https://air3dmessagingdev2.atlascopco.group/3dmessaging
+http://air3dspacedev2.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dspacedev2.atlascopco.group:8050/XPDMGW
+https://air3dspacenocasdev2.atlascopco.group/internal
+https://air3dfcsdev2.atlascopco.group/fcs",10.76.100.84,Virtual machine,ac-hybrid-devtest-01,Deployed,Enabled (10PM CET),Daily,5,19,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B8ms,4vCPU,64GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,"SSH,HTTPS,HTTP","22,443,19001",,Stopped,Stopped,Stopped,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0019.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0019.atlascopco.group:8070/internal/servlet/fcs/ping
+http://AIASNLAS0019.atlascopco.group:8080/3dpassport/healthcheck
+http://AIASNLAS0019.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0019.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0019.atlascopco.group:9280/healthcheck
+http://AIASNLAS0019.atlascopco.group:8094/3dswym/monitoring/healthcheck",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0020,Testing,"3DPassport,3DDashboard,3DComment,3DSpaceCAS,3DSpaceNOCAS",Running,3.00 AM,,"air3dspace1tstsrv.atlascopco.group
+air3dspacenocas1tstsrv.atlascopco.group
+air3ddashboardtstsrv.atlascopco.group
+air3dnotificationtstsrv.atlascopco.group
+air3dcommenttstsrv.atlascopco.group
+untrustedair3ddashboardtstsrv.atlascopco.group
+air3dpassporttstsrv.atlascopco.group
+",,10.76.100.85,Virtual machine,ac-hybrid-devtest-01,Deployed,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B8ms,8vCPU,32GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0020.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0020.atlascopco.group:8070/internal/servlet/fcs/ping
+ http://AIASNLAS0020.atlascopco.group:8080/3dpassport/healthcheck
+ http://AIASNLAS0020.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0020.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0020.atlascopco.group:9280/healthcheck",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0021,Testing,"3dxgw, xpdmgw",Running,3.00 AM,,"air3dspace2tstsrv.atlascopco.group
+air3dspacenocas2tstsrv.atlascopco.group
+air3dgwtstsrv.atlascopco.group
+air3dxpdmgwtstsrv.atlascopco.group
+
+","http://air3dgwtstsrv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dxpdmgwtstsrv.atlascopco.group:8050/XPDMGW",10.76.100.86,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B8ms,8vCPU,32GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0021.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0021.atlascopco.group:8070/internal/servlet/fcs/ping
+http://AIASNLAS0021.atlascopco.group:8080/3dpassport/healthcheck
+http://AIASNLAS0021.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0021.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0021.atlascopco.group:9280/healthcheck
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0023,Implementation Development 1,XPDM Adaptor,Decommissioned (12-Sep-2025),3.00 AM,,air3dxpdmdev121x.atlascopco.group,,10.76.100.88,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (5.30PM CET),Daily,20,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard B2ms,2vCPU,8GB,Premium SSD LRS / 500 IOPS / 100MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,2019-Datacenter / Windows Server 2019 Datacenter,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0026,Implementation Development 1,Job Server,Decommissioned (29-Oct-2025),3.00 AM,,air3djobsrvdev121x.atlascopco.group,,10.76.100.93,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (11AM CET),Weekdays,20,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4 v5,4 vCPU,16GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Premium SDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,"
+20h2-pro / Windows 10 Pro",,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0027,Implementation Development 2 (24x Upgrade),"XPDM Client
+Orchestrator",Decommissioned (07-Nov-2025),3.00 AM,,"air3dxpmclientint121x.atlascopco.group
+orchestratordev.atlascopco.group",,10.76.100.94,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (6.30PM CET),Daily,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4 v5,8vCPU,32GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0028,Implementation Development 2 (24x Upgrade),Job Server,Decommissioned (07-Nov-2025),3.00 AM,,air3djobsrvint121x.atlascopco.group,,10.76.100.95,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (10AM CET),Daily,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,"
+Standard D4 v5",4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-pro / Windows 10 Pro,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0029,Testing,Job Server,Decommissioned (27-Oct-2025),3.00 AM,,air3djobsrvtstsrv.atlascopco.group,,10.76.100.96,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4 v5,4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,20.4.72.63,2,20h2-pro / Windows 10 Pro,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0030,Implementation Development 2 (24x Upgrade),XPDM Adaptor,Decommissioned,3.00 AM,,air3dxpdmint121x.atlascopco.group,,10.76.100.97,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (7.30PM CET),Daily,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard B2ms,,,,,,,,,,,-,2,2019-datacenter-gensecond / Windows Server 2019 Datacenter,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0032,Migration Development,"PowerBI report developments
+- Used for PoC development SQL database
+- Power BI desktop client",Decommissioned,N/A,,,,10.76.100.99,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_E8_v4,,,,,,,,,,,-,2,2019-Datacenter,N/A,N/A,Atos,,N/A,,"RDP,JDBC,HTTP,HTTP,CONSUL,NOMAD,TCP,TCP,TCP,HTTP,HTTP,HTTP","3389,5432,4646,8500,8300,4648,61616,41616,51616,8161,9161,7161",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0033,Testing,XPDM Adapter,Decommissioned (12-Sep-2025),N/A,,,,10.76.100.100,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,23:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,"
+Standard B2ms",2vCPU,8GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,2019-Datacenter / Windows Server 2019 Datacenter,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0034,Implementation Development 1,XPDM Clients,Decommissioned (29-Oct-2025),3.00 AM,,air3dxpdmclientdev121x.atlascopco.group,,10.76.100.102,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (8PM CET),Weekdays,20,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,"
+Standard D4 v5",4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0036,Training,"3DSpaceCAS, 3DSpaceNOCAS",Running,1:30 AM,,,,10.76.100.103,Virtual machine,ac-hybrid-devtest-01,Deployed,Not Enabled,Weekend,05:00 AM CET,18:00 PM CET,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_B8ms,8vCPU,32GB,Premium SDD LRS / 120 IOPS / 25MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0036.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0036.atlascopco.group:8070/internal/servlet/fcs/ping
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0037,Training,Load Balancer,Running,3.00 AM,,,,10.76.98.13,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekend,05:00 AM CET,18:00 PM CET,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_B4ms,4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,"SSH,HTTPS",22.443,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0037.atlascopco.group/
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0038,Training,"3dxgw, xpdmgw",Running,3.00 AM,,,,10.76.98.14,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekend,05:00 AM CET,18:00 PM CET,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_B4ms,4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,,Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0038.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0038.atlascopco.group:8070/internal/servlet/fcs/ping
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0039,Training,3DX App Server (no 3DSpace),Running,3.00 AM,,,,10.76.98.15,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekend,05:00 AM CET,18:00 PM CET,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_B8ms,8vCPU,32GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,"SSH,HTTP",22.19001,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0039.atlascopco.group:8080/3dpassport/healthcheck
+http://AIASNLAS0039.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0039.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0039.atlascopco.group:9280/healthcheck
+http://AIASNLAS0039.atlascopco.group:8094/3dswym/monitoring/healthcheck
+http://AIASNLAS0039:8280/federated/manager?query=monitoring
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0040,QA (Staging),3DSpace CAS 1,Running,3.00 AM,,air3dspace1qasrv.atlascopco.group,,10.76.98.29,Virtual machine,ac-hybrid-devtest-01,Deployed,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0040.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0041,QA (Staging),"Central FCS 1, File Converter",Running,3.00 AM,,air3dfcswilrijk1qasrv.atlascopco.group,http://air3dfcswilrijk1qasrv.atlascopco.group:8060/fcs,10.76.98.38,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 2000 IOPS / 500MBps throughput,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0041.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0042,QA (Staging),"Central FCS 2, File Converter",Running,3.00 AM,,air3dfcswilrijk2qasrv.atlascopco.group,http://air3dfcswilrijk2qasrv.atlascopco.group:8060/fcs,10.76.98.51,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0042.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0043,QA (Staging),"3DSpace No CAS 1, 3dxgw1, xpdmgw1",Running,3.00 AM,,"air3dspacenocas1qasrv.atlascopco.group
+air3dxpdmgw1qasrv.atlascopco.group
+air3dgw1qasrv.atlascopco.group","http://air3dxpdmqa.atlascopco.group/3DEXPERIENCEPlatformGW
+http://air3dxpdmqa.atlascopco.group/XPDMGW
+http://air3dxpdmgw2qasrv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dgw2qasrv.atlascopco.group:8050/XPDMGW",10.76.98.52,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 300MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8070, 8040, 8050",Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0043.atlascopco.group:8070/internal/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0044,QA (Staging),"3DSwym 1,3DSwym, 3DComment 1, 3DNotification 1 ,CloudView",Running,3.00 AM,,"air3dswym2qasrv.atlascopco.group
+air3dwidget2qasrv.atlascopco.group",,10.76.98.53,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8094,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0044.atlascopco.group:8094/3dswym/monitoring/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0045,QA (Staging),"3DDashboard 1, 3DComment 1, 3DNotification 1",Stopped,3.00 AM,,"air3ddashboard1qasrv.atlascopco.group
+air3dcomment1qasrv.atlascopco.group
+air3dnotification1qasrv.atlascopco.group",,10.76.98.54,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8180, 9180, 9280",,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0045.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0045.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0045.atlascopco.group:9280/healthcheck
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0046,QA (Staging),"3DSwym2 3DSwym-Index, 3DComment 2, 3DNotification 2,CloudView",Running,1:30 AM,,"air3dswym1qasrv.atlascopco.group
+air3dwidget1qasrv.atlascopco.group",,10.76.98.36,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8094,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0046.atlascopco.group:8094/3dswym/monitoring/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0047,QA (Staging),3DSpace CAS 2,Running,1:30 AM,,air3dspace2qasrv.atlascopco.group,,10.76.98.57,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0047.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0048,QA (Staging),"3DSpace No CAS 2, DerivedObjectsQueueServer",Running,3.00 AM,,"air3dspacenocas2qasrv.atlascopco.group
+air3dxpdmgw2qasrv.atlascopco.group
+air3dgw2qasrv.atlascopco.group","http://air3dxpdmgw1qasrv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dgw1qasrv.atlascopco.group:8050/XPDMGW",10.76.98.55,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,64GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8070, 8040, 8050",Enabled,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,, http://AIASNLAS0048.atlascopco.group:8070/internal/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS004801,Unknown,Unknown,Decommissioned,N/A,,,,10.76.98.50,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,,,Linux,Standard_D8ds_v5,,,,,,,,,,,40.115.4.202,1,-,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,,,,,,,,,,,,,,,,,,,
+AIASNLAS0049,QA (Staging),"3DDashboard 2, 3DComment 2, 3DNotification 2",Stopped,3.00 AM,,"air3ddashboard2qasrv.atlascopco.group
+air3dcomment2qasrv.atlascopco.group
+air3dnotification2qasrv.atlascopco.group",,10.76.98.56,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D12_v2,4vCPU,28GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,-,,,Atos,,N/A,,SSH,22,"8180, 9180, 9280",,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0049.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0049.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0049.atlascopco.group:9280/healthcheck
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0050,QA (Staging),3DPassport 2,Stopped,3.00 AM,,air3dpassport2qasrv.atlascopco.group,,10.76.98.35,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D4s_v5,4vCPU,16GB,Standard SDD LRS / 500 IOPS / 60MBps throughput,Standard SDD LRS / 500 IOPS / 60MBps throughput,Standard SDD LRS / 500 IOPS / 60MBps throughput,,,,,,-,3,8.2,,,Atos,,N/A,,SSH,22,8080,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0050.atlascopco.group:8080/3dpassport/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0051,QA (Staging),3DPassport 1,Stopped,3.00 AM,,air3dpassport1qasrv.atlascopco.group,,10.76.98.27,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D4s_v5,4vCPU,16GB,Premium SSD LRS / 240 IOPS / 50MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8080,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0052,QA (Staging)," 3DPassport 1, 3DDashboard 1,FedSearch 1, 3DWidget 1",Running,3.00 AM,,air3dsearch2qasrv.atlascopco.group,,10.76.98.58,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D8_v4,8vCPU,32GB,Standard SDD LRS / 500 IOPS / 60MBps throughput,Standard SDD LRS / 500 IOPS / 60MBps throughput,Standard SDD LRS / 500 IOPS / 60MBps throughput,,,,,,-,3,-,,,Atos,,N/A,,SSH,22,8280,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0052:8280/federated/manager?query=monitoring,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0053,QA (Staging),"3DPassport 2, 3DDashboard 2, FedSearch 2,  3DWidget 2",Running,3.00 AM,,"air3dsearch1qasrv.atlascopco.group
+air3dindexingqasrv.atlascopco.group",,10.76.98.60,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_D8s_v4,8vCPU,32GB,Premium SSD LRS / 240 IOPS / 50MBps throughput,Premium SSD LRS / 240 IOPS / 50MBps throughput,,,,,,,-,2,-,,,Atos,,N/A,,SSH,22,8280,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0053:8280/federated/manager?query=monitoring
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0054,QA (Staging),Master indexing server,Running,3.00 AM,,air3dspaceidxmtrqa.atlascopco.group,http://air3dspaceidxmtrqa.atlascopco.group:19000,10.76.98.59,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard E48as v5,48vCPU,384GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 16000 IOPS / 500MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,"SSH,HTTP",22.19001,19000-190099,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0055,QA (Staging),Slave indexing server,Running,3.00 AM,,air3dspaceidxslvqa.atlascopco.group,http://air3dspaceidxslvqa.atlascopco.group:19001,10.76.98.61,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard E48as v5,48vCPU,384GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 16000 IOPS / 500MBps throughput,,,,,,,-,2,-,,,Atos,,N/A,,"SSH,HTTP",22.19001,19000-190099,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0056,QA (Staging),"Remote FCS Wuxi, File Converter",Running,NO,,air3dfcswuxiqa.atlascopco.group,,10.76.0.6,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,Southeast Asia  (Zone 1),AC-VNT-D-INFR-000001/AC-SNT-D-INFR-10.76.0.0-24,,Linux,Standard_D4_v4,4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0056.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0057,QA (Staging),"Remote FCS Houston, File Converter",Running,NO,,air3dfcshoustonqa.atlascopco.group,,10.76.193.4,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,South Central US  (Zone 1),AC-VNT-D-INFR-000005/AC-SNT-D-INFR-10.76.193.0-24,,Linux,Standard_D4s_v5,4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0057.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0058,Training,XPDM Adapter,Decommissioned (19-Sep-2025),3.00 AM,,,,10.76.100.104,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (8AM CET),N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard B2ms,2vCPU,8GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,2019-Datacenter / Windows Server 2019 Datacenter,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0059,Production Data Migration,IAT BoM in PLM - BoM Import,Decommissioned (06-Nov-2025),3.00 AM,,,,10.76.100.23,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4s v4,4vCPU,16GB,Premium SDD LRS / 500 IOPS / 100MBps throughput,Standard SDD LRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,-/ Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0060,Training,XPDM Client,Decommissioned (19-Sep-2025),3.00 AM,,,,10.76.100.107,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (8AM CET),N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4 v5,4vCPU,16GB,Standard SDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,"
+20h2-evd / Windows 10 Enterprise for Virtual Desktops",,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0061,Training,Job Server,Decommissioned (06-Nov-2025),3.00 AM,,,,10.76.100.108,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4 v5,4vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-pro-g2 / Windows 10 Pro,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0062,Production Data Migration,Migration_prod,Decommissioned,3.00 AM,,,,10.76.100.105,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_E8 v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0063,Production Data Migration,Migration_prod,Decommissioned,3.00 AM,,,,10.76.100.157,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v4,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0064,Production Data Migration,Migration_prod,Decommissioned,3.00 AM,,,,10.76.100.111,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v4,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0065,QA (Staging),XPDM Adapter 1,Decommissioned,3.00 AM,,air3dxpdm1qasrv.atlascopco.group,,10.76.100.89,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D2ads_v5,,,,,,,,,,,-,2,2019-datacenter-gensecond,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0066,QA (Staging),XPDM Adapter 2,Decommissioned,3.00 AM,,air3dxpdm2qasrv.atlascopco.group,,10.76.100.87,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D2ads_v5,,,,,,,,,,,-,2,2019-datacenter-gensecond,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0067,QA (Staging),Jobserver 1,Decommissioned (07-Nov-2025),3.00 AM,,air3djobsrv1qasrv.atlascopco.group,,10.76.100.112,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4s v5,4vCPU,16GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-pro-g2 / Windows 10 Pro,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0068,QA (Staging),Jobserver 2,Decommissioned (07-Nov-2025),3.00 AM,,air3djobsrv2qasrv.atlascopco.group,,10.76.100.90,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4s v5,4vCPU,16GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-pro-g2 / Windows 10 Enterprise,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0069,QA (Staging),XPDM Client 1,Decommissioned (07-Nov-2025),3.00 AM,,"air3dxpdmcli1qasrv.atlascopco.group
+orchestratorqa.atlascopco.group ",,10.76.100.116,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard E8-4as v5,8vCPU,64GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0070,QA (Staging),XPDM Client 2,Decommissioned (07-Nov-2025),3.00 AM,,air3dxpdmcli2qasrv.atlascopco.group,,10.76.100.117,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard E8-4as v5,2 vCPU,16GB,Standard SDD LRS / 500 IOPS / 100MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,-/ Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0071,QA (Staging),Apache LB 1 Main,Running,3.00 AM,,"air3dxlb1qa21x.atlascopco.group
+air3dspaceqa21x.atlascopco.group
+air3dspacenocasqa21x.atlascopco.group
+air3dpassportqa21x.atlascopco.group
+air3ddashboardqa21x.atlascopco.group
+air3dnotificationqa21x.atlascopco.group
+air3dcommentqa21x.atlascopco.group
+air3dswymqa21x.atlascopco.group
+air3dsearchqa21x.atlascopco.group
+air3dfcsqa21x.atlascopco.group
+air3dxpdmqa.atlascopco.group
+air3dgwqasrv.atlascopco.group
+air3dwidgetqa21x.atlascopco.group
+air3dwidgetqa21x.atlascopco.group","https://air3dspaceqa21x.atlascopco.group/3dspace
+https://air3dspacenocasqa21x.atlascopco.group/internal
+https://air3dpassportqa21x.atlascopco.group/3dpassport
+https://air3ddashboardqa21x.atlascopco.group/3ddashboard
+https://air3dcommentqa21x.atlascopco.group/3dcomment
+https://air3dnotificationqa21x.atlascopco.group/3dnotification
+https://air3dsearchqa21x.atlascopco.group/federated
+https://air3dfcsqa21x.atlascopco.group/fcs
+https://air3dfcswuxiqa.atlascopco.group/fcs
+https://air3dfcsgeciaqa.atlascopco.group/fcs
+https://air3dfcshoustonqa.atlascopco.group/fcs
+https://air3dswymqa21x.atlascopco.group/3dswym",10.76.100.114,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_D4s_v5,4 vCPU,16GB,Standard HDD LRS / 240 IOPS / 50MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,20.50.173.224,2,85-gen2,,,Atos,,N/A,,"SSH,HTTPS",22.443,,,,,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0071.atlascopco.group/,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0072,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.119,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v4,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0073,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.122,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v4,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0074,QA (Staging),Apache LB 2 Failover,Stopped,3.00 AM,,air3dxlb2qa21x.atlascopco.group,,10.76.100.113,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_D4s_v5,4 vCPU,16GB,Standard HDD LRS / 500 IOPS / 60MBps throughput,Standard HDD LRS / 500 IOPS / 60MBps throughput,,,,,,,20.229.156.221,2,82gen2,,,Atos,,N/A,,"SSH,HTTPS",22.443,,,,,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,16/5,,,http://AIASNLAS0074.atlascopco.group/,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0075,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.124,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v4,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0076,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.125,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_E8 v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0077,Production Data Migration,Migration_prod,Decommissioned,3.00 AM,,,,10.76.100.126,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard_D4s_v4,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0078,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.127,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,,,Linux,Standard_D4s_v4,,,,,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0079,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.128,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,,,Linux,Standard_D4s_v4,,,,,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0080,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.129,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,,,Linux,Standard_D4s_v4,,,,,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0081,Production Data Migration,Migration_prod (VM is deleted Finops),Decommissioned,N/A,,,,10.76.100.130,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,,,Linux,Standard_D4s_v4,,,,,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0082,Production Data Migration,Migration_prod,Decommissioned,N/A,,,,10.76.112.236,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Linux,Standard_D8_v4,,,,,,,,,,,-,2,8.1,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0083,Production Data Migration,Migration_prod,Decommissioned,N/A,,,,10.76.100.120,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard_D4s_v4,,,,,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0084,Production Data Migration,Migration_prod,Decommissioned,N/A,,,,10.76.113.215,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Linux,Standard_D8_v4,,,,,,,,,,,-,2,rhel-8-2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0085,Testing,XPDM Clients,Decommissioned (27-Oct-2025),3.00 AM,,"air3dxpdmclitstsrv.atlascopco.group
+orchestratortst.atlascopco.group",,10.76.100.98,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Daily,18:00 PM,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Windows,Standard D4s v5,8 vCPU,32GB,Premium  SSD LRS / 500 IOPS / 100MBps throughput,Standard HDD ZRS / 500 IOPS / 60MBps throughput,,,,,,,-,2,"20h2-evd /Windows 10 Enterprise for Virtual Desktops
+",,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0088,Production,"FedSearch 1, 3Dindexing",Running,3.00 AM,,"air3dxsearch1srv.atlascopco.group
+air3dxindexingsrv.atlascopco.group",,10.76.117.89,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8_v4,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8280,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0088:8280/federated/manager?query=monitoring,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0089,Production,FedSearch 2,Running,3.00 AM,,air3dxsearch2srv.atlascopco.group,,10.76.117.83,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8_v4,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8280,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0089:8280/federated/manager?query=monitoring,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0090,Production,3DSpace CAS 1,Running,3.00 AM,,air3dxspace1srv.atlascopco.group,,"
+10.76.117.46",Virtual machine,ac-hybrid-production-01,Deployed,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0090.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0091,Production,3DSpace CAS 2,Running,3.00 AM,,air3dxspace2srv.atlascopco.group,,10.76.117.80,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0091.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0092,Production,3DSpace CAS 3,Running,3.00 AM,,air3dxspace3srv.atlascopco.group,,10.76.117.94,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,, http://aiasnlas0092.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0093,Production,3DSpace CAS 4,Running,3.00 AM,,air3dxspace4srv.atlascopco.group,,10.76.117.77,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0093.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0094,Production,3DSpace CAS 5,Running,3.00 AM,,air3dxspace5srv.atlascopco.group,,10.76.117.91,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,, http://aiasnlas0094.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0095,Production,3DSpace CAS 6,Running,3.00 AM,,air3dxspace6srv.atlascopco.group,,10.76.117.98,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0095.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0096,Production,3DSpace CAS 7,Running,3.00 AM,,air3dxspace7srv.atlascopco.group,,10.76.117.82,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D8ds_v5,8 vCPU,32GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,9080,"Enabled in mxEnv.sh & mxEnvCAS.sh
+Disabled in mxEnv_nocas.sh",smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0096.atlascopco.group:9080/3dspace/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0097,Production,"3DSpace No CAS 1, 3dxgw1, xpdmgw1",Running,3.00 AM,"CreateDerivedOutput - create dummy derived output for inventor drawing, 
+StepFile JobServer Postprocess - inventor Stepfile generation,
+Generate CPDM Cancelled request Report,
+BPCS - Retry XPDM Failed Events ","air3dxspacenocas1srv.atlascopco.group
+air3dxgw1srv.atlascopco.group
+air3dxxpdmgw1srv.atlascopco.group","http://air3dxxpdm.atlascopco.group/3DEXPERIENCEPlatformGW
+http://air3dxxpdmgw1srv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dxxpdm.atlascopco.group/XPDMGW
+http://air3dxgw1srv.atlascopco.group:8050/XPDMGW",10.76.117.86,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,64GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8070, 8050,  8040",Diasbled but defined,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0097.atlascopco.group:8070/internal/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0098,Production,"3DSpace No CAS 2, 3dxgw2, xpdmgw2",Running,3.00 AM,"SAP EVENT PUBLISHING
+Move EPS Logs to SharedDrive
+Archive OLD XPDM Directories","air3dxspacenocas2srv.atlascopco.group
+air3dxgw2srv.atlascopco.group
+air3dxxpdmgw2srv.atlascopco.group","http://air3dxxpdmgw2srv.atlascopco.group:8040/3DEXPERIENCEPlatformGW
+http://air3dxgw2srv.atlascopco.group:8050/XPDMGW",10.76.117.85,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,28GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8070, 8050,  8040",Diasbled but defined,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0098.atlascopco.group:8070/internal/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0099,Production,3DSpace NoCAS 3,Running,3.00 AM,"X4UDailyUsage - user report
+Reprocess XPDM 404 error code
+Weekly 2021x license report
+Daily Jobserver failure Report",air3dxspacenocas3srv.atlascopco.group,,10.76.117.87,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,28GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8070,Diasbled but defined,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0099.atlascopco.group:8070/internal/servlet/fcs/ping,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0100,Production,3DSwym 1,Running,3.00 AM,,air3dxswym1srv.atlascopco.group,,10.76.117.90,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,28GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8094,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0100.atlascopco.group:8094/3dswym/monitoring/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0101,Production,3DSwym 2,Running,3.00 AM,,air3dxswym2srv.atlascopco.group,,10.76.117.100,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,28GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8094,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,, http://aiasnlas0101.atlascopco.group:8094/3dswym/monitoring/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0102,Production,"3DDashboard 1, 3DComment 1, 3DNotification 1",Running,3.00 AM,,"untrustedair3dxdashboardsrv.atlascopco.group
+air3dxdashboard1srv.atlascopco.group
+air3dxcomment1srv.atlascopco.group
+air3dxnotification1srv.atlascopco.group",,10.76.117.47,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,28GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8180,  9180,   9280",,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,," http://AIASNLAS0102.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0102.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+ http://AIASNLAS0102.atlascopco.group:9280/healthcheck",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0103,Production,"3DDashboard 2, 3DComment 2, 3DNotification 2",Running,3.00 AM,,"air3dxdashboard2srv.atlascopco.group
+air3dxcomment2srv.atlascopco.group
+air3dxnotification2srv.atlascopco.group",,10.76.117.92,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D12_v2,4 vCPU,28GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,"8180,  9180,   9280",,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,," http://AIASNLAS0103.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0103.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0103.atlascopco.group:9280/healthcheck
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0104,Production,Central FCS 1,Running,3.00 AM,,air3dxfcswilrijk1srv.atlascopco.group,http://air3dxfcswilrijk1srv.atlascopco.group:8060/fcs,10.76.117.96,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard D4ds v5,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 4000 IOPS / 600MBps throughput,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0104.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0105,Production,Central FCS 2,Running,3.00 AM,,air3dxfcswilrijk2srv.atlascopco.group,http://air3dxfcswilrijk2srv.atlascopco.group:8060/fcs,10.76.117.88,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard D4ds v5,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0105.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0106,Production,Remote FCS Wuxi,Running,3.00 AM,,air3dxfcswuxi.atlascopco.group,,10.76.16.19,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,Southeast Asia (Zone 1),AC-VNT-P-INFR-000001/AC-SNT-P-INFR-10.76.16.0-24,,Linux,Standard_D4_v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0106.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0107,Production,3DPassport 1,Running,3.00 AM,,air3dxpassport1srv.atlascopco.group,,10.76.117.102,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D4_v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8080,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0107.atlascopco.group:8080/3dpassport/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0108,Production,3DPassport 2,Running,3.00 AM,,air3dxpassport2srv.atlascopco.group,,10.76.117.81,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D4_v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8080,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0108.atlascopco.group:8080/3dpassport/healthcheck,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0109,Production,Remote FCS Houston,Running,3.00 AM,,air3dxfcshouston.atlascopco.group,,10.76.208.56,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,South Central US (Zone 1),AC-VNT-P-INFR-000005/AC-SNT-P-INFR-10.76.208.0-24,,Linux,Standard_D4_v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,http://AIASNLAS0109.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0110,Production,Apache LB 1 Main,Running,3.00 AM,,"air3dxxlb1.atlascopco.group
+air3dxspace.atlascopco.group
+air3dxspacenocas.atlascopco.group
+air3dxpassport.atlascopco.group
+air3dxdashboard.atlascopco.group
+air3dxnotification.atlascopco.group
+air3dxcomment.atlascopco.group
+air3dxswym.atlascopco.group
+air3dxfcs.atlascopco.group
+air3dxxpdm.atlascopco.group
+air3dxsearch.atlascopco.group","https://air3dxspace.atlascopco.group/3dspace/
+https://air3dxspacenocas.atlascopco.group/internal
+https://air3dxpassport.atlascopco.group/3dpassport
+https://air3dxdashboard.atlascopco.group/3ddashboard
+https://air3dxcomment.atlascopco.group/3dcomment
+https://air3dxnotification.atlascopco.group/3dnotification
+https://air3dxsearch.atlascopco.group/federated
+https://air3dxfcs.atlascopco.group/fcs
+https://air3dxfcs.atlascopco.group/fcs
+https://air3dxfcs.atlascopco.group/fcs
+https://air3dxfcswuxi.atlascopco.group/fcs
+https://air3dxfcsgecia.atlascopco.group/fcs
+https://air3dxfcshouston.atlascopco.group/fcs
+https://air3dxswym.atlascopco.group/3dswym",10.76.117.78,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D4_v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,"SSH,HTTPS",22.443,,,,,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,24/7,,,"http://aiasnlas0110.atlascopco.group 
+",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0111,Production,Apache LB 2 Failover,Stopped,3.00 AM,,air3dxxlb2.atlascopco.group,,10.76.117.76,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D4_v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,"SSH,HTTPS",22.443,,,,,,No,Yes,Yes,Yes (VM + Disk),Yes,Yes,24/7,,,http://aiasnlas0111.atlascopco.group,,,,,,,,,,,,,,,
+AIASNLAS0112,Production,"Jobserver 1 - Inventor, autocad, Office document, Jobserver LB",Decommissioned (06-Nov-2025),3.00 AM,"Daily Failed JSR Reprocessing
+Delete files under Temp Dir
+JobRequest Monitor1
+Jobserver Usage
+Jobserver Usage Short
+Move Failed Retreat",NA,,10.76.117.104,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard D4 v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0113,Production,"Jobserver 2 - Inventor, autocad, Office document",Decommissioned (06-Nov-2025),3.00 AM,"Daily Failed JSR Reprocessing
+Delete files under Temp Dir
+JobRequest Monitor2
+Jobserver Usage
+Jobserver Usage Short
+Move Failed Retreat",NA,,10.76.117.79,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard D4 v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0114,Production,"Jobserver 3 - Inventor, autocad, Office document",Decommissioned (06-Nov-2025),3.00 AM,"Daily Failed JSR Reprocessing
+Delete files under Temp Dir
+JobRequest Monitor3
+Jobserver Usage
+Jobserver Usage Short
+Move Failed Retreat",NA,,10.76.117.84,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,"
+Standard D4 v4",4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0115,Production,"Jobserver 4 - Electrical Document, Step File Jobserver - Inventor, Derived Format Converter",Decommissioned (07-Nov-2025),3.00 AM,"Daily Failed JSR Reprocessing
+Delete files under Temp Dir
+JobRequest Monitor4
+Jobserver Usage
+Jobserver Usage Short
+Monitor Step File Jobserver - Inventor
+Move Failed Retreat",NA,,10.76.117.99,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard D4 v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0116,Production,"Jobserver 5 - Debug Server, Step File Jobserver - CATIA V6",Decommissioned (06-Nov-2025),3.00 AM,"Delete files under Temp Dir
+Jobserver Usage
+Catia Step File Processor
+Delete file under Z:\JobserverPRD\StepJobserver_PRD\ExportFolder",NA,,10.76.117.101,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard D4 v4,4 vCPU,16GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,20h2-evd / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0117,Production,XPDM Adaptor 1,Decommissioned,3.00 AM,,air3dxxpdm1srv.atlascopco.group,,10.76.117.97,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard_B2ms,,,,,,,,,,,-,2,2019-Datacenter,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0118,Production,XPDM Adaptor 2,Decommissioned,3.00 AM,,air3dxxpdm2srv.atlascopco.group,,10.76.117.93,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard_B2ms,,,,,,,,,,,-,2,2019-Datacenter,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0119,Production,"XPGclient 1, Import from Spreadsheet,
+Orchestrator
+ Assembly Thumbnail Generator",Decommissioned (06-Nov-2025),3.00 AM,,"air3dxxpdmcli1srv.atlascopco.group
+orchestratorprd.atlascopco.group",,10.76.117.103,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,"
+Standard D16s v5",16 vCPU,64GB,Standard SSD ZRS / 500 IOPS / 100MBps throughput,Standard SSD ZRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,win10-22h2-avd-g2 / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0120,Production,XPG client 2,Decommissioned (07-Nov-2025),3.00 AM,,air3dxxpdmcli2srv.atlascopco.group,,10.76.117.95,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Windows,Standard D16s v5,16 vCPU,64GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,"
+20h2-evd / Windows 10 Enterprise for Virtual Desktops",,,Atos,,N/A,,RDP,3389,19000-19099,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0121,Production,Master index server,Running,3.00 AM,,air3dxspaceidxmtr.atlascopco.group,http://air3dxspaceidxmtr.atlascopco.group:19001/admin,10.76.117.52,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard E32s v5,32 vCPU,256GB,Premium SSD LRS / 240 IOPS / 50MBps throughput,Premium SSD LRS / 16000 IOPS / 500MBps throughput,,,,,,,-,2,-,,,Atos,,N/A,,"SSH,HTTP",22.19001,19000-19099,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0122,Production,Slave index server,Running,3.00 AM,,air3dxspaceidxslv.atlascopco.group,http://air3dxspaceidxslv.atlascopco.group:19001/admin,10.76.117.54,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard E32s v5,32 vCPU,256GB,Premium SSD LRS / 240 IOPS / 50MBps throughput,Premium SSD LRS / 16000 IOPS / 500MBps throughput,,,,,,,-,2,-,,,Atos,,N/A,,"SSH,HTTP",22.19001,8060,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0123,Production Data Migration,Migration_prod - MIG_CAD_IMPORT_1,Decommissioned,3.30 AM,,,,10.76.113.242,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_D4s_v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0124,Production Data Migration,Migration_prod - MIG_CAD_IMPORT_2,Decommissioned,3.30 AM,,,,10.76.113.243,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_D4s_v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0125,Production Data Migration,IAT BoM in PLM - BoM Import; 3DPlay Geometry correction,Decommissioned (06-Nov-2025),3.30 AM,,,,10.76.113.244,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard D4s v5,4 vCPU,16GB,Premium SSD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,,,,,,,-,2,- / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0126,Production Data Migration,Migration_prod MIG_CAD_EXPORT_1,Decommissioned,3.00 AM,,,,10.76.113.245,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_D4s_v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0127,Production Data Migration,Migration_prod MIG_CAD_EXPORT_2,Decommissioned,3.00 AM,,,,10.76.113.237,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_D4s_v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0128,Production Data Migration,Migration_prod MIG_CAD_EXPORT_3,Decommissioned,3.00 AM,,,,10.76.113.246,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_D4s_v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0129,Production Data Migration, Migration_prod - MIG_Metadata_impexp_1,Decommissioned,3.30 AM,,,,10.76.115.12,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_E8 v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0130,Production Data Migration,IAT BoM in PLM - BoM Import,Decommissioned (24-Oct-2025),3.30 AM,,,,10.76.115.13,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard D4s v5,4 vCPU,16GB,Premium SSD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,,,,,,,-,2,- / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0131,Production Data Migration, Migration_prod - MIG_Metadata_impexp_3,Decommissioned,3.30 AM,,,,10.76.113.241,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Windows,Standard_D4s_v5,,,,,,,,,,,-,2,-,,,Atos,,N/A,,"RDP,HTTP,CONSUL","3389,4646,8300",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0132,Production Data Migration,Migration_prod - MIG_jms1,Decommissioned,3.30 AM,,,,10.76.113.249,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Linux,Standard_D16s_v5,,,,,,,,,,,-,2,81gen2,,,Atos,,N/A,,"SSH,JDBC,HTTP,HTTP,CONSUL,NOMAD,TCP,HTTP","22,5432,4646,8500,8300,4648,61616,8161",,,,,Nomad Generates Dynamic Ports over 20000 for webservices,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0133,Production Data Migration, Migration_prod - MIG_orchestrator_server,Decommissioned,3.30 AM,,,,10.76.113.252,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.112.224-28,,Linux,Standard_D4s_v5,,,,,,,,,,,-,2,81gen2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLAS0134,Production Data Migration,Unknown - stopped,Decommissioned,1:30 AM,,,,10.76.113.253,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.113.0-24,,Linux,Standard_D4s_v5,,,,,,,,,,,-,2,81gen2,,,Atos,,N/A,,SSH,22,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLAS0135,Production,FTS Crawler,Stopped,3.00 AM,,,,10.76.113.254,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.113.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_D64as v5,64 vCPU,256GB,Premium SSD LRS / 240 IOPS / 50MBps throughput,Premium SSD LRS / 5000 IOPS / 200MBps throughput,,,,,,,-,2,81gen2,,,Atos,,N/A,,SSH,22,,,,,"
+03 July 2025 update: VM upgrade to Standard  D64as v5 model at request of 24x upgrade team.
+Default state is shutdown. Only started for high performance FTS indexing tasks in Production",No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,Standard D64as v5: 03 July 2025,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0136,Migration Development,3DX All-In-One Server,Decommissioned,N/A,,,,10.76.97.87,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe (Zone 1),AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.97.80-28,,Linux,Standard_B8ms,,,,,,,,,,,-,2,8.2,N/A,N/A,Atos,,N/A,,SSH,22,,Diasbled but defined,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0136.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0136.atlascopco.group:8070/internal/servlet/fcs/ping
+ http://AIASNLAS0136.atlascopco.group:8080/3dpassport/healthcheck
+http://AIASNLAS0136.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0136.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0136.atlascopco.group:9280/healthcheck
+http://AIASNLAS0136.atlascopco.group:8094/3dswym/monitoring/healthcheck",,,,,,,,,,,,,,,
+AIASNLAS0137,Implementation Development 2,3DX All-In-One Server,Decommissioned (27-Oct-2025),3.00 AM,,"air3dspaceidxdev421x.atlascopco.group
+air3dsearchdev421x.atlascopco.group
+air3dspacedev421x.atlascopco.group
+air3dspacenocasdev421x.atlascopco.group
+air3dswymdev421x.atlascopco.group
+air3ddashboarddev421x.atlascopco.group
+air3dnotificationdev421x.atlascopco.group
+air3dcommentdev421x.atlascopco.group
+untrusted.air3ddashboarddev421x.atlascopco.group
+air3dnotificationdev421x.atlascopco.group
+air3dfcsdev421x.atlascopco.group
+air3dpassportdev421x.atlascopco.group
+air3dindexingdev421x.atlascopco.group
+air3dxpdmdev421x.atlascopco.group","https://air3dspacedev421x.atlascopco.group/3dspace
+http://air3dspacenocasdev421x.atlascopco.group:8070/internal
+https://air3dpassportdev421x.atlascopco.group/3dpassport/login
+https://air3ddashboarddev421x.atlascopco.group/3ddashboard
+https://air3dcommentdev421x.atlascopco.group/3dcomment
+https://air3dnotificationdev421x.atlascopco.group/3dnotification
+https://air3dsearchdev421x.atlascopco.group/federated
+http://air3dspaceidxdev421x.atlascopco.group:19001/admin
+https://air3dfcsdev421x.atlascopco.group/fcs
+https://air3dswymdev421x.atlascopco.group/3dswym
+http://air3dfcsdev421x.atlascopco.group:8040/3dexperienceplatformgw
+http://air3dfcsdev421x.atlascopco.group:8050/xpdmgw",10.76.98.92,Virtual machine,ac-hybrid-devtest-01,Deployed,Not Enabled,Weekdays,20,4,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.98.0-24,,Linux,Standard_B8ms,8 vCPU,32GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,8.2,,,Atos,,N/A,,SSH,22,,Diasbled but defined,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,"http://AIASNLAS0137.atlascopco.group:9080/3dspace/servlet/fcs/ping
+http://AIASNLAS0137.atlascopco.group:8070/internal/servlet/fcs/ping
+ http://AIASNLAS0137.atlascopco.group:8080/3dpassport/healthcheck
+ http://AIASNLAS0137.atlascopco.group:8180/3ddashboard/test-alive
+http://AIASNLAS0137.atlascopco.group:9180/3dcomment/monitoring/healthcheck
+http://AIASNLAS0137.atlascopco.group:9280/healthcheck
+ http://AIASNLAS0137.atlascopco.group:8094/3dswym/monitoring/healthcheck",,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0138,Production Data Migration,IAT BoM in PLM - BoM Import,Decommissioned (24-Oct-2025),3.00 AM,,,,10.76.97.91,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,Weekdays,20:30,4:30,ac-rgp-d-app-10007216--r2021x,West Europe,AC-VNT-D-INFR-000003/AC-SNT-D-INFR-10.76.97.80-28,,Windows,"
+Standard E8 v5",8 vCPU,64GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,,,-,2,win10-21h2-avd-g2 / Windows 10 Enterprise for Virtual Desktops,,,Atos,,N/A,,RDP,3389,,,,,,No,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0139,Production,3DSpace CAS 8,Decommissioned,3.00 AM,,air3dxspace8srv.atlascopco.group,,10.76.113.11,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe,AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.113.0-24,,Linux,Standard_D12_v2,,,,,,,,,,,,2,8.2,,,Atos,,N/A,,SSH,22,9080,,,,,,,,,,,,,,,,4-Mar-24,,,,,,,,,,,,,
+AIASNLAS0140,Production,3DSpace CAS 9,Decommissioned,3.00 AM,,air3dxspace9srv.atlascopco.group,,10.76.117.121,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe,AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,,Linux,Standard_D12_v2,,,,,,,,,,,,2,8.2,,,Atos,,N/A,,SSH,22,9080,,,,,,,,,,,,,,,,4-Mar-24,,,,,,,,,,,,,
+AIASNLAS0141,Production,3DSpace CAS 8,Running,3.30 AM,,air3dxspace8srv.atlascopco.group,,10.76.117.141,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,AC-RGP-P-APP-10007216-R2021x,West Europe,AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,,Linux,"Standard D8ds v5 (8 vcpus, 32 GiB memory)",8 vCPU,32GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,,,,1,82gen2,,,Atos,,N/A,,SSH,22,,,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLAS0142,Production,3DSpace CAS 9,Running,3.30 AM,,air3dxspace9srv.atlascopco.group,,10.76.117.143,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe,AC-VNT-P-INFR-000007/AC-SNT-P-INFR-10.76.117.0-24,,Linux,"Standard D8ds v5 (8 vcpus, 32 GiB memory)",8 vCPU,32GB,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,,,,1,82gen2,,,Atos,,N/A,,SSH,22,,,smtp.atlascopco.group,admin_platform@atlascopco.com,,No,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLDB0001,Non-Production,Non-Production Database,Decommissioned (24-Oct-2025),3.30 AM,,,,10.76.100.56,Virtual machine,ac-hybrid-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,West Europe,AC-VNT-D-INFR-000007/AC-SNT-D-INFR-10.76.100.0-24,,Linux,Standard M16-8ms,8 vCPU,437.5GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,Premium SSD LRS / 240 IOPS / 50MBps throughput,"Premium SSD LRS / 240 IOPS / 50MBps throughput
+Premium SSD LRS / 75000 IOPS / 2500MBps throughput",,,,,,4,81,,,Atos,,Atos,,SSH,,,,,,,Yes,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLDB0002,QA (Staging),QA Oracle Database server,Running,N/A,,,,10.76.100.55,Virtual machine,ac-hybrid-devtest-01,N/A,Enabled (8PM CET),N/A,N/A,N/A,ac-rgp-d-app-10007216--r2021x,West Europe,,,Linux,Standard FX4mds v2,,,,,,,,,,,-,4,81,,,Atos,,Atos,,SSH,22,,,,,,Yes,Yes,No,Yes (VM + Disk),Yes,Yes,16/5,,,,,,,,,,,,,,,,,,
+AIASNLDB0005,Production,Database ,Decommissioned (28-Sep-2025),3.00 AM,,3dexp21xproddb.atlascopco.group,,10.76.113.56,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.113.0-24,AC-PPG-P-APP-10007216-R2021x,Linux,Standard_E48ds_v5,8 vCPU,160GB,Premium SSD LRS / 120 IOPS / 25MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,Premium SSD LRS / 2300 IOPS / 150MBps throughput,Premium SSD LRS / 16000 IOPS / 500MBps throughput,,,,,-,4,-,,,Atos,,N/A,,SSH,22,,,,,,Yes,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,vmX10008847eXXX,,,,,,,,,,,,
+AIASNLDB0006,Production,Database ,Decommissioned,3.00 AM,,,,10.76.113.222,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,ac-rgp-p-app-10007216-r2021x,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.113.0-24,,Linux,Standard_E32-8ads_v5,,,,,,,,,,,-,4,ol85-lvm-gen2,,,Atos,,N/A,,SSH,22,,,,,,Yes,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLDB0007,Production,Database ,Running,3.30 AM,,3dexp21xproddb.atlascopco.group,,10.76.113.111,Virtual machine,ac-hybrid-production-01,N/A,Not Enabled,N/A,N/A,N/A,AC-RGP-P-APP-10007216-R2021X,West Europe (Zone 1),AC-VNT-P-INFR-000003/AC-SNT-P-INFR-10.76.113.0-24,,Linux,Standard FX8mds v2,8 vCPU,168 GB,Premium SSD ZRS / 240 IOPS / 50MBps throughput,Premium SSD LRS / 16000 IOPS / 500MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,Premium SSD LRS / 2300 IOPS / 150MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,Premium SSD LRS / 1100 IOPS / 125MBps throughput,,,,5,ol810-lvm-gen2,,,Atos,,Atos,,SSH,22,,,,,,Yes,Yes,No,Yes (VM + Disk),Yes,Yes,24/7,,,,,,,,,,,,,,,,,,
+AIASNLDB0008,Secondary Non-Production,Database ,Running,,,,,10.131.110.19,Virtual machine,ct-private-devtest-01,N/A,Not Enabled,N/A,N/A,N/A,RG-D-APP-10008847-NONPROD,West Europe (Zone 1),vnet-d-weu-con-002/snet-d-weu-con-002-generic-001,,Linux,Standard FX4mds v2,4 vCPU,84 GB,Premium SSD LRS / 240 IOPS / 50MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,Standard SSD LRS / 500 IOPS / 100MBps throughput,,,,,5,ol810-lvm-gen2,,,Atos,,Atos,,SSH,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SSISINENO036,Production,Remote FCS Gecia,Decommissioned (30 Jan 2026,3.00 AM,,air3dxfcsgecia.atlascopco.group,,10.91.17.28,Physical Machine,N/A,N/A,,N/A,N/A,N/A,Physical Machine,Gecia (on-prem),Physical Machine,,Windows,,,,,,,,,,,,,,,,,,,,,,,,,,,,No,Yes,No,Yes (VM + Disk),Yes,No,24/7,,,http://SSISINENO036.atlascopco.group:8060/fcs/servlet/fcs/about,,,vmX10008847eXXX,,,,,,,,,,,,
+vmd10008847e24x,25x OOTB,3DX All-In-One Server,Stopped,3.00 AM,,"air24xootb3dpassport.atlascopco.group
+air24xootb3ddashboard.atlascopco.group
+untrusted-air24xootb3ddashboard.atlascopco.group
+air24xootb3dsearch.atlascopco.group
+air24xootb3dspaceidxmtr.atlascopco.group
+air24xootb3dspace.atlascopco.group
+air24xootb3dspacenocas.atlascopco.group
+air24xootb3dfcs.atlascopco.group
+air24xootb3dswym.atlascopco.group
+air24xootb3dcomment.atlascopco.group
+air24xootb3dnotification.atlascopco.group
+air24xootb3dmessaging.atlascopco.group","https://air24xootb3dpassport.atlascopco.group/3dpassport
+https://air24xootb3ddashboard.atlascopco.group/3ddashboard
+untrusted-air24xootb3ddashboard.atlascopco.group
+https://air24xootb3dsearch.atlascopco.group/federated
+https://air24xootb3dspace.atlascopco.group/3dspace
+https://air24xootb3dspacenocas.atlascopco.group/internal
+https://air24xootb3dfcs.atlascopco.group/fcs
+https://air24xootb3dswym.atlascopco.group/3dswym
+https://air24xootb3dcomment.atlascopco.group/3dcomment
+https://air24xootb3dnotification.atlascopco.group/3dnotification
+3DSpaceIndex: http://vmd10008847e24x.atlascopco.group:19000
+3DSwym Full Text Search: http://vmd10008847e24x.atlascopco.group:29000",10.131.110.4,Virtual machine,ct-private-devtest-01,,Not Enabled,Daily,N/A,N/A,RG-D-APP-10008847-NONPROD,West Europe,vnet-d-weu-con-002/snet-d-weu-con-002-generic-001,NA,Linux,Standard DS14 v2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,vmd10008847e24x,,,,,,,,,,,,
+fcsstoragehouston,QA (Staging),Storage account - fcsdatawuxiqa,Decommissioned,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-devtest-01,N/A,,N/A,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,southeastasia,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fcsstoragehoustonprod,Production,Storage accounts - fcsdatahoustonprod,Decommissioned,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-production-01,N/A,,N/A,N/A,N/A,AC-RGP-P-APP-10007216-R2021x,southcentralus,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fcsstoragewuxi,QA (Staging),Storage accounts -fcsdatawuxiqa,Decommissioned,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-devtest-01,N/A,,N/A,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,southeastasia,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fcsstoragewuxiprod,Production,Storage accounts - fcsdatawuxiprod,Decommissioned,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-production-01,N/A,,N/A,N/A,N/A,AC-RGP-P-APP-10007216-R2021x,southeastasia,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+prodfcscentral,Production,Storage accounts - prodfcscentral and prodjobserver,Decomissioned,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-production-01,N/A,,N/A,N/A,N/A,AC-RGP-P-APP-10007216-R2021x,westeurope,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2021xnonproddbbackups,Non-Production,Storage accounts - oraclebackupnonprod,Running,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-devtest-01,N/A,,,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,westeurope,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2021xproddbbackups,Production,Storage accounts - oraclebackupprod,Running,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-devtest-01,N/A,,N/A,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,westeurope,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+acstadapp10007216a,Production,"Storage accounts - xpdmgw, mediautils and custo-dev-jobserver-fileshare 
+Decommissioned: ac-rgp-d-app-10007216-vmstartupa116",Running,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-devtest-01,N/A,,N/A,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,westeurope,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+acstadapp10007216b,Production,"Storage accounts - iat-migration,plm-external-disk-in-cloud,qafcsshare and test-fcs-share
+Decommissioned: edatmigration and test-fcs-share",Running,N/A,N/A,N/A,,N/A,Storage account,ac-hybrid-devtest-01,N/A,,N/A,N/A,N/A,AC-RGP-D-APP-10007216--R2021x,westeurope,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SSCSBEAP4103,DSLS,"DSLS License Server Node 1 , License Statistics (X-Formation)",Running,,,"air3dlicense1.atlascopco.group:4085
+air3dlicense1.emea.group.atlascopco.com:4085",,10.26.49.175,Physical Machine,N/A,,Not Enabled,N/A,N/A,N/A,N/A,Kyndryl DC - Vaux-sur-Sûre,N/A,N/A,Windows 2022 Standard,Physical Machine,4 CPU,16GB,480GB,480GB,,,,,N/A,N/A,N/A,2,,,,Atos,,N/A,N/A,RDP,,N/A,N/A,N/A,N/A,,No,Yes,No,Yes,Yes,No,Atos Gold Level,Yes,,,N/A,N/A,,,,,,,,,,,,,
+SSCSBEAP4104,DSLS,DSLS License Server Node 2,Running,,,"air3dlicense2.atlascopco.group:4085
+air3dlicense2.emea.group.atlascopco.com:4085",,10.26.49.179,Physical Machine,N/A,,Not Enabled,N/A,N/A,N/A,N/A,Kyndryl DC - Vaux-sur-Sûre,N/A,N/A,Windows 2022 Standard,Physical Machine,4 CPU,16GB,480GB,480GB,,,,,N/A,N/A,N/A,2,,,,Atos,,N/A,N/A,RDP,,N/A,N/A,N/A,N/A,,No,Yes,No,Yes,Yes,No,Atos Gold Level,Yes,,,N/A,N/A,,,,,,,,,,,,,
+SSCSBEAP4105,DSLS,DSLS License Server Node 3,Running,,,"air3dlicense3.atlascopco.group:4085
+air3dlicense3.emea.group.atlascopco.com:4085",,10.26.49.177,Physical Machine,N/A,,Not Enabled,N/A,N/A,N/A,N/A,Kyndryl DC - Bastogne,N/A,N/A,Windows 2022 Standard,Physical Machine,4 CPU,16GB,480GB,480GB,,,,,N/A,N/A,N/A,2,,,,Atos,,N/A,N/A,RDP,,N/A,N/A,N/A,N/A,,No,Yes,No,Yes,Yes,No,Atos Gold Level,Yes,,,N/A,N/A,,,,,,,,,,,,,
+vmd10008847e001,Implementation Development 1,Job Server,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmd10008847e002,Implementation Development 1,XPDM Clients,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmd10008847e003,Implementation Development 2 (24x Upgrade),"XPDM Client, Orchestrator",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmd10008847e004,Implementation Development 2 (24x Upgrade),Job Server,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmt10008847e001,Testing,Job Server,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmt10008847e002,Testing,Orchestrator,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmt10008847et01,Training,,Decommissioned (11-Nov-2025),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmt10008847et02,Training,Job Server,Running,,,,,,,,,,,05:00 AM CET,18:00 PM CET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vms10008847e001,QA (Staging),Jobserver 1,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vms10008847e002,QA (Staging),"Jobserver 2,  Derived Format Converter",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,QA (Staging),"XPDM Client 1, Orchestrator",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vms10008847e004,QA (Staging),XPDM Client 2,Stopped,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ej01,Production,"Jobserver 1 - Inventor, autocad, Office document, Jobserver LB",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ej02,Production,"Jobserver 2 - Inventor, autocad, Office document",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ej03,Production,"Jobserver 3 - Inventor, autocad, Office document",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ej04,Production,"Jobserver 4 - Electrical Document, Step File Jobserver - Inventor, Derived Format Converter",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ej05,Production,"Jobserver 5 - Debug Server, Step File Jobserver - CATIA V6",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ex01,Production,"XPGclient 1, Import from Spreadsheet, Orchestrator",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847ex02,Production,XPG client 2,Stopped,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847em01,Production Data Migration,IAT BoM in PLM - BoM Import,Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847em02,Production Data Migration,"IAT BoM in PLM - BoM Import;
+ 3DPlay Geometry correction",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847em03,Production Data Migration,IAT BoM in PLM - BoM Import,Decommissioned (11-Nov-2025),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847em04,Production Data Migration,IAT BoM in PLM - BoM Import,Decommissioned (11-Nov-2025),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmp10008847afcs,Production,Remote FCS Gecia,Running,,,,,10.191.82.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+vmd10008847afcs ,QA (Staging),"Remote FCS Gecia, File Converter",Running,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Atlas2021x3632,,Key Vault,,,,,,,,ac-hybrid-devtest-01,,,,,,AC-RGP-D-APP-10007216--R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Atlas2021x3634,,Key Vault,,,,,,,,ac-hybrid-devtest-01,,,,,,AC-RGP-D-APP-10007216--R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+kv-d-10007216-001-r2021x,Implementation Development 1,Key Vault,,,,,,,,ac-hybrid-devtest-01,,,,,,AC-RGP-D-APP-10007216--R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+kv-d-10007216-002-r2021x,Implementation Development 1,Key Vault,,,,,,,,ac-hybrid-devtest-01,,,,,,AC-RGP-D-APP-10007216--R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+kv-p-10007216-002-r2021x,Production,Key Vault,,,,,,,,ac-hybrid-production-01,,,,,,AC-RGP-P-APP-10007216-R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+kv-q-10007216-001-r2021x,QA (Staging),Key Vault,,,,,,,,ac-hybrid-devtest-01,,,,,,AC-RGP-D-APP-10007216--R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+kv-t-10007216-001-r2021x,Testing,Key Vault,,,,,,,,ac-hybrid-devtest-01,,,,,,AC-RGP-D-APP-10007216--R2021x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SSISINFCSQA108,QA (Staging),Remote FCS Gecia,Decommissioned (30 Jan 2026),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
