@@ -12,6 +12,7 @@ import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
+import SplashScreenController from '../Features/SplashScreen/SplashScreenController';
 
 // ==========================================
 // 1. Root Route & Theme Shell
@@ -92,5 +93,11 @@ declare module '@tanstack/react-router' {
 }
 
 export default function ApplicationRouter(): React.JSX.Element {
+  const [isSplashReady, setIsSplashReady] = useState<boolean>(false);
+
+  if (!isSplashReady) {
+    return <SplashScreenController onReady={() => setIsSplashReady(true)} />;
+  }
+
   return <RouterProvider router={applicationRouter} />;
 }
