@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ChevronDown, Columns3, ServerOff } from 'lucide-react';
-import CardSharedComponent from '../../Shared/Components/CardSharedComponent';
+import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
+import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
@@ -123,38 +124,31 @@ export default function ResourcesScreenController(): React.JSX.Element {
       </div>
 
       {resources.length > 0 && (
-        <CardSharedComponent className="p-0 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-xs">
-              <thead>
-                <tr className="divide-x divide-slate-200 dark:divide-zinc-800 border-b border-slate-200 dark:border-zinc-800">
+        <DataTableContainerSharedComponent>
+          <table className="w-full border-collapse text-xs">
+            <thead>
+              <tr className="divide-x divide-white/10">
+                {visibleColumns.map((column) => (
+                  <TableHeaderCellSharedComponent key={column.key}>{column.label}</TableHeaderCellSharedComponent>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
+              {resources.map((resource) => (
+                <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
                   {visibleColumns.map((column) => (
-                    <th
+                    <td
                       key={column.key}
-                      className="whitespace-nowrap px-3 py-2.5 text-left font-mono font-bold uppercase tracking-wider text-[10px] text-slate-900 dark:text-zinc-100 bg-slate-50 dark:bg-zinc-900/60"
+                      className="whitespace-nowrap px-3 py-2 text-slate-700 dark:text-zinc-300"
                     >
-                      {column.label}
-                    </th>
+                      {getResourceCellValue(resource, column.key)}
+                    </td>
                   ))}
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
-                {resources.map((resource) => (
-                  <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
-                    {visibleColumns.map((column) => (
-                      <td
-                        key={column.key}
-                        className="whitespace-nowrap px-3 py-2 text-slate-700 dark:text-zinc-300"
-                      >
-                        {getResourceCellValue(resource, column.key)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardSharedComponent>
+              ))}
+            </tbody>
+          </table>
+        </DataTableContainerSharedComponent>
       )}
 
       {!isLoading && resources.length === 0 && (
