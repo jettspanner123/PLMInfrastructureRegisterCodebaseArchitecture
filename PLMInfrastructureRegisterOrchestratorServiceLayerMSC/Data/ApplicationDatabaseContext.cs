@@ -19,14 +19,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         {
             modelBuilder.Entity<ResourceNexus>(entity =>
             {
-                entity.ToTable("Resources");
+                entity.ToTable("IG_ResourcesTBL");
                 entity.HasKey(resource => resource.Id);
                 entity.Property(resource => resource.Status).HasConversion<string>();
             });
 
             modelBuilder.Entity<ConfiguredSubscription>(entity =>
             {
-                entity.ToTable("ConfiguredSubscriptions");
+                entity.ToTable("IG_ConfiguredSubscriptionsTBL");
                 entity.HasKey(subscription => subscription.Id);
                 entity.HasIndex(subscription => subscription.AzureSubscriptionId).IsUnique();
 

@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Sync.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Helpers;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Utilities;
@@ -22,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
 
 builder.Services.AddScoped<ResourcesService>();
 builder.Services.AddScoped<SyncService>();
+builder.Services.AddScoped<SubscriptionsService>();
 
 const string FrontendDevelopmentOriginPolicy = "FrontendDevelopmentOriginPolicy";
 
@@ -30,7 +32,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(FrontendDevelopmentOriginPolicy, policy =>
     {
         policy.WithOrigins("http://localhost:5173")
-            .WithMethods("GET");
+            .WithMethods("GET", "POST", "PUT", "DELETE")
+            .WithHeaders("Content-Type");
     });
 });
 

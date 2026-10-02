@@ -12,6 +12,7 @@ import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
+import ConfigureSubscriptionsScreenRoute from '../Routes/ConfigureSubscriptionsScreenRoute';
 import SplashScreenController from '../Features/SplashScreen/SplashScreenController';
 
 // ==========================================
@@ -80,9 +81,18 @@ const infrastructureRegisterRoute = createRoute({
 });
 
 // ==========================================
-// 3. Router Tree
+// 3. Configure Subscriptions Route
 // ==========================================
-const routeTree = rootRoute.addChildren([infrastructureRegisterRoute]);
+const configureSubscriptionsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ApplicationRouteCON.CONFIGURE_SUBSCRIPTIONS,
+  component: ConfigureSubscriptionsScreenRoute,
+});
+
+// ==========================================
+// 4. Router Tree
+// ==========================================
+const routeTree = rootRoute.addChildren([infrastructureRegisterRoute, configureSubscriptionsRoute]);
 
 export const applicationRouter = createRouter({ routeTree });
 

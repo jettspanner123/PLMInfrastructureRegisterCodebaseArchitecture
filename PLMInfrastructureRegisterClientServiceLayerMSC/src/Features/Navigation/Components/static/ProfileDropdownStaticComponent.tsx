@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Sun, Moon, LogOut, Maximize2, Minimize2 } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
+import { Cloud, Mail, Sun, Moon, LogOut, Maximize2, Minimize2 } from 'lucide-react';
 import ApplicationThemeCON from '../../../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../../../Constants/ApplicationLayoutWidthCON';
+import ApplicationRouteCON from '../../../../Constants/ApplicationRouteCON';
 import ApplicationHapticsUtility from '../../../../Utilities/ApplicationHapticsUtility';
 import ConfirmationModalSharedComponent from '../../../../Shared/Components/ConfirmationModalSharedComponent';
 import ControllBlockSharedComponent from '../../../../Shared/Components/ControllBlockSharedComponent';
@@ -25,6 +27,7 @@ export default function ProfileDropdownStaticComponent({
   layoutWidth,
   onToggleLayoutWidth,
 }: ProfileDropdownStaticComponentProps): React.JSX.Element {
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = React.useState<boolean>(false);
 
@@ -64,6 +67,11 @@ export default function ProfileDropdownStaticComponent({
   const handleInitiateSignOut = () => {
     onClose();
     setIsSignOutModalOpen(true);
+  };
+
+  const handleNavigateToConfigureSubscriptions = () => {
+    onClose();
+    navigate({ to: ApplicationRouteCON.CONFIGURE_SUBSCRIPTIONS });
   };
 
   const handleConfirmSignOut = () => {
@@ -152,7 +160,20 @@ export default function ProfileDropdownStaticComponent({
                 />
               </div>
 
-              {/* 3. Footer: Sign Out */}
+              {/* 3. Administration */}
+              <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
+                <button
+                  type="button"
+                  onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                  onClick={handleNavigateToConfigureSubscriptions}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                >
+                  <Cloud className="w-4 h-4" />
+                  <span>Configure Subscriptions</span>
+                </button>
+              </div>
+
+              {/* 4. Footer: Sign Out */}
               <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
                 <button
                   type="button"

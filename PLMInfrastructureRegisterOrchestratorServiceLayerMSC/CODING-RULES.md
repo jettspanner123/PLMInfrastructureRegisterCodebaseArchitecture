@@ -756,6 +756,7 @@ Never log:
 - User-controlled database input must be parameterized.
 - Never construct SQL queries through unsafe string concatenation or interpolation.
 - Do not expose database implementation details through API responses.
+- Every table must be explicitly named via `entity.ToTable(...)` using the template `IG_{Name}TBL`, where `{Name}` is the PascalCase, fully-spelled entity name (e.g. `IG_ResourcesTBL`, `IG_ConfiguredSubscriptionsTBL`). Never rely on EF Core's default pluralized-class-name table naming.
 
 ---
 

@@ -15,5 +15,20 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string RunSync = "Run";
         }
+
+        public static class SubscriptionsRoutes
+        {
+            public const string ControllerURL = "/Api/V1/Subscriptions";
+
+            public const string GetConfiguredSubscriptions = "";
+
+            public const string GetAvailableAzureSubscriptions = "Available";
+
+            public const string AddSubscription = "";
+
+            public const string UpdateDisplayName = "{id}/DisplayName";
+
+            public const string DeleteSubscription = "{id}";
+        }
     }
 }
