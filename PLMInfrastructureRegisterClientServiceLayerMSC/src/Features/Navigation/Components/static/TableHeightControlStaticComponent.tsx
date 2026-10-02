@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Maximize2, Minimize2, SlidersHorizontal } from 'lucide-react';
-import ControllBlockSharedComponent from '../../../../Shared/Components/ControllBlockSharedComponent';
+import CustomSelectSharedComponent from '../../../../Shared/Components/CustomSelectSharedComponent';
 import InputSharedComponent from '../../../../Shared/Components/InputSharedComponent';
 import ApplicationTableHeightCON from '../../../../Constants/ApplicationTableHeightCON';
 import ApplicationTableHeightUtility from '../../../../Utilities/ApplicationTableHeightUtility';
@@ -54,24 +54,33 @@ export default function TableHeightControlStaticComponent(): React.JSX.Element {
   };
 
   return (
-    <ControllBlockSharedComponent
-      label="Table Height"
-      layoutId="tableHeightControlPill"
-      value={mode}
-      onChange={handleChangeMode}
-      animatedTransition={false}
-      options={[
-        { value: ApplicationTableHeightCON.EXTENDED, label: 'Extended', icon: <Maximize2 className="w-3.5 h-3.5" /> },
-        { value: ApplicationTableHeightCON.LIMITED, label: 'Limited', icon: <Minimize2 className="w-3.5 h-3.5" /> },
-        {
-          value: ApplicationTableHeightCON.CUSTOM,
-          label: 'Custom',
-          icon: <SlidersHorizontal className="w-3.5 h-3.5" />,
-        },
-      ]}
-    >
+    <div className="space-y-2">
+      <CustomSelectSharedComponent
+        label="Table Height"
+        size="sm"
+        value={mode}
+        onChange={handleChangeMode}
+        options={[
+          {
+            value: ApplicationTableHeightCON.EXTENDED,
+            label: 'Extended',
+            icon: <Maximize2 className="w-3.5 h-3.5" />,
+          },
+          {
+            value: ApplicationTableHeightCON.LIMITED,
+            label: 'Limited',
+            icon: <Minimize2 className="w-3.5 h-3.5" />,
+          },
+          {
+            value: ApplicationTableHeightCON.CUSTOM,
+            label: 'Custom',
+            icon: <SlidersHorizontal className="w-3.5 h-3.5" />,
+          },
+        ]}
+      />
+
       {mode === ApplicationTableHeightCON.CUSTOM && (
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex items-center gap-2">
           <InputSharedComponent
             type="number"
             value={customHeightPx}
@@ -82,6 +91,6 @@ export default function TableHeightControlStaticComponent(): React.JSX.Element {
           <span className="text-[11px] text-slate-400 dark:text-zinc-500 shrink-0">px</span>
         </div>
       )}
-    </ControllBlockSharedComponent>
+    </div>
   );
 }

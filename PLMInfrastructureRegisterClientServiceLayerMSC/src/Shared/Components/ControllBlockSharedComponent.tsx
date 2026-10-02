@@ -12,10 +12,6 @@ export interface ControllBlockSharedComponentProps<T extends string> {
   // from whichever option button was actually clicked. Set false for a
   // future control that shouldn't have that flourish.
   animatedTransition?: boolean;
-  // Extra content rendered below the pill, inside the same box — e.g. the
-  // Table Height control's inline custom-height input, shown only while its
-  // "Custom" option is selected.
-  children?: React.ReactNode;
 }
 
 // A labeled preference block: an icon (mirroring whichever option is
@@ -30,7 +26,6 @@ export default function ControllBlockSharedComponent<T extends string>({
   options,
   layoutId,
   animatedTransition = true,
-  children,
 }: ControllBlockSharedComponentProps<T>): React.JSX.Element {
   const clickedElementRef = useRef<HTMLElement | null>(null);
   const activeOption = options.find((option) => option.value === value);
@@ -67,8 +62,6 @@ export default function ControllBlockSharedComponent<T extends string>({
           inactiveTextClassName="text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
         />
       </div>
-
-      {children}
     </div>
   );
 }
