@@ -1,6 +1,6 @@
 # TODO: Add/Remove Subscription Feature
 
-**Status**: Deferred — not part of the initial build. Build this once the core Resource register and Sync pipeline are working.
+**Status**: Built. The Configure Subscriptions page (profile dropdown → Configure Subscriptions) covers this — see `Features/Subscriptions/` in both the backend and frontend.
 
 ## Why this exists
 
@@ -26,11 +26,11 @@ For reference when building this — these are the subscription values already p
 
 (Some rows also have the subscription blank or `N/A` — not real subscriptions, ignore those.)
 
-## Open questions to resolve before/while building this (do not assume — ask the user)
+## How the open questions were resolved
 
-- **Removing a subscription**: when a subscription is removed from the configured list, what happens to the Resources that were already synced from it? Same treatment as a Resource disappearing from Azure (mark as Decommissioned, per the existing Sync/Resource Status rules in `CONTEXT.md`), or something else (e.g. hide them, or require explicit confirmation before decommissioning a whole subscription's worth of Resources at once)?
-- **Validation on add**: should adding a subscription ID validate that the app's Azure credentials actually have access to it before saving, or accept any ID and let the next Sync run surface the problem (e.g. an access error)?
-- **Access control**: this page lets someone change what infrastructure the whole app tracks, which is a sensitive action. The app has no authentication yet (also deferred — see note below), but once login exists, this page will very likely need to be restricted to specific roles rather than open to every logged-in user. Revisit this when auth is actually built.
+- **Removing a subscription**: deleting a configured subscription immediately marks every Resource under it as Decommissioned (never deleted, per `CONTEXT.md`'s Resource Status rules), matched by Azure Resource ID rather than the denormalized `Subscription` display string (which can drift once Display Name editing is used). The confirmation dialog discloses the affected count before the user confirms.
+- **Validation on add**: adding is picker-only — the Add Subscription modal lists live subscriptions from a read-only `ArmClient.GetSubscriptions()` call, already excluding ones already configured, so an invalid or inaccessible subscription is never an enterable state. The backend re-validates against Azure independently rather than trusting the client.
+- **Access control**: still open — this page remains unrestricted since auth doesn't exist yet (see note below). Revisit when auth is built.
 
 ## Related deferred work
 
