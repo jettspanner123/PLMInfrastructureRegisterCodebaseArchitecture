@@ -8,6 +8,7 @@ import ApplicationRouteCON from '../../../../Constants/ApplicationRouteCON';
 import ApplicationHapticsUtility from '../../../../Utilities/ApplicationHapticsUtility';
 import ConfirmationModalSharedComponent from '../../../../Shared/Components/ConfirmationModalSharedComponent';
 import ControllBlockSharedComponent from '../../../../Shared/Components/ControllBlockSharedComponent';
+import TableHeightControlStaticComponent from './TableHeightControlStaticComponent';
 import NavigationCON from '../../Constants/NavigationCON';
 
 export interface ProfileDropdownStaticComponentProps {
@@ -158,6 +159,8 @@ export default function ProfileDropdownStaticComponent({
                     },
                   ]}
                 />
+
+                <TableHeightControlStaticComponent />
               </div>
 
               {/* 3. Administration */}

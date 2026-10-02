@@ -104,3 +104,45 @@ body {
 html.full-width-layout .max-w-7xl {
   max-width: 100%;
 }
+
+/* Table Height preference (profile dropdown's "Table Height" control).
+   Extended is the default: the table has no height/overflow of its own, so
+   if it's wider or taller than the viewport, the whole page scrolls instead
+   of the table scrolling itself. Limited and Custom instead bound the table
+   to its own independently-scrolling box, with the header sticking to the
+   top of THAT box rather than the page. */
+.data-table-scroll-area {
+  overflow: visible;
+  max-height: none;
+}
+
+.data-table-card {
+  overflow: visible;
+}
+
+.data-table-header-cell {
+  position: sticky;
+  top: 4rem; /* Just below the navbar's fixed h-16 (see NavigationController.tsx) */
+  z-index: 30; /* Below the navbar's z-40, above table body rows */
+}
+
+html.table-height-limited .data-table-scroll-area,
+html.table-height-custom .data-table-scroll-area {
+  overflow: auto;
+  max-height: calc(100vh - 12rem);
+}
+
+html.table-height-custom .data-table-scroll-area {
+  max-height: var(--table-custom-height, calc(100vh - 12rem));
+}
+
+html.table-height-limited .data-table-card,
+html.table-height-custom .data-table-card {
+  overflow: hidden;
+}
+
+html.table-height-limited .data-table-header-cell,
+html.table-height-custom .data-table-header-cell {
+  top: 0;
+  z-index: 10;
+}

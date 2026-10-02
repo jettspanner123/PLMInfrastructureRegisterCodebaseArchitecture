@@ -10,6 +10,7 @@ import {
 import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
+import ApplicationTableHeightUtility from '../Utilities/ApplicationTableHeightUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
 import ConfigureSubscriptionsScreenRoute from '../Routes/ConfigureSubscriptionsScreenRoute';
@@ -53,6 +54,19 @@ function RootLayout(): React.JSX.Element {
     const next = ApplicationLayoutWidthUtility.current.togglePreference(layoutWidth);
     setLayoutWidth(next);
   };
+
+  // Table Height's own control lives entirely inside the profile dropdown
+  // (nothing else needs its value as a prop), but that control only mounts
+  // once the dropdown is actually opened — so the saved mode still has to be
+  // applied to <html> here, unconditionally, the same way Theme and Layout
+  // Width bootstrap themselves above.
+  useState(() => {
+    ApplicationTableHeightUtility.current.applyMode(ApplicationTableHeightUtility.current.getSavedMode());
+    const savedCustomHeightPx = ApplicationTableHeightUtility.current.getSavedCustomHeightPx();
+    if (savedCustomHeightPx !== null) {
+      ApplicationTableHeightUtility.current.applyCustomHeightPx(savedCustomHeightPx);
+    }
+  });
 
   const handleNavigateHome = (): void => {
     navigate({ to: ApplicationRouteCON.ROOT });
