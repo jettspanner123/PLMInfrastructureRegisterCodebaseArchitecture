@@ -106,24 +106,28 @@ html.full-width-layout .max-w-7xl {
 }
 
 /* Table Height preference (profile dropdown's "Table Height" control).
-   Extended is the default: the table has no height/overflow of its own, so
-   if it's wider or taller than the viewport, the whole page scrolls instead
-   of the table scrolling itself. Limited and Custom instead bound the table
-   to its own independently-scrolling box, with the header sticking to the
-   top of THAT box rather than the page. */
+   Extended is the default: the table has no height cap of its own, so a
+   tall table just grows the page and the page scrolls vertically - but its
+   WIDTH is still contained to its own horizontally-scrolling box, never the
+   page. Limited and Custom instead bound both axes to one independently-
+   scrolling box. Confirmed empirically (not assumed): a sticky header is
+   only possible within a box whose height is ALSO bounded - overflow-x:auto
+   alone makes a box the sticky containing block for its descendants even
+   when nothing inside it actually overflows vertically, so a sticky header
+   is simply not achievable in Extended mode. It's a plain (non-sticky)
+   header there, and sticky only in Limited/Custom. */
 .data-table-scroll-area {
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   max-height: none;
 }
 
 .data-table-card {
-  overflow: visible;
+  overflow: hidden;
 }
 
 .data-table-header-cell {
-  position: sticky;
-  top: 4rem; /* Just below the navbar's fixed h-16 (see NavigationController.tsx) */
-  z-index: 30; /* Below the navbar's z-40, above table body rows */
+  position: static;
 }
 
 html.table-height-limited .data-table-scroll-area,
@@ -136,13 +140,9 @@ html.table-height-custom .data-table-scroll-area {
   max-height: var(--table-custom-height, calc(100vh - 12rem));
 }
 
-html.table-height-limited .data-table-card,
-html.table-height-custom .data-table-card {
-  overflow: hidden;
-}
-
 html.table-height-limited .data-table-header-cell,
 html.table-height-custom .data-table-header-cell {
+  position: sticky;
   top: 0;
   z-index: 10;
 }

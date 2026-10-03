@@ -10,9 +10,11 @@ export interface TableHeaderCellSharedComponentProps {
 // (#0C2086, matching primary buttons/focus rings) in both light and dark
 // mode, deliberately not theme-adjusted. Stickiness itself (position, top
 // offset, z-index) comes from the `.data-table-header-cell` class in
-// index.css, which reacts to the current Table Height preference: sticky
-// to the page below the navbar in Extended mode, or to the top of the
-// table's own bounded scroll box in Limited/Custom.
+// index.css, which reacts to the current Table Height preference: sticky to
+// the top of the table's own bounded scroll box in Limited/Custom, or a
+// plain (non-sticky) header in Extended mode — a sticky header there isn't
+// achievable in CSS, since Extended's box has contained horizontal scroll
+// but deliberately no height cap (see index.css's comment for why).
 export default function TableHeaderCellSharedComponent({
   children,
   align = 'left',
