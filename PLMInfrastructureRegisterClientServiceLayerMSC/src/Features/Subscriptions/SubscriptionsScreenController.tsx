@@ -58,13 +58,13 @@ export default function SubscriptionsScreenController(): React.JSX.Element {
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {subscriptions.map((subscription) => (
                 <tr key={subscription.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
-                  <td className="whitespace-nowrap px-3 py-2 font-semibold text-slate-900 dark:text-zinc-100">
+                  <td className="whitespace-nowrap px-3 py-2 font-mono font-semibold text-slate-900 dark:text-zinc-100">
                     {subscription.displayName}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-500 dark:text-zinc-400">
                     {subscription.azureSubscriptionId}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-slate-700 dark:text-zinc-300">
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300">
                     {subscription.resourceCount}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">

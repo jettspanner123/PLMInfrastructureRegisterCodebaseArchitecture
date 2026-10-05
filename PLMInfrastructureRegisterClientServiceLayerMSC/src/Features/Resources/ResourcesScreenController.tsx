@@ -139,7 +139,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                   {visibleColumns.map((column) => (
                     <td
                       key={column.key}
-                      className="whitespace-nowrap px-3 py-2 text-slate-700 dark:text-zinc-300"
+                      className="whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300"
                     >
                       {getResourceCellValue(resource, column.key)}
                     </td>
