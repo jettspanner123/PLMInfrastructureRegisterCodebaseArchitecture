@@ -30,5 +30,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string DeleteSubscription = "{id}";
         }
+
+        public static class ChatAssistantRoutes
+        {
+            public const string ControllerURL = "/Api/V1/ChatAssistant";
+
+            public const string AskQuestion = "AskQuestion";
+        }
     }
 }
