@@ -5,9 +5,12 @@ export interface TableHeaderCellSharedComponentProps {
   align?: 'left' | 'center' | 'right';
   className?: string;
   // Wired up by TableSelectionService for column-select-by-header-click —
-  // omitted entirely for headers that already host their own interactive
-  // control (e.g. the Environment column's filter dropdown), so clicking
-  // those keeps doing what they already do instead of also selecting.
+  // passed on every header, including ones that also host their own
+  // interactive control (e.g. the Environment column's filter dropdown).
+  // That control is responsible for stopping its own mousedown from
+  // bubbling here (see ResourcesScreenController), so a plain click on it
+  // still only opens the dropdown; dragging/Shift+click through this
+  // header still extends a column selection either way.
   onMouseDown?: (event: React.MouseEvent) => void;
   onMouseEnter?: () => void;
 }
@@ -34,7 +37,7 @@ export default function TableHeaderCellSharedComponent({
       onMouseEnter={onMouseEnter}
       className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
         align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
-      } ${onMouseDown ? 'cursor-pointer select-none' : ''} ${className}`}
+      } ${onMouseDown ? 'data-table-column-header-cell--selectable select-none' : ''} ${className}`}
     >
       {children}
     </th>

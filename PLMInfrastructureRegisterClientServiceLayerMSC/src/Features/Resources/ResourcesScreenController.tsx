@@ -252,17 +252,29 @@ export default function ResourcesScreenController(): React.JSX.Element {
                 </TableHeaderCellSharedComponent>
                 {visibleColumns.map((column, colIndex) =>
                   column.key === ResourceColumnCON.ENVIRONMENT_COLUMN_KEY ? (
-                    <TableHeaderCellSharedComponent key={column.key} className="!p-0">
-                      <CustomSelectSharedComponent
-                        value={environmentFilter}
-                        options={environmentFilterOptions}
-                        onChange={handleEnvironmentFilterChange}
-                        size="sm"
-                        className="w-full"
-                        triggerClassName="!h-auto !w-full !bg-transparent dark:!bg-transparent !border-0 !rounded-none !px-3 !py-2.5 !text-white hover:!bg-white/10 !text-[10px] font-mono font-bold uppercase tracking-wider transition-colors !justify-start"
-                        chevronClassName="!text-white/60"
-                        dropdownClassName="!text-slate-700 dark:!text-zinc-300 normal-case tracking-normal font-sans"
-                      />
+                    <TableHeaderCellSharedComponent
+                      key={column.key}
+                      className="!p-0"
+                      {...tableSelection.getColumnHeaderHandlers(colIndex)}
+                    >
+                      {/* Stops its own mousedown from reaching the <th> above,
+                          so a plain click here only opens the filter dropdown
+                          instead of also starting a column-select drag.
+                          Dragging/Shift+click THROUGH this header (not
+                          starting on it) still extends a column selection
+                          normally, since only mousedown is stopped here. */}
+                      <div onMouseDown={(event) => event.stopPropagation()}>
+                        <CustomSelectSharedComponent
+                          value={environmentFilter}
+                          options={environmentFilterOptions}
+                          onChange={handleEnvironmentFilterChange}
+                          size="sm"
+                          className="w-full"
+                          triggerClassName="!h-auto !w-full !bg-transparent dark:!bg-transparent !border-0 !rounded-none !px-3 !py-2.5 !text-white hover:!bg-white/10 !text-[10px] font-mono font-bold uppercase tracking-wider transition-colors !justify-start"
+                          chevronClassName="!text-white/60"
+                          dropdownClassName="!text-slate-700 dark:!text-zinc-300 normal-case tracking-normal font-sans"
+                        />
+                      </div>
                     </TableHeaderCellSharedComponent>
                   ) : (
                     <TableHeaderCellSharedComponent key={column.key} {...tableSelection.getColumnHeaderHandlers(colIndex)}>
@@ -277,7 +289,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                 <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
                   <td
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}
-                    className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center cursor-pointer select-none"
+                    className="data-table-row-header-cell whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center select-none"
                   >
                     {rowIndex + 1}
                   </td>

@@ -88,7 +88,7 @@ export default function SubscriptionsScreenController(): React.JSX.Element {
                 <tr key={subscription.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
                   <td
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}
-                    className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center cursor-pointer select-none"
+                    className="data-table-row-header-cell whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center select-none"
                   >
                     {rowIndex + 1}
                   </td>

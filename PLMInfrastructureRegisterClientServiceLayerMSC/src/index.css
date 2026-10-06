@@ -182,6 +182,26 @@ html.dark .data-table-scroll-area td:hover {
   background-color: rgba(255, 255, 255, 0.11);
 }
 
+/* TableSelectionService's row/column "select the whole axis" affordance —
+   a custom cursor (not a rendered icon) on hover, matching Excel's own
+   row-number/column-header cursors: a solid arrowhead, black fill with a
+   white outline so it stays legible over any cell background in either
+   theme. Falls back to `pointer` wherever a custom cursor image can't be
+   rendered. */
+.data-table-row-header-cell {
+  cursor:
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48cGF0aCBkPSJNMyAzIEwxNyAxMCBMMyAxNyBaIiBmaWxsPSJibGFjayIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=")
+      2 10,
+    pointer;
+}
+
+.data-table-column-header-cell--selectable {
+  cursor:
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48cGF0aCBkPSJNMyAzIEwxMCAxNyBMMTcgMyBaIiBmaWxsPSJibGFjayIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=")
+      10 2,
+    pointer;
+}
+
 /* Table Density preference (profile dropdown's "Table Density" control).
    Standard (default) leaves every cell's own Tailwind padding untouched;
    Compact overrides it here with higher-specificity selectors - the "td >
