@@ -211,7 +211,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   aria-modal="true"
                   aria-label="Assistant"
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto w-full max-w-4xl h-[min(720px,90dvh)] flex flex-col gap-6"
+                  className="pointer-events-auto w-full max-w-4xl h-[min(720px,90dvh)] flex flex-col gap-3"
                 >
                   {/* Card: the visible panel surface, clipped to its own rounded corners */}
                   <div className="relative flex-1 min-h-0 bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col">
@@ -246,8 +246,10 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     </div>
                   </div>
 
-                  {/* Floating input bar — a separate piece below the card, with real space between them */}
-                  <div className="shrink-0 flex items-center gap-2 px-3 py-2.5 rounded-2xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-2xl">
+                  {/* Floating input row — input and button are each their own
+                      floating piece (own background/shadow), no shared bar
+                      container grouping them. */}
+                  <div className="shrink-0 flex items-center gap-2">
                     <input
                       ref={inputRef}
                       type="text"
@@ -258,14 +260,14 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         if (event.key === 'Enter') handleSend();
                       }}
                       placeholder="Message the assistant…"
-                      className="flex-1 h-10 px-3.5 rounded-xl bg-slate-100 dark:bg-zinc-800/80 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#0C2086] dark:focus:ring-blue-400"
+                      className="flex-1 h-10 px-4 rounded-full bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#0C2086] dark:focus:ring-blue-400"
                     />
                     <button
                       type="button"
                       onClick={handleSend}
                       disabled={!draftMessage.trim()}
                       aria-label="Send message"
-                      className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors"
+                      className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors shadow-lg"
                     >
                       <Send className="w-4 h-4" />
                     </button>
