@@ -19,6 +19,13 @@ export interface CopyableTableCellSharedComponentProps {
   selectionBoxShadow?: string;
   onCellMouseDown?: (event: React.MouseEvent) => void;
   onCellMouseEnter?: () => void;
+  // 'center' (default) matches every existing table's short, single-line
+  // cells. 'top' is for tables whose content regularly wraps to several
+  // lines (e.g. Environment Overview) — centering a multi-line block reads
+  // oddly, and the copy icon's own position changes to match (pinned to the
+  // cell's top-right corner instead of vertically centered, since centering
+  // it over a tall block would float it awkwardly mid-text).
+  verticalAlign?: 'center' | 'top';
 }
 
 // A table cell whose entire surface is a single native <button> - clicking
@@ -37,6 +44,7 @@ export default function CopyableTableCellSharedComponent({
   selectionBoxShadow,
   onCellMouseDown,
   onCellMouseEnter,
+  verticalAlign = 'center',
 }: CopyableTableCellSharedComponentProps): React.JSX.Element {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,13 +83,15 @@ export default function CopyableTableCellSharedComponent({
         onMouseEnter={onCellMouseEnter}
         onClick={handleClick}
         aria-label={ariaLabel}
-        className={`group relative w-full h-full flex items-center text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}
+        className={`group relative w-full h-full flex ${
+          verticalAlign === 'top' ? 'items-start' : 'items-center'
+        } text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}
       >
         <span className="pr-5">{children}</span>
         <span
-          className={`pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 transition-opacity ${
-            isCopied ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
-          }`}
+          className={`pointer-events-none absolute right-1.5 transition-opacity ${
+            verticalAlign === 'top' ? 'top-1.5' : 'top-1/2 -translate-y-1/2'
+          } ${isCopied ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'}`}
         >
           {isCopied ? (
             <Check className="w-3 h-3 text-emerald-500" />

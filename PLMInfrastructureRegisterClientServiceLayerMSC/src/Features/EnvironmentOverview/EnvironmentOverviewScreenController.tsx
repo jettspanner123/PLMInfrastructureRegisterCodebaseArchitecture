@@ -104,6 +104,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
+        verticalAlign="top"
       >
         {stringValue}
       </CopyableTableCellSharedComponent>
@@ -148,6 +149,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, STATUS_COLUMN_INDEX)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
+        verticalAlign="top"
       >
         <span className="inline-flex items-center gap-1.5">
           <span
