@@ -5,6 +5,7 @@ import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderC
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
+import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import AddSubscriptionModalController from './Components/AddSubscriptionModalController';
 import EditSubscriptionDisplayNameModalController from './Components/EditSubscriptionDisplayNameModalController';
@@ -58,15 +59,27 @@ export default function SubscriptionsScreenController(): React.JSX.Element {
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {subscriptions.map((subscription) => (
                 <tr key={subscription.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
-                  <td className="whitespace-nowrap px-3 py-2 font-mono font-semibold text-slate-900 dark:text-zinc-100">
+                  <CopyableTableCellSharedComponent
+                    value={subscription.displayName}
+                    ariaLabel={`Copy Display Name: ${subscription.displayName}`}
+                    className="whitespace-nowrap px-3 py-2 font-mono font-semibold text-slate-900 dark:text-zinc-100"
+                  >
                     {subscription.displayName}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-500 dark:text-zinc-400">
+                  </CopyableTableCellSharedComponent>
+                  <CopyableTableCellSharedComponent
+                    value={subscription.azureSubscriptionId}
+                    ariaLabel={`Copy Azure Subscription ID: ${subscription.azureSubscriptionId}`}
+                    className="whitespace-nowrap px-3 py-2 font-mono text-slate-500 dark:text-zinc-400"
+                  >
                     {subscription.azureSubscriptionId}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300">
+                  </CopyableTableCellSharedComponent>
+                  <CopyableTableCellSharedComponent
+                    value={String(subscription.resourceCount)}
+                    ariaLabel={`Copy Resources count: ${subscription.resourceCount}`}
+                    className="whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300"
+                  >
                     {subscription.resourceCount}
-                  </td>
+                  </CopyableTableCellSharedComponent>
                   <td className="whitespace-nowrap px-3 py-2">
                     <div className="flex items-center justify-end gap-1.5">
                       <button

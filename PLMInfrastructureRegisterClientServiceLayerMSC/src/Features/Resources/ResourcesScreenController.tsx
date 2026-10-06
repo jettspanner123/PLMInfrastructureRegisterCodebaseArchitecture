@@ -5,11 +5,12 @@ import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderC
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../Shared/Components/CustomSelectSharedComponent';
 import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
+import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
-import ResourceColumnCON from './Constants/ResourceColumnCON';
+import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceColumnCON';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
 
@@ -118,15 +119,33 @@ export default function ResourcesScreenController(): React.JSX.Element {
     );
   }, [environmentFilteredResources, visibleColumns, searchQuery]);
 
-  // Presentation only (wraps ResourceTableUtility's plain-data result in a
-  // dash placeholder) - kept local to this component, like AssetSphere's own
-  // renderAssetCard, rather than promoted to module scope.
-  const renderCellValue = (resource: ResourceInterfaceModel, key: string): React.ReactNode => {
-    const displayValue = ResourceTableUtility.current.getDisplayValue(resource, key);
-    return displayValue === null ? (
-      <span className="text-slate-300 dark:text-zinc-700">—</span>
-    ) : (
-      displayValue
+  // Presentation only (wraps ResourceTableUtility's plain-data result,
+  // dash-placeholder included) - kept local to this component, like
+  // AssetSphere's own renderAssetCard, rather than promoted to module scope.
+  // Empty cells render a plain <td> (nothing to copy); every other cell is
+  // copy-on-click via CopyableTableCellSharedComponent.
+  const CELL_CLASS_NAME = 'whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300';
+
+  const renderCell = (resource: ResourceInterfaceModel, column: ResourceColumnDef): React.ReactNode => {
+    const displayValue = ResourceTableUtility.current.getDisplayValue(resource, column.key);
+
+    if (displayValue === null) {
+      return (
+        <td key={column.key} className={CELL_CLASS_NAME}>
+          <span className="text-slate-300 dark:text-zinc-700">—</span>
+        </td>
+      );
+    }
+
+    return (
+      <CopyableTableCellSharedComponent
+        key={column.key}
+        value={displayValue}
+        ariaLabel={`Copy ${column.label}: ${displayValue}`}
+        className={CELL_CLASS_NAME}
+      >
+        {displayValue}
+      </CopyableTableCellSharedComponent>
     );
   };
 
@@ -215,14 +234,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {filteredResources.map((resource) => (
                 <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
-                  {visibleColumns.map((column) => (
-                    <td
-                      key={column.key}
-                      className="whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300"
-                    >
-                      {renderCellValue(resource, column.key)}
-                    </td>
-                  ))}
+                  {visibleColumns.map((column) => renderCell(resource, column))}
                 </tr>
               ))}
             </tbody>
