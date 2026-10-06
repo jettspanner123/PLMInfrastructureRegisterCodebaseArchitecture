@@ -147,3 +147,30 @@ html.table-height-custom .data-table-header-cell {
   top: 0;
   z-index: 10;
 }
+
+/* App-wide data table row/cell treatments (every table reaches these
+   through the same .data-table-scroll-area marker, so a future table gets
+   both for free, with no per-screen className work). */
+
+/* Zebra striping, Finder/macOS list-view style - alternating rows get a
+   faint tint instead of a flat solid background, purely for scan-ability
+   across a wide/dense table. */
+.data-table-scroll-area tbody tr:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.025);
+}
+
+html.dark .data-table-scroll-area tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Per-cell hover - a td's own background paints over its row's zebra tint,
+   so a hovered cell reads clearly regardless of which row it's on, in
+   either theme. Deliberately a stronger tint than the zebra stripe so the
+   two are always visually distinguishable even when they overlap. */
+.data-table-scroll-area td:hover {
+  background-color: rgba(15, 23, 42, 0.06);
+}
+
+html.dark .data-table-scroll-area td:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+}

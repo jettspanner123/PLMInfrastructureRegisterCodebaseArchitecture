@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface TableHeaderCellSharedComponentProps {
   children: React.ReactNode;
-  align?: 'left' | 'right';
+  align?: 'left' | 'center' | 'right';
   className?: string;
 }
 
@@ -23,7 +23,7 @@ export default function TableHeaderCellSharedComponent({
   return (
     <th
       className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
-        align === 'right' ? 'text-right' : 'text-left'
+        align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
       } ${className}`}
     >
       {children}

@@ -50,6 +50,9 @@ export default function SubscriptionsScreenController(): React.JSX.Element {
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-white/10">
+                <TableHeaderCellSharedComponent align="center" className="w-12">
+                  Sl. No
+                </TableHeaderCellSharedComponent>
                 <TableHeaderCellSharedComponent>Display Name</TableHeaderCellSharedComponent>
                 <TableHeaderCellSharedComponent>Azure Subscription ID</TableHeaderCellSharedComponent>
                 <TableHeaderCellSharedComponent>Resources</TableHeaderCellSharedComponent>
@@ -57,8 +60,11 @@ export default function SubscriptionsScreenController(): React.JSX.Element {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
-              {subscriptions.map((subscription) => (
+              {subscriptions.map((subscription, index) => (
                 <tr key={subscription.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center">
+                    {index + 1}
+                  </td>
                   <CopyableTableCellSharedComponent
                     value={subscription.displayName}
                     ariaLabel={`Copy Display Name: ${subscription.displayName}`}
