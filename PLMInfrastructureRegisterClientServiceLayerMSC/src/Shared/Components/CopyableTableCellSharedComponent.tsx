@@ -9,6 +9,17 @@ export interface CopyableTableCellSharedComponentProps {
   // instead, since the <td> only ever carries `p-0` here.
   className?: string;
   ariaLabel: string;
+  // Wired up by TableSelectionService — see its own file for the full
+  // click-vs-drag design. In short: a plain click (mousedown+mouseup on
+  // this same button, no Shift) still copies exactly as before, since the
+  // browser's native `click` event only fires in that case; Shift is
+  // checked explicitly below because Shift+click targets the same element
+  // too (so `click` still fires) even though it means "extend the
+  // selection", not "copy this one cell".
+  isSelected?: boolean;
+  selectionBoxShadow?: string;
+  onCellMouseDown?: (event: React.MouseEvent) => void;
+  onCellMouseEnter?: () => void;
 }
 
 // A table cell whose entire surface is a single native <button> - clicking
@@ -24,6 +35,10 @@ export default function CopyableTableCellSharedComponent({
   children,
   className = '',
   ariaLabel,
+  isSelected = false,
+  selectionBoxShadow,
+  onCellMouseDown,
+  onCellMouseEnter,
 }: CopyableTableCellSharedComponentProps): React.JSX.Element {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -46,13 +61,25 @@ export default function CopyableTableCellSharedComponent({
     copiedTimerRef.current = setTimeout(() => setIsCopied(false), 2000);
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    // Shift+click targets this same button on both mousedown and mouseup
+    // (no drag), so native `click` fires here too — but it means "extend
+    // the selection to this cell", not "copy this one cell".
+    if (event.shiftKey) return;
+    void handleCopy();
+  };
+
   return (
-    <td className="p-0">
+    <td className="p-0" style={isSelected ? { boxShadow: selectionBoxShadow } : undefined}>
       <button
         type="button"
-        onClick={handleCopy}
+        onMouseDown={onCellMouseDown}
+        onMouseEnter={onCellMouseEnter}
+        onClick={handleClick}
         aria-label={ariaLabel}
-        className={`group relative w-full h-full flex items-center text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}
+        className={`group relative w-full h-full flex items-center text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${
+          isSelected ? 'bg-[#0C2086]/10 dark:bg-blue-400/10' : ''
+        } ${className}`}
       >
         <span className="pr-5">{children}</span>
         <span

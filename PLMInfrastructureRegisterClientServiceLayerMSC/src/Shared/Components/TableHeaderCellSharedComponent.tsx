@@ -4,6 +4,12 @@ export interface TableHeaderCellSharedComponentProps {
   children: React.ReactNode;
   align?: 'left' | 'center' | 'right';
   className?: string;
+  // Wired up by TableSelectionService for column-select-by-header-click —
+  // omitted entirely for headers that already host their own interactive
+  // control (e.g. the Environment column's filter dropdown), so clicking
+  // those keeps doing what they already do instead of also selecting.
+  onMouseDown?: (event: React.MouseEvent) => void;
+  onMouseEnter?: () => void;
 }
 
 // The app-wide "iconic blue" table header treatment — same brand blue
@@ -19,12 +25,16 @@ export default function TableHeaderCellSharedComponent({
   children,
   align = 'left',
   className = '',
+  onMouseDown,
+  onMouseEnter,
 }: TableHeaderCellSharedComponentProps): React.JSX.Element {
   return (
     <th
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
       className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
         align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
-      } ${className}`}
+      } ${onMouseDown ? 'cursor-pointer select-none' : ''} ${className}`}
     >
       {children}
     </th>

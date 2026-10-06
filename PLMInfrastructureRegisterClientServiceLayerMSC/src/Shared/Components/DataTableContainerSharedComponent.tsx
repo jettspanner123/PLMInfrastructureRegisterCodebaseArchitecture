@@ -15,12 +15,19 @@ export interface DataTableContainerSharedComponentProps {
 // ApplicationTableHeightUtility) — not by Tailwind classes here, since that
 // preference lives far from every table that needs to react to it, the same
 // problem ApplicationLayoutWidthUtility already solves for layout width.
-export default function DataTableContainerSharedComponent({
-  children,
-}: DataTableContainerSharedComponentProps): React.JSX.Element {
-  return (
-    <CardSharedComponent className="!p-0 data-table-card">
-      <div className="data-table-scroll-area">{children}</div>
-    </CardSharedComponent>
-  );
-}
+//
+// Forwards its ref to the scroll-area div itself — TableSelectionService
+// attaches this as its selection's "outside click clears it" boundary.
+const DataTableContainerSharedComponent = React.forwardRef<HTMLDivElement, DataTableContainerSharedComponentProps>(
+  function DataTableContainerSharedComponent({ children }, ref): React.JSX.Element {
+    return (
+      <CardSharedComponent className="!p-0 data-table-card">
+        <div ref={ref} className="data-table-scroll-area">
+          {children}
+        </div>
+      </CardSharedComponent>
+    );
+  }
+);
+
+export default DataTableContainerSharedComponent;

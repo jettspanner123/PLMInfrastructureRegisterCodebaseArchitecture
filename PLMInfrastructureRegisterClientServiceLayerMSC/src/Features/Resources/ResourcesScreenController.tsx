@@ -10,6 +10,7 @@ import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTa
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
+import TableSelectionService from '../../Services/TableSelectionService';
 import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceColumnCON';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
@@ -120,6 +121,23 @@ export default function ResourcesScreenController(): React.JSX.Element {
     );
   }, [environmentFilteredResources, visibleColumns, searchQuery]);
 
+  // Excel-like multi-cell/row/column selection, shared with Configure
+  // Subscriptions - see TableSelectionService.ts for the full design.
+  // Coordinates are positions within filteredResources/visibleColumns
+  // (not tied to any resource's id or column key), so toggling column
+  // visibility or filtering rows just changes what the grid addresses, the
+  // same way it would in a real spreadsheet.
+  const tableSelection = TableSelectionService.current.useTableSelection({
+    rowCount: filteredResources.length,
+    columnCount: visibleColumns.length,
+    getCellValue: (rowIndex, colIndex) => {
+      const resource = filteredResources[rowIndex];
+      const column = visibleColumns[colIndex];
+      if (!resource || !column) return '';
+      return ResourceTableUtility.current.getDisplayValue(resource, column.key) ?? '';
+    },
+  });
+
   // Presentation only (wraps ResourceTableUtility's plain-data result,
   // dash-placeholder included) - kept local to this component, like
   // AssetSphere's own renderAssetCard, rather than promoted to module scope.
@@ -127,12 +145,24 @@ export default function ResourcesScreenController(): React.JSX.Element {
   // copy-on-click via CopyableTableCellSharedComponent.
   const CELL_CLASS_NAME = 'whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300';
 
-  const renderCell = (resource: ResourceInterfaceModel, column: ResourceColumnDef): React.ReactNode => {
+  const renderCell = (
+    resource: ResourceInterfaceModel,
+    column: ResourceColumnDef,
+    rowIndex: number,
+    colIndex: number
+  ): React.ReactNode => {
     const displayValue = ResourceTableUtility.current.getDisplayValue(resource, column.key);
+    const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
 
     if (displayValue === null) {
       return (
-        <td key={column.key} className={CELL_CLASS_NAME}>
+        <td
+          key={column.key}
+          onMouseDown={cellHandlers.onMouseDown}
+          onMouseEnter={cellHandlers.onMouseEnter}
+          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex) }}
+          className={`${CELL_CLASS_NAME} ${tableSelection.getCellSelectionClassName(rowIndex, colIndex)}`}
+        >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
         </td>
       );
@@ -144,6 +174,10 @@ export default function ResourcesScreenController(): React.JSX.Element {
         value={displayValue}
         ariaLabel={`Copy ${column.label}: ${displayValue}`}
         className={CELL_CLASS_NAME}
+        isSelected={tableSelection.isCellSelected(rowIndex, colIndex)}
+        selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
+        onCellMouseDown={cellHandlers.onMouseDown}
+        onCellMouseEnter={cellHandlers.onMouseEnter}
       >
         {displayValue}
       </CopyableTableCellSharedComponent>
@@ -210,14 +244,14 @@ export default function ResourcesScreenController(): React.JSX.Element {
       </div>
 
       {resources.length > 0 && (
-        <DataTableContainerSharedComponent>
+        <DataTableContainerSharedComponent ref={tableSelection.containerRef}>
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-white/10">
                 <TableHeaderCellSharedComponent align="center" className="w-12">
                   SL. NO
                 </TableHeaderCellSharedComponent>
-                {visibleColumns.map((column) =>
+                {visibleColumns.map((column, colIndex) =>
                   column.key === ResourceColumnCON.ENVIRONMENT_COLUMN_KEY ? (
                     <TableHeaderCellSharedComponent key={column.key} className="!p-0">
                       <CustomSelectSharedComponent
@@ -232,18 +266,23 @@ export default function ResourcesScreenController(): React.JSX.Element {
                       />
                     </TableHeaderCellSharedComponent>
                   ) : (
-                    <TableHeaderCellSharedComponent key={column.key}>{column.label}</TableHeaderCellSharedComponent>
+                    <TableHeaderCellSharedComponent key={column.key} {...tableSelection.getColumnHeaderHandlers(colIndex)}>
+                      {column.label}
+                    </TableHeaderCellSharedComponent>
                   )
                 )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
-              {filteredResources.map((resource, index) => (
+              {filteredResources.map((resource, rowIndex) => (
                 <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
-                  <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center">
-                    {index + 1}
+                  <td
+                    {...tableSelection.getRowHeaderHandlers(rowIndex)}
+                    className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center cursor-pointer select-none"
+                  >
+                    {rowIndex + 1}
                   </td>
-                  {visibleColumns.map((column) => renderCell(resource, column))}
+                  {visibleColumns.map((column, colIndex) => renderCell(resource, column, rowIndex, colIndex))}
                 </tr>
               ))}
             </tbody>

@@ -17,6 +17,11 @@
   --color-ash: #94a3b8;
   --color-stone: #cbd5e1;
 
+  /* Table selection perimeter border (TableSelectionService) — lighter blue
+     in dark mode for contrast, same pairing as this app's existing
+     dark:ring-blue-400 focus rings. */
+  --table-selection-border-color: #0c2086;
+
   --font-serif: 'Playfair Display', serif;
   --font-sans: 'Inter', 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -42,6 +47,8 @@
   --color-mute: #a1a4a5;
   --color-ash: #888e90;
   --color-stone: #464a4d;
+
+  --table-selection-border-color: #60a5fa;
 }
 
 @layer base {
