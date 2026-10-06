@@ -15,6 +15,7 @@ import ApplicationTableDensityUtility from '../Utilities/ApplicationTableDensity
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
 import ConfigureSubscriptionsScreenRoute from '../Routes/ConfigureSubscriptionsScreenRoute';
+import EnvironmentOverviewScreenRoute from '../Routes/EnvironmentOverviewScreenRoute';
 import SplashScreenController from '../Features/SplashScreen/SplashScreenController';
 
 // ==========================================
@@ -112,9 +113,22 @@ const configureSubscriptionsRoute = createRoute({
 });
 
 // ==========================================
-// 4. Router Tree
+// 4. Environment Overview Route
 // ==========================================
-const routeTree = rootRoute.addChildren([infrastructureRegisterRoute, configureSubscriptionsRoute]);
+const environmentOverviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ApplicationRouteCON.ENVIRONMENT_OVERVIEW,
+  component: EnvironmentOverviewScreenRoute,
+});
+
+// ==========================================
+// 5. Router Tree
+// ==========================================
+const routeTree = rootRoute.addChildren([
+  infrastructureRegisterRoute,
+  configureSubscriptionsRoute,
+  environmentOverviewRoute,
+]);
 
 export const applicationRouter = createRouter({ routeTree });
 

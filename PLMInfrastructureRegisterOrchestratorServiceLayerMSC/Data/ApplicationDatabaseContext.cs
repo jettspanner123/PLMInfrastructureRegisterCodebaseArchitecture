@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models.Classes;
@@ -17,6 +18,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<ConfiguredSubscription> ConfiguredSubscriptions => Set<ConfiguredSubscription>();
 
         public DbSet<ConfigurationConstantClass> ConfigurationConstants => Set<ConfigurationConstantClass>();
+
+        public DbSet<EnvironmentOverviewNexus> EnvironmentOverviews => Set<EnvironmentOverviewNexus>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,6 +84,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                         CreatedAt = new DateTime(2026, 10, 6, 0, 0, 0, DateTimeKind.Utc),
                     }
                 );
+            });
+
+            modelBuilder.Entity<EnvironmentOverviewNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentOverviewTBL");
+                entity.HasKey(environment => environment.Id);
             });
         }
     }

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import TanstackQueryKeysCON from '../Constants/TanstackQueryKeysCON';
+import EnvironmentOverviewService from '../Features/EnvironmentOverview/Services/EnvironmentOverviewService';
 import ResourcesService from '../Features/Resources/Services/ResourcesService';
 import SubscriptionsService from '../Features/Subscriptions/Services/SubscriptionsService';
 import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubscriptionInterfaceModel';
@@ -13,6 +14,16 @@ export default class TanstackQueryClientService {
       return useQuery({
         queryKey: TanstackQueryKeysCON.RESOURCES,
         queryFn: () => ResourcesService.current.getResources(),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+  };
+
+  public readonly environmentOverview = {
+    useEnvironmentOverviewsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS,
+        queryFn: () => EnvironmentOverviewService.current.getEnvironmentOverviews(),
         staleTime: 1000 * 60 * 2, // 2 minutes
       });
     },

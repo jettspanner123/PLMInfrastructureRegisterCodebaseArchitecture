@@ -37,5 +37,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string AskQuestion = "AskQuestion";
         }
+
+        public static class EnvironmentOverviewRoutes
+        {
+            public const string ControllerURL = "/Api/V1/EnvironmentOverview";
+
+            public const string GetAllEnvironmentOverviews = "";
+        }
     }
 }

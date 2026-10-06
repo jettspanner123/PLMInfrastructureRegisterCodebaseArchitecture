@@ -15,12 +15,10 @@ export default class NavigationCON {
   // Top-nav capsule, ported 1:1 (visual + shared-layout-pill mechanics) from
   // Monitoring Dashboard's own navbar. Unlike Monitoring Dashboard's version
   // (whose options are separate sibling applications), these options are
-  // real in-app sections. Infrastructure Register is the one real, enabled
-  // destination today; Environment Overview is a reserved, disabled
-  // placeholder until its design is defined.
+  // real in-app sections.
   public static readonly PRIMARY_NAV_ITEMS: NavItemDef[] = [
     { id: 'infrastructure-register', label: 'Infrastructure Register', icon: Server },
-    { id: 'environment-overview', label: 'Environment Overview', icon: Globe, disabled: true },
+    { id: 'environment-overview', label: 'Environment Overview', icon: Globe },
   ];
 
   // This register has no authentication system yet, so the profile dropdown's

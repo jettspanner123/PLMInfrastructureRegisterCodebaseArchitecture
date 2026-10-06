@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import ProfileSettingsSharedComponent from '../../Shared/Components/ProfileSettingsSharedComponent';
 import SegmentedControlSharedComponent from '../../Shared/Components/SegmentedControlSharedComponent';
 import NavigationCON from './Constants/NavigationCON';
@@ -29,8 +29,14 @@ export default function NavigationController({
   // last was, since nothing outside this component ever told it the route
   // changed. Matches neither PRIMARY_NAV_ITEMS option (so neither highlights)
   // when the current route isn't one of them.
+  const navigate = useNavigate();
   const location = useLocation();
-  const currentView = location.pathname === ApplicationRouteCON.ROOT ? 'infrastructure-register' : '';
+  const currentView =
+    location.pathname === ApplicationRouteCON.ROOT
+      ? 'infrastructure-register'
+      : location.pathname === ApplicationRouteCON.ENVIRONMENT_OVERVIEW
+        ? 'environment-overview'
+        : '';
 
   return (
     <div className="min-h-screen bg-(--color-canvas) text-(--color-ink)">
@@ -59,6 +65,8 @@ export default function NavigationController({
               onChange={(next) => {
                 if (next === 'infrastructure-register') {
                   onNavigateHome();
+                } else if (next === 'environment-overview') {
+                  navigate({ to: ApplicationRouteCON.ENVIRONMENT_OVERVIEW });
                 }
               }}
               layoutId="activeTopNavPill"
