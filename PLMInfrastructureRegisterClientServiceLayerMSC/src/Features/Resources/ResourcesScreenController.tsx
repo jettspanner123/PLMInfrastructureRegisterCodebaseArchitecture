@@ -5,6 +5,7 @@ import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderC
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../Shared/Components/CustomSelectSharedComponent';
 import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
+import ChatAssistantSharedComponent from '../../Shared/Components/ChatAssistantSharedComponent';
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
@@ -175,6 +176,8 @@ export default function ResourcesScreenController(): React.JSX.Element {
             placeholder="Search visible columns…"
             ariaLabel="Search Resources"
           />
+
+          <ChatAssistantSharedComponent />
 
           <div className="relative shrink-0">
             <button
