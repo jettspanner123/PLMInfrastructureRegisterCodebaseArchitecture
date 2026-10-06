@@ -11,6 +11,7 @@ import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import ApplicationTableHeightUtility from '../Utilities/ApplicationTableHeightUtility';
+import ApplicationTableDensityUtility from '../Utilities/ApplicationTableDensityUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
 import ConfigureSubscriptionsScreenRoute from '../Routes/ConfigureSubscriptionsScreenRoute';
@@ -66,6 +67,13 @@ function RootLayout(): React.JSX.Element {
     if (savedCustomHeightPx !== null) {
       ApplicationTableHeightUtility.current.applyCustomHeightPx(savedCustomHeightPx);
     }
+  });
+
+  // Same reasoning as Table Height just above: Table Density's control also
+  // lives entirely inside the profile dropdown, so its saved value needs
+  // the same independent bootstrap here.
+  useState(() => {
+    ApplicationTableDensityUtility.current.applyDensity(ApplicationTableDensityUtility.current.getSavedDensity());
   });
 
   const handleNavigateHome = (): void => {

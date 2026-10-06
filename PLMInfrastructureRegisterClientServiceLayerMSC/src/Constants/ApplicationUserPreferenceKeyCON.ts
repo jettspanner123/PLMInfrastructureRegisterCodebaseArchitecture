@@ -5,4 +5,5 @@ export default class ApplicationUserPreferenceKeyCON {
   public static readonly RESOURCE_TABLE_ENVIRONMENT_FILTER: string = 'RESOURCE_TABLE_ENVIRONMENT_FILTER';
   public static readonly TABLE_HEIGHT_MODE: string = 'TABLE_HEIGHT_MODE';
   public static readonly TABLE_HEIGHT_CUSTOM_PX: string = 'TABLE_HEIGHT_CUSTOM_PX';
+  public static readonly TABLE_DENSITY: string = 'TABLE_DENSITY';
 }

@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
-import { Cloud, Mail, Sun, Moon, LogOut, Maximize2, Minimize2 } from 'lucide-react';
+import { Cloud, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4 } from 'lucide-react';
 import ApplicationThemeCON from '../../../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../../../Constants/ApplicationLayoutWidthCON';
+import ApplicationTableDensityCON from '../../../../Constants/ApplicationTableDensityCON';
 import ApplicationRouteCON from '../../../../Constants/ApplicationRouteCON';
 import ApplicationHapticsUtility from '../../../../Utilities/ApplicationHapticsUtility';
+import ApplicationTableDensityUtility from '../../../../Utilities/ApplicationTableDensityUtility';
 import ConfirmationModalSharedComponent from '../../../../Shared/Components/ConfirmationModalSharedComponent';
 import ControllBlockSharedComponent from '../../../../Shared/Components/ControllBlockSharedComponent';
 import TableHeightControlStaticComponent from './TableHeightControlStaticComponent';
@@ -31,6 +33,20 @@ export default function ProfileDropdownStaticComponent({
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = React.useState<boolean>(false);
+
+  // Self-contained, like Table Height's own control — nothing outside this
+  // dropdown needs Table Density's value as a prop, so it isn't lifted to
+  // RootLayout. RootLayout still bootstraps the saved value onto <html>
+  // independently on mount, since this state only mounts once the dropdown
+  // is actually opened.
+  const [tableDensity, setTableDensity] = React.useState<string>(() =>
+    ApplicationTableDensityUtility.current.getSavedDensity()
+  );
+
+  const handleChangeTableDensity = (next: string): void => {
+    setTableDensity(next);
+    ApplicationTableDensityUtility.current.applyDensity(next);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -161,6 +177,26 @@ export default function ProfileDropdownStaticComponent({
                 />
 
                 <TableHeightControlStaticComponent />
+
+                <ControllBlockSharedComponent
+                  label="Table Density"
+                  layoutId="tableDensityControlPill"
+                  value={tableDensity}
+                  onChange={handleChangeTableDensity}
+                  animatedTransition={false}
+                  options={[
+                    {
+                      value: ApplicationTableDensityCON.STANDARD,
+                      label: 'Standard',
+                      icon: <Rows3 className="w-3.5 h-3.5" />,
+                    },
+                    {
+                      value: ApplicationTableDensityCON.COMPACT,
+                      label: 'Compact',
+                      icon: <Rows4 className="w-3.5 h-3.5" />,
+                    },
+                  ]}
+                />
               </div>
 
               {/* 3. Administration */}
