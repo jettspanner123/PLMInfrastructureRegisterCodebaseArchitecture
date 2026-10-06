@@ -16,7 +16,6 @@ export interface CopyableTableCellSharedComponentProps {
   // checked explicitly below because Shift+click targets the same element
   // too (so `click` still fires) even though it means "extend the
   // selection", not "copy this one cell".
-  isSelected?: boolean;
   selectionBoxShadow?: string;
   onCellMouseDown?: (event: React.MouseEvent) => void;
   onCellMouseEnter?: () => void;
@@ -35,7 +34,6 @@ export default function CopyableTableCellSharedComponent({
   children,
   className = '',
   ariaLabel,
-  isSelected = false,
   selectionBoxShadow,
   onCellMouseDown,
   onCellMouseEnter,
@@ -70,16 +68,14 @@ export default function CopyableTableCellSharedComponent({
   };
 
   return (
-    <td className="p-0" style={isSelected ? { boxShadow: selectionBoxShadow } : undefined}>
+    <td className="p-0" style={{ boxShadow: selectionBoxShadow }}>
       <button
         type="button"
         onMouseDown={onCellMouseDown}
         onMouseEnter={onCellMouseEnter}
         onClick={handleClick}
         aria-label={ariaLabel}
-        className={`group relative w-full h-full flex items-center text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${
-          isSelected ? 'bg-[#0C2086]/10 dark:bg-blue-400/10' : ''
-        } ${className}`}
+        className={`group relative w-full h-full flex items-center text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}
       >
         <span className="pr-5">{children}</span>
         <span

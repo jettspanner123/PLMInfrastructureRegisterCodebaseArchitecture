@@ -161,7 +161,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
           onMouseDown={cellHandlers.onMouseDown}
           onMouseEnter={cellHandlers.onMouseEnter}
           style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex) }}
-          className={`${CELL_CLASS_NAME} ${tableSelection.getCellSelectionClassName(rowIndex, colIndex)}`}
+          className={CELL_CLASS_NAME}
         >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
         </td>
@@ -174,7 +174,6 @@ export default function ResourcesScreenController(): React.JSX.Element {
         value={displayValue}
         ariaLabel={`Copy ${column.label}: ${displayValue}`}
         className={CELL_CLASS_NAME}
-        isSelected={tableSelection.isCellSelected(rowIndex, colIndex)}
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}

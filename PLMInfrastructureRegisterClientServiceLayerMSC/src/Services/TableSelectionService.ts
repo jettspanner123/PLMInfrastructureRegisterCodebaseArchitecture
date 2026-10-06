@@ -23,8 +23,6 @@ interface TableSelectionPoint {
 
 type TableSelectionDragAxis = 'cell' | 'row' | 'column';
 
-const SELECTION_TINT_CLASS_NAME = 'bg-[#0C2086]/10 dark:bg-blue-400/10';
-
 export interface TableSelectionMouseHandlers {
   onMouseDown: (event: React.MouseEvent) => void;
   onMouseEnter: () => void;
@@ -43,15 +41,9 @@ export interface UseTableSelectionResult {
   // this element clears the current selection, matching every other
   // dismissible panel in this app (dropdowns, modals).
   containerRef: React.RefObject<HTMLDivElement | null>;
-  isCellSelected: (rowIndex: number, columnIndex: number) => boolean;
   // undefined when the cell has no selection-perimeter edge to draw (either
   // unselected, or selected but fully interior to the selection rectangle).
   getCellSelectionBoxShadow: (rowIndex: number, columnIndex: number) => string | undefined;
-  // The selection tint's background class (empty string when unselected) —
-  // for plain <td>s that aren't CopyableTableCellSharedComponent (the row
-  // number column, empty-value cells) and so have no isSelected prop to
-  // reach for instead.
-  getCellSelectionClassName: (rowIndex: number, columnIndex: number) => string;
   getCellHandlers: (rowIndex: number, columnIndex: number) => TableSelectionMouseHandlers;
   getRowHeaderHandlers: (rowIndex: number) => TableSelectionMouseHandlers;
   getColumnHeaderHandlers: (columnIndex: number) => TableSelectionMouseHandlers;
@@ -143,6 +135,10 @@ export default class TableSelectionService {
         anchorPointRef.current = point;
         dragAxisRef.current = axis;
         isPointerDownRef.current = true;
+        // Only while an actual drag is in progress - cleared by the
+        // document mouseup handler below, not tied to React state since
+        // it's a purely visual, ephemeral signal.
+        document.body.style.cursor = 'crosshair';
         setSelection(computeRectangleForAxis(axis, point, point, rowCount, columnCount));
       },
       [rowCount, columnCount]
@@ -161,6 +157,7 @@ export default class TableSelectionService {
     useEffect(() => {
       const handleDocumentMouseUp = (): void => {
         isPointerDownRef.current = false;
+        document.body.style.cursor = '';
       };
       document.addEventListener('mouseup', handleDocumentMouseUp);
       return () => document.removeEventListener('mouseup', handleDocumentMouseUp);
@@ -224,14 +221,6 @@ export default class TableSelectionService {
       return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    const isCellSelected = useCallback(
-      (row: number, col: number): boolean => {
-        if (!selection) return false;
-        return row >= selection.startRow && row <= selection.endRow && col >= selection.startCol && col <= selection.endCol;
-      },
-      [selection]
-    );
-
     const getCellSelectionBoxShadow = useCallback(
       (row: number, col: number): string | undefined => {
         if (!selection) return undefined;
@@ -247,11 +236,6 @@ export default class TableSelectionService {
         return segments.length > 0 ? segments.join(', ') : undefined;
       },
       [selection]
-    );
-
-    const getCellSelectionClassName = useCallback(
-      (row: number, col: number): string => (isCellSelected(row, col) ? SELECTION_TINT_CLASS_NAME : ''),
-      [isCellSelected]
     );
 
     const getCellHandlers = useCallback(
@@ -284,9 +268,7 @@ export default class TableSelectionService {
 
     return {
       containerRef,
-      isCellSelected,
       getCellSelectionBoxShadow,
-      getCellSelectionClassName,
       getCellHandlers,
       getRowHeaderHandlers,
       getColumnHeaderHandlers,
