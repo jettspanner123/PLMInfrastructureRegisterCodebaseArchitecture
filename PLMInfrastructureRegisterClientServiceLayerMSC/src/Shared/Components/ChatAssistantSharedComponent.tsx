@@ -71,17 +71,14 @@ const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 300, damping: 30
 //    both directions are actually symmetric by construction, not by hoping
 //    an automatic mechanism bridges a portal boundary it apparently can't.
 //
-// 4. The floating input bar is a SIBLING of the clipped message card, not a
-//    descendant of it — both are children of the same layoutId/ref'd outer
-//    motion.div. This lets the bar spill past the card's own rounded bottom
-//    edge (the card has its own `overflow-hidden`; the outer wrapper does
-//    not) while still participating in the manual-flip transform, since a
-//    CSS transform on the outer wrapper visually carries every descendant,
-//    clipped or not. Nothing special was needed to keep the flip itself
-//    correct: `getBoundingClientRect()` on the outer wrapper only reflects
-//    its own box (its CSS width/height), never an overflowing child's
-//    extent, so the measured rect the flip animates from/to is unaffected
-//    by the bar spilling outside it.
+// 4. The floating input bar is a plain flex sibling of the message card
+//    (both children of a `flex flex-col gap-6` on the layoutId/ref'd outer
+//    motion.div), not absolutely positioned — the card simply shrinks
+//    (`flex-1 min-h-0`) to leave room for the gap and the bar's own fixed
+//    height, so the outer wrapper's total height stays exactly
+//    `min(720px,90dvh)` either way. This keeps the manual flip untouched:
+//    it measures/animates the outer wrapper itself, and plain flex children
+//    carry along with whatever transform that wrapper gets, same as before.
 export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [draftMessage, setDraftMessage] = useState<string>('');
@@ -214,10 +211,10 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   aria-modal="true"
                   aria-label="Assistant"
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto relative w-full max-w-4xl h-[min(720px,90dvh)]"
+                  className="pointer-events-auto w-full max-w-4xl h-[min(720px,90dvh)] flex flex-col gap-6"
                 >
                   {/* Card: the visible panel surface, clipped to its own rounded corners */}
-                  <div className="absolute inset-0 bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+                  <div className="relative flex-1 min-h-0 bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col">
                     {/* Floating close button — overlaid on scrolling message content */}
                     <button
                       type="button"
@@ -229,7 +226,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     </button>
 
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto px-6 pt-14 pb-16 space-y-3">
+                    <div className="flex-1 overflow-y-auto px-6 pt-14 pb-5 space-y-3">
                       {messages.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center gap-2 text-slate-400 dark:text-zinc-500">
                           <Bot className="w-8 h-8" />
@@ -249,8 +246,8 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     </div>
                   </div>
 
-                  {/* Floating input bar — detached, spilling past the card's own bottom edge */}
-                  <div className="absolute left-4 right-4 -bottom-7 flex items-center gap-2 px-3 py-2.5 rounded-2xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-2xl">
+                  {/* Floating input bar — a separate piece below the card, with real space between them */}
+                  <div className="shrink-0 flex items-center gap-2 px-3 py-2.5 rounded-2xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-2xl">
                     <input
                       ref={inputRef}
                       type="text"
