@@ -71,14 +71,11 @@ const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 300, damping: 30
 //    both directions are actually symmetric by construction, not by hoping
 //    an automatic mechanism bridges a portal boundary it apparently can't.
 //
-// 4. The floating input bar is a plain flex sibling of the message card
-//    (both children of a `flex flex-col gap-6` on the layoutId/ref'd outer
-//    motion.div), not absolutely positioned — the card simply shrinks
-//    (`flex-1 min-h-0`) to leave room for the gap and the bar's own fixed
-//    height, so the outer wrapper's total height stays exactly
-//    `min(720px,90dvh)` either way. This keeps the manual flip untouched:
-//    it measures/animates the outer wrapper itself, and plain flex children
-//    carry along with whatever transform that wrapper gets, same as before.
+// 4. The floating input bar lives back inside the panel's own clipped box
+//    (a normal flex-col child, with its own padding/margin and shadow, no
+//    border divider above it) rather than outside/overlapping it — an
+//    earlier round tried detaching it entirely past the panel's bottom
+//    edge, which read badly once seen live, so it moved back in.
 export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [draftMessage, setDraftMessage] = useState<string>('');
@@ -211,66 +208,66 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   aria-modal="true"
                   aria-label="Assistant"
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto w-full max-w-4xl h-[min(720px,90dvh)] flex flex-col gap-3"
+                  className="pointer-events-auto relative w-full max-w-4xl h-[min(800px,90dvh)] bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col"
                 >
-                  {/* Card: the visible panel surface, clipped to its own rounded corners */}
-                  <div className="relative flex-1 min-h-0 bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-                    {/* Floating close button — overlaid on scrolling message content */}
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      aria-label="Close Assistant"
-                      className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                  {/* Floating close button — overlaid on scrolling message content */}
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    aria-label="Close Assistant"
+                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
 
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto px-6 pt-14 pb-5 space-y-3">
-                      {messages.length === 0 ? (
-                        <div className="h-full flex flex-col items-center justify-center text-center gap-2 text-slate-400 dark:text-zinc-500">
-                          <Bot className="w-8 h-8" />
-                          <p className="text-xs max-w-[220px]">
-                            Ask me anything — I'm just a UI shell for now, not wired up to anything yet.
-                          </p>
-                        </div>
-                      ) : (
-                        messages.map((message) => (
-                          <div key={message.id} className="flex justify-end">
-                            <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[#0C2086] text-white text-xs px-3.5 py-2.5 break-words">
-                              {message.text}
-                            </div>
+                  {/* Messages */}
+                  <div className="flex-1 overflow-y-auto px-6 pt-14 pb-2 space-y-3">
+                    {messages.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-center gap-2 text-slate-400 dark:text-zinc-500">
+                        <Bot className="w-8 h-8" />
+                        <p className="text-xs max-w-[220px]">
+                          Ask me anything — I'm just a UI shell for now, not wired up to anything yet.
+                        </p>
+                      </div>
+                    ) : (
+                      messages.map((message) => (
+                        <div key={message.id} className="flex justify-end">
+                          <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[#0C2086] text-white text-xs px-3.5 py-2.5 break-words">
+                            {message.text}
                           </div>
-                        ))
-                      )}
-                    </div>
+                        </div>
+                      ))
+                    )}
                   </div>
 
-                  {/* Floating input row — input and button are each their own
-                      floating piece (own background/shadow), no shared bar
-                      container grouping them. */}
-                  <div className="shrink-0 flex items-center gap-2">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      name="chatAssistantMessage"
-                      value={draftMessage}
-                      onChange={(event) => setDraftMessage(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') handleSend();
-                      }}
-                      placeholder="Message the assistant…"
-                      className="flex-1 h-10 px-4 rounded-full bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#0C2086] dark:focus:ring-blue-400"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleSend}
-                      disabled={!draftMessage.trim()}
-                      aria-label="Send message"
-                      className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors shadow-lg"
-                    >
-                      <Send className="w-4 h-4" />
-                    </button>
+                  {/* Floating input bar — inset within the panel, margin on
+                      all sides, no border divider above it (just the gap
+                      plus its own shadow read as "floating over" the
+                      messages, rather than a docked footer). */}
+                  <div className="shrink-0 px-6 pb-6 pt-2">
+                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-full bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        name="chatAssistantMessage"
+                        value={draftMessage}
+                        onChange={(event) => setDraftMessage(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') handleSend();
+                        }}
+                        placeholder="Message the assistant…"
+                        className="flex-1 h-10 px-3.5 rounded-full bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSend}
+                        disabled={!draftMessage.trim()}
+                        aria-label="Send message"
+                        className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               </div>
