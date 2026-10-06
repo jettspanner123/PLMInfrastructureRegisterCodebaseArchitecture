@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
+import { useLocation } from '@tanstack/react-router';
 import ProfileDropdownStaticComponent from './Components/static/ProfileDropdownStaticComponent';
 import SegmentedControlSharedComponent from '../../Shared/Components/SegmentedControlSharedComponent';
 import NavigationCON from './Constants/NavigationCON';
+import ApplicationRouteCON from '../../Constants/ApplicationRouteCON';
 import weplmLogo from '../../Assets/weplm.jpeg';
 
 export interface NavigationControllerProps {
@@ -23,7 +25,15 @@ export default function NavigationController({
 }: NavigationControllerProps): React.JSX.Element {
   const profileButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-  const [currentView, setCurrentView] = useState<string>('infrastructure-register');
+
+  // Derived from the actual route, not independent state — otherwise
+  // navigating elsewhere (e.g. the profile dropdown's Configure
+  // Subscriptions link) would leave this pill stuck showing whatever it
+  // last was, since nothing outside this component ever told it the route
+  // changed. Matches neither PRIMARY_NAV_ITEMS option (so neither highlights)
+  // when the current route isn't one of them.
+  const location = useLocation();
+  const currentView = location.pathname === ApplicationRouteCON.ROOT ? 'infrastructure-register' : '';
 
   const handleCloseProfileDropdown = (): void => {
     setIsProfileOpen(false);
@@ -57,7 +67,6 @@ export default function NavigationController({
             <SegmentedControlSharedComponent
               value={currentView}
               onChange={(next) => {
-                setCurrentView(next);
                 if (next === 'infrastructure-register') {
                   onNavigateHome();
                 }
