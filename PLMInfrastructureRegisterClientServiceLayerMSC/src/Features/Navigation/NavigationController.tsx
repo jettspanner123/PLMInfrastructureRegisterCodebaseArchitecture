@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { useLocation } from '@tanstack/react-router';
-import ProfileDropdownStaticComponent from './Components/static/ProfileDropdownStaticComponent';
+import ProfileSettingsSharedComponent from '../../Shared/Components/ProfileSettingsSharedComponent';
 import SegmentedControlSharedComponent from '../../Shared/Components/SegmentedControlSharedComponent';
 import NavigationCON from './Constants/NavigationCON';
 import ApplicationRouteCON from '../../Constants/ApplicationRouteCON';
@@ -23,9 +23,6 @@ export default function NavigationController({
   onNavigateHome,
   children,
 }: NavigationControllerProps): React.JSX.Element {
-  const profileButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-
   // Derived from the actual route, not independent state — otherwise
   // navigating elsewhere (e.g. the profile dropdown's Configure
   // Subscriptions link) would leave this pill stuck showing whatever it
@@ -34,13 +31,6 @@ export default function NavigationController({
   // when the current route isn't one of them.
   const location = useLocation();
   const currentView = location.pathname === ApplicationRouteCON.ROOT ? 'infrastructure-register' : '';
-
-  const handleCloseProfileDropdown = (): void => {
-    setIsProfileOpen(false);
-    // Return focus to the trigger — standard disclosure-pattern behavior so
-    // keyboard users don't lose their place when the panel closes.
-    profileButtonRef.current?.focus();
-  };
 
   return (
     <div className="min-h-screen bg-(--color-canvas) text-(--color-ink)">
@@ -83,31 +73,12 @@ export default function NavigationController({
               }))}
             />
 
-            <div className="relative">
-              <button
-                ref={profileButtonRef}
-                type="button"
-                onClick={() => setIsProfileOpen((prev) => !prev)}
-                title={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
-                aria-haspopup="dialog"
-                aria-expanded={isProfileOpen}
-                aria-controls="profile-dropdown-panel"
-                aria-label={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
-                className="h-10 w-10 sm:h-9 sm:w-9 rounded-xl sm:rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer relative flex items-center justify-center select-none"
-              >
-                <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs sm:text-[10px] font-mono">
-                  {NavigationCON.PROFILE_INITIALS}
-                </div>
-              </button>
-              <ProfileDropdownStaticComponent
-                isOpen={isProfileOpen}
-                onClose={handleCloseProfileDropdown}
-                currentTheme={currentTheme}
-                onToggleTheme={onToggleTheme}
-                layoutWidth={layoutWidth}
-                onToggleLayoutWidth={onToggleLayoutWidth}
-              />
-            </div>
+            <ProfileSettingsSharedComponent
+              currentTheme={currentTheme}
+              onToggleTheme={onToggleTheme}
+              layoutWidth={layoutWidth}
+              onToggleLayoutWidth={onToggleLayoutWidth}
+            />
           </div>
         </div>
       </header>
