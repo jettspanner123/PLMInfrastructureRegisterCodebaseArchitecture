@@ -76,7 +76,18 @@ export default function CopyableTableCellSharedComponent({
   };
 
   return (
-    <td className="p-0" style={{ boxShadow: selectionBoxShadow }}>
+    // h-px (height: 1px) looks pointless but is load-bearing: a table cell
+    // never gives its children a resolvable percentage height (CSS's
+    // percentage-height rule needs a "definite" height, and a <td> stretched
+    // only by the row's own content doesn't count as one) - any explicit
+    // height, however small, makes browsers treat it as definite, and the
+    // row's real stretched height is still what's actually used. Without
+    // this, the button's own h-full silently resolves to "auto" and the
+    // button only ever grows to its own content's height, matching its row
+    // only by coincidence on tables where every cell's content is similarly
+    // short (which is exactly why this went unnoticed until a table with
+    // genuinely mixed row heights - Environment Overview - exposed it).
+    <td className="p-0 h-px" style={{ boxShadow: selectionBoxShadow }}>
       <button
         type="button"
         onMouseDown={onCellMouseDown}
