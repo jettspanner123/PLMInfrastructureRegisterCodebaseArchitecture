@@ -21,7 +21,7 @@
   --font-sans: 'Inter', 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  color-scheme: light dark;
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,6 +29,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --color-canvas: #000000;
   --color-surface-card: #0a0a0c;
   --color-surface-elevated: #101012;

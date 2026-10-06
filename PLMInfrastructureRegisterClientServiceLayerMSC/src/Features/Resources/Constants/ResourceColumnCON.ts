@@ -11,6 +11,11 @@ export interface ResourceColumnDef {
 }
 
 export default class ResourceColumnCON {
+  public static readonly ENVIRONMENT_COLUMN_KEY: string = 'environmentTag';
+  // Sentinel for the environment header-filter's "no filter, show every
+  // machine" option - not a real EnvironmentTag value itself.
+  public static readonly ALL_ENVIRONMENTS_FILTER_VALUE: string = 'ALL';
+
   public static readonly COLUMNS: ResourceColumnDef[] = [
     { key: 'hostname', label: 'HOSTNAME', locked: true },
     { key: 'environmentTag', label: 'ENVIRONMENT (TAG)', locked: true },
@@ -74,4 +79,13 @@ export default class ResourceColumnCON {
     { key: 'vmDeletionDate', label: 'VM deletion date' },
     { key: 'newHostname', label: 'New HOSTName' },
   ];
+
+  // Derived from COLUMNS above, not hand-maintained separately - a class
+  // static property can read an earlier static property of the same class
+  // during initialization, so these stay in sync with COLUMNS automatically.
+  public static readonly ALL_COLUMN_KEYS: string[] = ResourceColumnCON.COLUMNS.map((column) => column.key);
+
+  public static readonly LOCKED_COLUMN_KEYS: Set<string> = new Set(
+    ResourceColumnCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
+  );
 }

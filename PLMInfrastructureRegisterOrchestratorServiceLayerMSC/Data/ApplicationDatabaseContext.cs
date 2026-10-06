@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models.Classes;
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
 {
@@ -14,6 +15,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<ResourceNexus> Resources => Set<ResourceNexus>();
 
         public DbSet<ConfiguredSubscription> ConfiguredSubscriptions => Set<ConfiguredSubscription>();
+
+        public DbSet<ConfigurationConstantClass> ConfigurationConstants => Set<ConfigurationConstantClass>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +54,31 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                         Id = Guid.Parse("3e9a4c2b-1d7e-4f6a-8b2c-2a5d9e7f1c44"),
                         AzureSubscriptionId = "a5adb684-975e-4f1f-8769-93bcdf28e936",
                         DisplayName = "ct-private-devtest-01",
+                    }
+                );
+            });
+
+            modelBuilder.Entity<ConfigurationConstantClass>(entity =>
+            {
+                entity.ToTable("IG_ConfigurationConstantTBL");
+                entity.HasKey(constant => constant.Id);
+                entity.HasIndex(constant => constant.ConfigurationKey).IsUnique();
+
+                // The approved, structured set of environment tags a Resource's
+                // EnvironmentTag may be assigned - every value transcribed from
+                // the infrastructure register CSV's own ENVIRONMENT (TAG)
+                // column, plus "Not Assigned" as the fallback for anything
+                // with no CSV match. Not an enum: a real enum can't gain a new
+                // value without a code change and redeploy, which defeats
+                // storing this "in the DB" in the first place.
+                entity.HasData(
+                    new ConfigurationConstantClass
+                    {
+                        Id = Guid.Parse("a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"),
+                        ConfigurationKey = "ENVIRONMENT_TAGS",
+                        ConfigurationValue = "[\"Production\",\"QA\",\"Testing\",\"Dev1\",\"Dev2\",\"Training\",\"Production Data Migration\",\"Migration Development\",\"DSLS\",\"Non-Production\",\"Secondary Non-Production\",\"21x OOTB\",\"25x OOTB\",\"Unknown\",\"SandBox (Functional)\",\"SandBox (Technical)\",\"Not Assigned\"]",
+                        Notes = "Valid values for Resources.EnvironmentTag, transcribed from the infrastructure register CSV.",
+                        CreatedAt = new DateTime(2026, 10, 6, 0, 0, 0, DateTimeKind.Utc),
                     }
                 );
             });

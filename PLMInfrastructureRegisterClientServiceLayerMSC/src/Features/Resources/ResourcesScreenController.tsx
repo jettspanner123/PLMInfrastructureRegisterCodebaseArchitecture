@@ -1,37 +1,17 @@
-import React, { useRef, useState } from 'react';
-import { ChevronDown, Columns3, ServerOff } from 'lucide-react';
+import React, { useMemo, useRef, useState } from 'react';
+import { ChevronDown, Columns3, ServerOff, FilterX } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
+import CustomSelectSharedComponent, { type SelectOption } from '../../Shared/Components/CustomSelectSharedComponent';
+import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import ResourceColumnCON from './Constants/ResourceColumnCON';
+import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
-
-function getResourceCellValue(resource: ResourceInterfaceModel, key: string): React.ReactNode {
-  const value = (resource as unknown as Record<string, unknown>)[key];
-
-  if (value === null || value === undefined || value === '') {
-    return <span className="text-slate-300 dark:text-zinc-700">—</span>;
-  }
-  if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No';
-  }
-  return String(value);
-}
-
-const ALL_COLUMN_KEYS: string[] = ResourceColumnCON.COLUMNS.map((column) => column.key);
-const LOCKED_COLUMN_KEYS: Set<string> = new Set(
-  ResourceColumnCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
-);
-
-function withLockedColumnsIncluded(keys: Iterable<string>): Set<string> {
-  const next = new Set(keys);
-  LOCKED_COLUMN_KEYS.forEach((key) => next.add(key));
-  return next;
-}
 
 export default function ResourcesScreenController(): React.JSX.Element {
   const { data: resources = [], isLoading } = TanstackQueryClientService.current.resources.useResourcesQuery();
@@ -48,15 +28,15 @@ export default function ResourcesScreenController(): React.JSX.Element {
   const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
     const saved = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(
       ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
-      ALL_COLUMN_KEYS
+      ResourceColumnCON.ALL_COLUMN_KEYS
     );
     // Locked columns (Hostname, Environment) are always included, even if an
     // older persisted preference somehow excluded them.
-    return withLockedColumnsIncluded(saved);
+    return ResourceTableUtility.current.withLockedColumnsIncluded(saved);
   });
 
   const handleToggleColumn = (key: string): void => {
-    if (LOCKED_COLUMN_KEYS.has(key)) return;
+    if (ResourceColumnCON.LOCKED_COLUMN_KEYS.has(key)) return;
 
     setVisibleColumnKeys((previous) => {
       const next = new Set(previous);
@@ -77,13 +57,88 @@ export default function ResourcesScreenController(): React.JSX.Element {
     // Deliberately in-memory only — unlike individual column toggles, this
     // bulk action does not touch the persisted preference, so a reload
     // brings back whatever was last actually saved, not this cleared state.
-    setVisibleColumnKeys(new Set(LOCKED_COLUMN_KEYS));
+    setVisibleColumnKeys(new Set(ResourceColumnCON.LOCKED_COLUMN_KEYS));
   };
 
   const visibleColumns = ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
 
+  const [environmentFilter, setEnvironmentFilter] = useState<string>(
+    () =>
+      ApplicationUserPreferenceUtility.current.getPreference(
+        ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_ENVIRONMENT_FILTER
+      ) ?? ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE
+  );
+
+  const handleEnvironmentFilterChange = (value: string): void => {
+    setEnvironmentFilter(value);
+    ApplicationUserPreferenceUtility.current.setPreference(
+      ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_ENVIRONMENT_FILTER,
+      value
+    );
+  };
+
+  // Only ever offers tags actually present on at least one machine right now
+  // - IG_ConfigurationConstantTBL's full approved list is the right source
+  // for an edit dropdown later, but a filter listing tags nothing currently
+  // has would just be dead options.
+  const environmentFilterOptions: SelectOption[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    resources.forEach((resource) => {
+      const tag = resource.environmentTag;
+      if (!tag) return;
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    });
+
+    const tagOptions: SelectOption[] = Array.from(counts.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([tag, count]) => ({
+        value: tag,
+        label: tag,
+        sublabel: `${count} machine${count === 1 ? '' : 's'}`,
+      }));
+
+    return [
+      { value: ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE, label: 'All Environments' },
+      ...tagOptions,
+    ];
+  }, [resources]);
+
+  const environmentFilteredResources = useMemo(() => {
+    if (environmentFilter === ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE) return resources;
+    return resources.filter((resource) => resource.environmentTag === environmentFilter);
+  }, [resources, environmentFilter]);
+
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredResources = useMemo(() => {
+    const lowerCaseQuery = searchQuery.trim().toLowerCase();
+    if (!lowerCaseQuery) return environmentFilteredResources;
+    return environmentFilteredResources.filter((resource) =>
+      ResourceTableUtility.current.matchesSearchQuery(resource, visibleColumns, lowerCaseQuery)
+    );
+  }, [environmentFilteredResources, visibleColumns, searchQuery]);
+
+  // Presentation only (wraps ResourceTableUtility's plain-data result in a
+  // dash placeholder) - kept local to this component, like AssetSphere's own
+  // renderAssetCard, rather than promoted to module scope.
+  const renderCellValue = (resource: ResourceInterfaceModel, key: string): React.ReactNode => {
+    const displayValue = ResourceTableUtility.current.getDisplayValue(resource, key);
+    return displayValue === null ? (
+      <span className="text-slate-300 dark:text-zinc-700">—</span>
+    ) : (
+      displayValue
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
+      {/* Screen-reader-only announcement: sighted users already see the
+          table update as they type, but a live-filtering table gives no
+          other signal to someone not looking at it. */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {searchQuery.trim() ? `${filteredResources.length} Resources match "${searchQuery.trim()}"` : ''}
+      </p>
+
       <div className="flex items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-zinc-800">
         <div>
           <h1 className="font-serif-headline text-2xl font-bold text-slate-900 dark:text-white">
@@ -94,32 +149,41 @@ export default function ResourcesScreenController(): React.JSX.Element {
           </p>
         </div>
 
-        <div className="relative shrink-0">
-          <button
-            ref={columnButtonRef}
-            type="button"
-            onClick={() => setIsColumnDropdownOpen((previous) => !previous)}
-            aria-haspopup="dialog"
-            aria-expanded={isColumnDropdownOpen}
-            aria-controls="column-visibility-dropdown-panel"
-            className="flex items-center gap-2 h-9 px-3.5 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer text-xs font-semibold"
-          >
-            <Columns3 className="w-3.5 h-3.5" />
-            <span>Columns</span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 transition-transform duration-200 ${
-                isColumnDropdownOpen ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-
-          <ColumnVisibilityDropdownStaticComponent
-            isOpen={isColumnDropdownOpen}
-            onClose={handleCloseColumnDropdown}
-            visibleColumnKeys={visibleColumnKeys}
-            onToggleColumn={handleToggleColumn}
-            onClearAll={handleClearAllColumns}
+        <div className="flex items-center gap-2 shrink-0">
+          <ExpandableSearchSharedComponent
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search visible columns…"
+            ariaLabel="Search Resources"
           />
+
+          <div className="relative shrink-0">
+            <button
+              ref={columnButtonRef}
+              type="button"
+              onClick={() => setIsColumnDropdownOpen((previous) => !previous)}
+              aria-haspopup="dialog"
+              aria-expanded={isColumnDropdownOpen}
+              aria-controls="column-visibility-dropdown-panel"
+              className="flex items-center gap-2 h-9 px-3.5 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer text-xs font-semibold"
+            >
+              <Columns3 className="w-3.5 h-3.5" />
+              <span>Columns</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 transition-transform duration-200 ${
+                  isColumnDropdownOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            <ColumnVisibilityDropdownStaticComponent
+              isOpen={isColumnDropdownOpen}
+              onClose={handleCloseColumnDropdown}
+              visibleColumnKeys={visibleColumnKeys}
+              onToggleColumn={handleToggleColumn}
+              onClearAll={handleClearAllColumns}
+            />
+          </div>
         </div>
       </div>
 
@@ -128,20 +192,35 @@ export default function ResourcesScreenController(): React.JSX.Element {
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-white/10">
-                {visibleColumns.map((column) => (
-                  <TableHeaderCellSharedComponent key={column.key}>{column.label}</TableHeaderCellSharedComponent>
-                ))}
+                {visibleColumns.map((column) =>
+                  column.key === ResourceColumnCON.ENVIRONMENT_COLUMN_KEY ? (
+                    <TableHeaderCellSharedComponent key={column.key} className="!p-0">
+                      <CustomSelectSharedComponent
+                        value={environmentFilter}
+                        options={environmentFilterOptions}
+                        onChange={handleEnvironmentFilterChange}
+                        size="sm"
+                        className="w-full"
+                        triggerClassName="!h-auto !w-full !bg-transparent dark:!bg-transparent !border-0 !rounded-none !px-3 !py-2.5 !text-white hover:!bg-white/10 !text-[10px] font-mono font-bold uppercase tracking-wider transition-colors !justify-start"
+                        chevronClassName="!text-white/60"
+                        dropdownClassName="!text-slate-700 dark:!text-zinc-300 normal-case tracking-normal font-sans"
+                      />
+                    </TableHeaderCellSharedComponent>
+                  ) : (
+                    <TableHeaderCellSharedComponent key={column.key}>{column.label}</TableHeaderCellSharedComponent>
+                  )
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
-              {resources.map((resource) => (
+              {filteredResources.map((resource) => (
                 <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
                   {visibleColumns.map((column) => (
                     <td
                       key={column.key}
                       className="whitespace-nowrap px-3 py-2 font-mono text-slate-700 dark:text-zinc-300"
                     >
-                      {getResourceCellValue(resource, column.key)}
+                      {renderCellValue(resource, column.key)}
                     </td>
                   ))}
                 </tr>
@@ -149,6 +228,14 @@ export default function ResourcesScreenController(): React.JSX.Element {
             </tbody>
           </table>
         </DataTableContainerSharedComponent>
+      )}
+
+      {resources.length > 0 && filteredResources.length === 0 && (
+        <EmptyStateSharedComponent
+          icon={<FilterX className="w-6 h-6" />}
+          title="No matching Resources"
+          description="No Resource matches the current Environment filter and/or search."
+        />
       )}
 
       {!isLoading && resources.length === 0 && (

@@ -24,6 +24,10 @@ export interface CustomSelectSharedComponentProps {
   placeholder?: string;
   className?: string;
   triggerClassName?: string;
+  // Appended to the trigger's chevron icon, which otherwise always renders
+  // slate/zinc - needed when the trigger itself sits on a dark/colored
+  // background (e.g. a table header) rather than the default white card.
+  chevronClassName?: string;
   dropdownClassName?: string;
   size?: 'sm' | 'md';
   searchable?: boolean;
@@ -46,6 +50,7 @@ export default function CustomSelectSharedComponent({
   triggerClassName,
   dropdownClassName,
   size = 'md',
+  chevronClassName,
   searchable = false,
   searchPlaceholder = 'Search options or enter custom value...',
   enableCustomValue = false,
@@ -150,7 +155,7 @@ export default function CustomSelectSharedComponent({
         <ChevronDown
           className={`w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${
             isOpen ? 'rotate-180 text-slate-700 dark:text-zinc-200' : ''
-          }`}
+          } ${chevronClassName || ''}`}
         />
       </button>
 
