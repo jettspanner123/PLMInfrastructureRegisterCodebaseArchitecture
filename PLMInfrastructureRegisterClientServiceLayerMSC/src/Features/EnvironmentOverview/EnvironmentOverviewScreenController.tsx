@@ -101,7 +101,14 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const isResizing = columnWidths.resizingColumnKey === columnKey;
     return (
       <div
-        onMouseDown={columnWidths.getResizeHandleProps(columnKey).onMouseDown}
+        onMouseDown={(event) => {
+          // Stops this from also bubbling into the header's own mousedown
+          // (TableSelectionService's column-select-by-header-click) - same
+          // reason the Environment column's filter dropdown does this.
+          // Without it, every resize drag also started a column selection.
+          event.stopPropagation();
+          columnWidths.getResizeHandleProps(columnKey).onMouseDown(event);
+        }}
         className="absolute inset-y-0 right-0 w-2 cursor-col-resize select-none z-10 group/resize"
       >
         <div
@@ -259,7 +266,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                 {TEXT_COLUMNS.map((column, colIndex) => (
                   <TableHeaderCellSharedComponent
                     key={column.key}
-                    style={{ width: columnWidths.getColumnWidth(column.key) }}
+                    style={{ width: columnWidths.getColumnWidth(column.key), position: 'relative' }}
                     {...tableSelection.getColumnHeaderHandlers(colIndex)}
                   >
                     {column.label}
@@ -267,14 +274,14 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                   </TableHeaderCellSharedComponent>
                 ))}
                 <TableHeaderCellSharedComponent
-                  style={{ width: columnWidths.getColumnWidth('actionItemsUpdates') }}
+                  style={{ width: columnWidths.getColumnWidth('actionItemsUpdates'), position: 'relative' }}
                   {...tableSelection.getColumnHeaderHandlers(ACTION_ITEMS_COLUMN_INDEX)}
                 >
                   Action Items / Updates
                   {renderResizeHandle('actionItemsUpdates')}
                 </TableHeaderCellSharedComponent>
                 <TableHeaderCellSharedComponent
-                  style={{ width: columnWidths.getColumnWidth('status') }}
+                  style={{ width: columnWidths.getColumnWidth('status'), position: 'relative' }}
                   {...tableSelection.getColumnHeaderHandlers(STATUS_COLUMN_INDEX)}
                 >
                   Status

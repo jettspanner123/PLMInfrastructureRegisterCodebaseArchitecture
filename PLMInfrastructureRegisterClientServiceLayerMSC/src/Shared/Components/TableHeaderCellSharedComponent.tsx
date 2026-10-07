@@ -15,7 +15,15 @@ export interface TableHeaderCellSharedComponentProps {
   onMouseEnter?: () => void;
   // Escape hatch for a dynamic per-render value Tailwind's JIT can't see at
   // build time (e.g. a user-dragged column width in px) — inert for every
-  // caller that doesn't pass it.
+  // caller that doesn't pass it. Also the only reliable way to set
+  // `position` on this element specifically: `.data-table-header-cell`
+  // itself sets `position: static` in index.css, and a plain Tailwind
+  // `relative` class on the same element loses that fight (identical
+  // specificity, decided by stylesheet order, not by which one looks more
+  // specific to a human reader) — inline style is the one thing that wins
+  // regardless. A caller that needs to absolutely-position something inside
+  // this header (e.g. EnvironmentOverviewScreenController's column-resize
+  // handles) must pass `{ position: 'relative' }` here, not a className.
   style?: React.CSSProperties;
 }
 
@@ -41,7 +49,7 @@ export default function TableHeaderCellSharedComponent({
       onMouseDown={onMouseDown}
       onMouseEnter={onMouseEnter}
       style={style}
-      className={`data-table-header-cell relative whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
+      className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
         align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
       } ${onMouseDown ? 'data-table-column-header-cell--selectable select-none' : ''} ${className}`}
     >
