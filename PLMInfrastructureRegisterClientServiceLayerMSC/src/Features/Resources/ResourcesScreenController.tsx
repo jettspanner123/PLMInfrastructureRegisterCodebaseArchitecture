@@ -5,6 +5,7 @@ import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderC
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../Shared/Components/CustomSelectSharedComponent';
 import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
+import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
 import ChatAssistantSharedComponent from '../../Shared/Components/ChatAssistantSharedComponent';
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
@@ -203,6 +204,8 @@ export default function ResourcesScreenController(): React.JSX.Element {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <ViewEditModeToggleSharedComponent />
+
           <ExpandableSearchSharedComponent
             value={searchQuery}
             onChange={setSearchQuery}

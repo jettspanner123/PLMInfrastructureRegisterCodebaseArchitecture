@@ -5,6 +5,7 @@ import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderC
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
+import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import TableSelectionService from '../../Services/TableSelectionService';
@@ -353,6 +354,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <ViewEditModeToggleSharedComponent />
+
           <ExpandableSearchSharedComponent
             value={searchQuery}
             onChange={setSearchQuery}
