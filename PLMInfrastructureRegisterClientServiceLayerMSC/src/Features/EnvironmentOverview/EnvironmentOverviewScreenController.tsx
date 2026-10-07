@@ -94,9 +94,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   // now, not a cross-table service like TableSelectionService.
   const columnWidths = EnvironmentOverviewColumnWidthService.current.useColumnWidths(DEFAULT_COLUMN_WIDTHS);
 
-  // A thin drag handle pinned to a header's right edge - transparent until
-  // hovered (subtle line) or actively dragged (brighter, thicker line),
-  // matching Excel's own "only show it when it matters" treatment.
+  // A thin drag handle straddling a header's right border - the hit zone is
+  // deliberately much wider (16px, 8 on each side of the true border) than
+  // the visible line (1-2px), since a pixel-perfect hit zone is frustrating
+  // to grab; only the thin inner line is actually drawn, so the extra width
+  // costs nothing visually. Transparent until hovered (subtle line) or
+  // actively dragged (brighter, thicker line), matching Excel's own "only
+  // show it when it matters" treatment.
   const renderResizeHandle = (columnKey: string): React.ReactNode => {
     const isResizing = columnWidths.resizingColumnKey === columnKey;
     return (
@@ -109,10 +113,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           event.stopPropagation();
           columnWidths.getResizeHandleProps(columnKey).onMouseDown(event);
         }}
-        className="absolute inset-y-0 right-0 w-2 cursor-col-resize select-none z-10 group/resize"
+        className="absolute inset-y-0 -right-2 w-4 cursor-col-resize select-none z-10 group/resize"
       >
         <div
-          className={`absolute inset-y-0 right-0 transition-colors ${
+          className={`absolute inset-y-0 right-2 transition-colors ${
             isResizing ? 'w-0.5 bg-blue-300' : 'w-px bg-transparent group-hover/resize:bg-white/40'
           }`}
         />
