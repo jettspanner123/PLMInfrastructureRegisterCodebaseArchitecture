@@ -43,6 +43,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string ControllerURL = "/Api/V1/EnvironmentOverview";
 
             public const string GetAllEnvironmentOverviews = "";
+
+            public const string CreateEnvironmentOverview = "";
         }
     }
 }

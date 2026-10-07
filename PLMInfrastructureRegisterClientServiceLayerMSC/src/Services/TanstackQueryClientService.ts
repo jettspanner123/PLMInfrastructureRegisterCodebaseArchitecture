@@ -5,6 +5,8 @@ import ResourcesService from '../Features/Resources/Services/ResourcesService';
 import SubscriptionsService from '../Features/Subscriptions/Services/SubscriptionsService';
 import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubscriptionInterfaceModel';
 import type SubscriptionDeletionResultInterfaceModel from '../Models/SubscriptionDeletionResultInterfaceModel';
+import type EnvironmentOverviewInterfaceModel from '../Models/EnvironmentOverviewInterfaceModel';
+import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -25,6 +27,20 @@ export default class TanstackQueryClientService {
         queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS,
         queryFn: () => EnvironmentOverviewService.current.getEnvironmentOverviews(),
         staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useCreateEnvironmentOverviewMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: CreateEnvironmentOverviewRequestInterfaceModel) =>
+          EnvironmentOverviewService.current.createEnvironmentOverview(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
       });
     },
   };

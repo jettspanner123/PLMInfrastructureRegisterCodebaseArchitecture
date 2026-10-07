@@ -46,5 +46,42 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.CreateEnvironmentOverview)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> CreateEnvironmentOverviewAsynchronous(
+            [FromBody] CreateEnvironmentOverviewRequestDTO request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Environment))
+            {
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "Environment is required.",
+                        new List<string>(),
+                        400));
+            }
+
+            try
+            {
+                EnvironmentOverviewDTO createdEnvironment =
+                    await _environmentOverviewService.CreateEnvironmentOverviewAsynchronous(request);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        createdEnvironment,
+                        "Environment created successfully.",
+                        201));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while creating an environment overview.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while creating the environment.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

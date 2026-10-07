@@ -4,8 +4,6 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentO
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services
 {
-    // Read-only for now - this table is meant to become user-editable later,
-    // but only fetch/display is in scope today.
     public sealed class EnvironmentOverviewService
     {
         private readonly ApplicationDatabaseContext _applicationDatabaseContext;
@@ -40,6 +38,50 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     IsDecommissioned = environment.IsDecommissioned,
                 })
                 .ToList();
+        }
+
+        public async Task<EnvironmentOverviewDTO> CreateEnvironmentOverviewAsynchronous(CreateEnvironmentOverviewRequestDTO request)
+        {
+            bool hasExistingRows = await _applicationDatabaseContext.EnvironmentOverviews.AnyAsync();
+            int nextDisplayOrder = hasExistingRows
+                ? await _applicationDatabaseContext.EnvironmentOverviews.MaxAsync(environment => environment.DisplayOrder) + 1
+                : 1;
+
+            EnvironmentOverviewNexus newEnvironment = new()
+            {
+                Id = Guid.NewGuid(),
+                DisplayOrder = nextDisplayOrder,
+                Environment = request.Environment,
+                Purpose = request.Purpose,
+                Sponsor = request.Sponsor,
+                CurrentUptimeSchedule = request.CurrentUptimeSchedule,
+                Priority1 = request.Priority1,
+                Priority2 = request.Priority2,
+                Priority3 = request.Priority3,
+                ActionItemsUpdates = request.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = request.ConfigurationCustomisationVersion,
+                DNSURL = request.DNSURL,
+                IsDecommissioned = false,
+            };
+
+            _applicationDatabaseContext.EnvironmentOverviews.Add(newEnvironment);
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = newEnvironment.Id,
+                Environment = newEnvironment.Environment,
+                Purpose = newEnvironment.Purpose,
+                Sponsor = newEnvironment.Sponsor,
+                CurrentUptimeSchedule = newEnvironment.CurrentUptimeSchedule,
+                Priority1 = newEnvironment.Priority1,
+                Priority2 = newEnvironment.Priority2,
+                Priority3 = newEnvironment.Priority3,
+                ActionItemsUpdates = newEnvironment.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = newEnvironment.ConfigurationCustomisationVersion,
+                DNSURL = newEnvironment.DNSURL,
+                IsDecommissioned = newEnvironment.IsDecommissioned,
+            };
         }
     }
 }
