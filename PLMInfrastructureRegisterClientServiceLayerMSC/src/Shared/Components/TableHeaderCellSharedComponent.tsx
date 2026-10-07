@@ -13,6 +13,10 @@ export interface TableHeaderCellSharedComponentProps {
   // header still extends a column selection either way.
   onMouseDown?: (event: React.MouseEvent) => void;
   onMouseEnter?: () => void;
+  // Escape hatch for a dynamic per-render value Tailwind's JIT can't see at
+  // build time (e.g. a user-dragged column width in px) — inert for every
+  // caller that doesn't pass it.
+  style?: React.CSSProperties;
 }
 
 // The app-wide "iconic blue" table header treatment — same brand blue
@@ -30,12 +34,14 @@ export default function TableHeaderCellSharedComponent({
   className = '',
   onMouseDown,
   onMouseEnter,
+  style,
 }: TableHeaderCellSharedComponentProps): React.JSX.Element {
   return (
     <th
       onMouseDown={onMouseDown}
       onMouseEnter={onMouseEnter}
-      className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
+      style={style}
+      className={`data-table-header-cell relative whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
         align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
       } ${onMouseDown ? 'data-table-column-header-cell--selectable select-none' : ''} ${className}`}
     >

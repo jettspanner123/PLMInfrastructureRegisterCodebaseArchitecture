@@ -26,6 +26,10 @@ export interface CopyableTableCellSharedComponentProps {
   // cell's top-right corner instead of vertically centered, since centering
   // it over a tall block would float it awkwardly mid-text).
   verticalAlign?: 'center' | 'top';
+  // Same escape hatch as TableHeaderCellSharedComponent's `style` prop — a
+  // dynamic per-render pixel width (e.g. a user-dragged column width)
+  // Tailwind's JIT can't see at build time. Inert when omitted.
+  width?: number;
 }
 
 // A table cell whose entire surface is a single native <button> - clicking
@@ -45,6 +49,7 @@ export default function CopyableTableCellSharedComponent({
   onCellMouseDown,
   onCellMouseEnter,
   verticalAlign = 'center',
+  width,
 }: CopyableTableCellSharedComponentProps): React.JSX.Element {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,7 +92,7 @@ export default function CopyableTableCellSharedComponent({
     // only by coincidence on tables where every cell's content is similarly
     // short (which is exactly why this went unnoticed until a table with
     // genuinely mixed row heights - Environment Overview - exposed it).
-    <td className="p-0 h-px" style={{ boxShadow: selectionBoxShadow }}>
+    <td className="p-0 h-px" style={{ boxShadow: selectionBoxShadow, width }}>
       <button
         type="button"
         onMouseDown={onCellMouseDown}

@@ -6,4 +6,5 @@ export default class ApplicationUserPreferenceKeyCON {
   public static readonly TABLE_HEIGHT_MODE: string = 'TABLE_HEIGHT_MODE';
   public static readonly TABLE_HEIGHT_CUSTOM_PX: string = 'TABLE_HEIGHT_CUSTOM_PX';
   public static readonly TABLE_DENSITY: string = 'TABLE_DENSITY';
+  public static readonly ENVIRONMENT_OVERVIEW_COLUMN_WIDTHS: string = 'ENVIRONMENT_OVERVIEW_COLUMN_WIDTHS';
 }

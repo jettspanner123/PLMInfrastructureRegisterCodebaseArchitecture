@@ -7,6 +7,7 @@ import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableS
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
+import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
 
 // One cell per real text column, in table order - the one thing NOT in this
@@ -33,7 +34,25 @@ const STATUS_COLUMN_INDEX = TEXT_COLUMNS.length + 1;
 const TOTAL_COLUMN_COUNT = TEXT_COLUMNS.length + 2;
 
 const CELL_CLASS_NAME =
-  'px-3 py-2 align-top whitespace-pre-wrap break-words font-mono text-slate-700 dark:text-zinc-300 max-w-xs';
+  'px-3 py-2 align-top whitespace-pre-wrap break-words font-mono text-slate-700 dark:text-zinc-300';
+
+// Starting point only - every one of these is user-resizable (dragging a
+// header's right edge) and persists via EnvironmentOverviewColumnWidthService,
+// which is why these aren't Tailwind max-w-* classes anymore: a fixed CSS cap
+// would fight a user-dragged width wider than it.
+const DEFAULT_COLUMN_WIDTHS: Record<string, number> = {
+  environment: 180,
+  purpose: 260,
+  sponsor: 140,
+  currentUptimeSchedule: 220,
+  priority1: 200,
+  priority2: 200,
+  priority3: 200,
+  configurationCustomisationVersion: 200,
+  dnsurl: 220,
+  actionItemsUpdates: 420,
+  status: 110,
+};
 
 export default function EnvironmentOverviewScreenController(): React.JSX.Element {
   const { data: environments = [], isLoading } =
@@ -70,6 +89,30 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     },
   });
 
+  // Excel-style draggable column borders, persisted to localStorage - see
+  // EnvironmentOverviewColumnWidthService.ts. Scoped to this one table for
+  // now, not a cross-table service like TableSelectionService.
+  const columnWidths = EnvironmentOverviewColumnWidthService.current.useColumnWidths(DEFAULT_COLUMN_WIDTHS);
+
+  // A thin drag handle pinned to a header's right edge - transparent until
+  // hovered (subtle line) or actively dragged (brighter, thicker line),
+  // matching Excel's own "only show it when it matters" treatment.
+  const renderResizeHandle = (columnKey: string): React.ReactNode => {
+    const isResizing = columnWidths.resizingColumnKey === columnKey;
+    return (
+      <div
+        onMouseDown={columnWidths.getResizeHandleProps(columnKey).onMouseDown}
+        className="absolute inset-y-0 right-0 w-2 cursor-col-resize select-none z-10 group/resize"
+      >
+        <div
+          className={`absolute inset-y-0 right-0 transition-colors ${
+            isResizing ? 'w-0.5 bg-blue-300' : 'w-px bg-transparent group-hover/resize:bg-white/40'
+          }`}
+        />
+      </div>
+    );
+  };
+
   const renderTextCell = (
     environment: EnvironmentOverviewInterfaceModel,
     column: (typeof TEXT_COLUMNS)[number],
@@ -79,13 +122,15 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const displayValue = environment[column.key];
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
 
+    const columnWidth = columnWidths.getColumnWidth(column.key);
+
     if (displayValue === null || displayValue === '') {
       return (
         <td
           key={column.key}
           onMouseDown={cellHandlers.onMouseDown}
           onMouseEnter={cellHandlers.onMouseEnter}
-          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex) }}
+          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), width: columnWidth }}
           className={CELL_CLASS_NAME}
         >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
@@ -105,6 +150,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
         verticalAlign="top"
+        width={columnWidth}
       >
         {stringValue}
       </CopyableTableCellSharedComponent>
@@ -122,8 +168,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         key="actionItemsUpdates"
         onMouseDown={cellHandlers.onMouseDown}
         onMouseEnter={cellHandlers.onMouseEnter}
-        style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, ACTION_ITEMS_COLUMN_INDEX) }}
-        className="px-3 py-2 align-top min-w-[280px]"
+        style={{
+          boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, ACTION_ITEMS_COLUMN_INDEX),
+          width: columnWidths.getColumnWidth('actionItemsUpdates'),
+        }}
+        className="px-3 py-2 align-top"
       >
         {environment.actionItemsUpdates ? (
           <div className="max-h-40 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1">
@@ -150,6 +199,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
         verticalAlign="top"
+        width={columnWidths.getColumnWidth('status')}
       >
         <span className="inline-flex items-center gap-1.5">
           <span
@@ -191,22 +241,44 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
       {environments.length > 0 && (
         <DataTableContainerSharedComponent ref={tableSelection.containerRef}>
-          <table className="w-full border-collapse text-xs">
+          {/* table-fixed is load-bearing, not cosmetic: under the default
+              auto layout, an explicit per-cell width is only a soft hint —
+              once every column's hinted width is summed past the table's
+              own w-full cap, the browser freely compresses whichever
+              columns CAN wrap (all of them, since every cell here uses
+              whitespace-pre-wrap) right down toward their minimum
+              content width (effectively their longest unbreakable word),
+              silently ignoring the drag-resized width entirely. Fixed
+              layout makes the first row's widths authoritative instead. */}
+          <table className="w-full table-fixed border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-white/10">
                 <TableHeaderCellSharedComponent align="center" className="w-12">
                   SL. NO
                 </TableHeaderCellSharedComponent>
                 {TEXT_COLUMNS.map((column, colIndex) => (
-                  <TableHeaderCellSharedComponent key={column.key} {...tableSelection.getColumnHeaderHandlers(colIndex)}>
+                  <TableHeaderCellSharedComponent
+                    key={column.key}
+                    style={{ width: columnWidths.getColumnWidth(column.key) }}
+                    {...tableSelection.getColumnHeaderHandlers(colIndex)}
+                  >
                     {column.label}
+                    {renderResizeHandle(column.key)}
                   </TableHeaderCellSharedComponent>
                 ))}
-                <TableHeaderCellSharedComponent {...tableSelection.getColumnHeaderHandlers(ACTION_ITEMS_COLUMN_INDEX)}>
+                <TableHeaderCellSharedComponent
+                  style={{ width: columnWidths.getColumnWidth('actionItemsUpdates') }}
+                  {...tableSelection.getColumnHeaderHandlers(ACTION_ITEMS_COLUMN_INDEX)}
+                >
                   Action Items / Updates
+                  {renderResizeHandle('actionItemsUpdates')}
                 </TableHeaderCellSharedComponent>
-                <TableHeaderCellSharedComponent {...tableSelection.getColumnHeaderHandlers(STATUS_COLUMN_INDEX)}>
+                <TableHeaderCellSharedComponent
+                  style={{ width: columnWidths.getColumnWidth('status') }}
+                  {...tableSelection.getColumnHeaderHandlers(STATUS_COLUMN_INDEX)}
+                >
                   Status
+                  {renderResizeHandle('status')}
                 </TableHeaderCellSharedComponent>
               </tr>
             </thead>
