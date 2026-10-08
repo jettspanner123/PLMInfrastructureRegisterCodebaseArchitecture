@@ -8,7 +8,7 @@ import type SubscriptionDeletionResultInterfaceModel from '../Models/Subscriptio
 import type EnvironmentOverviewInterfaceModel from '../Models/EnvironmentOverviewInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
-import type AddEnvironmentOverviewStatusOptionRequestInterfaceModel from '../Models/AddEnvironmentOverviewStatusOptionRequestInterfaceModel';
+import type AddEnvironmentOverviewOptionRequestInterfaceModel from '../Models/AddEnvironmentOverviewOptionRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
 
@@ -48,21 +48,26 @@ export default class TanstackQueryClientService {
       });
     },
 
-    useStatusOptionsQuery: () => {
+    // Generic growable-dropdown options mechanism - shared by Status,
+    // Sponsor, and any future field that needs one. Each field gets its own
+    // independently cached query key (see
+    // TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_OPTIONS), so adding a new
+    // Sponsor option never invalidates Status's already-cached list.
+    useOptionsQuery: (fieldName: string) => {
       return useQuery({
-        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_STATUS_OPTIONS,
-        queryFn: () => EnvironmentOverviewService.current.getStatusOptions(),
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_OPTIONS(fieldName),
+        queryFn: () => EnvironmentOverviewService.current.getOptions(fieldName),
         staleTime: 1000 * 60 * 2, // 2 minutes
       });
     },
 
-    useAddStatusOptionMutation: (options?: { onSuccess?: (data: string[]) => void }) => {
+    useAddOptionMutation: (fieldName: string, options?: { onSuccess?: (data: string[]) => void }) => {
       const queryClient = useQueryClient();
       return useMutation({
-        mutationFn: (request: AddEnvironmentOverviewStatusOptionRequestInterfaceModel) =>
-          EnvironmentOverviewService.current.addStatusOption(request),
+        mutationFn: (request: AddEnvironmentOverviewOptionRequestInterfaceModel) =>
+          EnvironmentOverviewService.current.addOption(fieldName, request),
         onSuccess: async (data) => {
-          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_STATUS_OPTIONS });
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_OPTIONS(fieldName) });
           options?.onSuccess?.(data);
         },
       });

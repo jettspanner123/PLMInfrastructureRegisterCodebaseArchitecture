@@ -10,7 +10,7 @@ import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryA
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
-import CreateStatusOptionModalController from './Components/CreateStatusOptionModalController';
+import CreateOptionModalController from './Components/CreateOptionModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
@@ -76,13 +76,15 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [statusErrorByRowId, setStatusErrorByRowId] = useState<{ rowId: string; message: string } | null>(null);
   const statusErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Which row's dropdown opened the "Create Status" modal - null when the
-  // modal isn't open, or was opened from somewhere else. Lets onCreated
-  // below know which row to immediately select+save the new Status onto,
-  // combining SignForge's own "auto-select the newly created option" pattern
-  // with this screen's "selecting a Status saves immediately" behavior.
-  const [statusModalTargetRowId, setStatusModalTargetRowId] = useState<string | null>(null);
-  const [isCreateStatusModalOpen, setIsCreateStatusModalOpen] = useState<boolean>(false);
+  // Which row + field (Status or Sponsor) opened the "Add New Option" modal
+  // - null when the modal isn't open. Lets onCreated below know which row to
+  // immediately select+save the new option onto, combining SignForge's own
+  // "auto-select the newly created option" pattern with this screen's
+  // "selecting a dropdown value saves immediately" behavior. Shared across
+  // every growable-dropdown field rather than one target/open pair per
+  // field, since only one of these modals is ever open at a time.
+  const [optionModalTarget, setOptionModalTarget] = useState<{ fieldName: string; rowId: string } | null>(null);
+  const [isOptionModalOpen, setIsOptionModalOpen] = useState<boolean>(false);
 
   // Which cells (keyed "<rowId>:<columnKey>") are mid-save after a blur, and
   // the most recent field-save failure, if any - unlike Status (one
@@ -101,10 +103,17 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   }, []);
 
   const { data: statusOptions = [] } =
-    TanstackQueryClientService.current.environmentOverview.useStatusOptionsQuery();
+    TanstackQueryClientService.current.environmentOverview.useOptionsQuery('Status');
   const statusSelectOptions = useMemo(
     () => statusOptions.map((option) => ({ value: option, label: option })),
     [statusOptions]
+  );
+
+  const { data: sponsorOptions = [] } =
+    TanstackQueryClientService.current.environmentOverview.useOptionsQuery('Sponsor');
+  const sponsorSelectOptions = useMemo(
+    () => sponsorOptions.map((option) => ({ value: option, label: option })),
+    [sponsorOptions]
   );
 
   const filteredEnvironments = useMemo(() => {
@@ -179,30 +188,47 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     });
   };
 
-  const handleOpenCreateStatusModal = (rowId: string): void => {
-    setStatusModalTargetRowId(rowId);
-    setIsCreateStatusModalOpen(true);
+  const handleOpenOptionModal = (fieldName: string, rowId: string): void => {
+    setOptionModalTarget({ fieldName, rowId });
+    setIsOptionModalOpen(true);
   };
 
-  const handleStatusOptionCreated = (newStatus: string): void => {
-    if (statusModalTargetRowId) {
-      handleStatusChange(statusModalTargetRowId, newStatus);
-      setStatusModalTargetRowId(null);
+  // Sponsor saves immediately on selection, same UX as Status - it goes
+  // through the generic Field endpoint (handleFieldSave) rather than
+  // Status's own dedicated UpdateStatus+history mechanism, since Sponsor
+  // carries none of Status's audit-trail requirement.
+  const handleSponsorChange = (rowId: string, newSponsor: string, previousSponsor: string | null): void => {
+    handleFieldSave(rowId, 'sponsor', 'Sponsor', newSponsor, previousSponsor);
+  };
+
+  const handleOptionCreated = (newValue: string): void => {
+    if (!optionModalTarget) return;
+
+    const { fieldName, rowId } = optionModalTarget;
+    if (fieldName === 'Status') {
+      handleStatusChange(rowId, newValue);
+    } else if (fieldName === 'Sponsor') {
+      const environment = environments.find((candidate) => candidate.id === rowId);
+      handleSponsorChange(rowId, newValue, environment?.sponsor ?? null);
     }
+    setOptionModalTarget(null);
   };
 
   const updateFieldMutation = TanstackQueryClientService.current.environmentOverview.useUpdateFieldMutation();
 
-  // Fires on blur, not on every keystroke - the user's own confirmed choice
-  // over an explicit save button. Skips the request entirely when the
-  // trimmed value didn't actually change, since every blur (even one that
-  // didn't edit anything) would otherwise fire a no-op save. Empty string
-  // and null are treated as equivalent "nothing here" states for this
-  // comparison, matching UpdateFieldAsynchronous's own normalisation on the
-  // backend. Pending/error state is tracked per call (not via the mutation
-  // hook's own onSuccess/onError) since several of these cells could be
-  // mid-save at once.
-  const handleFieldBlur = (
+  // Shared by every field that persists through the generic Field endpoint -
+  // Purpose/Priority/DNS URL's textareas call this on blur (the user's own
+  // confirmed choice over an explicit save button), Sponsor's dropdown calls
+  // it immediately on selection (matching Status's own save-on-select UX).
+  // Skips the request entirely when the trimmed value didn't actually
+  // change, since a blur that didn't edit anything (or a dropdown re-
+  // selecting its own current value) would otherwise fire a no-op save.
+  // Empty string and null are treated as equivalent "nothing here" states
+  // for this comparison, matching UpdateFieldAsynchronous's own
+  // normalisation on the backend. Pending/error state is tracked per call
+  // (not via the mutation hook's own onSuccess/onError) since several of
+  // these cells could be mid-save at once.
+  const handleFieldSave = (
     rowId: string,
     columnKey: keyof EnvironmentOverviewInterfaceModel,
     fieldName: string,
@@ -508,7 +534,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           rows={2}
           aria-label={column.label}
           onBlur={(event) =>
-            handleFieldBlur(environment.id, column.key, fieldName, event.target.value, currentValue)
+            handleFieldSave(environment.id, column.key, fieldName, event.target.value, currentValue)
           }
           className={EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME}
         />
@@ -527,6 +553,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
 
     const columnWidth = columnWidths.getColumnWidth(column.key);
+
+    if (isEditMode && column.key === 'sponsor') {
+      return renderSponsorCell(environment, columnWidth);
+    }
 
     const editableFieldName = EnvironmentOverviewCON.EDITABLE_TEXT_FIELD_NAMES[column.key];
     if (isEditMode && editableFieldName) {
@@ -765,7 +795,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             footerAction={{
               label: 'Add New Status',
               icon: <Plus className="w-3.5 h-3.5" />,
-              onClick: () => handleOpenCreateStatusModal(environment.id),
+              onClick: () => handleOpenOptionModal('Status', environment.id),
             }}
           />
           {rowError && <p className="mt-1 text-[10px] text-rose-500">{rowError}</p>}
@@ -794,6 +824,38 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           {statusText}
         </span>
       </CopyableTableCellSharedComponent>
+    );
+  };
+
+  // Sponsor's Edit Mode rendering - same searchable-dropdown + "Add New"
+  // mechanism as Status, but saved through the generic Field endpoint
+  // (handleFieldSave/updateFieldMutation) rather than Status's own dedicated
+  // UpdateStatus+history mechanism, since Sponsor carries no audit-trail
+  // requirement. Pending/error state is the same Set-keyed one
+  // Purpose/Priority/DNS URL's textareas already use, not Status's own
+  // single-row pendingStatusRowId.
+  const renderSponsorCell = (environment: EnvironmentOverviewInterfaceModel, columnWidth: number): React.ReactNode => {
+    const cellKey = `${environment.id}:sponsor`;
+    const isPending = pendingFieldEditKeys.has(cellKey);
+    const cellError = fieldEditErrorByKey?.key === cellKey ? fieldEditErrorByKey.message : null;
+
+    return (
+      <td key="sponsor" style={{ width: columnWidth }} className="px-3 py-2 align-top">
+        <CustomSelectSharedComponent
+          value={environment.sponsor ?? ''}
+          onChange={(newSponsor) => handleSponsorChange(environment.id, newSponsor, environment.sponsor)}
+          options={sponsorSelectOptions}
+          searchable
+          size="sm"
+          disabled={isPending}
+          footerAction={{
+            label: 'Add New Sponsor',
+            icon: <Plus className="w-3.5 h-3.5" />,
+            onClick: () => handleOpenOptionModal('Sponsor', environment.id),
+          }}
+        />
+        {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
+      </td>
     );
   };
 
@@ -994,13 +1056,22 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         />
       )}
 
-      <CreateStatusOptionModalController
-        isOpen={isCreateStatusModalOpen}
+      <CreateOptionModalController
+        isOpen={isOptionModalOpen}
         onClose={() => {
-          setIsCreateStatusModalOpen(false);
-          setStatusModalTargetRowId(null);
+          setIsOptionModalOpen(false);
+          setOptionModalTarget(null);
         }}
-        onCreated={handleStatusOptionCreated}
+        fieldName={optionModalTarget?.fieldName ?? 'Status'}
+        title={optionModalTarget?.fieldName === 'Sponsor' ? 'Create Sponsor' : 'Create Status'}
+        subtitle={
+          optionModalTarget?.fieldName === 'Sponsor'
+            ? 'Adds a new option to the Sponsor dropdown for every environment.'
+            : 'Adds a new option to the Status dropdown for every environment.'
+        }
+        inputLabel={optionModalTarget?.fieldName === 'Sponsor' ? 'Sponsor Name' : 'Status Name'}
+        inputPlaceholder={optionModalTarget?.fieldName === 'Sponsor' ? 'e.g. Jane Doe' : 'e.g. Maintenance'}
+        onCreated={handleOptionCreated}
       />
 
       <ConfirmationModalSharedComponent

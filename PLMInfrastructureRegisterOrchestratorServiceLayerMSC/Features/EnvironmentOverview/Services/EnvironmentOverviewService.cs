@@ -10,10 +10,6 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 {
     public sealed class EnvironmentOverviewService
     {
-        // Owns the valid Status option list for this table - seeded with
-        // "Live"/"Decommissioned", growable at runtime via AddStatusOptionAsynchronous.
-        private const string StatusOptionsConfigurationKey = "ENVIRONMENT_OVERVIEW_STATUS_OPTIONS";
-
         private readonly ApplicationDatabaseContext _applicationDatabaseContext;
 
         public EnvironmentOverviewService(ApplicationDatabaseContext applicationDatabaseContext)
@@ -92,35 +88,40 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             };
         }
 
-        public async Task<List<string>> GetStatusOptionsAsynchronous()
+        // configurationKey is already resolved from the public fieldName via
+        // EnvironmentOverviewAssertion.AssertOptionsFieldName before either
+        // of these run - shared by Status and Sponsor (and any future
+        // growable-dropdown field) rather than one GetXOptions/AddXOption
+        // pair per field.
+        public async Task<List<string>> GetOptionsAsynchronous(string configurationKey)
         {
             ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
                 .AsNoTracking()
-                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == StatusOptionsConfigurationKey);
+                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == configurationKey);
 
             if (configurationConstant is null) return new List<string>();
 
             return JsonSerializer.Deserialize<List<string>>(configurationConstant.ConfigurationValue) ?? new List<string>();
         }
 
-        public async Task<List<string>> AddStatusOptionAsynchronous(string status)
+        public async Task<List<string>> AddOptionAsynchronous(string configurationKey, string value)
         {
             ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
-                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == StatusOptionsConfigurationKey);
+                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == configurationKey);
 
             if (configurationConstant is null)
             {
-                throw new NotFoundException($"Configuration key '{StatusOptionsConfigurationKey}' was not found.");
+                throw new NotFoundException($"Configuration key '{configurationKey}' was not found.");
             }
 
             List<string> options = JsonSerializer.Deserialize<List<string>>(configurationConstant.ConfigurationValue) ?? new List<string>();
 
-            if (options.Any(existingOption => string.Equals(existingOption, status, StringComparison.OrdinalIgnoreCase)))
+            if (options.Any(existingOption => string.Equals(existingOption, value, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new ConflictException($"Status option '{status}' already exists.");
+                throw new ConflictException($"Option '{value}' already exists.");
             }
 
-            options.Add(status);
+            options.Add(value);
             configurationConstant.ConfigurationValue = JsonSerializer.Serialize(options);
             configurationConstant.UpdatedAt = DateTime.UtcNow;
             await _applicationDatabaseContext.SaveChangesAsync();
@@ -284,6 +285,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             {
                 case "Purpose":
                     environment.Purpose = normalisedValue;
+                    break;
+                case "Sponsor":
+                    environment.Sponsor = normalisedValue;
                     break;
                 case "Priority1":
                     environment.Priority1 = normalisedValue;

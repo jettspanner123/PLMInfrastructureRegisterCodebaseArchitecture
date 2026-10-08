@@ -86,77 +86,88 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             }
         }
 
-        [HttpGet(ApplicationRouteFactory.EnvironmentOverviewRoutes.GetStatusOptions)]
-        public async Task<ActionResult<APIResponse<List<string>>>> GetStatusOptionsAsynchronous()
+        [HttpGet(ApplicationRouteFactory.EnvironmentOverviewRoutes.GetOptions)]
+        public async Task<ActionResult<APIResponse<List<string>>>> GetOptionsAsynchronous([FromRoute] string? fieldName)
         {
             try
             {
-                List<string> statusOptions = await _environmentOverviewService.GetStatusOptionsAsynchronous();
+                string configurationKey = EnvironmentOverviewAssertion.Current.AssertOptionsFieldName(fieldName);
+
+                List<string> options = await _environmentOverviewService.GetOptionsAsynchronous(configurationKey);
 
                 return Ok(
                     APIResponse<List<string>>.Succeeded(
-                        statusOptions,
-                        "Status options retrieved successfully.",
+                        options,
+                        "Options retrieved successfully.",
                         200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Get options validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<string>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while retrieving status options.");
+                _logger.LogError(ex, "Unexpected error while retrieving options.");
 
                 return StatusCode(
                     500,
                     APIResponse<List<string>>.Failed(
-                        "An unexpected error occurred while retrieving status options.",
+                        "An unexpected error occurred while retrieving the options.",
                         new List<string>(),
                         500));
             }
         }
 
-        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.AddStatusOption)]
-        public async Task<ActionResult<APIResponse<List<string>>>> AddStatusOptionAsynchronous(
-            [FromBody] AddEnvironmentOverviewStatusOptionRequestDTO? request)
+        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.AddOption)]
+        public async Task<ActionResult<APIResponse<List<string>>>> AddOptionAsynchronous(
+            [FromRoute] string? fieldName,
+            [FromBody] AddEnvironmentOverviewOptionRequestDTO? request)
         {
             try
             {
-                EnvironmentOverviewAssertion.Current.AssertAddStatusOptionRequest(request);
+                string configurationKey = EnvironmentOverviewAssertion.Current.AssertOptionsFieldName(fieldName);
+                EnvironmentOverviewAssertion.Current.AssertAddOptionRequest(request);
 
-                List<string> statusOptions = await _environmentOverviewService.AddStatusOptionAsynchronous(request!.Status!);
+                List<string> options = await _environmentOverviewService.AddOptionAsynchronous(configurationKey, request!.Value!);
 
                 return Ok(
                     APIResponse<List<string>>.Succeeded(
-                        statusOptions,
-                        "Status option added successfully.",
+                        options,
+                        "Option added successfully.",
                         201));
             }
             catch (ValidationException valEx)
             {
-                _logger.LogWarning("Add status option validation failed: {Message}", valEx.Message);
+                _logger.LogWarning("Add option validation failed: {Message}", valEx.Message);
 
                 return BadRequest(
                     APIResponse<List<string>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
             }
             catch (ConflictException conflictEx)
             {
-                _logger.LogWarning("Add status option conflict: {Message}", conflictEx.Message);
+                _logger.LogWarning("Add option conflict: {Message}", conflictEx.Message);
 
                 return Conflict(
                     APIResponse<List<string>>.Failed(conflictEx.Message, new List<string>(), 409));
             }
             catch (NotFoundException notFoundEx)
             {
-                _logger.LogWarning("Add status option not found: {Message}", notFoundEx.Message);
+                _logger.LogWarning("Add option not found: {Message}", notFoundEx.Message);
 
                 return NotFound(
                     APIResponse<List<string>>.Failed(notFoundEx.Message, new List<string>(), 404));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while adding a status option.");
+                _logger.LogError(ex, "Unexpected error while adding an option.");
 
                 return StatusCode(
                     500,
                     APIResponse<List<string>>.Failed(
-                        "An unexpected error occurred while adding the status option.",
+                        "An unexpected error occurred while adding the option.",
                         new List<string>(),
                         500));
             }

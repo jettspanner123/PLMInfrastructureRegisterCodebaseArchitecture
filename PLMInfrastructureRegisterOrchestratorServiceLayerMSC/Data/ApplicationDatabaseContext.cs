@@ -93,6 +93,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                         ConfigurationValue = "[\"Live\",\"Decommissioned\"]",
                         Notes = "Valid values for EnvironmentOverview.Status, growable via the Edit Mode status dropdown's \"Create New Status\" button.",
                         CreatedAt = new DateTime(2026, 10, 8, 0, 0, 0, DateTimeKind.Utc),
+                    },
+                    new ConfigurationConstantClass
+                    {
+                        Id = Guid.Parse("1b09d9ad-6719-470d-8d43-c1c357bd8332"),
+                        ConfigurationKey = "ENVIRONMENT_OVERVIEW_SPONSOR_OPTIONS",
+                        ConfigurationValue = "[\"Ajay Shelke\",\"Balgovind\",\"Gopinath Karthikesan\",\"Heena Ahirrao\",\"Ilse Roegies\",\"Jacky Joseph\",\"N/A\",\"Pavan Gude\",\"Shruti Vedasen\",\"Stefaan Boel\",\"Tom Slegers\"]",
+                        Notes = "Valid values for EnvironmentOverview.Sponsor, seeded from every distinct Sponsor already present in the infrastructure register CSV - growable via the Edit Mode sponsor dropdown's \"Add New Sponsor\" button.",
+                        CreatedAt = new DateTime(2026, 10, 8, 0, 0, 0, DateTimeKind.Utc),
                     }
                 );
             });

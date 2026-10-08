@@ -3,7 +3,7 @@ import type APIResponseInterfaceModel from '../../../Models/APIResponseInterface
 import type EnvironmentOverviewInterfaceModel from '../../../Models/EnvironmentOverviewInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
-import type AddEnvironmentOverviewStatusOptionRequestInterfaceModel from '../../../Models/AddEnvironmentOverviewStatusOptionRequestInterfaceModel';
+import type AddEnvironmentOverviewOptionRequestInterfaceModel from '../../../Models/AddEnvironmentOverviewOptionRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../../../Models/AddActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
 
@@ -44,20 +44,25 @@ export default class EnvironmentOverviewService {
     return payload.data;
   }
 
-  public async getStatusOptions(): Promise<string[]> {
-    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/StatusOptions`);
+  // Generic growable-dropdown options mechanism - shared by Status, Sponsor,
+  // and any future field that needs one, rather than a dedicated
+  // getXOptions/addXOption pair per field. fieldName is validated server-
+  // side against a fixed allow-list (see EnvironmentOverviewAssertion on the
+  // backend).
+  public async getOptions(fieldName: string): Promise<string[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/Options/${fieldName}`);
 
     const payload: APIResponseInterfaceModel<string[]> = await response.json();
 
     if (!response.ok || !payload.status) {
-      throw new Error(payload.message || 'Failed to fetch Status options.');
+      throw new Error(payload.message || 'Failed to fetch the options.');
     }
 
     return payload.data;
   }
 
-  public async addStatusOption(request: AddEnvironmentOverviewStatusOptionRequestInterfaceModel): Promise<string[]> {
-    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/StatusOptions`, {
+  public async addOption(fieldName: string, request: AddEnvironmentOverviewOptionRequestInterfaceModel): Promise<string[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/Options/${fieldName}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
@@ -66,7 +71,7 @@ export default class EnvironmentOverviewService {
     const payload: APIResponseInterfaceModel<string[]> = await response.json();
 
     if (!response.ok || !payload.status) {
-      throw new Error(payload.message || 'Failed to add the Status option.');
+      throw new Error(payload.message || 'Failed to add the option.');
     }
 
     return payload.data;

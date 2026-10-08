@@ -46,9 +46,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string CreateEnvironmentOverview = "";
 
-            public const string GetStatusOptions = "StatusOptions";
+            // Generic growable-dropdown options mechanism, shared by every
+            // field that needs one (Status, Sponsor, any future one) - one
+            // route pair instead of a dedicated StatusOptions/SponsorOptions
+            // pair per field. fieldName is allow-listed server-side (see
+            // EnvironmentOverviewAssertion.AssertOptionsFieldName) and mapped
+            // internally to its own IG_ConfigurationConstantTBL row.
+            public const string GetOptions = "Options/{fieldName}";
 
-            public const string AddStatusOption = "StatusOptions";
+            public const string AddOption = "Options/{fieldName}";
 
             public const string UpdateStatus = "{id}/Status";
 
