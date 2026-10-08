@@ -61,6 +61,17 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     lineText: string;
   } | null>(null);
 
+  // The one row currently pending whole-environment delete confirmation, if
+  // any - environmentName is kept only for the confirmation modal's own
+  // preview text, not sent to the server. Deletion is a soft delete
+  // (EnvironmentOverviewNexus.IsDeleted) but behaves identically to a hard
+  // delete from this screen's perspective - the row simply stops coming
+  // back from the list query.
+  const [deletingEnvironment, setDeletingEnvironment] = useState<{
+    id: string;
+    environmentName: string;
+  } | null>(null);
+
   // Lifted (not self-contained) specifically on this screen, unlike Resources
   // - the Status column needs to know whether Edit Mode is active to decide
   // between its read-only copyable cell and its editable dropdown.
@@ -352,6 +363,22 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       id: deletingActionItem.rowId,
       lineIndex: deletingActionItem.lineIndex,
     });
+  };
+
+  const deleteEnvironmentOverviewMutation =
+    TanstackQueryClientService.current.environmentOverview.useDeleteEnvironmentOverviewMutation({
+      onSuccess: () => {
+        setDeletingEnvironment(null);
+      },
+    });
+
+  const handleRequestDeleteEnvironment = (id: string, environmentName: string): void => {
+    setDeletingEnvironment({ id, environmentName });
+  };
+
+  const handleConfirmDeleteEnvironment = async (): Promise<void> => {
+    if (!deletingEnvironment) return;
+    await deleteEnvironmentOverviewMutation.mutateAsync(deletingEnvironment.id);
   };
 
   const handleToggleActionItemsExpanded = (rowId: string): void => {
@@ -736,7 +763,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               if (el) actionItemsScrollRefs.current.set(environment.id, el);
               else actionItemsScrollRefs.current.delete(environment.id);
             }}
-            className="max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
+            className="action-items-scroll-area max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
           >
             {isEditMode && renderActionItemDraftOrButton(environment.id)}
             {visibleLines.map((line, lineIndex) => renderActionItemsLine(environment.id, line, lineIndex))}
@@ -994,7 +1021,22 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}
                     className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center align-top cursor-pointer select-none"
                   >
-                    {rowIndex + 1}
+                    {isEditMode ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onMouseDown={(event) => event.stopPropagation()}
+                          onClick={() => handleRequestDeleteEnvironment(environment.id, environment.environment)}
+                          aria-label={`Delete ${environment.environment}`}
+                          className="shrink-0 text-slate-300 dark:text-zinc-700 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                        {rowIndex + 1}
+                      </span>
+                    ) : (
+                      rowIndex + 1
+                    )}
                   </td>
                   {EnvironmentOverviewCON.TEXT_COLUMNS.map((column, colIndex) =>
                     renderTextCell(environment, column, rowIndex, colIndex)
@@ -1098,6 +1140,28 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         cancelText="Cancel"
         variant="danger"
         isLoading={deleteActionItemMutation.isPending}
+        maxWidth="md"
+      />
+
+      <ConfirmationModalSharedComponent
+        isOpen={deletingEnvironment !== null}
+        onClose={() => setDeletingEnvironment(null)}
+        onConfirm={handleConfirmDeleteEnvironment}
+        title="Delete Environment"
+        description={
+          deletingEnvironment && (
+            <>
+              <p>
+                This will remove "{deletingEnvironment.environmentName}" and all of its data from the table.
+              </p>
+              <p className="mt-2">This cannot be undone.</p>
+            </>
+          )
+        }
+        confirmText="Delete Environment"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={deleteEnvironmentOverviewMutation.isPending}
         maxWidth="md"
       />
     </div>

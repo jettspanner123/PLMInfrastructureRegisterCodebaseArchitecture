@@ -323,5 +323,27 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Status = environment.Status,
             };
         }
+
+        // Soft delete - sets IsDeleted/DeletedAt rather than removing the
+        // row (see EnvironmentOverviewNexus.IsDeleted). The global query
+        // filter on this entity means every other query already behaves as
+        // if the row is gone, without this method needing to touch
+        // anything else (Status History rows, column widths, etc. are left
+        // exactly as they were).
+        public async Task DeleteEnvironmentOverviewAsynchronous(Guid id)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            environment.IsDeleted = true;
+            environment.DeletedAt = DateTime.UtcNow;
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+        }
     }
 }

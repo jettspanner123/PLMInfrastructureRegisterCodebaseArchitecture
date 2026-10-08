@@ -63,6 +63,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string DeleteActionItem = "{id}/ActionItems/{lineIndex}";
 
             public const string UpdateField = "{id}/Field";
+
+            // Soft delete (sets IsDeleted/DeletedAt) - see
+            // EnvironmentOverviewNexus.IsDeleted for why this isn't a hard
+            // DELETE.
+            public const string DeleteEnvironmentOverview = "{id}";
         }
     }
 }

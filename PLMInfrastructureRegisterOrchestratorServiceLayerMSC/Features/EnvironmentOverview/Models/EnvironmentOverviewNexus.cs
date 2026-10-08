@@ -44,5 +44,18 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         // became "Decommissioned", everything else "Live" - that divider row
         // itself was never a real environment and isn't stored.
         public string Status { get; set; } = string.Empty;
+
+        // Soft delete, not hard - deleting a whole environment is a bigger
+        // action than deleting one Action Items line, and the register's
+        // general "nothing just disappears" feel (plus the fact Status
+        // History rows aren't a real cascading FK today) argued for
+        // preserving the row rather than removing it. A global query filter
+        // (see ApplicationDatabaseContext.OnModelCreating) excludes
+        // IsDeleted rows from every normal query automatically, so this
+        // behaves like a hard delete everywhere the app actually reads
+        // EnvironmentOverviews - no UI anywhere filters on this directly.
+        public bool IsDeleted { get; set; }
+
+        public DateTime? DeletedAt { get; set; }
     }
 }

@@ -350,5 +350,38 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpDelete(ApplicationRouteFactory.EnvironmentOverviewRoutes.DeleteEnvironmentOverview)]
+        public async Task<ActionResult<APIResponse<bool>>> DeleteEnvironmentOverviewAsynchronous([FromRoute] Guid id)
+        {
+            try
+            {
+                await _environmentOverviewService.DeleteEnvironmentOverviewAsynchronous(id);
+
+                return Ok(
+                    APIResponse<bool>.Succeeded(
+                        true,
+                        "Environment deleted successfully.",
+                        200));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Delete environment not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<bool>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting an environment.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<bool>.Failed(
+                        "An unexpected error occurred while deleting the environment.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

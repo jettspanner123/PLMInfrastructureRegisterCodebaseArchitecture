@@ -109,6 +109,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
             {
                 entity.ToTable("IG_EnvironmentOverviewTBL");
                 entity.HasKey(environment => environment.Id);
+
+                // Soft-deleted rows are excluded from every query against
+                // this DbSet automatically (DeleteEnvironmentOverviewAsynchronous
+                // sets IsDeleted instead of removing the row) - nothing
+                // reading EnvironmentOverviews needs its own IsDeleted check.
+                entity.HasQueryFilter(environment => !environment.IsDeleted);
             });
 
             modelBuilder.Entity<EnvironmentOverviewStatusHistoryNexus>(entity =>

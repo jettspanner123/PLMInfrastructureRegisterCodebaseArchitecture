@@ -76,6 +76,30 @@ body {
   display: none;
 }
 
+/* Scoped exception to the app-wide hidden-scrollbar rule above - Action
+   Items / Updates' own scroll container (EnvironmentOverviewScreenController's
+   renderActionItemsCell) is the one place a visible scrollbar helps rather
+   than clutters, since "See All" can reveal far more content than the
+   fixed-height cell shows at once and nothing else hints that it scrolls. */
+.action-items-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-stone) transparent;
+}
+
+.action-items-scroll-area::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+
+.action-items-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.action-items-scroll-area::-webkit-scrollbar-thumb {
+  background-color: var(--color-stone);
+  border-radius: 9999px;
+}
+
 .font-serif-headline {
   font-family: var(--font-serif);
 }

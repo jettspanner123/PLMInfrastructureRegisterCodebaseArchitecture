@@ -96,6 +96,23 @@ export default class EnvironmentOverviewService {
     return payload.data;
   }
 
+  // Soft delete server-side (IsDeleted/DeletedAt, see EnvironmentOverviewNexus)
+  // - the frontend never sees that distinction, since a soft-deleted
+  // environment just stops coming back from GET at all.
+  public async deleteEnvironmentOverview(id: string): Promise<boolean> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/${id}`, {
+      method: 'DELETE',
+    });
+
+    const payload: APIResponseInterfaceModel<boolean> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to delete the environment.');
+    }
+
+    return payload.data;
+  }
+
   public async updateField(
     id: string,
     request: UpdateEnvironmentOverviewFieldRequestInterfaceModel

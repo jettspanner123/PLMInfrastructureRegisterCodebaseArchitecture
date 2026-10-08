@@ -127,6 +127,23 @@ export default class TanstackQueryClientService {
       });
     },
 
+    useDeleteEnvironmentOverviewMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => EnvironmentOverviewService.current.deleteEnvironmentOverview(id),
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.();
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to delete the environment.'));
+        },
+      });
+    },
+
     useUpdateFieldMutation: (options?: {
       onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
       onError?: (error: Error) => void;
