@@ -11,13 +11,18 @@ export interface SplashScreenControllerProps {
 export default function SplashScreenController({
   onReady,
 }: SplashScreenControllerProps): React.JSX.Element {
-  // Pre-fetch Resources so they're already cached by the time the
-  // Infrastructure Register screen mounts — same pattern SignForge uses for
-  // its own dashboard/config queries.
+  // Pre-fetch Resources and Environment Overview so they're already cached
+  // by the time either screen mounts — same pattern SignForge uses for its
+  // own dashboard/config queries.
   const resourcesQuery = TanstackQueryClientService.current.resources.useResourcesQuery();
+  const environmentOverviewsQuery =
+    TanstackQueryClientService.current.environmentOverview.useEnvironmentOverviewsQuery();
 
   const allQueriesSettled =
-    !resourcesQuery.isLoading && (resourcesQuery.isFetched || resourcesQuery.isError);
+    !resourcesQuery.isLoading &&
+    (resourcesQuery.isFetched || resourcesQuery.isError) &&
+    !environmentOverviewsQuery.isLoading &&
+    (environmentOverviewsQuery.isFetched || environmentOverviewsQuery.isError);
 
   const [isReadyToDismiss, setIsReadyToDismiss] = useState(false);
 
