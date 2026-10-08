@@ -369,6 +369,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     TanstackQueryClientService.current.environmentOverview.useDeleteEnvironmentOverviewMutation({
       onSuccess: () => {
         setDeletingEnvironment(null);
+        // Selection is tracked by row/column INDEX, not row identity - once
+        // this row is gone, every row below it shifts up one index, so a
+        // leftover selection would silently highlight a now-different row
+        // instead of just disappearing with the row it used to point at.
+        tableSelection.clearSelection();
       },
     });
 
