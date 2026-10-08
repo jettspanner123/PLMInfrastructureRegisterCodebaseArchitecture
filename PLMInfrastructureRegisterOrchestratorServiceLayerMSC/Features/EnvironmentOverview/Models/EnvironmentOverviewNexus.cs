@@ -36,9 +36,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string? DNSURL { get; set; }
 
-        // True for every row that appeared below the CSV's own
-        // "DECOMISSIONED ENVIRONMENTS" section-divider label - that divider
-        // row itself was never a real environment and isn't stored.
-        public bool IsDecommissioned { get; set; }
+        // Not a compiled enum on purpose - the valid option set is owned by
+        // IG_ConfigurationConstantTBL (key "ENVIRONMENT_OVERVIEW_STATUS_OPTIONS",
+        // seeded with "Live"/"Decommissioned") so a user can add a new status
+        // without a code change/redeploy. Seeded from the CSV's own
+        // "DECOMISSIONED ENVIRONMENTS" section-divider: every row below it
+        // became "Decommissioned", everything else "Live" - that divider row
+        // itself was never a real environment and isn't stored.
+        public string Status { get; set; } = string.Empty;
     }
 }

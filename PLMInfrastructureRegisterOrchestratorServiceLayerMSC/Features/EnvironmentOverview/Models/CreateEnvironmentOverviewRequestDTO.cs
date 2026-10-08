@@ -1,9 +1,9 @@
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models
 {
     // Every field the "Add Environment" draft row can submit. DisplayOrder
-    // and IsDecommissioned are deliberately absent - both are derived
-    // server-side (max + 1, and always false for a brand-new row) rather
-    // than client-supplied.
+    // and Status are deliberately absent - both are derived server-side
+    // (max + 1, and always "Live" for a brand-new row) rather than
+    // client-supplied.
     public sealed class CreateEnvironmentOverviewRequestDTO
     {
         public string Environment { get; set; } = string.Empty;

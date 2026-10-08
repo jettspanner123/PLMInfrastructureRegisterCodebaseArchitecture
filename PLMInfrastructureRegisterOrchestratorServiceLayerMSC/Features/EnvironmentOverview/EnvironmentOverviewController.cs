@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Assertion;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models;
@@ -79,6 +81,126 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     500,
                     APIResponse<EnvironmentOverviewDTO>.Failed(
                         "An unexpected error occurred while creating the environment.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpGet(ApplicationRouteFactory.EnvironmentOverviewRoutes.GetStatusOptions)]
+        public async Task<ActionResult<APIResponse<List<string>>>> GetStatusOptionsAsynchronous()
+        {
+            try
+            {
+                List<string> statusOptions = await _environmentOverviewService.GetStatusOptionsAsynchronous();
+
+                return Ok(
+                    APIResponse<List<string>>.Succeeded(
+                        statusOptions,
+                        "Status options retrieved successfully.",
+                        200));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while retrieving status options.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<string>>.Failed(
+                        "An unexpected error occurred while retrieving status options.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.AddStatusOption)]
+        public async Task<ActionResult<APIResponse<List<string>>>> AddStatusOptionAsynchronous(
+            [FromBody] AddEnvironmentOverviewStatusOptionRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertAddStatusOptionRequest(request);
+
+                List<string> statusOptions = await _environmentOverviewService.AddStatusOptionAsynchronous(request!.Status!);
+
+                return Ok(
+                    APIResponse<List<string>>.Succeeded(
+                        statusOptions,
+                        "Status option added successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Add status option validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<string>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (ConflictException conflictEx)
+            {
+                _logger.LogWarning("Add status option conflict: {Message}", conflictEx.Message);
+
+                return Conflict(
+                    APIResponse<List<string>>.Failed(conflictEx.Message, new List<string>(), 409));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Add status option not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<List<string>>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while adding a status option.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<string>>.Failed(
+                        "An unexpected error occurred while adding the status option.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateStatus)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> UpdateStatusAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateEnvironmentOverviewStatusRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertUpdateStatusRequest(request);
+
+                EnvironmentOverviewDTO updatedEnvironment = await _environmentOverviewService.UpdateStatusAsynchronous(id, request!.Status!);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Status updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update status validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update status not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating an environment's status.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while updating the status.",
                         new List<string>(),
                         500));
             }

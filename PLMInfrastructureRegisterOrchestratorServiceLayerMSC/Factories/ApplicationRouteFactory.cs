@@ -45,6 +45,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string GetAllEnvironmentOverviews = "";
 
             public const string CreateEnvironmentOverview = "";
+
+            public const string GetStatusOptions = "StatusOptions";
+
+            public const string AddStatusOption = "StatusOptions";
+
+            public const string UpdateStatus = "{id}/Status";
         }
     }
 }

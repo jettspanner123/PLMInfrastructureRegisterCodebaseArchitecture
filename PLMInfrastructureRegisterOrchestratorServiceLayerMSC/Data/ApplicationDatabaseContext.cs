@@ -82,6 +82,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                         ConfigurationValue = "[\"Production\",\"QA\",\"Testing\",\"Dev1\",\"Dev2\",\"Training\",\"Production Data Migration\",\"Migration Development\",\"DSLS\",\"Non-Production\",\"Secondary Non-Production\",\"21x OOTB\",\"25x OOTB\",\"Unknown\",\"SandBox (Functional)\",\"SandBox (Technical)\",\"Not Assigned\"]",
                         Notes = "Valid values for Resources.EnvironmentTag, transcribed from the infrastructure register CSV.",
                         CreatedAt = new DateTime(2026, 10, 6, 0, 0, 0, DateTimeKind.Utc),
+                    },
+                    new ConfigurationConstantClass
+                    {
+                        Id = Guid.Parse("b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"),
+                        ConfigurationKey = "ENVIRONMENT_OVERVIEW_STATUS_OPTIONS",
+                        ConfigurationValue = "[\"Live\",\"Decommissioned\"]",
+                        Notes = "Valid values for EnvironmentOverview.Status, growable via the Edit Mode status dropdown's \"Create New Status\" button.",
+                        CreatedAt = new DateTime(2026, 10, 8, 0, 0, 0, DateTimeKind.Utc),
                     }
                 );
             });

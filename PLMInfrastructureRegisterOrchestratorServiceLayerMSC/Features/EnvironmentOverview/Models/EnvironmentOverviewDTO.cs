@@ -24,6 +24,6 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string? DNSURL { get; set; }
 
-        public bool IsDecommissioned { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

@@ -1,11 +1,18 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models.Classes;
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services
 {
     public sealed class EnvironmentOverviewService
     {
+        // Owns the valid Status option list for this table - seeded with
+        // "Live"/"Decommissioned", growable at runtime via AddStatusOptionAsynchronous.
+        private const string StatusOptionsConfigurationKey = "ENVIRONMENT_OVERVIEW_STATUS_OPTIONS";
+
         private readonly ApplicationDatabaseContext _applicationDatabaseContext;
 
         public EnvironmentOverviewService(ApplicationDatabaseContext applicationDatabaseContext)
@@ -35,7 +42,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     ActionItemsUpdates = environment.ActionItemsUpdates,
                     ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                     DNSURL = environment.DNSURL,
-                    IsDecommissioned = environment.IsDecommissioned,
+                    Status = environment.Status,
                 })
                 .ToList();
         }
@@ -61,7 +68,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 ActionItemsUpdates = request.ActionItemsUpdates,
                 ConfigurationCustomisationVersion = request.ConfigurationCustomisationVersion,
                 DNSURL = request.DNSURL,
-                IsDecommissioned = false,
+                Status = "Live",
             };
 
             _applicationDatabaseContext.EnvironmentOverviews.Add(newEnvironment);
@@ -80,7 +87,73 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 ActionItemsUpdates = newEnvironment.ActionItemsUpdates,
                 ConfigurationCustomisationVersion = newEnvironment.ConfigurationCustomisationVersion,
                 DNSURL = newEnvironment.DNSURL,
-                IsDecommissioned = newEnvironment.IsDecommissioned,
+                Status = newEnvironment.Status,
+            };
+        }
+
+        public async Task<List<string>> GetStatusOptionsAsynchronous()
+        {
+            ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
+                .AsNoTracking()
+                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == StatusOptionsConfigurationKey);
+
+            if (configurationConstant is null) return new List<string>();
+
+            return JsonSerializer.Deserialize<List<string>>(configurationConstant.ConfigurationValue) ?? new List<string>();
+        }
+
+        public async Task<List<string>> AddStatusOptionAsynchronous(string status)
+        {
+            ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
+                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == StatusOptionsConfigurationKey);
+
+            if (configurationConstant is null)
+            {
+                throw new NotFoundException($"Configuration key '{StatusOptionsConfigurationKey}' was not found.");
+            }
+
+            List<string> options = JsonSerializer.Deserialize<List<string>>(configurationConstant.ConfigurationValue) ?? new List<string>();
+
+            if (options.Any(existingOption => string.Equals(existingOption, status, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ConflictException($"Status option '{status}' already exists.");
+            }
+
+            options.Add(status);
+            configurationConstant.ConfigurationValue = JsonSerializer.Serialize(options);
+            configurationConstant.UpdatedAt = DateTime.UtcNow;
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return options;
+        }
+
+        public async Task<EnvironmentOverviewDTO> UpdateStatusAsynchronous(Guid id, string status)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            environment.Status = status;
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = environment.Id,
+                Environment = environment.Environment,
+                Purpose = environment.Purpose,
+                Sponsor = environment.Sponsor,
+                CurrentUptimeSchedule = environment.CurrentUptimeSchedule,
+                Priority1 = environment.Priority1,
+                Priority2 = environment.Priority2,
+                Priority3 = environment.Priority3,
+                ActionItemsUpdates = environment.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
+                DNSURL = environment.DNSURL,
+                Status = environment.Status,
             };
         }
     }
