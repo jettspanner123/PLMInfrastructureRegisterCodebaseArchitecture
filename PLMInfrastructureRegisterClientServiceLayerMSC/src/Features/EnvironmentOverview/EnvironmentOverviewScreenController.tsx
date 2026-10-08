@@ -30,6 +30,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [isDraftInvalid, setIsDraftInvalid] = useState<boolean>(false);
   const environmentInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Which rows' Action Items / Updates column is showing every entry rather
+  // than just the first few dated ones - per-row since each row's history is
+  // independent. Resets on reload (not persisted) - matches Edit Mode's own
+  // "resets on reload" convention for this screen's other transient UI state.
+  const [expandedActionItemsRowIds, setExpandedActionItemsRowIds] = useState<Set<string>>(new Set());
+  const actionItemsScrollRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
   // Lifted (not self-contained) specifically on this screen, unlike Resources
   // - the Status column needs to know whether Edit Mode is active to decide
   // between its read-only copyable cell and its editable dropdown.
@@ -148,6 +155,48 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       handleStatusChange(statusModalTargetRowId, newStatus);
       setStatusModalTargetRowId(null);
     }
+  };
+
+  const handleToggleActionItemsExpanded = (rowId: string): void => {
+    setExpandedActionItemsRowIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(rowId)) {
+        next.delete(rowId);
+        // Collapsing can leave the cell's own scroll position further down
+        // than the now-shorter content allows - reset it so "Show Less"
+        // actually shows the first few entries again, not an empty-looking
+        // scrolled-past view.
+        const scrollEl = actionItemsScrollRefs.current.get(rowId);
+        if (scrollEl) scrollEl.scrollTop = 0;
+      } else {
+        next.add(rowId);
+      }
+      return next;
+    });
+  };
+
+  // Splits a cell's full line list into what the collapsed view shows: every
+  // line up through the Nth real dated line, PLUS any date-less continuation
+  // lines that follow it - stopping only once the (N+1)th real date would
+  // begin. A continuation line is never cut off mid-entry, matching the
+  // explicit "every line is crucial" requirement - only whole dated entries
+  // (and everything that precedes the next one) are ever hidden.
+  const getVisibleActionItemsLines = (allLines: string[]): { visibleLines: string[]; hasMore: boolean } => {
+    const visibleLines: string[] = [];
+    let realDateCount = 0;
+
+    for (const line of allLines) {
+      const parsed = ActionItemsLineParserUtility.current.parseLine(line);
+      if (parsed.date !== null) {
+        realDateCount += 1;
+        if (realDateCount > EnvironmentOverviewCON.MAX_VISIBLE_ACTION_ITEMS_DATES) {
+          return { visibleLines, hasMore: true };
+        }
+      }
+      visibleLines.push(line);
+    }
+
+    return { visibleLines, hasMore: false };
   };
 
   // Scrolls to and focuses the draft row the moment it's added - keyed on a
@@ -307,27 +356,30 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
   // Most lines in this column follow a "DATE: NOTE" convention (dated
   // history entries, newest-first) - ActionItemsLineParserUtility splits
-  // each line into its leading date (if any) and the rest, so the date can
-  // get its own small badge instead of blending into the note text,
-  // matching every other dated entry at a glance. Lines with no
-  // recognizable leading date (continuation/context lines) render exactly
-  // as before - plain text, no badge.
+  // each line into its leading date (if any, normalized to a fixed-width
+  // "DD-Mon-YYYY" shape) and the rest. Every line gets a same-shaped tag
+  // regardless - a line with no recognizable leading date gets a generic
+  // "Unrevealed" tag instead of a real date, rather than being left as bare
+  // plain text, since every line is treated as equally worth keeping visible.
   const renderActionItemsLine = (line: string, lineIndex: number): React.ReactNode => {
     const parsed = ActionItemsLineParserUtility.current.parseLine(line);
-
-    if (!parsed.date) {
-      return (
-        <div key={lineIndex} className="whitespace-pre-wrap break-words">
-          {line}
-        </div>
-      );
-    }
+    const hasDate = parsed.date !== null;
 
     return (
       <div key={lineIndex} className="flex items-start gap-1.5">
-        <span className="shrink-0 mt-px inline-flex items-center rounded-full bg-[#0C2086] dark:bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap">
-          {parsed.date}
-          {parsed.tag ? ` (${parsed.tag})` : ''}
+        <span
+          className={`shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap ${
+            hasDate ? 'bg-[#0C2086] dark:bg-blue-600' : 'bg-slate-400 dark:bg-zinc-600'
+          }`}
+        >
+          {hasDate ? (
+            <>
+              {parsed.date}
+              {parsed.tag ? ` (${parsed.tag})` : ''}
+            </>
+          ) : (
+            'Unrevealed'
+          )}
         </span>
         <span className="whitespace-pre-wrap break-words">{parsed.note}</span>
       </div>
@@ -339,6 +391,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     rowIndex: number
   ): React.ReactNode => {
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, EnvironmentOverviewCON.ACTION_ITEMS_COLUMN_INDEX);
+    const isExpanded = expandedActionItemsRowIds.has(environment.id);
+    const allLines = environment.actionItemsUpdates ? environment.actionItemsUpdates.split('\n') : [];
+    const { visibleLines, hasMore } = isExpanded
+      ? { visibleLines: allLines, hasMore: false }
+      : getVisibleActionItemsLines(allLines);
 
     return (
       <td
@@ -351,9 +408,33 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         }}
         className="px-3 py-2 align-top"
       >
-        {environment.actionItemsUpdates ? (
-          <div className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1">
-            {environment.actionItemsUpdates.split('\n').map((line, lineIndex) => renderActionItemsLine(line, lineIndex))}
+        {allLines.length > 0 ? (
+          <div
+            ref={(el) => {
+              if (el) actionItemsScrollRefs.current.set(environment.id, el);
+              else actionItemsScrollRefs.current.delete(environment.id);
+            }}
+            className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
+          >
+            {visibleLines.map((line, lineIndex) => renderActionItemsLine(line, lineIndex))}
+            {hasMore && (
+              <button
+                type="button"
+                onClick={() => handleToggleActionItemsExpanded(environment.id)}
+                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+              >
+                See All
+              </button>
+            )}
+            {isExpanded && (
+              <button
+                type="button"
+                onClick={() => handleToggleActionItemsExpanded(environment.id)}
+                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+              >
+                Show Less
+              </button>
+            )}
           </div>
         ) : (
           <span className="text-slate-300 dark:text-zinc-700">—</span>

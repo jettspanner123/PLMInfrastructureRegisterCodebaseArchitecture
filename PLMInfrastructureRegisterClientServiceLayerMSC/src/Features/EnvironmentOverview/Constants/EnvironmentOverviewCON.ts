@@ -39,6 +39,13 @@ export default class EnvironmentOverviewCON {
   public static readonly CELL_CLASS_NAME: string =
     'px-3 py-2 align-top whitespace-pre-wrap break-words font-mono text-slate-700 dark:text-zinc-300';
 
+  // Action Items / Updates' collapsed-by-default state shows only the first
+  // few dated entries (plus any date-less continuation lines bundled in
+  // before the next real date) - "See All" reveals the rest. Counts only
+  // real dated lines toward this limit; a continuation line never gets cut
+  // off mid-entry.
+  public static readonly MAX_VISIBLE_ACTION_ITEMS_DATES: number = 3;
+
   // Starting point only - every one of these is user-resizable (dragging a
   // header's right edge) and persists via EnvironmentOverviewColumnWidthService,
   // which is why these aren't Tailwind max-w-* classes anymore: a fixed CSS cap
