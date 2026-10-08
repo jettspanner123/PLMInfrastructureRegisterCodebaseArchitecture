@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
@@ -149,6 +150,48 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 ChangedByClientId = changedByClientId,
                 ChangedAt = DateTime.UtcNow,
             });
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = environment.Id,
+                Environment = environment.Environment,
+                Purpose = environment.Purpose,
+                Sponsor = environment.Sponsor,
+                CurrentUptimeSchedule = environment.CurrentUptimeSchedule,
+                Priority1 = environment.Priority1,
+                Priority2 = environment.Priority2,
+                Priority3 = environment.Priority3,
+                ActionItemsUpdates = environment.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
+                DNSURL = environment.DNSURL,
+                Status = environment.Status,
+            };
+        }
+
+        // New entries are prepended, not appended - matches the source
+        // data's own existing newest-first convention (every real entry in
+        // this column reads top-to-bottom as newest-to-oldest). The date
+        // prefix format ("dd-MMM-yyyy") matches ActionItemsLineParserUtility's
+        // own normalized display format on the frontend exactly, so this
+        // new entry parses and renders identically to every pre-existing one.
+        public async Task<EnvironmentOverviewDTO> AddActionItemAsynchronous(Guid id, string note)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            string formattedDate = DateTime.UtcNow.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
+            string newLine = $"{formattedDate}: {note.Trim()}";
+
+            environment.ActionItemsUpdates = string.IsNullOrEmpty(environment.ActionItemsUpdates)
+                ? newLine
+                : $"{newLine}\n{environment.ActionItemsUpdates}";
 
             await _applicationDatabaseContext.SaveChangesAsync();
 

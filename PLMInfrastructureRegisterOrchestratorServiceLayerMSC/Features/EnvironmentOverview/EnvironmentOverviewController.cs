@@ -206,5 +206,50 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.AddActionItem)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> AddActionItemAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] AddActionItemRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertAddActionItemRequest(request);
+
+                EnvironmentOverviewDTO updatedEnvironment =
+                    await _environmentOverviewService.AddActionItemAsynchronous(id, request!.Note!);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Action item added successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Add action item validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Add action item not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while adding an action item.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while adding the action item.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

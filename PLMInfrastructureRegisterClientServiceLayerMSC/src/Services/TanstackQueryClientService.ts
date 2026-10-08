@@ -9,6 +9,7 @@ import type EnvironmentOverviewInterfaceModel from '../Models/EnvironmentOvervie
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
 import type AddEnvironmentOverviewStatusOptionRequestInterfaceModel from '../Models/AddEnvironmentOverviewStatusOptionRequestInterfaceModel';
+import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -80,6 +81,24 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to update the Status.'));
+        },
+      });
+    },
+
+    useAddActionItemMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: AddActionItemRequestInterfaceModel }) =>
+          EnvironmentOverviewService.current.addActionItem(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to add the action item.'));
         },
       });
     },

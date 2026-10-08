@@ -37,6 +37,17 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [expandedActionItemsRowIds, setExpandedActionItemsRowIds] = useState<Set<string>>(new Set());
   const actionItemsScrollRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
+  // Which row has an active "Add Entry" draft open - only one at a time
+  // across the whole table (clicking "+ Add Entry" elsewhere closes any
+  // other open draft), matching how only one modal/dropdown is normally
+  // open at once elsewhere in this app. Edit-Mode-gated: "Add Entry" itself
+  // only renders while Edit Mode is active, matching Status editing's own
+  // precedent on this screen.
+  const [actionItemDraftRowId, setActionItemDraftRowId] = useState<string | null>(null);
+  const [actionItemDraftText, setActionItemDraftText] = useState<string>('');
+  const [actionItemDraftError, setActionItemDraftError] = useState<string | null>(null);
+  const actionItemDraftInputRef = useRef<HTMLTextAreaElement | null>(null);
+
   // Lifted (not self-contained) specifically on this screen, unlike Resources
   // - the Status column needs to know whether Edit Mode is active to decide
   // between its read-only copyable cell and its editable dropdown.
@@ -156,6 +167,70 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       setStatusModalTargetRowId(null);
     }
   };
+
+  const addActionItemMutation = TanstackQueryClientService.current.environmentOverview.useAddActionItemMutation({
+    onSuccess: () => {
+      setActionItemDraftRowId(null);
+      setActionItemDraftText('');
+      setActionItemDraftError(null);
+    },
+    onError: (error) => {
+      setActionItemDraftError(error.message);
+    },
+  });
+
+  // Same three-letter-month format ActionItemsLineParserUtility normalizes
+  // every other date to, and the exact format the backend actually persists
+  // (EnvironmentOverviewService.AddActionItemAsynchronous) - so the draft
+  // preview shown before saving looks identical to how it'll render after.
+  const getTodayFormattedDate = (): string => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const today = new Date();
+    return `${String(today.getDate()).padStart(2, '0')}-${months[today.getMonth()]}-${today.getFullYear()}`;
+  };
+
+  const handleOpenActionItemDraft = (rowId: string): void => {
+    setActionItemDraftRowId(rowId);
+    setActionItemDraftText('');
+    setActionItemDraftError(null);
+  };
+
+  const handleDiscardActionItemDraft = (): void => {
+    setActionItemDraftRowId(null);
+    setActionItemDraftText('');
+    setActionItemDraftError(null);
+  };
+
+  const handleSaveActionItemDraft = (): void => {
+    if (!actionItemDraftRowId) return;
+    const trimmedNote = actionItemDraftText.trim();
+    if (!trimmedNote) {
+      setActionItemDraftError('A note is required.');
+      return;
+    }
+    addActionItemMutation.mutate({ id: actionItemDraftRowId, request: { note: trimmedNote } });
+  };
+
+  // Escape discards the draft; Ctrl/Cmd+Enter saves it. stopPropagation on
+  // both for the exact same reason the Add Environment draft row does this -
+  // stops TableSelectionService's own document-level Escape handler from
+  // also firing (a harmless no-op here, but no reason to let it run at all
+  // while editing a draft field).
+  const handleActionItemDraftKeyDown = (event: React.KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      handleDiscardActionItemDraft();
+      return;
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.stopPropagation();
+      handleSaveActionItemDraft();
+    }
+  };
+
+  useEffect(() => {
+    if (actionItemDraftRowId) actionItemDraftInputRef.current?.focus();
+  }, [actionItemDraftRowId]);
 
   const handleToggleActionItemsExpanded = (rowId: string): void => {
     setExpandedActionItemsRowIds((previous) => {
@@ -386,6 +461,76 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
+  // The "+ Add Entry" control at the very top of a row's cell, or (while a
+  // draft is active for this row) the draft itself - today's date in a
+  // non-editable pill matching every other entry's own tag, plus a focused
+  // textarea for the note. Edit-Mode-gated: never rendered in View Mode,
+  // same as the Status column's own editing affordance.
+  const renderActionItemDraftOrButton = (rowId: string): React.ReactNode => {
+    if (actionItemDraftRowId !== rowId) {
+      return (
+        <button
+          type="button"
+          onClick={() => handleOpenActionItemDraft(rowId)}
+          className="flex items-center gap-1 font-bold text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+        >
+          <Plus className="w-3 h-3" />
+          Add Entry
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex items-start gap-1.5">
+        <span className="shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full bg-[#0C2086] dark:bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap">
+          {getTodayFormattedDate()}
+        </span>
+        <div className="flex-1 min-w-0">
+          <textarea
+            ref={actionItemDraftInputRef}
+            name="draft-action-item-note"
+            aria-label="New action item note"
+            value={actionItemDraftText}
+            onChange={(event) => {
+              setActionItemDraftText(event.target.value);
+              if (actionItemDraftError) setActionItemDraftError(null);
+            }}
+            onKeyDown={handleActionItemDraftKeyDown}
+            placeholder="Type a note…"
+            rows={2}
+            className="w-full bg-transparent border-b border-dashed border-[#0C2086]/30 dark:border-blue-400/40 focus:border-solid focus:border-[#0C2086] dark:focus:border-blue-400 focus:outline-none resize-y whitespace-pre-wrap break-words placeholder:text-slate-300 dark:placeholder:text-zinc-700"
+          />
+          <div className="flex items-center justify-between mt-0.5">
+            <span className="text-[9px]">
+              {actionItemDraftError ? (
+                <span className="text-rose-500 dark:text-rose-400">{actionItemDraftError}</span>
+              ) : (
+                <span className="text-slate-400 dark:text-zinc-500">Ctrl+Enter to save · Esc to discard</span>
+              )}
+            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleDiscardActionItemDraft}
+                className="font-bold text-slate-400 dark:text-zinc-500 hover:opacity-80"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveActionItemDraft}
+                disabled={addActionItemMutation.isPending}
+                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 disabled:opacity-50"
+              >
+                {addActionItemMutation.isPending ? 'Saving…' : 'Done'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderActionItemsCell = (
     environment: EnvironmentOverviewInterfaceModel,
     rowIndex: number
@@ -408,7 +553,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         }}
         className="px-3 py-2 align-top"
       >
-        {allLines.length > 0 ? (
+        {allLines.length > 0 || isEditMode ? (
           <div
             ref={(el) => {
               if (el) actionItemsScrollRefs.current.set(environment.id, el);
@@ -416,6 +561,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             }}
             className="max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
           >
+            {isEditMode && renderActionItemDraftOrButton(environment.id)}
             {visibleLines.map((line, lineIndex) => renderActionItemsLine(line, lineIndex))}
             {hasMore && (
               <button

@@ -34,5 +34,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 throw new ValidationException("A Status option name must be provided.");
             }
         }
+
+        public void AssertAddActionItemRequest(AddActionItemRequestDTO? request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.Note))
+            {
+                throw new ValidationException("A note must be provided.");
+            }
+        }
     }
 }

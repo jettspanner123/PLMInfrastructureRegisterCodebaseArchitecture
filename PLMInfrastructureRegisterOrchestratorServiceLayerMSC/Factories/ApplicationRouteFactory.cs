@@ -51,6 +51,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string AddStatusOption = "StatusOptions";
 
             public const string UpdateStatus = "{id}/Status";
+
+            public const string AddActionItem = "{id}/ActionItems";
         }
     }
 }
