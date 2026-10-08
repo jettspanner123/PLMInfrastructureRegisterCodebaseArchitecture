@@ -353,6 +353,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             searchable
             size="sm"
             disabled={isPending}
+            // Status is this table's last (rightmost) column - a left-
+            // anchored panel would grow further right and overflow past the
+            // table/viewport edge, since the trigger itself is much
+            // narrower than the panel's own min-width.
+            dropdownAnchor="right"
             footerAction={{
               label: 'Add New Status',
               icon: <Plus className="w-3.5 h-3.5" />,

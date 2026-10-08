@@ -39,6 +39,14 @@ export interface CustomSelectSharedComponentProps {
   footerAction?: SelectFooterAction;
   onOpenChange?: (isOpen: boolean) => void;
   disabled?: boolean;
+  // 'left' (default, unchanged for every existing caller): the panel's
+  // top-left corner anchors to the trigger's bottom-left, growing rightward
+  // past the trigger's own width when the panel's min-width needs more room
+  // than a narrow trigger provides. 'right': anchors the panel's top-right
+  // corner to the trigger's bottom-right instead, growing leftward - for a
+  // narrow trigger near the right edge of its container (e.g. a table's
+  // last column), where growing rightward would overflow.
+  dropdownAnchor?: 'left' | 'right';
 }
 
 export default function CustomSelectSharedComponent({
@@ -59,6 +67,7 @@ export default function CustomSelectSharedComponent({
   footerAction,
   onOpenChange,
   disabled = false,
+  dropdownAnchor = 'left',
 }: CustomSelectSharedComponentProps): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -171,7 +180,9 @@ export default function CustomSelectSharedComponent({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 4 }}
             transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className={`absolute left-0 right-0 min-w-[200px] top-full mt-1.5 z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs space-y-1 sm:space-y-0.5 max-h-80 sm:max-h-72 overflow-y-auto ${dropdownClassName || ''}`}
+            className={`absolute ${
+              dropdownAnchor === 'right' ? 'right-0' : 'left-0 right-0'
+            } min-w-[200px] top-full mt-1.5 z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs space-y-1 sm:space-y-0.5 max-h-80 sm:max-h-72 overflow-y-auto ${dropdownClassName || ''}`}
           >
             {isSearchActive && (
               <div className="p-2 sm:p-1.5 border-b border-slate-100 dark:border-zinc-800/80 mb-1">
