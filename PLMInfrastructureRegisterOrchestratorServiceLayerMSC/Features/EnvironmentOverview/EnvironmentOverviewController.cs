@@ -251,5 +251,48 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpDelete(ApplicationRouteFactory.EnvironmentOverviewRoutes.DeleteActionItem)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> DeleteActionItemAsynchronous(
+            [FromRoute] Guid id,
+            [FromRoute] int lineIndex)
+        {
+            try
+            {
+                EnvironmentOverviewDTO updatedEnvironment =
+                    await _environmentOverviewService.DeleteActionItemAsynchronous(id, lineIndex);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Action item deleted successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Delete action item validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Delete action item not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting an action item.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while deleting the action item.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

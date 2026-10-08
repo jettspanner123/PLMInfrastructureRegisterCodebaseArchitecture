@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX, Plus } from 'lucide-react';
+import { ServerOff, FilterX, Plus, Trash2 } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -9,6 +9,7 @@ import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditM
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
+import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import CreateStatusOptionModalController from './Components/CreateStatusOptionModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
@@ -47,6 +48,18 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [actionItemDraftText, setActionItemDraftText] = useState<string>('');
   const [actionItemDraftError, setActionItemDraftError] = useState<string | null>(null);
   const actionItemDraftInputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // The one Action Items entry currently pending delete confirmation, if
+  // any - lineIndex doubles as both "position in the currently-displayed
+  // list" and "position in the full stored list", since every visible line
+  // is always a genuine prefix of the full list (see
+  // getVisibleActionItemsLines). lineText is kept only for the confirmation
+  // modal's own preview text, not sent to the server.
+  const [deletingActionItem, setDeletingActionItem] = useState<{
+    rowId: string;
+    lineIndex: number;
+    lineText: string;
+  } | null>(null);
 
   // Lifted (not self-contained) specifically on this screen, unlike Resources
   // - the Status column needs to know whether Edit Mode is active to decide
@@ -231,6 +244,24 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   useEffect(() => {
     if (actionItemDraftRowId) actionItemDraftInputRef.current?.focus();
   }, [actionItemDraftRowId]);
+
+  const deleteActionItemMutation = TanstackQueryClientService.current.environmentOverview.useDeleteActionItemMutation({
+    onSuccess: () => {
+      setDeletingActionItem(null);
+    },
+  });
+
+  const handleRequestDeleteActionItem = (rowId: string, lineIndex: number, lineText: string): void => {
+    setDeletingActionItem({ rowId, lineIndex, lineText });
+  };
+
+  const handleConfirmDeleteActionItem = async (): Promise<void> => {
+    if (!deletingActionItem) return;
+    await deleteActionItemMutation.mutateAsync({
+      id: deletingActionItem.rowId,
+      lineIndex: deletingActionItem.lineIndex,
+    });
+  };
 
   const handleToggleActionItemsExpanded = (rowId: string): void => {
     setExpandedActionItemsRowIds((previous) => {
@@ -436,12 +467,12 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   // regardless - a line with no recognizable leading date gets a generic
   // "Unrevealed" tag instead of a real date, rather than being left as bare
   // plain text, since every line is treated as equally worth keeping visible.
-  const renderActionItemsLine = (line: string, lineIndex: number): React.ReactNode => {
+  const renderActionItemsLine = (rowId: string, line: string, lineIndex: number): React.ReactNode => {
     const parsed = ActionItemsLineParserUtility.current.parseLine(line);
     const hasDate = parsed.date !== null;
 
     return (
-      <div key={lineIndex} className="flex items-start gap-1.5">
+      <div key={lineIndex} className="flex items-start gap-1.5 group/action-item">
         <span
           className={`shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap ${
             hasDate ? 'bg-[#0C2086] dark:bg-blue-600' : 'bg-slate-400 dark:bg-zinc-600'
@@ -456,7 +487,17 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             'Unrevealed'
           )}
         </span>
-        <span className="whitespace-pre-wrap break-words">{parsed.note}</span>
+        <span className="flex-1 whitespace-pre-wrap break-words">{parsed.note}</span>
+        {isEditMode && (
+          <button
+            type="button"
+            onClick={() => handleRequestDeleteActionItem(rowId, lineIndex, line)}
+            aria-label="Delete this entry"
+            className="shrink-0 mt-px text-slate-300 dark:text-zinc-700 hover:text-rose-500 dark:hover:text-rose-400 opacity-0 group-hover/action-item:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        )}
       </div>
     );
   };
@@ -562,7 +603,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             className="max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
           >
             {isEditMode && renderActionItemDraftOrButton(environment.id)}
-            {visibleLines.map((line, lineIndex) => renderActionItemsLine(line, lineIndex))}
+            {visibleLines.map((line, lineIndex) => renderActionItemsLine(environment.id, line, lineIndex))}
             {hasMore && (
               <button
                 type="button"
@@ -854,6 +895,33 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           setStatusModalTargetRowId(null);
         }}
         onCreated={handleStatusOptionCreated}
+      />
+
+      <ConfirmationModalSharedComponent
+        isOpen={deletingActionItem !== null}
+        onClose={() => setDeletingActionItem(null)}
+        onConfirm={handleConfirmDeleteActionItem}
+        title="Delete Entry"
+        description={
+          deletingActionItem && (
+            <>
+              <p>This will permanently delete this entry:</p>
+              <p className="mt-2 italic text-slate-500 dark:text-zinc-400 whitespace-pre-wrap break-words">
+                "
+                {deletingActionItem.lineText.length > 150
+                  ? `${deletingActionItem.lineText.slice(0, 150)}…`
+                  : deletingActionItem.lineText}
+                "
+              </p>
+              <p className="mt-2">This cannot be undone.</p>
+            </>
+          )
+        }
+        confirmText="Delete Entry"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={deleteActionItemMutation.isPending}
+        maxWidth="md"
       />
     </div>
   );

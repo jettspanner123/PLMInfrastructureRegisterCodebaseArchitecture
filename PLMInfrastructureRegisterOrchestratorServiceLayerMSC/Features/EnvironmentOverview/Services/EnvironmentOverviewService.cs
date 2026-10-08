@@ -211,5 +211,56 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Status = environment.Status,
             };
         }
+
+        // lineIndex is the entry's position in the current line-split list,
+        // exactly as the frontend is already displaying it (every "visible"
+        // line is always a genuine prefix of the full list - see
+        // EnvironmentOverviewScreenController.getVisibleActionItemsLines -
+        // so a line's position within the collapsed view is already its true
+        // position in the full list, no separate index translation needed).
+        // No per-entry identity exists in this single free-text column, so
+        // this is a straightforward hard delete of that line - there's no
+        // equivalent of IsDecommissioned's soft-delete pattern for one line
+        // within a text blob the way there is for a whole row.
+        public async Task<EnvironmentOverviewDTO> DeleteActionItemAsynchronous(Guid id, int lineIndex)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            List<string> lines = (environment.ActionItemsUpdates ?? string.Empty)
+                .Split('\n')
+                .ToList();
+
+            if (lineIndex < 0 || lineIndex >= lines.Count)
+            {
+                throw new ValidationException("That entry no longer exists - it may have already been changed or removed.");
+            }
+
+            lines.RemoveAt(lineIndex);
+            environment.ActionItemsUpdates = lines.Count > 0 ? string.Join("\n", lines) : null;
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = environment.Id,
+                Environment = environment.Environment,
+                Purpose = environment.Purpose,
+                Sponsor = environment.Sponsor,
+                CurrentUptimeSchedule = environment.CurrentUptimeSchedule,
+                Priority1 = environment.Priority1,
+                Priority2 = environment.Priority2,
+                Priority3 = environment.Priority3,
+                ActionItemsUpdates = environment.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
+                DNSURL = environment.DNSURL,
+                Status = environment.Status,
+            };
+        }
     }
 }

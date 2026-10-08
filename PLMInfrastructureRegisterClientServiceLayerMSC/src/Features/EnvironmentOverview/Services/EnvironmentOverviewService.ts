@@ -108,4 +108,18 @@ export default class EnvironmentOverviewService {
 
     return payload.data;
   }
+
+  public async deleteActionItem(id: string, lineIndex: number): Promise<EnvironmentOverviewInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/${id}/ActionItems/${lineIndex}`, {
+      method: 'DELETE',
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to delete the action item.');
+    }
+
+    return payload.data;
+  }
 }

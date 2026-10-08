@@ -102,6 +102,24 @@ export default class TanstackQueryClientService {
         },
       });
     },
+
+    useDeleteActionItemMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, lineIndex }: { id: string; lineIndex: number }) =>
+          EnvironmentOverviewService.current.deleteActionItem(id, lineIndex),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to delete the action item.'));
+        },
+      });
+    },
   };
 
   public readonly subscriptions = {
