@@ -414,14 +414,14 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               if (el) actionItemsScrollRefs.current.set(environment.id, el);
               else actionItemsScrollRefs.current.delete(environment.id);
             }}
-            className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
+            className="max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
           >
             {visibleLines.map((line, lineIndex) => renderActionItemsLine(line, lineIndex))}
             {hasMore && (
               <button
                 type="button"
                 onClick={() => handleToggleActionItemsExpanded(environment.id)}
-                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
               >
                 See All
               </button>
@@ -430,7 +430,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               <button
                 type="button"
                 onClick={() => handleToggleActionItemsExpanded(environment.id)}
-                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
               >
                 Show Less
               </button>
