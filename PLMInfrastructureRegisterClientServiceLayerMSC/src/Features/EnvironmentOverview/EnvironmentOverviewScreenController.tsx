@@ -16,6 +16,7 @@ import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOvervie
 import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
 import ViewEditModeCON from '../../Constants/ViewEditModeCON';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
+import ActionItemsLineParserUtility from '../../Utilities/ActionItemsLineParserUtility';
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
 import type DraftEnvironmentOverviewRowInterfaceModel from '../../Models/DraftEnvironmentOverviewRowInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
@@ -304,6 +305,35 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
+  // Most lines in this column follow a "DATE: NOTE" convention (dated
+  // history entries, newest-first) - ActionItemsLineParserUtility splits
+  // each line into its leading date (if any) and the rest, so the date can
+  // get its own small badge instead of blending into the note text,
+  // matching every other dated entry at a glance. Lines with no
+  // recognizable leading date (continuation/context lines) render exactly
+  // as before - plain text, no badge.
+  const renderActionItemsLine = (line: string, lineIndex: number): React.ReactNode => {
+    const parsed = ActionItemsLineParserUtility.current.parseLine(line);
+
+    if (!parsed.date) {
+      return (
+        <div key={lineIndex} className="whitespace-pre-wrap break-words">
+          {line}
+        </div>
+      );
+    }
+
+    return (
+      <div key={lineIndex} className="flex items-start gap-1.5">
+        <span className="shrink-0 mt-px inline-flex items-center rounded-full bg-[#0C2086] dark:bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap">
+          {parsed.date}
+          {parsed.tag ? ` (${parsed.tag})` : ''}
+        </span>
+        <span className="whitespace-pre-wrap break-words">{parsed.note}</span>
+      </div>
+    );
+  };
+
   const renderActionItemsCell = (
     environment: EnvironmentOverviewInterfaceModel,
     rowIndex: number
@@ -322,8 +352,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         className="px-3 py-2 align-top"
       >
         {environment.actionItemsUpdates ? (
-          <div className="max-h-40 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1">
-            {environment.actionItemsUpdates}
+          <div className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1">
+            {environment.actionItemsUpdates.split('\n').map((line, lineIndex) => renderActionItemsLine(line, lineIndex))}
           </div>
         ) : (
           <span className="text-slate-300 dark:text-zinc-700">—</span>
