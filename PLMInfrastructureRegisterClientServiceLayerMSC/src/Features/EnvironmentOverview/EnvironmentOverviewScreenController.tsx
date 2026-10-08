@@ -84,9 +84,19 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [statusModalTargetRowId, setStatusModalTargetRowId] = useState<string | null>(null);
   const [isCreateStatusModalOpen, setIsCreateStatusModalOpen] = useState<boolean>(false);
 
+  // Which cells (keyed "<rowId>:<columnKey>") are mid-save after a blur, and
+  // the most recent field-save failure, if any - unlike Status (one
+  // dropdown open at a time), several Purpose/Priority/DNS URL cells across
+  // different rows could plausibly be mid-save at once, so pending state is
+  // a Set rather than a single row id.
+  const [pendingFieldEditKeys, setPendingFieldEditKeys] = useState<Set<string>>(new Set());
+  const [fieldEditErrorByKey, setFieldEditErrorByKey] = useState<{ key: string; message: string } | null>(null);
+  const fieldEditErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
     return () => {
       if (statusErrorTimerRef.current !== null) clearTimeout(statusErrorTimerRef.current);
+      if (fieldEditErrorTimerRef.current !== null) clearTimeout(fieldEditErrorTimerRef.current);
     };
   }, []);
 
@@ -179,6 +189,61 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       handleStatusChange(statusModalTargetRowId, newStatus);
       setStatusModalTargetRowId(null);
     }
+  };
+
+  const updateFieldMutation = TanstackQueryClientService.current.environmentOverview.useUpdateFieldMutation();
+
+  // Fires on blur, not on every keystroke - the user's own confirmed choice
+  // over an explicit save button. Skips the request entirely when the
+  // trimmed value didn't actually change, since every blur (even one that
+  // didn't edit anything) would otherwise fire a no-op save. Empty string
+  // and null are treated as equivalent "nothing here" states for this
+  // comparison, matching UpdateFieldAsynchronous's own normalisation on the
+  // backend. Pending/error state is tracked per call (not via the mutation
+  // hook's own onSuccess/onError) since several of these cells could be
+  // mid-save at once.
+  const handleFieldBlur = (
+    rowId: string,
+    columnKey: keyof EnvironmentOverviewInterfaceModel,
+    fieldName: string,
+    rawValue: string,
+    originalValue: string | null
+  ): void => {
+    const trimmedNewValue = rawValue.trim();
+    const trimmedOriginalValue = (originalValue ?? '').trim();
+    if (trimmedNewValue === trimmedOriginalValue) return;
+
+    const cellKey = `${rowId}:${String(columnKey)}`;
+    setPendingFieldEditKeys((previous) => new Set(previous).add(cellKey));
+    setFieldEditErrorByKey((current) => (current?.key === cellKey ? null : current));
+
+    updateFieldMutation.mutate(
+      { id: rowId, request: { fieldName, value: trimmedNewValue || null } },
+      {
+        onSuccess: () => {
+          setPendingFieldEditKeys((previous) => {
+            const next = new Set(previous);
+            next.delete(cellKey);
+            return next;
+          });
+        },
+        onError: (error) => {
+          setPendingFieldEditKeys((previous) => {
+            const next = new Set(previous);
+            next.delete(cellKey);
+            return next;
+          });
+          if (fieldEditErrorTimerRef.current !== null) clearTimeout(fieldEditErrorTimerRef.current);
+          setFieldEditErrorByKey({
+            key: cellKey,
+            message: error instanceof Error ? error.message : 'Failed to update the field.',
+          });
+          fieldEditErrorTimerRef.current = setTimeout(() => {
+            setFieldEditErrorByKey((current) => (current?.key === cellKey ? null : current));
+          }, 4000);
+        },
+      }
+    );
   };
 
   const addActionItemMutation = TanstackQueryClientService.current.environmentOverview.useAddActionItemMutation({
@@ -416,6 +481,42 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
+  // Purpose/Priority1-3/DNS URL's Edit Mode rendering - an uncontrolled
+  // textarea (defaultValue, not value) rather than React-controlled state
+  // per keystroke: the DOM owns what's typed, so an unrelated re-render
+  // elsewhere in the table (another row's pending/error state changing)
+  // can't reset a user's in-progress typing in this cell. The key stays
+  // tied to the row+column, never to the value itself, so React doesn't
+  // force a remount mid-typing either.
+  const renderEditableTextCell = (
+    environment: EnvironmentOverviewInterfaceModel,
+    column: EnvironmentOverviewColumnDef,
+    fieldName: string,
+    columnWidth: number
+  ): React.ReactNode => {
+    const cellKey = `${environment.id}:${column.key}`;
+    const isPending = pendingFieldEditKeys.has(cellKey);
+    const cellError = fieldEditErrorByKey?.key === cellKey ? fieldEditErrorByKey.message : null;
+    const currentValue = (environment[column.key] as string | null) ?? '';
+
+    return (
+      <td key={column.key} style={{ width: columnWidth }} className="px-3 py-2 align-top">
+        <textarea
+          key={cellKey}
+          defaultValue={currentValue}
+          disabled={isPending}
+          rows={2}
+          aria-label={column.label}
+          onBlur={(event) =>
+            handleFieldBlur(environment.id, column.key, fieldName, event.target.value, currentValue)
+          }
+          className={EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME}
+        />
+        {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
+      </td>
+    );
+  };
+
   const renderTextCell = (
     environment: EnvironmentOverviewInterfaceModel,
     column: EnvironmentOverviewColumnDef,
@@ -426,6 +527,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
 
     const columnWidth = columnWidths.getColumnWidth(column.key);
+
+    const editableFieldName = EnvironmentOverviewCON.EDITABLE_TEXT_FIELD_NAMES[column.key];
+    if (isEditMode && editableFieldName) {
+      return renderEditableTextCell(environment, column, editableFieldName, columnWidth);
+    }
 
     if (displayValue === null || displayValue === '') {
       return (

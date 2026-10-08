@@ -262,5 +262,62 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Status = environment.Status,
             };
         }
+
+        // FieldName is already validated against the allow-list in
+        // EnvironmentOverviewAssertion.AssertUpdateFieldRequest before this
+        // runs - the switch below is exhaustive over that same allow-list,
+        // so the default branch is unreachable in practice, not a silent
+        // fallback for an unvalidated value.
+        public async Task<EnvironmentOverviewDTO> UpdateFieldAsynchronous(Guid id, string fieldName, string? value)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            string? normalisedValue = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+            switch (fieldName)
+            {
+                case "Purpose":
+                    environment.Purpose = normalisedValue;
+                    break;
+                case "Priority1":
+                    environment.Priority1 = normalisedValue;
+                    break;
+                case "Priority2":
+                    environment.Priority2 = normalisedValue;
+                    break;
+                case "Priority3":
+                    environment.Priority3 = normalisedValue;
+                    break;
+                case "DNSURL":
+                    environment.DNSURL = normalisedValue;
+                    break;
+                default:
+                    throw new ValidationException($"'{fieldName}' is not an editable field.");
+            }
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = environment.Id,
+                Environment = environment.Environment,
+                Purpose = environment.Purpose,
+                Sponsor = environment.Sponsor,
+                CurrentUptimeSchedule = environment.CurrentUptimeSchedule,
+                Priority1 = environment.Priority1,
+                Priority2 = environment.Priority2,
+                Priority3 = environment.Priority3,
+                ActionItemsUpdates = environment.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
+                DNSURL = environment.DNSURL,
+                Status = environment.Status,
+            };
+        }
     }
 }

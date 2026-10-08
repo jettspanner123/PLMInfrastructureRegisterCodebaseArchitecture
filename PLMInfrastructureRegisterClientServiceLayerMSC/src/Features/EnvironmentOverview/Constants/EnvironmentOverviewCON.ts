@@ -39,6 +39,21 @@ export default class EnvironmentOverviewCON {
   public static readonly CELL_CLASS_NAME: string =
     'px-3 py-2 align-top whitespace-pre-wrap break-words font-mono text-slate-700 dark:text-zinc-300';
 
+  // The only TEXT_COLUMNS keys Edit Mode lets a user type into directly -
+  // Environment, Sponsor, Current Uptime Schedule and Configuration &
+  // Customisation Version aren't part of this request and keep their
+  // read-only rendering. Maps each editable key to the PascalCase
+  // FieldName the backend's generic PUT /{id}/Field endpoint expects (see
+  // EnvironmentOverviewAssertion.AssertUpdateFieldRequest on the backend
+  // for the matching allow-list).
+  public static readonly EDITABLE_TEXT_FIELD_NAMES: Partial<Record<keyof EnvironmentOverviewInterfaceModel, string>> = {
+    purpose: 'Purpose',
+    priority1: 'Priority1',
+    priority2: 'Priority2',
+    priority3: 'Priority3',
+    dnsurl: 'DNSURL',
+  };
+
   // Action Items / Updates' collapsed-by-default state shows only the first
   // few dated entries (plus any date-less continuation lines bundled in
   // before the next real date) - "See All" reveals the rest. Counts only

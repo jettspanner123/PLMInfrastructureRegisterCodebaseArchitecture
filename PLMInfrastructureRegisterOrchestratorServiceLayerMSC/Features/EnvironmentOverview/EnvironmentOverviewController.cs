@@ -294,5 +294,50 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateField)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> UpdateFieldAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateEnvironmentOverviewFieldRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertUpdateFieldRequest(request);
+
+                EnvironmentOverviewDTO updatedEnvironment =
+                    await _environmentOverviewService.UpdateFieldAsynchronous(id, request!.FieldName!, request.Value);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Field updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update field validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update field not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating a field.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while updating the field.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

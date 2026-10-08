@@ -55,6 +55,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string AddActionItem = "{id}/ActionItems";
 
             public const string DeleteActionItem = "{id}/ActionItems/{lineIndex}";
+
+            public const string UpdateField = "{id}/Field";
         }
     }
 }
