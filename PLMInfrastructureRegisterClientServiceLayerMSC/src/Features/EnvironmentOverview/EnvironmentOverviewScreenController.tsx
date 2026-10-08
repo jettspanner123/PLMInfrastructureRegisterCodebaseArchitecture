@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX } from 'lucide-react';
+import { ServerOff, FilterX, Plus } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -8,10 +8,14 @@ import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTa
 import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
+import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
+import CreateStatusOptionModalController from './Components/CreateStatusOptionModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
 import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
+import ViewEditModeCON from '../../Constants/ViewEditModeCON';
+import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
 import type DraftEnvironmentOverviewRowInterfaceModel from '../../Models/DraftEnvironmentOverviewRowInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
@@ -24,6 +28,42 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [draftRow, setDraftRow] = useState<DraftEnvironmentOverviewRowInterfaceModel | null>(null);
   const [isDraftInvalid, setIsDraftInvalid] = useState<boolean>(false);
   const environmentInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Lifted (not self-contained) specifically on this screen, unlike Resources
+  // - the Status column needs to know whether Edit Mode is active to decide
+  // between its read-only copyable cell and its editable dropdown.
+  const [editMode, setEditMode] = useState<string>(ViewEditModeCON.VIEW);
+  const isEditMode = editMode === ViewEditModeCON.EDIT;
+
+  // Which row's Status dropdown is mid-update (disables that one dropdown
+  // and shows a pending indicator) and which row most recently failed (shows
+  // an inline error under that row's cell, auto-clearing after a few
+  // seconds) - keyed by row id since in principle more than one row could be
+  // mid-edit, even though only one dropdown is normally open at a time.
+  const [pendingStatusRowId, setPendingStatusRowId] = useState<string | null>(null);
+  const [statusErrorByRowId, setStatusErrorByRowId] = useState<{ rowId: string; message: string } | null>(null);
+  const statusErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Which row's dropdown opened the "Create Status" modal - null when the
+  // modal isn't open, or was opened from somewhere else. Lets onCreated
+  // below know which row to immediately select+save the new Status onto,
+  // combining SignForge's own "auto-select the newly created option" pattern
+  // with this screen's "selecting a Status saves immediately" behavior.
+  const [statusModalTargetRowId, setStatusModalTargetRowId] = useState<string | null>(null);
+  const [isCreateStatusModalOpen, setIsCreateStatusModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    return () => {
+      if (statusErrorTimerRef.current !== null) clearTimeout(statusErrorTimerRef.current);
+    };
+  }, []);
+
+  const { data: statusOptions = [] } =
+    TanstackQueryClientService.current.environmentOverview.useStatusOptionsQuery();
+  const statusSelectOptions = useMemo(
+    () => statusOptions.map((option) => ({ value: option, label: option })),
+    [statusOptions]
+  );
 
   const filteredEnvironments = useMemo(() => {
     const lowerCaseQuery = searchQuery.trim().toLowerCase();
@@ -68,6 +108,46 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       setIsDraftInvalid(false);
     },
   });
+
+  const updateStatusMutation = TanstackQueryClientService.current.environmentOverview.useUpdateEnvironmentStatusMutation({
+    onSuccess: () => {
+      setPendingStatusRowId(null);
+    },
+    onError: (error) => {
+      setPendingStatusRowId((currentRowId) => {
+        if (currentRowId) {
+          if (statusErrorTimerRef.current !== null) clearTimeout(statusErrorTimerRef.current);
+          setStatusErrorByRowId({ rowId: currentRowId, message: error.message });
+          statusErrorTimerRef.current = setTimeout(() => setStatusErrorByRowId(null), 4000);
+        }
+        return null;
+      });
+    },
+  });
+
+  // Fires the moment a Status option is picked - no separate confirm step.
+  // The cell keeps showing its last known-good value until the server
+  // responds (no optimistic update), so a failure never looks like a
+  // silent revert - it just never visually changed in the first place.
+  const handleStatusChange = (rowId: string, newStatus: string): void => {
+    setPendingStatusRowId(rowId);
+    updateStatusMutation.mutate({
+      id: rowId,
+      request: { status: newStatus, changedByClientId: AnonymousClientIdentityUtility.current.getOrCreateClientId() },
+    });
+  };
+
+  const handleOpenCreateStatusModal = (rowId: string): void => {
+    setStatusModalTargetRowId(rowId);
+    setIsCreateStatusModalOpen(true);
+  };
+
+  const handleStatusOptionCreated = (newStatus: string): void => {
+    if (statusModalTargetRowId) {
+      handleStatusChange(statusModalTargetRowId, newStatus);
+      setStatusModalTargetRowId(null);
+    }
+  };
 
   // Scrolls to and focuses the draft row the moment it's added - keyed on a
   // boolean (not the draft object itself), since the object gets a new
@@ -256,6 +336,34 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, EnvironmentOverviewCON.STATUS_COLUMN_INDEX);
     const statusText = environment.status;
 
+    if (isEditMode) {
+      const isPending = pendingStatusRowId === environment.id;
+      const rowError = statusErrorByRowId?.rowId === environment.id ? statusErrorByRowId.message : null;
+
+      return (
+        <td
+          key="status"
+          style={{ width: columnWidths.getColumnWidth('status') }}
+          className="px-3 py-2 align-top"
+        >
+          <CustomSelectSharedComponent
+            value={environment.status}
+            onChange={(newStatus) => handleStatusChange(environment.id, newStatus)}
+            options={statusSelectOptions}
+            searchable
+            size="sm"
+            disabled={isPending}
+            footerAction={{
+              label: 'Add New Status',
+              icon: <Plus className="w-3.5 h-3.5" />,
+              onClick: () => handleOpenCreateStatusModal(environment.id),
+            }}
+          />
+          {rowError && <p className="mt-1 text-[10px] text-rose-500">{rowError}</p>}
+        </td>
+      );
+    }
+
     return (
       <CopyableTableCellSharedComponent
         key="status"
@@ -353,7 +461,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <ViewEditModeToggleSharedComponent />
+          <ViewEditModeToggleSharedComponent value={editMode} onChange={setEditMode} />
 
           <ExpandableSearchSharedComponent
             value={searchQuery}
@@ -476,6 +584,15 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           description="Nothing has been loaded into the Environment Overview table yet."
         />
       )}
+
+      <CreateStatusOptionModalController
+        isOpen={isCreateStatusModalOpen}
+        onClose={() => {
+          setIsCreateStatusModalOpen(false);
+          setStatusModalTargetRowId(null);
+        }}
+        onCreated={handleStatusOptionCreated}
+      />
     </div>
   );
 }

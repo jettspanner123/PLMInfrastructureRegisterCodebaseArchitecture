@@ -20,6 +20,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             {
                 throw new ValidationException("A Status must be provided.");
             }
+
+            if (string.IsNullOrWhiteSpace(request.ChangedByClientId))
+            {
+                throw new ValidationException("A ChangedByClientId must be provided.");
+            }
         }
 
         public void AssertAddStatusOptionRequest(AddEnvironmentOverviewStatusOptionRequestDTO? request)

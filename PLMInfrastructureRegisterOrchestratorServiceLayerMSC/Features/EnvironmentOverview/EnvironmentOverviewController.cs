@@ -171,7 +171,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             {
                 EnvironmentOverviewAssertion.Current.AssertUpdateStatusRequest(request);
 
-                EnvironmentOverviewDTO updatedEnvironment = await _environmentOverviewService.UpdateStatusAsynchronous(id, request!.Status!);
+                EnvironmentOverviewDTO updatedEnvironment = await _environmentOverviewService.UpdateStatusAsynchronous(
+                    id, request!.Status!, request.ChangedByClientId!);
 
                 return Ok(
                     APIResponse<EnvironmentOverviewDTO>.Succeeded(

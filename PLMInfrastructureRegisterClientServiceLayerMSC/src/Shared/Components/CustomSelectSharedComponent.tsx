@@ -38,6 +38,7 @@ export interface CustomSelectSharedComponentProps {
   formatDisplayValue?: (val: string) => string;
   footerAction?: SelectFooterAction;
   onOpenChange?: (isOpen: boolean) => void;
+  disabled?: boolean;
 }
 
 export default function CustomSelectSharedComponent({
@@ -57,6 +58,7 @@ export default function CustomSelectSharedComponent({
   formatDisplayValue,
   footerAction,
   onOpenChange,
+  disabled = false,
 }: CustomSelectSharedComponentProps): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -142,9 +144,12 @@ export default function CustomSelectSharedComponent({
 
       <button
         type="button"
-        onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 cursor-pointer select-none ${triggerClassName || ''}`}
+        disabled={disabled}
+        onPointerDown={() => !disabled && ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 select-none ${
+          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        } ${triggerClassName || ''}`}
       >
         <div className="flex items-center gap-2 truncate font-medium">
           {selectedOption?.icon}
@@ -175,6 +180,8 @@ export default function CustomSelectSharedComponent({
                   <input
                     ref={searchInputRef}
                     type="text"
+                    name="custom-select-search"
+                    aria-label={searchPlaceholder}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={searchPlaceholder}

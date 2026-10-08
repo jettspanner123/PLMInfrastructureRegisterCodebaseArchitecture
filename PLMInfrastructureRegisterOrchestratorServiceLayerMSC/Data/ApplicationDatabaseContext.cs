@@ -21,6 +21,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
 
         public DbSet<EnvironmentOverviewNexus> EnvironmentOverviews => Set<EnvironmentOverviewNexus>();
 
+        public DbSet<EnvironmentOverviewStatusHistoryNexus> EnvironmentOverviewStatusHistories =>
+            Set<EnvironmentOverviewStatusHistoryNexus>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ResourceNexus>(entity =>
@@ -98,6 +101,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
             {
                 entity.ToTable("IG_EnvironmentOverviewTBL");
                 entity.HasKey(environment => environment.Id);
+            });
+
+            modelBuilder.Entity<EnvironmentOverviewStatusHistoryNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentOverviewStatusHistoryTBL");
+                entity.HasKey(history => history.Id);
+                entity.HasIndex(history => history.EnvironmentOverviewId);
             });
         }
     }

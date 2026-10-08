@@ -7,6 +7,8 @@ import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubsc
 import type SubscriptionDeletionResultInterfaceModel from '../Models/SubscriptionDeletionResultInterfaceModel';
 import type EnvironmentOverviewInterfaceModel from '../Models/EnvironmentOverviewInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/CreateEnvironmentOverviewRequestInterfaceModel';
+import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
+import type AddEnvironmentOverviewStatusOptionRequestInterfaceModel from '../Models/AddEnvironmentOverviewStatusOptionRequestInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -40,6 +42,44 @@ export default class TanstackQueryClientService {
         onSuccess: async (data) => {
           await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
           options?.onSuccess?.(data);
+        },
+      });
+    },
+
+    useStatusOptionsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_STATUS_OPTIONS,
+        queryFn: () => EnvironmentOverviewService.current.getStatusOptions(),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useAddStatusOptionMutation: (options?: { onSuccess?: (data: string[]) => void }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: AddEnvironmentOverviewStatusOptionRequestInterfaceModel) =>
+          EnvironmentOverviewService.current.addStatusOption(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_STATUS_OPTIONS });
+          options?.onSuccess?.(data);
+        },
+      });
+    },
+
+    useUpdateEnvironmentStatusMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateEnvironmentOverviewStatusRequestInterfaceModel }) =>
+          EnvironmentOverviewService.current.updateStatus(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the Status.'));
         },
       });
     },

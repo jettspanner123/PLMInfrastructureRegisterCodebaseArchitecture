@@ -127,7 +127,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             return options;
         }
 
-        public async Task<EnvironmentOverviewDTO> UpdateStatusAsynchronous(Guid id, string status)
+        public async Task<EnvironmentOverviewDTO> UpdateStatusAsynchronous(Guid id, string status, string changedByClientId)
         {
             EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
                 .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
@@ -137,7 +137,19 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 throw new NotFoundException("That environment could not be found.");
             }
 
+            string previousStatus = environment.Status;
             environment.Status = status;
+
+            _applicationDatabaseContext.EnvironmentOverviewStatusHistories.Add(new EnvironmentOverviewStatusHistoryNexus
+            {
+                Id = Guid.NewGuid(),
+                EnvironmentOverviewId = environment.Id,
+                PreviousStatus = previousStatus,
+                NewStatus = status,
+                ChangedByClientId = changedByClientId,
+                ChangedAt = DateTime.UtcNow,
+            });
+
             await _applicationDatabaseContext.SaveChangesAsync();
 
             return new EnvironmentOverviewDTO
