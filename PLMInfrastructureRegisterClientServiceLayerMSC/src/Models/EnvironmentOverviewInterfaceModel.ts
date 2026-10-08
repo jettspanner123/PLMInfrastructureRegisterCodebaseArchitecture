@@ -12,5 +12,5 @@ export default interface EnvironmentOverviewInterfaceModel {
   actionItemsUpdates: string | null;
   configurationCustomisationVersion: string | null;
   dnsurl: string | null;
-  isDecommissioned: boolean;
+  status: string;
 }

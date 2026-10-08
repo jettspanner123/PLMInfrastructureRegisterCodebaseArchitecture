@@ -33,7 +33,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       [
         ...EnvironmentOverviewCON.TEXT_COLUMNS.map((column) => environment[column.key]),
         environment.actionItemsUpdates,
-        environment.isDecommissioned ? 'Decommissioned' : 'Live',
+        environment.status,
       ].some((value) => typeof value === 'string' && value.toLowerCase().includes(lowerCaseQuery))
     );
   }, [environments, searchQuery]);
@@ -50,8 +50,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       const environment = filteredEnvironments[rowIndex];
       if (!environment) return '';
       if (colIndex === EnvironmentOverviewCON.ACTION_ITEMS_COLUMN_INDEX) return environment.actionItemsUpdates ?? '';
-      if (colIndex === EnvironmentOverviewCON.STATUS_COLUMN_INDEX)
-        return environment.isDecommissioned ? 'Decommissioned' : 'Live';
+      if (colIndex === EnvironmentOverviewCON.STATUS_COLUMN_INDEX) return environment.status;
       return environment[EnvironmentOverviewCON.TEXT_COLUMNS[colIndex].key]?.toString() ?? '';
     },
   });
@@ -255,7 +254,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
   const renderStatusCell = (environment: EnvironmentOverviewInterfaceModel, rowIndex: number): React.ReactNode => {
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, EnvironmentOverviewCON.STATUS_COLUMN_INDEX);
-    const statusText = environment.isDecommissioned ? 'Decommissioned' : 'Live';
+    const statusText = environment.status;
 
     return (
       <CopyableTableCellSharedComponent
@@ -272,7 +271,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         <span className="inline-flex items-center gap-1.5">
           <span
             className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-              environment.isDecommissioned ? 'bg-slate-400 dark:bg-zinc-600' : 'bg-emerald-500'
+              environment.status === 'Live' ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-zinc-600'
             }`}
           />
           {statusText}
