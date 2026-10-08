@@ -15,6 +15,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
 
         public DbSet<ResourceNexus> Resources => Set<ResourceNexus>();
 
+        public DbSet<ResourceCellFormatNexus> ResourceCellFormats => Set<ResourceCellFormatNexus>();
+
         public DbSet<ConfiguredSubscription> ConfiguredSubscriptions => Set<ConfiguredSubscription>();
 
         public DbSet<ConfigurationConstantClass> ConfigurationConstants => Set<ConfigurationConstantClass>();
@@ -31,6 +33,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 entity.ToTable("IG_ResourcesTBL");
                 entity.HasKey(resource => resource.Id);
                 entity.Property(resource => resource.Status).HasConversion<string>();
+            });
+
+            modelBuilder.Entity<ResourceCellFormatNexus>(entity =>
+            {
+                entity.ToTable("IG_ResourceCellFormatTBL");
+                entity.HasKey(cellFormat => cellFormat.Id);
+                // One row per (Resource, column) - a second right-click
+                // format change on the same cell updates this same row
+                // rather than creating a duplicate.
+                entity.HasIndex(cellFormat => new { cellFormat.ResourceId, cellFormat.ColumnKey }).IsUnique();
             });
 
             modelBuilder.Entity<ConfiguredSubscription>(entity =>

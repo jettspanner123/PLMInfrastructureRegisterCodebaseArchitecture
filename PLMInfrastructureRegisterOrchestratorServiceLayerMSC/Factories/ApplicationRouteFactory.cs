@@ -7,6 +7,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string ControllerURL = "/Api/V1/Resources";
 
             public const string GetAllResources = "";
+
+            // Right-click cell formatting (bold/italic/background color) -
+            // sparse, keyed by (ResourceId, ColumnKey). GetAllResources
+            // itself is untouched; the frontend fetches these separately and
+            // merges them in by (resourceId, columnKey) when rendering.
+            public const string GetCellFormats = "CellFormats";
+
+            public const string UpdateCellFormat = "CellFormats";
         }
 
         public static class SyncRoutes

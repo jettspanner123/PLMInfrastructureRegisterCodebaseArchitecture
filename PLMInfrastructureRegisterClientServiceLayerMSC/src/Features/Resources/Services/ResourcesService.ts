@@ -1,6 +1,8 @@
 import ApplicationNetworkAPIConfiguration from '../../../Constants/ApplicationNetworkAPIConfiguration';
 import type APIResponseInterfaceModel from '../../../Models/APIResponseInterfaceModel';
 import type ResourceInterfaceModel from '../../../Models/ResourceInterfaceModel';
+import type ResourceCellFormatInterfaceModel from '../../../Models/ResourceCellFormatInterfaceModel';
+import type UpdateResourceCellFormatRequestInterfaceModel from '../../../Models/UpdateResourceCellFormatRequestInterfaceModel';
 
 export default class ResourcesService {
   public static current: ResourcesService = new ResourcesService();
@@ -16,6 +18,36 @@ export default class ResourcesService {
 
     if (!payload.status) {
       throw new Error(payload.message || 'Failed to fetch Resources.');
+    }
+
+    return payload.data;
+  }
+
+  public async getCellFormats(): Promise<ResourceCellFormatInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/CellFormats`);
+
+    const payload: APIResponseInterfaceModel<ResourceCellFormatInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch cell formats.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateCellFormat(
+    request: UpdateResourceCellFormatRequestInterfaceModel
+  ): Promise<ResourceCellFormatInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/CellFormats`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<ResourceCellFormatInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the cell format.');
     }
 
     return payload.data;

@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 // separate "row selection" or "column selection" type, which keeps the
 // copy/highlight logic uniform across all three trigger types (cell, row
 // header, column header).
-interface TableSelectionRectangle {
+export interface TableSelectionRectangle {
   startRow: number;
   endRow: number;
   startCol: number;
@@ -48,6 +48,17 @@ export interface UseTableSelectionResult {
   getRowHeaderHandlers: (rowIndex: number) => TableSelectionMouseHandlers;
   getColumnHeaderHandlers: (columnIndex: number) => TableSelectionMouseHandlers;
   clearSelection: () => void;
+  // The raw rectangle, for a caller that needs every (row, col) pair it
+  // covers (e.g. applying a right-click formatting action to the whole
+  // selection) rather than just drawing it.
+  selection: TableSelectionRectangle | null;
+  // Right-click's own "Excel-like" entry point - selects exactly this one
+  // cell, replacing whatever was selected before. A caller only calls this
+  // when the right-clicked cell ISN'T already part of the current selection
+  // (see isCellSelected) - right-clicking inside an existing multi-cell
+  // selection should keep it, not collapse it to one cell.
+  selectCell: (rowIndex: number, columnIndex: number) => void;
+  isCellSelected: (rowIndex: number, columnIndex: number) => boolean;
 }
 
 function computeRectangleForAxis(
@@ -266,12 +277,27 @@ export default class TableSelectionService {
       setSelection(null);
     }, []);
 
+    const selectCell = useCallback((row: number, col: number): void => {
+      setSelection({ startRow: row, endRow: row, startCol: col, endCol: col });
+    }, []);
+
+    const isCellSelected = useCallback(
+      (row: number, col: number): boolean => {
+        if (!selection) return false;
+        return row >= selection.startRow && row <= selection.endRow && col >= selection.startCol && col <= selection.endCol;
+      },
+      [selection]
+    );
+
     return {
       containerRef,
       getCellSelectionBoxShadow,
       getCellHandlers,
       getRowHeaderHandlers,
       getColumnHeaderHandlers,
+      selection,
+      selectCell,
+      isCellSelected,
       clearSelection,
     };
   }

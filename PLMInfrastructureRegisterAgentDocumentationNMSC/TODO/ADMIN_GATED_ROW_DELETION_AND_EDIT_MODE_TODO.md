@@ -14,6 +14,8 @@ Correction to this TODO's own earlier claim: `PermissionGuardSharedComponent` do
 
 **Update**: Row deletion has now shipped too (a trash icon before each row's serial number in Edit Mode, soft-deleting the environment via `IsDeleted`/`DeletedAt` on `EnvironmentOverviewNexus`, filtered out everywhere by a global EF query filter). Same deliberate, explicit, fully-ungated decision as Status before it — the standing instruction from when Status shipped ("don't add any role filter please, but keep in TODO that this feature will only be shown to admin only") applies to every Edit Mode feature built since, not just the one it was first said about. So as of now, **anyone who opens this page can delete any environment row, with zero restriction** — same known, accepted gap as everything else in this TODO, not a new oversight.
 
+**Update**: Edit Mode's first real behavior on **Infrastructure Register** (`ResourcesScreenController.tsx`) has now shipped too - right-click a selected cell (or multi-cell selection) to open a context menu with Bold/Italic/4 background colors, persisted via `IG_ResourceCellFormatTBL`. This is the first thing that screen's own View/Edit Mode toggle has ever actually gated (previously pure UI, nothing reacted to it) - same ungated-for-now decision, same standing instruction. **Anyone who opens Infrastructure Register and switches to Edit Mode can format any cell, with zero restriction.**
+
 ## What needs deciding when this is picked up
 
 - What the authentication/authorization system itself looks like (identity provider, session model, how a user's role reaches the frontend) — this TODO assumes that work happens first, as its own separate effort.

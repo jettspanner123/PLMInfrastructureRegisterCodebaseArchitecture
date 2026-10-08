@@ -11,6 +11,8 @@ import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models
 import type AddEnvironmentOverviewOptionRequestInterfaceModel from '../Models/AddEnvironmentOverviewOptionRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
+import type UpdateResourceCellFormatRequestInterfaceModel from '../Models/UpdateResourceCellFormatRequestInterfaceModel';
+import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -21,6 +23,32 @@ export default class TanstackQueryClientService {
         queryKey: TanstackQueryKeysCON.RESOURCES,
         queryFn: () => ResourcesService.current.getResources(),
         staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useResourceCellFormatsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.RESOURCE_CELL_FORMATS,
+        queryFn: () => ResourcesService.current.getCellFormats(),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useUpdateResourceCellFormatMutation: (options?: {
+      onSuccess?: (data: ResourceCellFormatInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: UpdateResourceCellFormatRequestInterfaceModel) =>
+          ResourcesService.current.updateCellFormat(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CELL_FORMATS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the cell format.'));
+        },
       });
     },
   };

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ChevronDown, Columns3, ServerOff, FilterX } from 'lucide-react';
+import { ChevronDown, Columns3, ServerOff, FilterX, Bold, Italic, X } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -8,17 +8,28 @@ import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableS
 import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
 import ChatAssistantSharedComponent from '../../Shared/Components/ChatAssistantSharedComponent';
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
+import ContextMenuSharedComponent, { type ContextMenuItem } from '../../Shared/Components/ContextMenuSharedComponent';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
+import ViewEditModeCON from '../../Constants/ViewEditModeCON';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import TableSelectionService from '../../Services/TableSelectionService';
 import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
+import type ResourceCellFormatTargetInterfaceModel from '../../Models/ResourceCellFormatTargetInterfaceModel';
 import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceColumnCON';
+import ResourceCellFormatCON from './Constants/ResourceCellFormatCON';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
 
 export default function ResourcesScreenController(): React.JSX.Element {
   const { data: resources = [], isLoading } = TanstackQueryClientService.current.resources.useResourcesQuery();
+
+  // Lifted (not self-contained) specifically because right-click cell
+  // formatting needs to know whether Edit Mode is active - this screen had
+  // nothing to react to it before now, see ViewEditModeToggleSharedComponent's
+  // own doc comment.
+  const [editMode, setEditMode] = useState<string>(ViewEditModeCON.VIEW);
+  const isEditMode = editMode === ViewEditModeCON.EDIT;
 
   const columnButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isColumnDropdownOpen, setIsColumnDropdownOpen] = useState<boolean>(false);
@@ -139,6 +150,135 @@ export default function ResourcesScreenController(): React.JSX.Element {
     },
   });
 
+  // Right-click cell formatting (bold/italic/background color) - Edit-Mode
+  // gated, the first real behavior this screen has ever had react to that
+  // toggle. Formats are fetched as their own flat list and merged in here by
+  // "<resourceId>:<columnKey>", independent of GetAllResources entirely.
+  const { data: cellFormats = [] } = TanstackQueryClientService.current.resources.useResourceCellFormatsQuery();
+  const cellFormatByKey = useMemo(() => {
+    const map = new Map<string, { isBold: boolean; isItalic: boolean; backgroundColorKey: string | null }>();
+    cellFormats.forEach((format) => {
+      map.set(`${format.resourceId}:${format.columnKey}`, {
+        isBold: format.isBold,
+        isItalic: format.isItalic,
+        backgroundColorKey: format.backgroundColorKey,
+      });
+    });
+    return map;
+  }, [cellFormats]);
+
+  const updateCellFormatMutation = TanstackQueryClientService.current.resources.useUpdateResourceCellFormatMutation();
+
+  const [contextMenu, setContextMenu] = useState<{ isOpen: boolean; x: number; y: number }>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+  });
+
+  // Every (resourceId, columnKey) pair the current selection rectangle
+  // covers - computed fresh each time rather than captured once when the
+  // menu opened, so it always reflects whatever selectCell/drag last set.
+  const getSelectedCellTargets = (): ResourceCellFormatTargetInterfaceModel[] => {
+    const selection = tableSelection.selection;
+    if (!selection) return [];
+
+    const targets: ResourceCellFormatTargetInterfaceModel[] = [];
+    for (let row = selection.startRow; row <= selection.endRow; row++) {
+      const resource = filteredResources[row];
+      if (!resource) continue;
+      for (let col = selection.startCol; col <= selection.endCol; col++) {
+        const column = visibleColumns[col];
+        if (!column) continue;
+        targets.push({ resourceId: resource.id, columnKey: column.key });
+      }
+    }
+    return targets;
+  };
+
+  // Excel-like: right-clicking a cell that isn't already part of the
+  // current selection selects just that one cell first; right-clicking
+  // inside an existing multi-cell selection keeps all of it. Does nothing
+  // outside Edit Mode - the native browser menu shows as normal.
+  const handleCellContextMenu = (event: React.MouseEvent, rowIndex: number, colIndex: number): void => {
+    if (!isEditMode) return;
+    event.preventDefault();
+
+    if (!tableSelection.isCellSelected(rowIndex, colIndex)) {
+      tableSelection.selectCell(rowIndex, colIndex);
+    }
+
+    setContextMenu({ isOpen: true, x: event.clientX, y: event.clientY });
+  };
+
+  const handleCloseContextMenu = (): void => {
+    setContextMenu((previous) => ({ ...previous, isOpen: false }));
+  };
+
+  // Word-processor convention for a selection with mixed existing state: if
+  // any targeted cell doesn't already have the attribute, turn it ON for
+  // every targeted cell; only turn it OFF for all of them once every one
+  // already has it.
+  const isEveryTargetAlready = (targets: ResourceCellFormatTargetInterfaceModel[], key: 'isBold' | 'isItalic'): boolean =>
+    targets.length > 0 && targets.every((target) => cellFormatByKey.get(`${target.resourceId}:${target.columnKey}`)?.[key] === true);
+
+  const handleToggleBold = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, isBold: !isEveryTargetAlready(targets, 'isBold') });
+  };
+
+  const handleToggleItalic = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, isItalic: !isEveryTargetAlready(targets, 'isItalic') });
+  };
+
+  const handleSetColor = (colorKey: string): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, backgroundColorKey: colorKey });
+  };
+
+  const handleClearColor = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, clearBackgroundColor: true });
+  };
+
+  // Built fresh on every render (not memoized) - it must reflect whichever
+  // cells are selected right now, which changes between the right-click
+  // that opens the menu and whichever item the user actually clicks.
+  const contextMenuTargets = getSelectedCellTargets();
+  const contextMenuItems: ContextMenuItem[] = [
+    {
+      id: 'bold',
+      label: 'Bold',
+      icon: <Bold className="w-3.5 h-3.5" />,
+      onClick: handleToggleBold,
+      shortcut: isEveryTargetAlready(contextMenuTargets, 'isBold') ? '✓' : undefined,
+    },
+    {
+      id: 'italic',
+      label: 'Italic',
+      icon: <Italic className="w-3.5 h-3.5" />,
+      onClick: handleToggleItalic,
+      shortcut: isEveryTargetAlready(contextMenuTargets, 'isItalic') ? '✓' : undefined,
+    },
+    ...ResourceCellFormatCON.COLORS.map((color, index) => ({
+      id: `color-${color.key}`,
+      label: color.label,
+      icon: <span className={`w-3 h-3 rounded-full ${color.swatchClassName}`} />,
+      onClick: () => handleSetColor(color.key),
+      divider: index === 0,
+    })),
+    {
+      id: 'clear-color',
+      label: 'Clear Color',
+      icon: <X className="w-3.5 h-3.5" />,
+      onClick: handleClearColor,
+    },
+  ];
+
   // Presentation only (wraps ResourceTableUtility's plain-data result,
   // dash-placeholder included) - kept local to this component, like
   // AssetSphere's own renderAssetCard, rather than promoted to module scope.
@@ -155,14 +295,22 @@ export default function ResourcesScreenController(): React.JSX.Element {
     const displayValue = ResourceTableUtility.current.getDisplayValue(resource, column.key);
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
 
+    const format = cellFormatByKey.get(`${resource.id}:${column.key}`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${ResourceCellFormatCON.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const cellClassName = `${CELL_CLASS_NAME} ${formatClassName}`;
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
     if (displayValue === null) {
       return (
         <td
           key={column.key}
           onMouseDown={cellHandlers.onMouseDown}
           onMouseEnter={cellHandlers.onMouseEnter}
+          onContextMenu={onCellContextMenu}
           style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex) }}
-          className={CELL_CLASS_NAME}
+          className={cellClassName}
         >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
         </td>
@@ -174,10 +322,11 @@ export default function ResourcesScreenController(): React.JSX.Element {
         key={column.key}
         value={displayValue}
         ariaLabel={`Copy ${column.label}: ${displayValue}`}
-        className={CELL_CLASS_NAME}
+        className={cellClassName}
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
+        onCellContextMenu={onCellContextMenu}
       >
         {displayValue}
       </CopyableTableCellSharedComponent>
@@ -204,7 +353,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <ViewEditModeToggleSharedComponent />
+          <ViewEditModeToggleSharedComponent value={editMode} onChange={setEditMode} />
 
           <ExpandableSearchSharedComponent
             value={searchQuery}
@@ -319,6 +468,14 @@ export default function ResourcesScreenController(): React.JSX.Element {
           description="Sync hasn't run yet, so nothing has been discovered."
         />
       )}
+
+      <ContextMenuSharedComponent
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onClose={handleCloseContextMenu}
+        items={contextMenuItems}
+      />
     </div>
   );
 }

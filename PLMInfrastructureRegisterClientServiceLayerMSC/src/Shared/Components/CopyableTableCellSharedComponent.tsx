@@ -19,6 +19,10 @@ export interface CopyableTableCellSharedComponentProps {
   selectionBoxShadow?: string;
   onCellMouseDown?: (event: React.MouseEvent) => void;
   onCellMouseEnter?: () => void;
+  // Right-click cell formatting (Resources' Infrastructure Register table) -
+  // inert everywhere else, since this just forwards to the inner button's
+  // own onContextMenu when provided.
+  onCellContextMenu?: (event: React.MouseEvent) => void;
   // 'center' (default) matches every existing table's short, single-line
   // cells. 'top' is for tables whose content regularly wraps to several
   // lines (e.g. Environment Overview) — centering a multi-line block reads
@@ -48,6 +52,7 @@ export default function CopyableTableCellSharedComponent({
   selectionBoxShadow,
   onCellMouseDown,
   onCellMouseEnter,
+  onCellContextMenu,
   verticalAlign = 'center',
   width,
 }: CopyableTableCellSharedComponentProps): React.JSX.Element {
@@ -97,6 +102,7 @@ export default function CopyableTableCellSharedComponent({
         type="button"
         onMouseDown={onCellMouseDown}
         onMouseEnter={onCellMouseEnter}
+        onContextMenu={onCellContextMenu}
         onClick={handleClick}
         aria-label={ariaLabel}
         className={`group relative w-full h-full flex ${
