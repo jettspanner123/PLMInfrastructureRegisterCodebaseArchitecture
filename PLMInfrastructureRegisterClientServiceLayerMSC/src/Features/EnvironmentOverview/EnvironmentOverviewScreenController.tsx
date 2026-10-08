@@ -512,15 +512,15 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               <button
                 type="button"
                 onClick={handleDiscardActionItemDraft}
-                className="font-bold text-slate-400 dark:text-zinc-500 hover:opacity-80"
+                className="font-bold text-slate-400 dark:text-zinc-500 hover:opacity-80 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveActionItemDraft}
-                disabled={addActionItemMutation.isPending}
-                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 disabled:opacity-50"
+                disabled={addActionItemMutation.isPending || !actionItemDraftText.trim()}
+                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {addActionItemMutation.isPending ? 'Saving…' : 'Done'}
               </button>
