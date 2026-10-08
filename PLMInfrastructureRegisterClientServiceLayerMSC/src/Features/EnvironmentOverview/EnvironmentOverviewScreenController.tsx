@@ -472,7 +472,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         <button
           type="button"
           onClick={() => handleOpenActionItemDraft(rowId)}
-          className="flex items-center gap-1 font-bold text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+          className="flex items-center gap-1 font-bold text-[#0C2086] dark:text-blue-400 hover:opacity-80 cursor-pointer"
         >
           <Plus className="w-3 h-3" />
           Add Entry
@@ -567,7 +567,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               <button
                 type="button"
                 onClick={() => handleToggleActionItemsExpanded(environment.id)}
-                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 cursor-pointer"
               >
                 See All
               </button>
@@ -576,7 +576,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               <button
                 type="button"
                 onClick={() => handleToggleActionItemsExpanded(environment.id)}
-                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80"
+                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 cursor-pointer"
               >
                 Show Less
               </button>
