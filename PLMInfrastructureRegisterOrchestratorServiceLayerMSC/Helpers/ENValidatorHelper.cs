@@ -34,6 +34,30 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Helpers
             throw new ENKeyNotFoundException(key);
         }
 
+        // For config that's genuinely optional (e.g. an extra allowed CORS
+        // origin only present in deployed environments) - GetEnvKeyValue's
+        // own throw-if-missing is wrong for these, since local dev legitimately
+        // never sets them.
+        public bool TryGetEnvKeyValue(string key, out string? value)
+        {
+            if (_dotEnvValues.TryGetValue(key, out string? dotEnvValue))
+            {
+                value = dotEnvValue;
+                return true;
+            }
+
+            string? processValue = Environment.GetEnvironmentVariable(key);
+
+            if (!string.IsNullOrWhiteSpace(processValue))
+            {
+                value = processValue;
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+
         private void LoadDotEnvFile()
         {
             string? directory = Directory.GetCurrentDirectory();

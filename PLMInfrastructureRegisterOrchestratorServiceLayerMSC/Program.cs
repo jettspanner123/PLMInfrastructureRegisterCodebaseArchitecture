@@ -12,6 +12,16 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Render (and Heroku-style platforms generally) assign the listen port
+// dynamically via PORT, unknown until the container actually starts - only
+// set there, never locally, so this leaves launchSettings.json's own ports
+// in charge of local dev entirely untouched.
+string? renderAssignedPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(renderAssignedPort))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{renderAssignedPort}");
+}
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -32,13 +42,23 @@ builder.Services.AddScoped<EnvironmentOverviewService>();
 builder.Services.AddScoped<ConfigurationConstantsService>();
 builder.Services.AddHttpClient<ChatAssistantService>();
 
-const string FrontendDevelopmentOriginPolicy = "FrontendDevelopmentOriginPolicy";
+const string FrontendOriginPolicy = "FrontendOriginPolicy";
+
+// Local dev's origin is always allowed; FRONTEND_PRODUCTION_ORIGIN (e.g. the
+// deployed Vercel URL) is optional - only set in deployed environments, so
+// this reads it via TryGetEnvKeyValue rather than the throwing
+// GetEnvKeyValue local dev never configures.
+List<string> allowedFrontendOrigins = new() { "http://localhost:5173" };
+if (ENValidatorHelper.Current.TryGetEnvKeyValue("FRONTEND_PRODUCTION_ORIGIN", out string? productionOrigin))
+{
+    allowedFrontendOrigins.Add(productionOrigin!);
+}
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(FrontendDevelopmentOriginPolicy, policy =>
+    options.AddPolicy(FrontendOriginPolicy, policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(allowedFrontendOrigins.ToArray())
             .WithMethods("GET", "POST", "PUT", "DELETE")
             .WithHeaders("Content-Type");
     });
@@ -52,9 +72,16 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Render terminates TLS at its own edge and talks plain HTTP to the
+// container - redirecting to HTTPS in here as well has nothing to redirect
+// to and breaks requests. Only applies locally (see renderAssignedPort
+// above), where this app really does serve both schemes itself.
+if (string.IsNullOrWhiteSpace(renderAssignedPort))
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseCors(FrontendDevelopmentOriginPolicy);
+app.UseCors(FrontendOriginPolicy);
 
 app.MapControllers();
 
