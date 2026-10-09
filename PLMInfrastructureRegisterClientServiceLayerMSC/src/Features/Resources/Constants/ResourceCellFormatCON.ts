@@ -7,11 +7,14 @@
 export interface ResourceCellFormatColorDef {
   key: string;
   label: string;
-  // Applied to the formatted cell itself - also reused as-is for the
-  // context menu's own item icon (a small circle), so that preview is an
-  // honest match for the color the cell will actually become, not a
-  // separate, more vivid stand-in for it.
+  // Applied to the formatted cell itself.
   cellClassName: string;
+  // The context menu's own item icon (a small circle) - a flat, literal
+  // color matching what the label itself says ("Red" gets an actually-red
+  // circle), not the cell's own muted/translucent tint. Purely an icon
+  // identifying which option this is, same role Bold/Italic's own icons
+  // play - not a preview of the cell's resulting appearance.
+  swatchClassName: string;
 }
 
 export default class ResourceCellFormatCON {
@@ -20,21 +23,25 @@ export default class ResourceCellFormatCON {
       key: 'Yellow',
       label: 'Yellow',
       cellClassName: 'bg-amber-100 dark:bg-amber-900/40',
+      swatchClassName: 'bg-yellow-400',
     },
     {
       key: 'Green',
       label: 'Green',
       cellClassName: 'bg-emerald-100 dark:bg-emerald-900/40',
+      swatchClassName: 'bg-green-500',
     },
     {
       key: 'Blue',
       label: 'Blue',
       cellClassName: 'bg-sky-100 dark:bg-sky-900/40',
+      swatchClassName: 'bg-blue-500',
     },
     {
       key: 'Red',
       label: 'Red',
       cellClassName: 'bg-rose-100 dark:bg-rose-900/40',
+      swatchClassName: 'bg-red-500',
     },
   ];
 
