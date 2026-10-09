@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Utilities;
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Assertion
 {
@@ -77,6 +78,28 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
             if (request.IsBold is null && request.IsItalic is null && request.BackgroundColorKey is null && !request.ClearBackgroundColor)
             {
                 throw new ValidationException("At least one formatting change must be provided.");
+            }
+        }
+
+        public void AssertAddCustomColorOptionRequest(AddCustomColorOptionRequestDTO? request)
+        {
+            if (request is null
+                || string.IsNullOrWhiteSpace(request.ColorName)
+                || string.IsNullOrWhiteSpace(request.Format)
+                || string.IsNullOrWhiteSpace(request.Color)
+                || string.IsNullOrWhiteSpace(request.CreatedByClientId))
+            {
+                throw new ValidationException("ColorName, Format, Color, and CreatedByClientId are all required.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidFormat(request.Format))
+            {
+                throw new ValidationException($"'{request.Format}' is not a valid color format.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidColorForFormat(request.Color, request.Format))
+            {
+                throw new ValidationException($"'{request.Color}' is not a valid {request.Format} color.");
             }
         }
     }

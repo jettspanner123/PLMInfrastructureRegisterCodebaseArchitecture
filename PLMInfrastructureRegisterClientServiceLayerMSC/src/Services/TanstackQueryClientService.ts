@@ -14,6 +14,8 @@ import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequ
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
 import type UpdateResourceCellFormatRequestInterfaceModel from '../Models/UpdateResourceCellFormatRequestInterfaceModel';
 import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatInterfaceModel';
+import type CustomColorOptionInterfaceModel from '../Models/CustomColorOptionInterfaceModel';
+import type AddCustomColorOptionRequestInterfaceModel from '../Models/AddCustomColorOptionRequestInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -49,6 +51,37 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to update the cell format.'));
+        },
+      });
+    },
+
+    // The named, growable custom-color palette offered by "Add Color" - a
+    // dedicated pair rather than a reuse of configurationConstants' generic
+    // options mechanism below, since a color needs a name attached (see
+    // ResourceCellFormatColorService on the backend); Status/Sponsor never
+    // will, so they stay on the generic mechanism untouched.
+    useCustomColorsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.RESOURCE_CUSTOM_COLORS,
+        queryFn: () => ResourcesService.current.getCustomColors(),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useAddCustomColorMutation: (options?: {
+      onSuccess?: (data: CustomColorOptionInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: AddCustomColorOptionRequestInterfaceModel) =>
+          ResourcesService.current.addCustomColor(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CUSTOM_COLORS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to add the custom color.'));
         },
       });
     },

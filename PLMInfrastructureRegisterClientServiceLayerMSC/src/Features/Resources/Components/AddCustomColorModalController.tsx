@@ -3,8 +3,11 @@ import ModalSharedComponent from '../../../Shared/Components/ModalSharedComponen
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
 import SegmentedControlSharedComponent from '../../../Shared/Components/SegmentedControlSharedComponent';
+import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
+import AnonymousClientIdentityUtility from '../../../Utilities/AnonymousClientIdentityUtility';
 import ResourceCellFormatHelper from '../Helpers/ResourceCellFormatHelper';
+import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
 
 export interface AddCustomColorModalControllerProps {
   isOpen: boolean;
@@ -13,7 +16,7 @@ export interface AddCustomColorModalControllerProps {
   // decides what to do with it (e.g. immediately apply it to whichever
   // cells were selected when "Add Color" was opened), matching
   // CreateOptionModalController's own onCreated convention.
-  onCreated: (hex: string) => void;
+  onCreated: (option: CustomColorOptionInterfaceModel) => void;
 }
 
 type ColorInputMode = 'HEX' | 'RGB';
@@ -29,10 +32,9 @@ function clampByteInput(value: string): string {
   return String(Math.min(255, Math.max(0, Math.round(parsed))));
 }
 
-function rgbToHex(r: string, g: string, b: string): string | null {
-  const values = [r, g, b].map((part) => Number(part));
-  if (values.some((value) => Number.isNaN(value) || value < 0 || value > 255)) return null;
-  return `#${values.map((value) => value.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+function isValidRgbComponent(value: string): boolean {
+  const parsed = Number(value);
+  return value.trim() !== '' && !Number.isNaN(parsed) && parsed >= 0 && parsed <= 255;
 }
 
 export default function AddCustomColorModalController({
@@ -41,6 +43,7 @@ export default function AddCustomColorModalController({
   onCreated,
 }: AddCustomColorModalControllerProps): React.JSX.Element {
   const [inputMode, setInputMode] = useState<ColorInputMode>('HEX');
+  const [colorNameInput, setColorNameInput] = useState<string>('');
   const [hexInput, setHexInput] = useState<string>('');
   const [redInput, setRedInput] = useState<string>('');
   const [greenInput, setGreenInput] = useState<string>('');
@@ -50,6 +53,7 @@ export default function AddCustomColorModalController({
   useEffect(() => {
     if (isOpen) {
       setInputMode('HEX');
+      setColorNameInput('');
       setHexInput('');
       setRedInput('');
       setGreenInput('');
@@ -58,33 +62,44 @@ export default function AddCustomColorModalController({
     }
   }, [isOpen]);
 
-  const addColorMutation = TanstackQueryClientService.current.configurationConstants.useAddOptionMutation(
-    'ResourceCellFormatColor',
-    {
-      onSuccess: (options) => {
-        onCreated(options[options.length - 1]);
-        onClose();
-      },
-    }
-  );
+  const addColorMutation = TanstackQueryClientService.current.resources.useAddCustomColorMutation({
+    onSuccess: (options) => {
+      onCreated(options[options.length - 1]);
+      onClose();
+    },
+  });
+
+  const isRgbInputValid =
+    isValidRgbComponent(redInput) && isValidRgbComponent(greenInput) && isValidRgbComponent(blueInput);
 
   // Normalized "#RRGGBB" (uppercase) once the current mode's input is fully
-  // valid, null otherwise - drives both the live preview circle and whether
-  // "Add Color" is enabled, so there's exactly one source of truth for
-  // "is this a real color yet" across both input modes.
+  // valid, null otherwise - drives the live preview circle regardless of
+  // mode (an RGB entry is converted purely for display here; the raw triple
+  // is what actually gets submitted, see handleAddColor) and whether
+  // "Add Color" is enabled.
   const resolvedHex: string | null =
     inputMode === 'HEX'
       ? HEX_INPUT_PATTERN.test(hexInput.trim())
         ? `#${hexInput.trim().replace('#', '').toUpperCase()}`
         : null
-      : rgbToHex(redInput, greenInput, blueInput);
+      : isRgbInputValid
+        ? ResourceCellFormatHelper.current.rgbComponentsToHex(Number(redInput), Number(greenInput), Number(blueInput))
+        : null;
+
+  const isNameValid = colorNameInput.trim().length > 0;
+  const canSubmit = !!resolvedHex && isNameValid;
 
   const handleAddColor = async (): Promise<void> => {
-    if (!resolvedHex) return;
+    if (!canSubmit || !resolvedHex) return;
 
     setErrorMessage(null);
     try {
-      await addColorMutation.mutateAsync({ value: resolvedHex });
+      await addColorMutation.mutateAsync({
+        colorName: colorNameInput.trim(),
+        format: inputMode,
+        color: inputMode === 'HEX' ? resolvedHex : `${Number(redInput)},${Number(greenInput)},${Number(blueInput)}`,
+        createdByClientId: AnonymousClientIdentityUtility.current.getOrCreateClientId(),
+      });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to add the color.');
     }
@@ -105,13 +120,22 @@ export default function AddCustomColorModalController({
           <PrimaryActionButtonSharedComponent
             label="Add Color"
             onClick={handleAddColor}
-            disabled={!resolvedHex}
+            disabled={!canSubmit}
             isLoading={addColorMutation.isPending}
           />
         </div>
       }
     >
       <div className="space-y-4">
+        <InputSharedComponent
+          label="Name"
+          name="custom-color-name"
+          value={colorNameInput}
+          onChange={(event) => setColorNameInput(event.target.value)}
+          placeholder="e.g. Sunset Orange"
+          required
+        />
+
         <SegmentedControlSharedComponent
           value={inputMode}
           onChange={setInputMode}

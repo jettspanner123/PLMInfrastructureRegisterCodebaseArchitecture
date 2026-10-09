@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import ResourceCellFormatCON from '../Constants/ResourceCellFormatCON';
+import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
 
 // Behavior around ResourceCellFormatCON's own data (telling a fixed color
 // apart from a custom one, deriving the inline styles a custom color needs)
@@ -47,5 +48,30 @@ export default class ResourceCellFormatHelper {
     const g = parseInt(normalized.substring(2, 4), 16);
     const b = parseInt(normalized.substring(4, 6), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  public rgbComponentsToHex(r: number, g: number, b: number): string {
+    return `#${[r, g, b].map((value) => value.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+  }
+
+  // The custom-colors list menu item's own swatch icon - unlike the cell it
+  // gets applied to (always a literal hex BackgroundColorKey, see
+  // getApplicableColorKey below), this renders the color exactly as the user
+  // entered it, RGB triple included.
+  public getSwatchStyleForCustomColor(option: CustomColorOptionInterfaceModel): CSSProperties {
+    if (option.format === 'RGB') return { backgroundColor: `rgb(${option.color})` };
+    return { backgroundColor: option.color };
+  }
+
+  // A resource cell's BackgroundColorKey is always a literal hex string,
+  // regardless of how the color it displays was originally entered - this is
+  // the one place an RGB-entered custom color gets normalized to hex, right
+  // before it's written onto a cell.
+  public getApplicableColorKey(option: CustomColorOptionInterfaceModel): string {
+    if (option.format === 'RGB') {
+      const [r, g, b] = option.color.split(',').map(Number);
+      return this.rgbComponentsToHex(r, g, b);
+    }
+    return option.color;
   }
 }

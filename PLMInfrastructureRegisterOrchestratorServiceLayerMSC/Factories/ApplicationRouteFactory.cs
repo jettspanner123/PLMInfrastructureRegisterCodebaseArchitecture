@@ -15,6 +15,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string GetCellFormats = "CellFormats";
 
             public const string UpdateCellFormat = "CellFormats";
+
+            // The named, growable custom-color palette offered by the
+            // right-click formatting menu's "Add Color" option - structured
+            // (name + format + value), unlike ConfigurationConstants' own
+            // generic {fieldName} routes which only ever carry a bare
+            // display string (see ConfigurationConstantsRoutes below).
+            public const string GetCustomColors = "CellFormats/Colors";
+
+            public const string AddCustomColor = "CellFormats/Colors";
         }
 
         public static class SyncRoutes

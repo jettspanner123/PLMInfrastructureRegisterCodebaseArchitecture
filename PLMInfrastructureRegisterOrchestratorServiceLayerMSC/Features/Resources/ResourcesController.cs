@@ -13,11 +13,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
     public sealed class ResourcesController : ControllerBase
     {
         private readonly ResourcesService _resourcesService;
+        private readonly ResourceCellFormatColorService _resourceCellFormatColorService;
         private readonly ILogger<ResourcesController> _logger;
 
-        public ResourcesController(ResourcesService resourcesService, ILogger<ResourcesController> logger)
+        public ResourcesController(
+            ResourcesService resourcesService,
+            ResourceCellFormatColorService resourceCellFormatColorService,
+            ILogger<ResourcesController> logger)
         {
             _resourcesService = resourcesService;
+            _resourceCellFormatColorService = resourceCellFormatColorService;
             _logger = logger;
         }
 
@@ -104,6 +109,75 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                     500,
                     APIResponse<List<ResourceCellFormatDTO>>.Failed(
                         "An unexpected error occurred while updating the cell format.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpGet(ApplicationRouteFactory.ResourcesRoutes.GetCustomColors)]
+        public async Task<ActionResult<APIResponse<List<CustomColorOptionDTO>>>> GetCustomColorsAsynchronous()
+        {
+            try
+            {
+                List<CustomColorOptionDTO> colors = await _resourceCellFormatColorService.GetCustomColorsAsynchronous();
+
+                return Ok(
+                    APIResponse<List<CustomColorOptionDTO>>.Succeeded(
+                        colors,
+                        "Custom colors retrieved successfully.",
+                        200));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while retrieving custom colors.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(
+                        "An unexpected error occurred while retrieving the custom colors.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPost(ApplicationRouteFactory.ResourcesRoutes.AddCustomColor)]
+        public async Task<ActionResult<APIResponse<List<CustomColorOptionDTO>>>> AddCustomColorAsynchronous(
+            [FromBody] AddCustomColorOptionRequestDTO? request)
+        {
+            try
+            {
+                ResourcesAssertion.Current.AssertAddCustomColorOptionRequest(request);
+
+                List<CustomColorOptionDTO> colors = await _resourceCellFormatColorService.AddCustomColorAsynchronous(request!);
+
+                return Ok(
+                    APIResponse<List<CustomColorOptionDTO>>.Succeeded(
+                        colors,
+                        "Custom color added successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Add custom color validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (ConflictException conflictEx)
+            {
+                _logger.LogWarning("Add custom color conflict: {Message}", conflictEx.Message);
+
+                return Conflict(
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(conflictEx.Message, new List<string>(), 409));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while adding a custom color.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(
+                        "An unexpected error occurred while adding the custom color.",
                         new List<string>(),
                         500));
             }

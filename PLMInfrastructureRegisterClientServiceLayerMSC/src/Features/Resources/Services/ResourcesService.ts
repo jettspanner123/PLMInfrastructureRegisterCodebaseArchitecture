@@ -3,6 +3,8 @@ import type APIResponseInterfaceModel from '../../../Models/APIResponseInterface
 import type ResourceInterfaceModel from '../../../Models/ResourceInterfaceModel';
 import type ResourceCellFormatInterfaceModel from '../../../Models/ResourceCellFormatInterfaceModel';
 import type UpdateResourceCellFormatRequestInterfaceModel from '../../../Models/UpdateResourceCellFormatRequestInterfaceModel';
+import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
+import type AddCustomColorOptionRequestInterfaceModel from '../../../Models/AddCustomColorOptionRequestInterfaceModel';
 
 export default class ResourcesService {
   public static current: ResourcesService = new ResourcesService();
@@ -48,6 +50,36 @@ export default class ResourcesService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to update the cell format.');
+    }
+
+    return payload.data;
+  }
+
+  public async getCustomColors(): Promise<CustomColorOptionInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/CellFormats/Colors`);
+
+    const payload: APIResponseInterfaceModel<CustomColorOptionInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch custom colors.');
+    }
+
+    return payload.data;
+  }
+
+  public async addCustomColor(
+    request: AddCustomColorOptionRequestInterfaceModel
+  ): Promise<CustomColorOptionInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/CellFormats/Colors`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<CustomColorOptionInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to add the custom color.');
     }
 
     return payload.data;

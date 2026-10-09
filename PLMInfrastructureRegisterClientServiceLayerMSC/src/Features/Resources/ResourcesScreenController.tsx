@@ -177,11 +177,12 @@ export default function ResourcesScreenController(): React.JSX.Element {
     y: 0,
   });
 
-  // Custom colors a user has added via "Add Color" - growable, shared
-  // across every table that ever gets this feature (not just Resources),
-  // stored the same way Status/Sponsor's own option lists are.
-  const { data: customColors = [] } =
-    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('ResourceCellFormatColor');
+  // Named custom colors a user has added via "Add Color" - growable, stored
+  // the same underlying IG_ConfigurationConstantTBL-backed way as
+  // Status/Sponsor's own option lists, but through a dedicated structured
+  // endpoint rather than the generic one, since a color needs a name
+  // attached and Status/Sponsor never will (see ResourceCellFormatColorService).
+  const { data: customColors = [] } = TanstackQueryClientService.current.resources.useCustomColorsQuery();
   const [isAddColorModalOpen, setIsAddColorModalOpen] = useState<boolean>(false);
 
   // Every (resourceId, columnKey) pair the current selection rectangle
@@ -289,19 +290,22 @@ export default function ResourcesScreenController(): React.JSX.Element {
       onClick: () => handleSetColor(color.key),
       divider: index === 0,
     })),
-    // Custom (hex) colors - same icon treatment as the 4 fixed ones, just
-    // an inline style instead of a Tailwind class, since the hex value only
-    // exists at runtime.
-    ...customColors.map((hex) => ({
-      id: `color-${hex}`,
-      label: hex,
+    // Named custom colors - same icon treatment as the 4 fixed ones, just an
+    // inline style instead of a Tailwind class, since the color only exists
+    // at runtime. The menu shows the user-given name (not the raw color
+    // value); whatever cell gets this applied always ends up with a literal
+    // hex BackgroundColorKey regardless of how this color was entered - see
+    // getApplicableColorKey.
+    ...customColors.map((option) => ({
+      id: `color-${option.colorName}`,
+      label: option.colorName,
       icon: (
         <span
           className="inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
-          style={ResourceCellFormatHelper.current.getSwatchStyle(hex)}
+          style={ResourceCellFormatHelper.current.getSwatchStyleForCustomColor(option)}
         />
       ),
-      onClick: () => handleSetColor(hex),
+      onClick: () => handleSetColor(ResourceCellFormatHelper.current.getApplicableColorKey(option)),
     })),
     {
       id: 'add-color',

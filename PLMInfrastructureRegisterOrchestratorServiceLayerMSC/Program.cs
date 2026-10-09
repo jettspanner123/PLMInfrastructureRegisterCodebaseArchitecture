@@ -25,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
     options.UseNpgsql(npgsqlConnectionString));
 
 builder.Services.AddScoped<ResourcesService>();
+builder.Services.AddScoped<ResourceCellFormatColorService>();
 builder.Services.AddScoped<SyncService>();
 builder.Services.AddScoped<SubscriptionsService>();
 builder.Services.AddScoped<EnvironmentOverviewService>();
