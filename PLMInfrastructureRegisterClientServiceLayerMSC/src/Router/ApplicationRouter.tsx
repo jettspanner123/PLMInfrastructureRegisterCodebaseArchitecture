@@ -37,6 +37,18 @@ function RootLayout(): React.JSX.Element {
     ApplicationThemeUtility.current.applyTheme(currentTheme);
   }, [currentTheme]);
 
+  // App-wide, not scoped to any one screen - the only context menu anywhere
+  // in this app should ever be ContextMenuSharedComponent's own (currently
+  // just Infrastructure Register's cell formatting), never the browser's
+  // native one. Matches AssetSphere's own identical app-wide suppression.
+  useEffect(() => {
+    const disableNativeContextMenu = (event: MouseEvent): void => {
+      event.preventDefault();
+    };
+    window.addEventListener('contextmenu', disableNativeContextMenu);
+    return () => window.removeEventListener('contextmenu', disableNativeContextMenu);
+  }, []);
+
   const handleToggleTheme = (): void => {
     const next = ApplicationThemeUtility.current.toggleTheme(currentTheme);
     setCurrentTheme(next);
