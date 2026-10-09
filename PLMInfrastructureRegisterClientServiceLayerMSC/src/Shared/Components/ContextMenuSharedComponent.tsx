@@ -114,9 +114,9 @@ export default function ContextMenuSharedComponent({
           ref={menuRef}
           role="menu"
           aria-orientation="vertical"
-          initial={{ opacity: 0, y: 4, filter: 'blur(5px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: 4, filter: 'blur(5px)' }}
+          initial={{ opacity: 0, filter: 'blur(5px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, filter: 'blur(5px)' }}
           transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
           style={{
             position: 'fixed',
