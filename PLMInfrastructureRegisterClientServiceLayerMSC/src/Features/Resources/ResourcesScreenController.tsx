@@ -267,7 +267,16 @@ export default function ResourcesScreenController(): React.JSX.Element {
     ...ResourceCellFormatCON.COLORS.map((color, index) => ({
       id: `color-${color.key}`,
       label: color.label,
-      icon: <span className={`w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 ${color.swatchClassName}`} />,
+      // inline-block, not the bare default (inline) a <span> gets otherwise
+      // - width/height are no-ops on an inline box with no text content, so
+      // without it this collapses to 0x0 and the color never actually
+      // shows, unlike Bold/Italic's own <svg> icons (a replaced element,
+      // which respects width/height even while still display:inline).
+      icon: (
+        <span
+          className={`inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 ${color.swatchClassName}`}
+        />
+      ),
       onClick: () => handleSetColor(color.key),
       divider: index === 0,
     })),
