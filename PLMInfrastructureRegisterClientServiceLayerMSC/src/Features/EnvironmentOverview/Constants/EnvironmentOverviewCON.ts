@@ -8,14 +8,18 @@ import type DraftEnvironmentOverviewRowInterfaceModel from '../../../Models/Draf
 export interface EnvironmentOverviewColumnDef {
   key: keyof EnvironmentOverviewInterfaceModel;
   label: string;
+  locked?: boolean;
 }
 
 export default class EnvironmentOverviewCON {
   // One entry per real text column, in table order - the one thing NOT in
   // this list is the derived "Status" column (Live/Decommissioned),
-  // appended separately since it isn't itself a stored string field.
+  // appended separately since it isn't itself a stored string field. Kept
+  // separate from COLUMNS below (rather than COLUMNS.filter(...)) since
+  // several other members here (EMPTY_DRAFT_ROW, EDITABLE_TEXT_FIELD_NAMES)
+  // only ever apply to this subset, never to Action Items/Status.
   public static readonly TEXT_COLUMNS: EnvironmentOverviewColumnDef[] = [
-    { key: 'environment', label: 'ENVIRONMENT' },
+    { key: 'environment', label: 'ENVIRONMENT', locked: true },
     { key: 'purpose', label: 'PURPOSE' },
     { key: 'sponsor', label: 'SPONSOR' },
     { key: 'currentUptimeSchedule', label: 'CURRENT UPTIME SCHEDULE' },
@@ -26,15 +30,23 @@ export default class EnvironmentOverviewCON {
     { key: 'dnsurl', label: 'DNS URL' },
   ];
 
-  // Action Items / Updates is addressed separately (last column) since its
-  // display needs a scrollable fixed-height cell rather than the plain
-  // wrapped-text treatment every other column gets - some entries run past
-  // 10,000 characters of dated log entries. Derived from TEXT_COLUMNS above,
-  // not hand-maintained separately - a class static property can read an
+  // The full table's column order for the Columns visibility dropdown (and
+  // for computing dynamic table-selection indexes once some are hidden) -
+  // TEXT_COLUMNS plus the two specially-rendered columns appended last,
+  // matching their fixed position in the table today. Not hand-maintained
+  // separately from TEXT_COLUMNS - a class static property can read an
   // earlier static property of the same class during initialization.
-  public static readonly ACTION_ITEMS_COLUMN_INDEX: number = EnvironmentOverviewCON.TEXT_COLUMNS.length;
-  public static readonly STATUS_COLUMN_INDEX: number = EnvironmentOverviewCON.TEXT_COLUMNS.length + 1;
-  public static readonly TOTAL_COLUMN_COUNT: number = EnvironmentOverviewCON.TEXT_COLUMNS.length + 2;
+  public static readonly COLUMNS: EnvironmentOverviewColumnDef[] = [
+    ...EnvironmentOverviewCON.TEXT_COLUMNS,
+    { key: 'actionItemsUpdates', label: 'Action Items / Updates' },
+    { key: 'status', label: 'Status' },
+  ];
+
+  public static readonly ALL_COLUMN_KEYS: string[] = EnvironmentOverviewCON.COLUMNS.map((column) => column.key);
+
+  public static readonly LOCKED_COLUMN_KEYS: Set<string> = new Set(
+    EnvironmentOverviewCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
+  );
 
   public static readonly CELL_CLASS_NAME: string =
     'px-3 py-2 align-top whitespace-pre-wrap break-words font-mono text-slate-700 dark:text-zinc-300';

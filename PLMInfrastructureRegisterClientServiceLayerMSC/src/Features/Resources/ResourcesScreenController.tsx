@@ -20,7 +20,8 @@ import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceC
 import ResourceCellFormatCON from './Constants/ResourceCellFormatCON';
 import ResourceCellFormatHelper from './Helpers/ResourceCellFormatHelper';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
-import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
+import TableColumnVisibilityUtility from '../../Utilities/TableColumnVisibilityUtility';
+import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
 import AddCustomColorModalController from './Components/AddCustomColorModalController';
 
 export default function ResourcesScreenController(): React.JSX.Element {
@@ -49,7 +50,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
     );
     // Locked columns (Hostname, Environment) are always included, even if an
     // older persisted preference somehow excluded them.
-    return ResourceTableUtility.current.withLockedColumnsIncluded(saved);
+    return TableColumnVisibilityUtility.current.withLockedColumnsIncluded(saved, ResourceColumnCON.LOCKED_COLUMN_KEYS);
   });
 
   const handleToggleColumn = (key: string): void => {
@@ -430,9 +431,10 @@ export default function ResourcesScreenController(): React.JSX.Element {
               />
             </button>
 
-            <ColumnVisibilityDropdownStaticComponent
+            <ColumnVisibilityDropdownSharedComponent
               isOpen={isColumnDropdownOpen}
               onClose={handleCloseColumnDropdown}
+              columns={ResourceColumnCON.COLUMNS}
               visibleColumnKeys={visibleColumnKeys}
               onToggleColumn={handleToggleColumn}
               onClearAll={handleClearAllColumns}

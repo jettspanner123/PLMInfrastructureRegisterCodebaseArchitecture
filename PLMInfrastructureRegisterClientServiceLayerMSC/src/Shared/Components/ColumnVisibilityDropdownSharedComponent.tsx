@@ -1,23 +1,35 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ListX, Search } from 'lucide-react';
-import ResourceColumnCON from '../../Constants/ResourceColumnCON';
 
-export interface ColumnVisibilityDropdownStaticComponentProps {
+export interface ColumnVisibilityDropdownColumnDef {
+  key: string;
+  label: string;
+  locked?: boolean;
+}
+
+export interface ColumnVisibilityDropdownSharedComponentProps {
   isOpen: boolean;
   onClose: () => void;
+  columns: ColumnVisibilityDropdownColumnDef[];
   visibleColumnKeys: Set<string>;
   onToggleColumn: (key: string) => void;
   onClearAll: () => void;
+  // Resources has ~60 columns and benefits from an in-panel search;
+  // Environment Overview's much shorter list doesn't need one - defaults on
+  // since Resources (the original consumer) already relied on it.
+  showSearch?: boolean;
 }
 
-export default function ColumnVisibilityDropdownStaticComponent({
+export default function ColumnVisibilityDropdownSharedComponent({
   isOpen,
   onClose,
+  columns,
   visibleColumnKeys,
   onToggleColumn,
   onClearAll,
-}: ColumnVisibilityDropdownStaticComponentProps): React.JSX.Element {
+  showSearch = true,
+}: ColumnVisibilityDropdownSharedComponentProps): React.JSX.Element {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -44,8 +56,9 @@ export default function ColumnVisibilityDropdownStaticComponent({
     }, 10);
     document.addEventListener('keydown', handleKeyDown);
 
-    // Move focus into the panel so keyboard users don't have to Tab to it.
-    searchInputRef.current?.focus();
+    // Move focus into the panel so keyboard users don't have to Tab to it -
+    // only meaningful when there's a search input to receive it.
+    if (showSearch) searchInputRef.current?.focus();
 
     return () => {
       clearTimeout(timeoutId);
@@ -53,17 +66,18 @@ export default function ColumnVisibilityDropdownStaticComponent({
       document.removeEventListener('touchstart', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, showSearch]);
 
   useEffect(() => {
     if (!isOpen) setSearchTerm('');
   }, [isOpen]);
 
   const filteredColumns = useMemo(() => {
+    if (!showSearch) return columns;
     const term = searchTerm.trim().toLowerCase();
-    if (!term) return ResourceColumnCON.COLUMNS;
-    return ResourceColumnCON.COLUMNS.filter((column) => column.label.toLowerCase().includes(term));
-  }, [searchTerm]);
+    if (!term) return columns;
+    return columns.filter((column) => column.label.toLowerCase().includes(term));
+  }, [columns, searchTerm, showSearch]);
 
   return (
     <AnimatePresence>
@@ -92,19 +106,21 @@ export default function ColumnVisibilityDropdownStaticComponent({
             </span>
 
             <div className="flex items-center gap-2 mb-2.5">
-              <div className="relative flex-1">
-                <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 pointer-events-none" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Search columns..."
-                  aria-label="Search columns"
-                  autoComplete="off"
-                  className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
-                />
-              </div>
+              {showSearch && (
+                <div className="relative flex-1">
+                  <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 pointer-events-none" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    placeholder="Search columns..."
+                    aria-label="Search columns"
+                    autoComplete="off"
+                    className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
+                  />
+                </div>
+              )}
 
               <button
                 type="button"
@@ -139,7 +155,7 @@ export default function ColumnVisibilityDropdownStaticComponent({
                         // once found and toggled, close the panel. onClose()
                         // closing the panel also resets the search term, via
                         // the isOpen effect above.
-                        if (searchTerm.trim().length > 0) {
+                        if (showSearch && searchTerm.trim().length > 0) {
                           onClose();
                         }
                       }}

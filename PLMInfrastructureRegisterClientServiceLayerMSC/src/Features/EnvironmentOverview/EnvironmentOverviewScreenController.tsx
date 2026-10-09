@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX, Plus, Trash2 } from 'lucide-react';
+import { ServerOff, FilterX, Plus, Trash2, Columns3, ChevronDown } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -10,12 +10,16 @@ import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryA
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
+import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
 import CreateOptionModalController from './Components/CreateOptionModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
 import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
 import ViewEditModeCON from '../../Constants/ViewEditModeCON';
+import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
+import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
+import TableColumnVisibilityUtility from '../../Utilities/TableColumnVisibilityUtility';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import ActionItemsLineParserUtility from '../../Utilities/ActionItemsLineParserUtility';
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
@@ -127,33 +131,80 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     [sponsorOptions]
   );
 
+  // Columns dropdown - same mechanism as Resources' own (see
+  // TableColumnVisibilityUtility/ColumnVisibilityDropdownSharedComponent),
+  // just scoped to this table's own column list and its own persisted
+  // preference key. Only "environment" is locked: it's the one field
+  // required to save a new row (see handleSaveDraft below).
+  const columnButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [isColumnDropdownOpen, setIsColumnDropdownOpen] = useState<boolean>(false);
+
+  const handleCloseColumnDropdown = (): void => {
+    setIsColumnDropdownOpen(false);
+    columnButtonRef.current?.focus();
+  };
+
+  const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
+    const saved = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(
+      ApplicationUserPreferenceKeyCON.ENVIRONMENT_OVERVIEW_TABLE_VISIBLE_COLUMNS,
+      EnvironmentOverviewCON.ALL_COLUMN_KEYS
+    );
+    return TableColumnVisibilityUtility.current.withLockedColumnsIncluded(saved, EnvironmentOverviewCON.LOCKED_COLUMN_KEYS);
+  });
+
+  const handleToggleColumn = (key: string): void => {
+    if (EnvironmentOverviewCON.LOCKED_COLUMN_KEYS.has(key)) return;
+
+    setVisibleColumnKeys((previous) => {
+      const next = new Set(previous);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      ApplicationUserPreferenceUtility.current.setJSONPreference(
+        ApplicationUserPreferenceKeyCON.ENVIRONMENT_OVERVIEW_TABLE_VISIBLE_COLUMNS,
+        Array.from(next)
+      );
+      return next;
+    });
+  };
+
+  // Deliberately in-memory only, same as Resources' own - a reload brings
+  // back whatever was last actually saved, not this cleared state.
+  const handleClearAllColumns = (): void => {
+    setVisibleColumnKeys(new Set(EnvironmentOverviewCON.LOCKED_COLUMN_KEYS));
+  };
+
+  const visibleColumns = EnvironmentOverviewCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
+
   const filteredEnvironments = useMemo(() => {
     const lowerCaseQuery = searchQuery.trim().toLowerCase();
     if (!lowerCaseQuery) return environments;
 
     return environments.filter((environment) =>
-      [
-        ...EnvironmentOverviewCON.TEXT_COLUMNS.map((column) => environment[column.key]),
-        environment.actionItemsUpdates,
-        environment.status,
-      ].some((value) => typeof value === 'string' && value.toLowerCase().includes(lowerCaseQuery))
+      visibleColumns.some((column) => {
+        const value = environment[column.key];
+        return typeof value === 'string' && value.toLowerCase().includes(lowerCaseQuery);
+      })
     );
-  }, [environments, searchQuery]);
+  }, [environments, searchQuery, visibleColumns]);
 
   // Excel-like multi-cell/row/column selection, shared with Resources and
   // Configure Subscriptions - see TableSelectionService.ts for the full
-  // design. Column indexes follow TEXT_COLUMNS, then Action Items, then
-  // Status. The draft row below is deliberately NOT part of this - it has
-  // real inputs instead of copyable cells, so it isn't selectable/copyable.
+  // design. Column indexes follow visibleColumns' own order, same as
+  // Resources - hiding a column removes it from this grid entirely, same as
+  // hiding one on Resources. The draft row below is deliberately NOT part of
+  // this - it has real inputs instead of copyable cells, so it isn't
+  // selectable/copyable.
   const tableSelection = TableSelectionService.current.useTableSelection({
     rowCount: filteredEnvironments.length,
-    columnCount: EnvironmentOverviewCON.TOTAL_COLUMN_COUNT,
+    columnCount: visibleColumns.length,
     getCellValue: (rowIndex, colIndex) => {
       const environment = filteredEnvironments[rowIndex];
-      if (!environment) return '';
-      if (colIndex === EnvironmentOverviewCON.ACTION_ITEMS_COLUMN_INDEX) return environment.actionItemsUpdates ?? '';
-      if (colIndex === EnvironmentOverviewCON.STATUS_COLUMN_INDEX) return environment.status;
-      return environment[EnvironmentOverviewCON.TEXT_COLUMNS[colIndex].key]?.toString() ?? '';
+      const column = visibleColumns[colIndex];
+      if (!environment || !column) return '';
+      return environment[column.key]?.toString() ?? '';
     },
   });
 
@@ -445,7 +496,12 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         container.scrollIntoView({ block: 'end', behavior: 'smooth' });
       }
     }
-    environmentInputRef.current?.focus();
+    // preventScroll: true - a plain focus() on an off-screen element
+    // triggers the browser's OWN native "scroll into view", which is
+    // instant and fires immediately, snapping straight to the end position
+    // and visually cutting off the smooth scroll started just above before
+    // it gets a chance to animate at all.
+    environmentInputRef.current?.focus({ preventScroll: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasDraftRow]);
 
@@ -742,9 +798,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
   const renderActionItemsCell = (
     environment: EnvironmentOverviewInterfaceModel,
-    rowIndex: number
+    rowIndex: number,
+    colIndex: number
   ): React.ReactNode => {
-    const cellHandlers = tableSelection.getCellHandlers(rowIndex, EnvironmentOverviewCON.ACTION_ITEMS_COLUMN_INDEX);
+    const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
     const isExpanded = expandedActionItemsRowIds.has(environment.id);
     const allLines = environment.actionItemsUpdates ? environment.actionItemsUpdates.split('\n') : [];
     const { visibleLines, hasMore } = isExpanded
@@ -757,7 +814,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onMouseDown={cellHandlers.onMouseDown}
         onMouseEnter={cellHandlers.onMouseEnter}
         style={{
-          boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, EnvironmentOverviewCON.ACTION_ITEMS_COLUMN_INDEX),
+          boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
           width: columnWidths.getColumnWidth('actionItemsUpdates'),
         }}
         className="px-3 py-2 align-top"
@@ -798,8 +855,12 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
-  const renderStatusCell = (environment: EnvironmentOverviewInterfaceModel, rowIndex: number): React.ReactNode => {
-    const cellHandlers = tableSelection.getCellHandlers(rowIndex, EnvironmentOverviewCON.STATUS_COLUMN_INDEX);
+  const renderStatusCell = (
+    environment: EnvironmentOverviewInterfaceModel,
+    rowIndex: number,
+    colIndex: number
+  ): React.ReactNode => {
+    const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
     const statusText = environment.status;
 
     if (isEditMode) {
@@ -841,7 +902,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         value={statusText}
         ariaLabel={`Copy Status: ${statusText}`}
         className="px-3 py-2 align-top font-mono text-[11px]"
-        selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, EnvironmentOverviewCON.STATUS_COLUMN_INDEX)}
+        selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
         verticalAlign="top"
@@ -973,6 +1034,36 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             ariaLabel="Search Environment Overview"
           />
           <PrimaryActionButtonSharedComponent label="Add Environment" onClick={handleAddEnvironmentClick} />
+
+          <div className="relative shrink-0">
+            <button
+              ref={columnButtonRef}
+              type="button"
+              onClick={() => setIsColumnDropdownOpen((previous) => !previous)}
+              aria-haspopup="dialog"
+              aria-expanded={isColumnDropdownOpen}
+              aria-controls="column-visibility-dropdown-panel"
+              className="flex items-center gap-2 h-9 px-3.5 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer text-xs font-semibold"
+            >
+              <Columns3 className="w-3.5 h-3.5" />
+              <span>Columns</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 transition-transform duration-200 ${
+                  isColumnDropdownOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            <ColumnVisibilityDropdownSharedComponent
+              isOpen={isColumnDropdownOpen}
+              onClose={handleCloseColumnDropdown}
+              columns={EnvironmentOverviewCON.COLUMNS}
+              visibleColumnKeys={visibleColumnKeys}
+              onToggleColumn={handleToggleColumn}
+              onClearAll={handleClearAllColumns}
+              showSearch={false}
+            />
+          </div>
         </div>
       </div>
 
@@ -993,7 +1084,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                 <TableHeaderCellSharedComponent align="center" className="w-12">
                   SL. NO
                 </TableHeaderCellSharedComponent>
-                {EnvironmentOverviewCON.TEXT_COLUMNS.map((column, colIndex) => (
+                {visibleColumns.map((column, colIndex) => (
                   <TableHeaderCellSharedComponent
                     key={column.key}
                     style={{ width: columnWidths.getColumnWidth(column.key), position: 'relative' }}
@@ -1003,20 +1094,6 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                     {renderResizeHandle(column.key)}
                   </TableHeaderCellSharedComponent>
                 ))}
-                <TableHeaderCellSharedComponent
-                  style={{ width: columnWidths.getColumnWidth('actionItemsUpdates'), position: 'relative' }}
-                  {...tableSelection.getColumnHeaderHandlers(EnvironmentOverviewCON.ACTION_ITEMS_COLUMN_INDEX)}
-                >
-                  Action Items / Updates
-                  {renderResizeHandle('actionItemsUpdates')}
-                </TableHeaderCellSharedComponent>
-                <TableHeaderCellSharedComponent
-                  style={{ width: columnWidths.getColumnWidth('status'), position: 'relative' }}
-                  {...tableSelection.getColumnHeaderHandlers(EnvironmentOverviewCON.STATUS_COLUMN_INDEX)}
-                >
-                  Status
-                  {renderResizeHandle('status')}
-                </TableHeaderCellSharedComponent>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
@@ -1043,11 +1120,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                       rowIndex + 1
                     )}
                   </td>
-                  {EnvironmentOverviewCON.TEXT_COLUMNS.map((column, colIndex) =>
-                    renderTextCell(environment, column, rowIndex, colIndex)
-                  )}
-                  {renderActionItemsCell(environment, rowIndex)}
-                  {renderStatusCell(environment, rowIndex)}
+                  {visibleColumns.map((column, colIndex) => {
+                    if (column.key === 'actionItemsUpdates') return renderActionItemsCell(environment, rowIndex, colIndex);
+                    if (column.key === 'status') return renderStatusCell(environment, rowIndex, colIndex);
+                    return renderTextCell(environment, column, rowIndex, colIndex);
+                  })}
                 </tr>
               ))}
               {draftRow && (
@@ -1055,9 +1132,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                   <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-300 dark:text-zinc-700 text-center align-top">
                     –
                   </td>
-                  {EnvironmentOverviewCON.TEXT_COLUMNS.map((column) => renderDraftTextCell(column))}
-                  {renderDraftActionItemsCell()}
-                  {renderDraftStatusCell()}
+                  {visibleColumns.map((column) => {
+                    if (column.key === 'actionItemsUpdates') return renderDraftActionItemsCell();
+                    if (column.key === 'status') return renderDraftStatusCell();
+                    return renderDraftTextCell(column);
+                  })}
                 </tr>
               )}
             </tbody>
