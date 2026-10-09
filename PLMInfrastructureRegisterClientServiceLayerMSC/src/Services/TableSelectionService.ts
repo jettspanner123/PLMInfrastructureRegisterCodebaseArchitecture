@@ -132,6 +132,15 @@ export default class TableSelectionService {
 
     const beginSelectionDrag = useCallback(
       (axis: TableSelectionDragAxis, row: number, col: number, event: React.MouseEvent): void => {
+        // Only the primary (left) button starts or collapses a selection -
+        // a right-click's own mousedown fires before its contextmenu event,
+        // and without this guard it would silently collapse whatever was
+        // already selected to just this one cell before a right-click
+        // handler ever got a chance to see the real selection (e.g.
+        // Resources' context-menu formatting, which needs to know a
+        // multi-cell selection is still intact when it opens).
+        if (event.button !== 0) return;
+
         if (event.shiftKey && anchorPointRef.current) {
           setSelection(computeRectangleForAxis(axis, anchorPointRef.current, { row, col }, rowCount, columnCount));
           return;
@@ -180,9 +189,20 @@ export default class TableSelectionService {
       const handleDocumentMouseDown = (event: MouseEvent): void => {
         if (!selectionRef.current) return;
         const container = containerRef.current;
-        if (container && event.target instanceof Node && !container.contains(event.target)) {
-          setSelection(null);
-        }
+        if (!container || !(event.target instanceof Node)) return;
+        if (container.contains(event.target)) return;
+
+        // A floating menu (ContextMenuSharedComponent, role="menu") renders
+        // outside the table's own container by design (position: fixed), so
+        // a click on one of its items always fails the containment check
+        // above - without this exemption, clicking ANY context-menu item
+        // would clear the selection on this same mousedown, before the
+        // menu item's own click handler ever got a chance to read it. A
+        // floating menu opened FROM a selection is conceptually still part
+        // of interacting with that selection, not a click away from it.
+        if (event.target instanceof Element && event.target.closest('[role="menu"]')) return;
+
+        setSelection(null);
       };
       document.addEventListener('mousedown', handleDocumentMouseDown);
       return () => document.removeEventListener('mousedown', handleDocumentMouseDown);
