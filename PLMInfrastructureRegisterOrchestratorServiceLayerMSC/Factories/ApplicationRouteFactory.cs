@@ -24,6 +24,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string GetCustomColors = "CellFormats/Colors";
 
             public const string AddCustomColor = "CellFormats/Colors";
+
+            public const string UpdateCustomColor = "CellFormats/Colors/{id}";
+
+            public const string DeleteCustomColor = "CellFormats/Colors/{id}";
         }
 
         public static class SyncRoutes

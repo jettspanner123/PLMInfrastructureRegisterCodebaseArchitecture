@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
-import { Cloud, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X } from 'lucide-react';
+import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X } from 'lucide-react';
 import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../Constants/ApplicationLayoutWidthCON';
 import ApplicationTableDensityCON from '../../Constants/ApplicationTableDensityCON';
@@ -140,9 +140,9 @@ export default function ProfileSettingsSharedComponent({
     setIsSignOutModalOpen(true);
   };
 
-  const handleNavigateToConfigureSubscriptions = (): void => {
+  const handleNavigateToSettings = (): void => {
     handleClose();
-    navigate({ to: ApplicationRouteCON.CONFIGURE_SUBSCRIPTIONS });
+    navigate({ to: ApplicationRouteCON.SETTINGS_SUBSCRIPTIONS });
   };
 
   const handleConfirmSignOut = (): void => {
@@ -294,11 +294,11 @@ export default function ProfileSettingsSharedComponent({
                     <button
                       type="button"
                       onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-                      onClick={handleNavigateToConfigureSubscriptions}
+                      onClick={handleNavigateToSettings}
                       className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
                     >
-                      <Cloud className="w-4 h-4" />
-                      <span>Configure Subscriptions</span>
+                      <Settings className="w-4 h-4" />
+                      <span>Settings</span>
                     </button>
                   </div>
 

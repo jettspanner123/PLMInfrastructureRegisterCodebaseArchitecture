@@ -8,6 +8,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
     // itself stays unaware of this shape; it only ever sees opaque strings.
     public sealed class CustomColorOptionDTO
     {
+        public Guid Id { get; set; }
+
         public string? ColorName { get; set; }
 
         // "HEX" or "RGB" - how the user originally entered this color.

@@ -16,6 +16,7 @@ import type UpdateResourceCellFormatRequestInterfaceModel from '../Models/Update
 import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatInterfaceModel';
 import type CustomColorOptionInterfaceModel from '../Models/CustomColorOptionInterfaceModel';
 import type AddCustomColorOptionRequestInterfaceModel from '../Models/AddCustomColorOptionRequestInterfaceModel';
+import type UpdateCustomColorOptionRequestInterfaceModel from '../Models/UpdateCustomColorOptionRequestInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -82,6 +83,41 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to add the custom color.'));
+        },
+      });
+    },
+
+    useUpdateCustomColorMutation: (options?: {
+      onSuccess?: (data: CustomColorOptionInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateCustomColorOptionRequestInterfaceModel }) =>
+          ResourcesService.current.updateCustomColor(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CUSTOM_COLORS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the custom color.'));
+        },
+      });
+    },
+
+    useDeleteCustomColorMutation: (options?: {
+      onSuccess?: (data: CustomColorOptionInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => ResourcesService.current.deleteCustomColor(id),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CUSTOM_COLORS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to delete the custom color.'));
         },
       });
     },

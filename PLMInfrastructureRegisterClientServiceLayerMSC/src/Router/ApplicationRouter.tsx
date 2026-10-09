@@ -6,6 +6,7 @@ import {
   RouterProvider,
   Outlet,
   useNavigate,
+  useLocation,
 } from '@tanstack/react-router';
 import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
@@ -14,9 +15,12 @@ import ApplicationTableHeightUtility from '../Utilities/ApplicationTableHeightUt
 import ApplicationTableDensityUtility from '../Utilities/ApplicationTableDensityUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
-import ConfigureSubscriptionsScreenRoute from '../Routes/ConfigureSubscriptionsScreenRoute';
+import SettingsScreenRoute from '../Routes/SettingsScreenRoute';
 import EnvironmentOverviewScreenRoute from '../Routes/EnvironmentOverviewScreenRoute';
 import SplashScreenController from '../Features/SplashScreen/SplashScreenController';
+import SubscriptionsScreenController from '../Features/Subscriptions/SubscriptionsScreenController';
+import SettingsColorEditingScreenController from '../Features/Settings/SettingsColorEditingScreenController';
+import SettingsSidebarStaticComponent from '../Features/Settings/Components/SettingsSidebarStaticComponent';
 
 // ==========================================
 // 1. Root Route & Theme Shell
@@ -27,6 +31,13 @@ const rootRoute = createRootRoute({
 
 function RootLayout(): React.JSX.Element {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Only Settings gets a sidebar today - NavigationController's slot is
+  // generic (any route could pass one later), but deciding WHICH routes do
+  // is kept here rather than inside NavigationController itself, so that
+  // component stays agnostic about any particular screen.
+  const isSettingsRoute = location.pathname.startsWith(ApplicationRouteCON.SETTINGS);
+
   const [currentTheme, setCurrentTheme] = useState<string>(() => {
     const saved = ApplicationThemeUtility.current.getSavedTheme();
     ApplicationThemeUtility.current.applyTheme(saved);
@@ -100,6 +111,7 @@ function RootLayout(): React.JSX.Element {
       layoutWidth={layoutWidth}
       onToggleLayoutWidth={handleToggleLayoutWidth}
       onNavigateHome={handleNavigateHome}
+      sidebar={isSettingsRoute ? <SettingsSidebarStaticComponent /> : undefined}
     >
       <Outlet />
     </NavigationController>
@@ -116,12 +128,40 @@ const infrastructureRegisterRoute = createRoute({
 });
 
 // ==========================================
-// 3. Configure Subscriptions Route
+// 3. Settings Route (sidebar shell + 2 URL-backed tabs)
 // ==========================================
-const configureSubscriptionsRoute = createRoute({
+const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: ApplicationRouteCON.CONFIGURE_SUBSCRIPTIONS,
-  component: ConfigureSubscriptionsScreenRoute,
+  path: ApplicationRouteCON.SETTINGS,
+  component: SettingsScreenRoute,
+});
+
+// Bare /settings (no tab) lands on Subscriptions - replace (not push) so the
+// redirect itself never becomes its own back-button stop.
+function SettingsIndexRedirectComponent(): null {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate({ to: ApplicationRouteCON.SETTINGS_SUBSCRIPTIONS, replace: true });
+  }, [navigate]);
+  return null;
+}
+
+const settingsIndexRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: '/',
+  component: SettingsIndexRedirectComponent,
+});
+
+const settingsSubscriptionsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'subscriptions',
+  component: SubscriptionsScreenController,
+});
+
+const settingsEditingRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'editing',
+  component: SettingsColorEditingScreenController,
 });
 
 // ==========================================
@@ -138,7 +178,7 @@ const environmentOverviewRoute = createRoute({
 // ==========================================
 const routeTree = rootRoute.addChildren([
   infrastructureRegisterRoute,
-  configureSubscriptionsRoute,
+  settingsRoute.addChildren([settingsIndexRoute, settingsSubscriptionsRoute, settingsEditingRoute]),
   environmentOverviewRoute,
 ]);
 

@@ -57,6 +57,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
 
             CustomColorOptionDTO newColor = new()
             {
+                Id = Guid.NewGuid(),
                 ColorName = request.ColorName,
                 Format = request.Format,
                 Color = request.Color,
@@ -67,6 +68,69 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
             await _configurationConstantsService.AddOptionAsynchronous(ConfigurationKey, JsonSerializer.Serialize(newColor));
 
             existingColors.Add(newColor);
+            return existingColors;
+        }
+
+        public async Task<List<CustomColorOptionDTO>> UpdateCustomColorAsynchronous(Guid id, UpdateCustomColorOptionRequestDTO request)
+        {
+            List<CustomColorOptionDTO> existingColors = await GetCustomColorsAsynchronous();
+
+            CustomColorOptionDTO? target = existingColors.FirstOrDefault(color => color.Id == id);
+            if (target is null)
+            {
+                throw new NotFoundException($"No color with id '{id}' was found.");
+            }
+
+            string canonicalHex = ResourceCellFormatColorUtility.Current.NormalizeToHex(request.Color!, request.Format!);
+
+            if (existingColors.Any(color =>
+                color.Id != id && string.Equals(color.ColorName, request.ColorName, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ConflictException($"A color named '{request.ColorName}' already exists.");
+            }
+
+            if (existingColors.Any(color =>
+                color.Id != id &&
+                string.Equals(
+                    ResourceCellFormatColorUtility.Current.NormalizeToHex(color.Color!, color.Format!),
+                    canonicalHex,
+                    StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ConflictException("That color already exists under a different name.");
+            }
+
+            target.ColorName = request.ColorName;
+            target.Format = request.Format;
+            target.Color = request.Color;
+
+            await _configurationConstantsService.ReplaceOptionsAsynchronous(
+                ConfigurationKey,
+                existingColors.Select(color => JsonSerializer.Serialize(color)).ToList());
+
+            return existingColors;
+        }
+
+        public async Task<List<CustomColorOptionDTO>> DeleteCustomColorAsynchronous(Guid id)
+        {
+            List<CustomColorOptionDTO> existingColors = await GetCustomColorsAsynchronous();
+
+            int removedCount = existingColors.RemoveAll(color => color.Id == id);
+            if (removedCount == 0)
+            {
+                throw new NotFoundException($"No color with id '{id}' was found.");
+            }
+
+            // Deleting a color only removes it from this growable list - any
+            // resource cell already formatted with its literal hex value
+            // keeps rendering exactly as before (a cell's own
+            // BackgroundColorKey is a self-contained hex string, never a
+            // reference back into this list - see
+            // ResourceCellFormatHelper.isCustomColor on the frontend), it
+            // just stops being offered as a named option going forward.
+            await _configurationConstantsService.ReplaceOptionsAsynchronous(
+                ConfigurationKey,
+                existingColors.Select(color => JsonSerializer.Serialize(color)).ToList());
+
             return existingColors;
         }
     }

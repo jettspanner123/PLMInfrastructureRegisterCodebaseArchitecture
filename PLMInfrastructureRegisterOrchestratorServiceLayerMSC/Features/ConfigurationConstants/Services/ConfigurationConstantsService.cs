@@ -55,5 +55,26 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Configur
 
             return options;
         }
+
+        // Overwrites the whole list - for a caller that needs to update or
+        // remove an entry (not just append one), which this generic service
+        // has no concept of itself (Status/Sponsor never update or delete an
+        // option once added). The caller is responsible for loading the
+        // current list, making whatever change it needs, and handing back
+        // the full result.
+        public async Task ReplaceOptionsAsynchronous(string configurationKey, List<string> options)
+        {
+            ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
+                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == configurationKey);
+
+            if (configurationConstant is null)
+            {
+                throw new NotFoundException($"Configuration key '{configurationKey}' was not found.");
+            }
+
+            configurationConstant.ConfigurationValue = JsonSerializer.Serialize(options);
+            configurationConstant.UpdatedAt = DateTime.UtcNow;
+            await _applicationDatabaseContext.SaveChangesAsync();
+        }
     }
 }

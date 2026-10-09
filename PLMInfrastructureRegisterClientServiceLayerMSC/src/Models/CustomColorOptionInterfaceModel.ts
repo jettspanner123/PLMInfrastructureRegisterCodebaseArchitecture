@@ -2,6 +2,7 @@
 // the named, growable custom-color palette offered by the right-click
 // formatting menu's "Add Color" option.
 export default interface CustomColorOptionInterfaceModel {
+  id: string;
   colorName: string;
   format: 'HEX' | 'RGB';
   color: string;

@@ -182,5 +182,89 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                         500));
             }
         }
+
+        [HttpPut(ApplicationRouteFactory.ResourcesRoutes.UpdateCustomColor)]
+        public async Task<ActionResult<APIResponse<List<CustomColorOptionDTO>>>> UpdateCustomColorAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateCustomColorOptionRequestDTO? request)
+        {
+            try
+            {
+                ResourcesAssertion.Current.AssertUpdateCustomColorOptionRequest(request);
+
+                List<CustomColorOptionDTO> colors = await _resourceCellFormatColorService.UpdateCustomColorAsynchronous(id, request!);
+
+                return Ok(
+                    APIResponse<List<CustomColorOptionDTO>>.Succeeded(
+                        colors,
+                        "Custom color updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update custom color validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (ConflictException conflictEx)
+            {
+                _logger.LogWarning("Update custom color conflict: {Message}", conflictEx.Message);
+
+                return Conflict(
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(conflictEx.Message, new List<string>(), 409));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update custom color not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating a custom color.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(
+                        "An unexpected error occurred while updating the custom color.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpDelete(ApplicationRouteFactory.ResourcesRoutes.DeleteCustomColor)]
+        public async Task<ActionResult<APIResponse<List<CustomColorOptionDTO>>>> DeleteCustomColorAsynchronous([FromRoute] Guid id)
+        {
+            try
+            {
+                List<CustomColorOptionDTO> colors = await _resourceCellFormatColorService.DeleteCustomColorAsynchronous(id);
+
+                return Ok(
+                    APIResponse<List<CustomColorOptionDTO>>.Succeeded(
+                        colors,
+                        "Custom color deleted successfully.",
+                        200));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Delete custom color not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting a custom color.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<CustomColorOptionDTO>>.Failed(
+                        "An unexpected error occurred while deleting the custom color.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

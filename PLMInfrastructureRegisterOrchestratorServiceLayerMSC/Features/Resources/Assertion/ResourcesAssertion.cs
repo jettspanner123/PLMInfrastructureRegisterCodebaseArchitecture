@@ -102,5 +102,26 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                 throw new ValidationException($"'{request.Color}' is not a valid {request.Format} color.");
             }
         }
+
+        public void AssertUpdateCustomColorOptionRequest(UpdateCustomColorOptionRequestDTO? request)
+        {
+            if (request is null
+                || string.IsNullOrWhiteSpace(request.ColorName)
+                || string.IsNullOrWhiteSpace(request.Format)
+                || string.IsNullOrWhiteSpace(request.Color))
+            {
+                throw new ValidationException("ColorName, Format, and Color are all required.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidFormat(request.Format))
+            {
+                throw new ValidationException($"'{request.Format}' is not a valid color format.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidColorForFormat(request.Color, request.Format))
+            {
+                throw new ValidationException($"'{request.Color}' is not a valid {request.Format} color.");
+            }
+        }
     }
 }

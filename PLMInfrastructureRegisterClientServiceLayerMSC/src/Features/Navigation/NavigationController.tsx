@@ -13,6 +13,12 @@ export interface NavigationControllerProps {
   onToggleLayoutWidth: () => void;
   onNavigateHome: () => void;
   children: React.ReactNode;
+  // Optional, screen-agnostic slot for a route that wants a left sidebar
+  // sitting flush against the real viewport edge (sticky below the header,
+  // full remaining height) - RootLayout decides which routes pass one, not
+  // this component. Undefined for every route that doesn't, which renders
+  // identically to before this slot existed.
+  sidebar?: React.ReactNode;
 }
 
 export default function NavigationController({
@@ -22,6 +28,7 @@ export default function NavigationController({
   onToggleLayoutWidth,
   onNavigateHome,
   children,
+  sidebar,
 }: NavigationControllerProps): React.JSX.Element {
   // Derived from the actual route, not independent state — otherwise
   // navigating elsewhere (e.g. the profile dropdown's Configure
@@ -39,7 +46,7 @@ export default function NavigationController({
         : '';
 
   return (
-    <div className="min-h-screen bg-(--color-canvas) text-(--color-ink)">
+    <div className="min-h-screen bg-(--color-canvas) text-(--color-ink) flex flex-col">
       <header className="sticky top-0 z-40 w-full bg-white dark:bg-black sm:bg-white/90 sm:dark:bg-black/90 sm:backdrop-blur-md border-b border-slate-200/80 dark:border-zinc-800/80 transition-colors">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 sm:gap-3 select-none shrink-0">
@@ -90,7 +97,14 @@ export default function NavigationController({
           </div>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8">{children}</main>
+      {/* A sidebar (when passed) sits here as <main>'s sibling, outside its
+          max-width - that's what lets it sit flush against the real
+          viewport edge instead of inside the centered content column, same
+          as AssetSphere's own header+sidebar+main shell. */}
+      <div className="flex-1 flex w-full items-start">
+        {sidebar}
+        <main className="flex-1 min-w-0 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8">{children}</main>
+      </div>
     </div>
   );
 }

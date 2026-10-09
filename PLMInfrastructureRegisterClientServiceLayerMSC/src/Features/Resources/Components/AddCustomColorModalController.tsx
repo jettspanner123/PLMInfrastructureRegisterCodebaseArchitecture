@@ -12,11 +12,15 @@ import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOpt
 export interface AddCustomColorModalControllerProps {
   isOpen: boolean;
   onClose: () => void;
-  // Fired after the new color is successfully persisted - the parent
-  // decides what to do with it (e.g. immediately apply it to whichever
-  // cells were selected when "Add Color" was opened), matching
+  // Fired after a NEW color is successfully persisted (never for an edit) -
+  // the parent decides what to do with it (e.g. immediately apply it to
+  // whichever cells were selected when "Add Color" was opened), matching
   // CreateOptionModalController's own onCreated convention.
   onCreated: (option: CustomColorOptionInterfaceModel) => void;
+  // When present, the modal edits this existing color (rename/recolor)
+  // instead of creating a new one - same form, different mutation and
+  // copy. Settings' "Editing" tab is the one caller that passes this.
+  editingColor?: CustomColorOptionInterfaceModel;
 }
 
 type ColorInputMode = 'HEX' | 'RGB';
@@ -41,7 +45,10 @@ export default function AddCustomColorModalController({
   isOpen,
   onClose,
   onCreated,
+  editingColor,
 }: AddCustomColorModalControllerProps): React.JSX.Element {
+  const isEditMode = editingColor !== undefined;
+
   const [inputMode, setInputMode] = useState<ColorInputMode>('HEX');
   const [colorNameInput, setColorNameInput] = useState<string>('');
   const [hexInput, setHexInput] = useState<string>('');
@@ -51,15 +58,38 @@ export default function AddCustomColorModalController({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      setInputMode('HEX');
-      setColorNameInput('');
-      setHexInput('');
-      setRedInput('');
-      setGreenInput('');
-      setBlueInput('');
-      setErrorMessage(null);
+    if (!isOpen) return;
+
+    setErrorMessage(null);
+
+    if (editingColor) {
+      setColorNameInput(editingColor.colorName);
+      setInputMode(editingColor.format);
+      if (editingColor.format === 'HEX') {
+        setHexInput(editingColor.color);
+        setRedInput('');
+        setGreenInput('');
+        setBlueInput('');
+      } else {
+        const [r, g, b] = editingColor.color.split(',');
+        setRedInput(r ?? '');
+        setGreenInput(g ?? '');
+        setBlueInput(b ?? '');
+        setHexInput('');
+      }
+      return;
     }
+
+    setInputMode('HEX');
+    setColorNameInput('');
+    setHexInput('');
+    setRedInput('');
+    setGreenInput('');
+    setBlueInput('');
+    // editingColor is intentionally omitted - re-running this effect every
+    // time the SAME color object gets a new reference (e.g. a background
+    // refetch after some unrelated edit) would stomp on in-progress typing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const addColorMutation = TanstackQueryClientService.current.resources.useAddCustomColorMutation({
@@ -67,6 +97,10 @@ export default function AddCustomColorModalController({
       onCreated(options[options.length - 1]);
       onClose();
     },
+  });
+
+  const updateColorMutation = TanstackQueryClientService.current.resources.useUpdateCustomColorMutation({
+    onSuccess: () => onClose(),
   });
 
   const isRgbInputValid =
@@ -88,20 +122,30 @@ export default function AddCustomColorModalController({
 
   const isNameValid = colorNameInput.trim().length > 0;
   const canSubmit = !!resolvedHex && isNameValid;
+  const isSubmitting = addColorMutation.isPending || updateColorMutation.isPending;
 
-  const handleAddColor = async (): Promise<void> => {
+  const handleSubmit = async (): Promise<void> => {
     if (!canSubmit || !resolvedHex) return;
+
+    const colorValue = inputMode === 'HEX' ? resolvedHex : `${Number(redInput)},${Number(greenInput)},${Number(blueInput)}`;
 
     setErrorMessage(null);
     try {
-      await addColorMutation.mutateAsync({
-        colorName: colorNameInput.trim(),
-        format: inputMode,
-        color: inputMode === 'HEX' ? resolvedHex : `${Number(redInput)},${Number(greenInput)},${Number(blueInput)}`,
-        createdByClientId: AnonymousClientIdentityUtility.current.getOrCreateClientId(),
-      });
+      if (editingColor) {
+        await updateColorMutation.mutateAsync({
+          id: editingColor.id,
+          request: { colorName: colorNameInput.trim(), format: inputMode, color: colorValue },
+        });
+      } else {
+        await addColorMutation.mutateAsync({
+          colorName: colorNameInput.trim(),
+          format: inputMode,
+          color: colorValue,
+          createdByClientId: AnonymousClientIdentityUtility.current.getOrCreateClientId(),
+        });
+      }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to add the color.');
+      setErrorMessage(error instanceof Error ? error.message : `Failed to ${editingColor ? 'save' : 'add'} the color.`);
     }
   };
 
@@ -109,19 +153,23 @@ export default function AddCustomColorModalController({
     <ModalSharedComponent
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Color"
-      subtitle="Adds a new background color to the cell-formatting context menu for every table."
+      title={isEditMode ? 'Edit Color' : 'Add Color'}
+      subtitle={
+        isEditMode
+          ? 'Renames and/or recolors this entry everywhere it appears in the formatting menu.'
+          : 'Adds a new background color to the cell-formatting context menu for every table.'
+      }
       maxWidth="sm"
       footer={
         <div className="flex items-center justify-end gap-3">
-          <ButtonSharedComponent variant="outline" onClick={onClose} disabled={addColorMutation.isPending}>
+          <ButtonSharedComponent variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </ButtonSharedComponent>
           <PrimaryActionButtonSharedComponent
-            label="Add Color"
-            onClick={handleAddColor}
+            label={isEditMode ? 'Save Changes' : 'Add Color'}
+            onClick={handleSubmit}
             disabled={!canSubmit}
-            isLoading={addColorMutation.isPending}
+            isLoading={isSubmitting}
           />
         </div>
       }
@@ -164,7 +212,7 @@ export default function AddCustomColorModalController({
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && resolvedHex) {
                   event.preventDefault();
-                  void handleAddColor();
+                  void handleSubmit();
                 }
               }}
               placeholder="#RRGGBB"

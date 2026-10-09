@@ -5,6 +5,7 @@ import type ResourceCellFormatInterfaceModel from '../../../Models/ResourceCellF
 import type UpdateResourceCellFormatRequestInterfaceModel from '../../../Models/UpdateResourceCellFormatRequestInterfaceModel';
 import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
 import type AddCustomColorOptionRequestInterfaceModel from '../../../Models/AddCustomColorOptionRequestInterfaceModel';
+import type UpdateCustomColorOptionRequestInterfaceModel from '../../../Models/UpdateCustomColorOptionRequestInterfaceModel';
 
 export default class ResourcesService {
   public static current: ResourcesService = new ResourcesService();
@@ -80,6 +81,39 @@ export default class ResourcesService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to add the custom color.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateCustomColor(
+    id: string,
+    request: UpdateCustomColorOptionRequestInterfaceModel
+  ): Promise<CustomColorOptionInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/CellFormats/Colors/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<CustomColorOptionInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the custom color.');
+    }
+
+    return payload.data;
+  }
+
+  public async deleteCustomColor(id: string): Promise<CustomColorOptionInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/CellFormats/Colors/${id}`, {
+      method: 'DELETE',
+    });
+
+    const payload: APIResponseInterfaceModel<CustomColorOptionInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to delete the custom color.');
     }
 
     return payload.data;
