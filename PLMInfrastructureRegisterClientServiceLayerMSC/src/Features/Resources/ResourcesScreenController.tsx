@@ -267,7 +267,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
     ...ResourceCellFormatCON.COLORS.map((color, index) => ({
       id: `color-${color.key}`,
       label: color.label,
-      icon: <span className={`w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 ${color.swatchClassName}`} />,
+      icon: <span className={`w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 ${color.cellClassName}`} />,
       onClick: () => handleSetColor(color.key),
       divider: index === 0,
     })),
