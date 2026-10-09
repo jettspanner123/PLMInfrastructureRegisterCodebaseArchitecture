@@ -18,6 +18,7 @@ import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import type ResourceCellFormatTargetInterfaceModel from '../../Models/ResourceCellFormatTargetInterfaceModel';
 import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceColumnCON';
 import ResourceCellFormatCON from './Constants/ResourceCellFormatCON';
+import ResourceCellFormatHelper from './Helpers/ResourceCellFormatHelper';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
 import AddCustomColorModalController from './Components/AddCustomColorModalController';
@@ -297,7 +298,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
       icon: (
         <span
           className="inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
-          style={ResourceCellFormatCON.getSwatchStyle(hex)}
+          style={ResourceCellFormatHelper.current.getSwatchStyle(hex)}
         />
       ),
       onClick: () => handleSetColor(hex),
@@ -335,12 +336,12 @@ export default function ResourcesScreenController(): React.JSX.Element {
 
     const format = cellFormatByKey.get(`${resource.id}:${column.key}`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${ResourceCellFormatCON.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${ResourceCellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const cellClassName = `${CELL_CLASS_NAME} ${formatClassName}`;
     // Only a custom (hex) color needs this - the 4 fixed colors are fully
     // handled by formatClassName's Tailwind classes above.
-    const formatStyle = ResourceCellFormatCON.getCellStyle(format?.backgroundColorKey);
+    const formatStyle = ResourceCellFormatHelper.current.getCellStyle(format?.backgroundColorKey);
     const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
 
     if (displayValue === null) {

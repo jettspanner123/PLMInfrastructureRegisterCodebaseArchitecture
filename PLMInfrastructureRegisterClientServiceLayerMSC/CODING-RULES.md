@@ -63,6 +63,8 @@ PLMInfrastructureRegisterClientServiceLayerMSC/src/
 │   │   ├── AssetInventoryScreenController.tsx
 │   │   ├── Components/         # Feature-specific sub-controllers & modals
 │   │   │   └── AssetTemplateSelectionModalController.tsx
+│   │   ├── Helpers/             # Feature-specific derived-data logic (*Helper.ts) - see note below
+│   │   │   └── AssetPricingHelper.ts
 │   │   └── Services/           # Feature-specific API communication services
 │   │       └── AssetInventoryService.ts
 │   ├── Employees/
@@ -116,10 +118,15 @@ PLMInfrastructureRegisterClientServiceLayerMSC/src/
 │   ├── SoftwareLicenseType.ts
 │   ├── UserRoleType.ts
 │   └── index.ts                # Central barrel export for all types
-└── Utilities/                  # Pure utility singletons (*Utility.ts)
+└── Utilities/                  # Pure utility singletons (*Utility.ts) - APP-WIDE, usable by any feature
     ├── DateFormatterUtility.ts
     └── OrdinalNumberUtility.ts
 ```
+
+**Utility vs. Helper** — both are singleton classes (`ClassName.current`) returning plain data, never JSX, and both exist specifically because this logic doesn't belong on a `*CON.ts` (pure constant data, no methods) or inline in a screen controller (orchestration, not derived-data logic). The only difference is scope:
+
+- **`Utilities/[Name]Utility.ts`** — general-purpose, usable by any feature. Nothing about the logic itself is tied to one feature's own domain model.
+- **`Features/[Feature]/Helpers/[Name]Helper.ts`** — feature-specific, operating on one feature's own domain data and meaningless outside it (e.g. `ResourceCellFormatHelper` only makes sense next to Resources' own cell-formatting feature). Lives inside that feature's folder as a sibling to its own `Components/`/`Services/`, the same way `Features/[Feature]/Constants/` already does for that feature's own constant data.
 
 ---
 
@@ -138,6 +145,7 @@ Every file, class, component, and type **MUST** adhere to strict suffix and case
 │ Constant Class            │ [Name]CON.ts                  │ export default class [Name]CON           │
 │ Service Singleton         │ [Name]Service.ts              │ export default class [Name]Service       │
 │ Utility Singleton         │ [Name]Utility.ts              │ export default class [Name]Utility       │
+│ Helper Singleton          │ [Name]Helper.ts               │ export default class [Name]Helper        │
 │ Enum Model Definition     │ [Name]EnumModel.ts            │ export enum [Name]EnumModel (1 per file) │
 │ Interface Model Definition│ [Name]InterfaceModel.ts       │ export interface [Name]InterfaceModel    │
 │ Type Model Definition     │ [Name]TypeModel.ts            │ export type [Name]TypeModel              │

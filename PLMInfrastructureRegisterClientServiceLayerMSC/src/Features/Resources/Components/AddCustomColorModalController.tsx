@@ -4,7 +4,7 @@ import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedCompon
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
 import SegmentedControlSharedComponent from '../../../Shared/Components/SegmentedControlSharedComponent';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
-import ResourceCellFormatCON from '../Constants/ResourceCellFormatCON';
+import ResourceCellFormatHelper from '../Helpers/ResourceCellFormatHelper';
 
 export interface AddCustomColorModalControllerProps {
   isOpen: boolean;
@@ -127,7 +127,7 @@ export default function AddCustomColorModalController({
           <span
             aria-hidden="true"
             className="shrink-0 w-9 h-9 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
-            style={resolvedHex ? ResourceCellFormatCON.getSwatchStyle(resolvedHex) : undefined}
+            style={resolvedHex ? ResourceCellFormatHelper.current.getSwatchStyle(resolvedHex) : undefined}
           />
 
           {inputMode === 'HEX' ? (
