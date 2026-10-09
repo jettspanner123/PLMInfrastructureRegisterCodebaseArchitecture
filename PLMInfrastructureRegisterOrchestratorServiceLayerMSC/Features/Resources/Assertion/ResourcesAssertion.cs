@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
 
@@ -14,15 +15,29 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         {
         }
 
-        // Fixed, non-growable (unlike Status/Sponsor's own option lists) -
-        // the request asked for exactly 4 colors, not a user-extensible set.
-        private static readonly HashSet<string> AllowedBackgroundColorKeys = new(StringComparer.Ordinal)
+        // The 4 original fixed colors, plus any growable custom color a user
+        // has added via the "Add Color" modal (see
+        // ConfigurationConstantsAssertion's "ResourceCellFormatColor" field -
+        // stored the same growable-options way as Status/Sponsor). A custom
+        // color is a raw "#RRGGBB" hex string rather than a name, so it's
+        // recognized by SHAPE here instead of requiring a database lookup to
+        // confirm it was actually added through that modal first - there's
+        // no safety reason to restrict this to only previously-registered
+        // hex values, since persisting an arbitrary valid hex color carries
+        // no risk beyond what persisting any other free-text value already
+        // does elsewhere in this app.
+        private static readonly HashSet<string> AllowedNamedBackgroundColorKeys = new(StringComparer.Ordinal)
         {
             "Yellow",
             "Green",
             "Blue",
             "Red",
         };
+
+        private static readonly Regex HexColorPattern = new(@"^#[0-9A-Fa-f]{6}$", RegexOptions.Compiled);
+
+        private static bool IsValidBackgroundColorKey(string colorKey) =>
+            AllowedNamedBackgroundColorKeys.Contains(colorKey) || HexColorPattern.IsMatch(colorKey);
 
         // Reflection against ResourceNexus's own property names rather than a
         // hand-maintained string list - this entity has ~60 properties and a
@@ -54,7 +69,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                 }
             }
 
-            if (request.BackgroundColorKey is not null && !AllowedBackgroundColorKeys.Contains(request.BackgroundColorKey))
+            if (request.BackgroundColorKey is not null && !IsValidBackgroundColorKey(request.BackgroundColorKey))
             {
                 throw new ValidationException($"'{request.BackgroundColorKey}' is not a valid background color.");
             }

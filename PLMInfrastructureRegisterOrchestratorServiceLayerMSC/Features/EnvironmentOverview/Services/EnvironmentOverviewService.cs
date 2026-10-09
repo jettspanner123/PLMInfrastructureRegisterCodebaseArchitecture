@@ -1,10 +1,8 @@
 using System.Globalization;
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
-using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models.Classes;
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services
 {
@@ -93,42 +91,6 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         // of these run - shared by Status and Sponsor (and any future
         // growable-dropdown field) rather than one GetXOptions/AddXOption
         // pair per field.
-        public async Task<List<string>> GetOptionsAsynchronous(string configurationKey)
-        {
-            ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
-                .AsNoTracking()
-                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == configurationKey);
-
-            if (configurationConstant is null) return new List<string>();
-
-            return JsonSerializer.Deserialize<List<string>>(configurationConstant.ConfigurationValue) ?? new List<string>();
-        }
-
-        public async Task<List<string>> AddOptionAsynchronous(string configurationKey, string value)
-        {
-            ConfigurationConstantClass? configurationConstant = await _applicationDatabaseContext.ConfigurationConstants
-                .FirstOrDefaultAsync(constant => constant.ConfigurationKey == configurationKey);
-
-            if (configurationConstant is null)
-            {
-                throw new NotFoundException($"Configuration key '{configurationKey}' was not found.");
-            }
-
-            List<string> options = JsonSerializer.Deserialize<List<string>>(configurationConstant.ConfigurationValue) ?? new List<string>();
-
-            if (options.Any(existingOption => string.Equals(existingOption, value, StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new ConflictException($"Option '{value}' already exists.");
-            }
-
-            options.Add(value);
-            configurationConstant.ConfigurationValue = JsonSerializer.Serialize(options);
-            configurationConstant.UpdatedAt = DateTime.UtcNow;
-            await _applicationDatabaseContext.SaveChangesAsync();
-
-            return options;
-        }
-
         public async Task<EnvironmentOverviewDTO> UpdateStatusAsynchronous(Guid id, string status, string changedByClientId)
         {
             EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews

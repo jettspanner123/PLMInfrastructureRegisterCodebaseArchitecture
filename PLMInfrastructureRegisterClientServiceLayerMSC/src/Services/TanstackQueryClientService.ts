@@ -3,12 +3,13 @@ import TanstackQueryKeysCON from '../Constants/TanstackQueryKeysCON';
 import EnvironmentOverviewService from '../Features/EnvironmentOverview/Services/EnvironmentOverviewService';
 import ResourcesService from '../Features/Resources/Services/ResourcesService';
 import SubscriptionsService from '../Features/Subscriptions/Services/SubscriptionsService';
+import ConfigurationConstantsService from './ConfigurationConstantsService';
 import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubscriptionInterfaceModel';
 import type SubscriptionDeletionResultInterfaceModel from '../Models/SubscriptionDeletionResultInterfaceModel';
 import type EnvironmentOverviewInterfaceModel from '../Models/EnvironmentOverviewInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
-import type AddEnvironmentOverviewOptionRequestInterfaceModel from '../Models/AddEnvironmentOverviewOptionRequestInterfaceModel';
+import type AddConfigurationConstantOptionRequestInterfaceModel from '../Models/AddConfigurationConstantOptionRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
 import type UpdateResourceCellFormatRequestInterfaceModel from '../Models/UpdateResourceCellFormatRequestInterfaceModel';
@@ -53,6 +54,38 @@ export default class TanstackQueryClientService {
     },
   };
 
+  // Generic growable-dropdown options mechanism - shared by Status/Sponsor
+  // (Environment Overview), the custom color palette (Infrastructure
+  // Register), and any future field across the whole app that needs one.
+  // Each field gets its own independently cached query key (see
+  // TanstackQueryKeysCON.CONFIGURATION_CONSTANT_OPTIONS), so adding a new
+  // Sponsor option never invalidates Status's (or a custom color's)
+  // already-cached list.
+  public readonly configurationConstants = {
+    useOptionsQuery: (fieldName: string) => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.CONFIGURATION_CONSTANT_OPTIONS(fieldName),
+        queryFn: () => ConfigurationConstantsService.current.getOptions(fieldName),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useAddOptionMutation: (fieldName: string, options?: { onSuccess?: (data: string[]) => void; onError?: (error: Error) => void }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: AddConfigurationConstantOptionRequestInterfaceModel) =>
+          ConfigurationConstantsService.current.addOption(fieldName, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.CONFIGURATION_CONSTANT_OPTIONS(fieldName) });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to add the option.'));
+        },
+      });
+    },
+  };
+
   public readonly environmentOverview = {
     useEnvironmentOverviewsQuery: () => {
       return useQuery({
@@ -71,31 +104,6 @@ export default class TanstackQueryClientService {
           EnvironmentOverviewService.current.createEnvironmentOverview(request),
         onSuccess: async (data) => {
           await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
-          options?.onSuccess?.(data);
-        },
-      });
-    },
-
-    // Generic growable-dropdown options mechanism - shared by Status,
-    // Sponsor, and any future field that needs one. Each field gets its own
-    // independently cached query key (see
-    // TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_OPTIONS), so adding a new
-    // Sponsor option never invalidates Status's already-cached list.
-    useOptionsQuery: (fieldName: string) => {
-      return useQuery({
-        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_OPTIONS(fieldName),
-        queryFn: () => EnvironmentOverviewService.current.getOptions(fieldName),
-        staleTime: 1000 * 60 * 2, // 2 minutes
-      });
-    },
-
-    useAddOptionMutation: (fieldName: string, options?: { onSuccess?: (data: string[]) => void }) => {
-      const queryClient = useQueryClient();
-      return useMutation({
-        mutationFn: (request: AddEnvironmentOverviewOptionRequestInterfaceModel) =>
-          EnvironmentOverviewService.current.addOption(fieldName, request),
-        onSuccess: async (data) => {
-          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_OPTIONS(fieldName) });
           options?.onSuccess?.(data);
         },
       });

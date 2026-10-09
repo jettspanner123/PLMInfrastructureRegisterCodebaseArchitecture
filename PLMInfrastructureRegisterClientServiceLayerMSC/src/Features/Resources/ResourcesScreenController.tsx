@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ChevronDown, Columns3, ServerOff, FilterX, Bold, Italic, X } from 'lucide-react';
+import { ChevronDown, Columns3, ServerOff, FilterX, Bold, Italic, X, Plus } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -20,6 +20,7 @@ import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceC
 import ResourceCellFormatCON from './Constants/ResourceCellFormatCON';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import ColumnVisibilityDropdownStaticComponent from './Components/static/ColumnVisibilityDropdownStaticComponent';
+import AddCustomColorModalController from './Components/AddCustomColorModalController';
 
 export default function ResourcesScreenController(): React.JSX.Element {
   const { data: resources = [], isLoading } = TanstackQueryClientService.current.resources.useResourcesQuery();
@@ -175,6 +176,13 @@ export default function ResourcesScreenController(): React.JSX.Element {
     y: 0,
   });
 
+  // Custom colors a user has added via "Add Color" - growable, shared
+  // across every table that ever gets this feature (not just Resources),
+  // stored the same way Status/Sponsor's own option lists are.
+  const { data: customColors = [] } =
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('ResourceCellFormatColor');
+  const [isAddColorModalOpen, setIsAddColorModalOpen] = useState<boolean>(false);
+
   // Every (resourceId, columnKey) pair the current selection rectangle
   // covers - computed fresh each time rather than captured once when the
   // menu opened, so it always reflects whatever selectCell/drag last set.
@@ -280,11 +288,32 @@ export default function ResourcesScreenController(): React.JSX.Element {
       onClick: () => handleSetColor(color.key),
       divider: index === 0,
     })),
+    // Custom (hex) colors - same icon treatment as the 4 fixed ones, just
+    // an inline style instead of a Tailwind class, since the hex value only
+    // exists at runtime.
+    ...customColors.map((hex) => ({
+      id: `color-${hex}`,
+      label: hex,
+      icon: (
+        <span
+          className="inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
+          style={ResourceCellFormatCON.getSwatchStyle(hex)}
+        />
+      ),
+      onClick: () => handleSetColor(hex),
+    })),
+    {
+      id: 'add-color',
+      label: 'Add Color',
+      icon: <Plus className="w-3.5 h-3.5" />,
+      onClick: () => setIsAddColorModalOpen(true),
+    },
     {
       id: 'clear-color',
       label: 'Clear Color',
       icon: <X className="w-3.5 h-3.5" />,
       onClick: handleClearColor,
+      divider: true,
     },
   ];
 
@@ -309,6 +338,9 @@ export default function ResourcesScreenController(): React.JSX.Element {
       ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${ResourceCellFormatCON.getCellClassName(format.backgroundColorKey)}`
       : '';
     const cellClassName = `${CELL_CLASS_NAME} ${formatClassName}`;
+    // Only a custom (hex) color needs this - the 4 fixed colors are fully
+    // handled by formatClassName's Tailwind classes above.
+    const formatStyle = ResourceCellFormatCON.getCellStyle(format?.backgroundColorKey);
     const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
 
     if (displayValue === null) {
@@ -318,7 +350,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
           onMouseDown={cellHandlers.onMouseDown}
           onMouseEnter={cellHandlers.onMouseEnter}
           onContextMenu={onCellContextMenu}
-          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex) }}
+          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), ...formatStyle }}
           className={cellClassName}
         >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
@@ -332,6 +364,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
         value={displayValue}
         ariaLabel={`Copy ${column.label}: ${displayValue}`}
         className={cellClassName}
+        buttonStyle={formatStyle}
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
@@ -484,6 +517,12 @@ export default function ResourcesScreenController(): React.JSX.Element {
         y={contextMenu.y}
         onClose={handleCloseContextMenu}
         items={contextMenuItems}
+      />
+
+      <AddCustomColorModalController
+        isOpen={isAddColorModalOpen}
+        onClose={() => setIsAddColorModalOpen(false)}
+        onCreated={() => {}}
       />
     </div>
   );

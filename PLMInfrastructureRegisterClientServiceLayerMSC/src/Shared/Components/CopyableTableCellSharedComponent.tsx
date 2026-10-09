@@ -34,6 +34,13 @@ export interface CopyableTableCellSharedComponentProps {
   // dynamic per-render pixel width (e.g. a user-dragged column width)
   // Tailwind's JIT can't see at build time. Inert when omitted.
   width?: number;
+  // A second, independent escape hatch for the inner button specifically
+  // (not the outer <td>, which is what the plain `style` object baked into
+  // this component already covers via selectionBoxShadow/width) - for a
+  // value Tailwind's JIT can't precompile a class for at all, such as a
+  // user-entered custom color that only exists at runtime (Resources' own
+  // cell-formatting feature).
+  buttonStyle?: React.CSSProperties;
 }
 
 // A table cell whose entire surface is a single native <button> - clicking
@@ -55,6 +62,7 @@ export default function CopyableTableCellSharedComponent({
   onCellContextMenu,
   verticalAlign = 'center',
   width,
+  buttonStyle,
 }: CopyableTableCellSharedComponentProps): React.JSX.Element {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -105,6 +113,7 @@ export default function CopyableTableCellSharedComponent({
         onContextMenu={onCellContextMenu}
         onClick={handleClick}
         aria-label={ariaLabel}
+        style={buttonStyle}
         className={`group relative w-full h-full flex ${
           verticalAlign === 'top' ? 'items-start' : 'items-center'
         } text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}

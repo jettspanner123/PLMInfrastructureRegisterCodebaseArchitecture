@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ConfigurationConstants.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Services;
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ResourcesService>();
 builder.Services.AddScoped<SyncService>();
 builder.Services.AddScoped<SubscriptionsService>();
 builder.Services.AddScoped<EnvironmentOverviewService>();
+builder.Services.AddScoped<ConfigurationConstantsService>();
 builder.Services.AddHttpClient<ChatAssistantService>();
 
 const string FrontendDevelopmentOriginPolicy = "FrontendDevelopmentOriginPolicy";

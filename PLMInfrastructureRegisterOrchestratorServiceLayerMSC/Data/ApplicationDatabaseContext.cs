@@ -113,6 +113,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                         ConfigurationValue = "[\"Ajay Shelke\",\"Balgovind\",\"Gopinath Karthikesan\",\"Heena Ahirrao\",\"Ilse Roegies\",\"Jacky Joseph\",\"N/A\",\"Pavan Gude\",\"Shruti Vedasen\",\"Stefaan Boel\",\"Tom Slegers\"]",
                         Notes = "Valid values for EnvironmentOverview.Sponsor, seeded from every distinct Sponsor already present in the infrastructure register CSV - growable via the Edit Mode sponsor dropdown's \"Add New Sponsor\" button.",
                         CreatedAt = new DateTime(2026, 10, 8, 0, 0, 0, DateTimeKind.Utc),
+                    },
+                    new ConfigurationConstantClass
+                    {
+                        Id = Guid.Parse("7d51a405-d373-4b20-b96c-53e7238ae1d5"),
+                        ConfigurationKey = "RESOURCE_CELL_FORMAT_CUSTOM_COLORS",
+                        ConfigurationValue = "[]",
+                        Notes = "User-added custom background colors (raw \"#RRGGBB\" hex strings) for Infrastructure Register's right-click cell formatting, growable via its context menu's \"Add Color\" option - starts empty, unlike Status/Sponsor there's no existing data to seed from.",
+                        CreatedAt = new DateTime(2026, 10, 9, 0, 0, 0, DateTimeKind.Utc),
                     }
                 );
             });

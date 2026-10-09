@@ -114,14 +114,14 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   }, []);
 
   const { data: statusOptions = [] } =
-    TanstackQueryClientService.current.environmentOverview.useOptionsQuery('Status');
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('Status');
   const statusSelectOptions = useMemo(
     () => statusOptions.map((option) => ({ value: option, label: option })),
     [statusOptions]
   );
 
   const { data: sponsorOptions = [] } =
-    TanstackQueryClientService.current.environmentOverview.useOptionsQuery('Sponsor');
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('Sponsor');
   const sponsorSelectOptions = useMemo(
     () => sponsorOptions.map((option) => ({ value: option, label: option })),
     [sponsorOptions]

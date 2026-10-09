@@ -36,7 +36,7 @@ export default function CreateOptionModalController({
   const [optionValue, setOptionValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const addOptionMutation = TanstackQueryClientService.current.environmentOverview.useAddOptionMutation(fieldName, {
+  const addOptionMutation = TanstackQueryClientService.current.configurationConstants.useAddOptionMutation(fieldName, {
     onSuccess: () => {
       onCreated(optionValue.trim());
       setOptionValue('');
