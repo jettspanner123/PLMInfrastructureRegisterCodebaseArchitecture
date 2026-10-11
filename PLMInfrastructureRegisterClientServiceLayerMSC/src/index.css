@@ -248,3 +248,99 @@ html.table-density-compact .data-table-scroll-area td > button {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+
+/* =========================================================
+ * We.PLM Corporate Sonner Toast Theming (mirrors AssetSphere's own 1:1)
+ * ========================================================= */
+[data-sonner-toaster] {
+  font-family: var(--font-sans) !important;
+}
+
+[data-sonner-toaster][data-theme="light"],
+:root [data-sonner-toaster] {
+  --normal-bg: #ffffff !important;
+  --normal-text: #0f172a !important;
+  --normal-border: #e2e8f0 !important;
+  --success-bg: #f0fdf4 !important;
+  --success-border: rgba(34, 197, 94, 0.3) !important;
+  --success-text: #166534 !important;
+  --error-bg: #fef2f2 !important;
+  --error-border: rgba(239, 68, 68, 0.3) !important;
+  --error-text: #991b1b !important;
+  --warning-bg: #fffbeb !important;
+  --warning-border: rgba(245, 158, 11, 0.3) !important;
+  --warning-text: #92400e !important;
+  --info-bg: #eff6ff !important;
+  --info-border: rgba(59, 130, 246, 0.3) !important;
+  --info-text: #1e40af !important;
+}
+
+.dark [data-sonner-toaster],
+[data-sonner-toaster][data-theme="dark"] {
+  --normal-bg: #0e0e12 !important;
+  --normal-text: #f4f4f5 !important;
+  --normal-border: #27272a !important;
+  --success-bg: #06281e !important;
+  --success-border: rgba(16, 185, 129, 0.35) !important;
+  --success-text: #6ee7b7 !important;
+  --error-bg: #2d0e14 !important;
+  --error-border: rgba(244, 63, 94, 0.35) !important;
+  --error-text: #fda4af !important;
+  --warning-bg: #2d1c07 !important;
+  --warning-border: rgba(245, 158, 11, 0.35) !important;
+  --warning-text: #fcd34d !important;
+  --info-bg: #0b1e3b !important;
+  --info-border: rgba(59, 130, 246, 0.35) !important;
+  --info-text: #93c5fd !important;
+}
+
+[data-sonner-toast] {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
+  cursor: grab !important;
+  touch-action: pan-y pinch-zoom !important;
+  user-select: none !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+}
+
+[data-sonner-toast]:active {
+  cursor: grabbing !important;
+}
+
+[data-sonner-toast] [data-title] {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+[data-sonner-toast] [data-description] {
+  font-size: 11.5px !important;
+  opacity: 0.88 !important;
+  line-height: 1.45 !important;
+  margin-top: 2px !important;
+}
+
+/* Top-left dismiss button floating badge */
+[data-sonner-toast] [data-close-button] {
+  background: var(--normal-bg) !important;
+  border: 1px solid var(--normal-border) !important;
+  color: var(--normal-text) !important;
+  opacity: 0.85 !important;
+  transition: all 0.15s ease !important;
+  border-radius: 9999px !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  transform: translate(-50%, -50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  z-index: 50 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.15) !important;
+}

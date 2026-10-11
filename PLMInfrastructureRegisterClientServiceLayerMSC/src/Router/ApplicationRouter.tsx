@@ -21,6 +21,7 @@ import SplashScreenController from '../Features/SplashScreen/SplashScreenControl
 import SubscriptionsScreenController from '../Features/Subscriptions/SubscriptionsScreenController';
 import SettingsColorEditingScreenController from '../Features/Settings/SettingsColorEditingScreenController';
 import SettingsSidebarStaticComponent from '../Features/Settings/Components/SettingsSidebarStaticComponent';
+import ApplicationToasterSharedComponent from '../Shared/Components/ApplicationToasterSharedComponent';
 
 // ==========================================
 // 1. Root Route & Theme Shell
@@ -105,16 +106,19 @@ function RootLayout(): React.JSX.Element {
   };
 
   return (
-    <NavigationController
-      currentTheme={currentTheme}
-      onToggleTheme={handleToggleTheme}
-      layoutWidth={layoutWidth}
-      onToggleLayoutWidth={handleToggleLayoutWidth}
-      onNavigateHome={handleNavigateHome}
-      sidebar={isSettingsRoute ? <SettingsSidebarStaticComponent /> : undefined}
-    >
-      <Outlet />
-    </NavigationController>
+    <React.Fragment>
+      <NavigationController
+        currentTheme={currentTheme}
+        onToggleTheme={handleToggleTheme}
+        layoutWidth={layoutWidth}
+        onToggleLayoutWidth={handleToggleLayoutWidth}
+        onNavigateHome={handleNavigateHome}
+        sidebar={isSettingsRoute ? <SettingsSidebarStaticComponent /> : undefined}
+      >
+        <Outlet />
+      </NavigationController>
+      <ApplicationToasterSharedComponent />
+    </React.Fragment>
   );
 }
 

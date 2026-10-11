@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import TanstackQueryKeysCON from '../Constants/TanstackQueryKeysCON';
 import EnvironmentOverviewService from '../Features/EnvironmentOverview/Services/EnvironmentOverviewService';
 import ResourcesService from '../Features/Resources/Services/ResourcesService';
+import ResourceCellFormatHelper from '../Features/Resources/Helpers/ResourceCellFormatHelper';
 import SubscriptionsService from '../Features/Subscriptions/Services/SubscriptionsService';
 import ConfigurationConstantsService from './ConfigurationConstantsService';
 import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubscriptionInterfaceModel';
@@ -38,6 +40,13 @@ export default class TanstackQueryClientService {
       });
     },
 
+    // Optimistic by design - a right-click formatting action (bold/italic/
+    // color, possibly across many selected cells) applies to the UI the
+    // instant it's clicked, with the actual save happening in the
+    // background. A failed save rolls back silently (this mutation never
+    // had any error UI to begin with - see git history - so that's not a
+    // regression) plus one toast, since "the thing I just saw happen
+    // quietly un-happened" is exactly the moment a user needs telling why.
     useUpdateResourceCellFormatMutation: (options?: {
       onSuccess?: (data: ResourceCellFormatInterfaceModel[]) => void;
       onError?: (error: Error) => void;
@@ -46,11 +55,38 @@ export default class TanstackQueryClientService {
       return useMutation({
         mutationFn: (request: UpdateResourceCellFormatRequestInterfaceModel) =>
           ResourcesService.current.updateCellFormat(request),
-        onSuccess: async (data) => {
-          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CELL_FORMATS });
+        onMutate: (request) => {
+          const previousFormats =
+            queryClient.getQueryData<ResourceCellFormatInterfaceModel[]>(TanstackQueryKeysCON.RESOURCE_CELL_FORMATS) ?? [];
+
+          // The optimistic write itself must never wait on anything - fired
+          // synchronously, before cancelling any in-flight refetch that
+          // could otherwise land after it and clobber it with stale
+          // pre-mutation data (that cancellation doesn't need to be awaited
+          // either; it just needs to be in flight before this returns).
+          queryClient.setQueryData(
+            TanstackQueryKeysCON.RESOURCE_CELL_FORMATS,
+            ResourceCellFormatHelper.current.applyOptimisticUpdate(previousFormats, request)
+          );
+          void queryClient.cancelQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CELL_FORMATS });
+
+          return { previousFormats };
+        },
+        onSuccess: (data) => {
+          // The PUT response is already the full fresh list - setting it
+          // directly avoids an extra refetch invalidate would otherwise cost.
+          queryClient.setQueryData(TanstackQueryKeysCON.RESOURCE_CELL_FORMATS, data);
           options?.onSuccess?.(data);
         },
-        onError: (error) => {
+        onError: (error, _request, context) => {
+          if (context) {
+            queryClient.setQueryData(TanstackQueryKeysCON.RESOURCE_CELL_FORMATS, context.previousFormats);
+          }
+
+          toast.error('Failed to update cell formatting', {
+            description: 'Your change was rolled back. You might want to check your internet connection before making any more changes.',
+          });
+
           options?.onError?.(error instanceof Error ? error : new Error('Failed to update the cell format.'));
         },
       });

@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react';
 import ResourceCellFormatCON from '../Constants/ResourceCellFormatCON';
 import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
+import type ResourceCellFormatInterfaceModel from '../../../Models/ResourceCellFormatInterfaceModel';
+import type UpdateResourceCellFormatRequestInterfaceModel from '../../../Models/UpdateResourceCellFormatRequestInterfaceModel';
 
 // Behavior around ResourceCellFormatCON's own data (telling a fixed color
 // apart from a custom one, deriving the inline styles a custom color needs)
@@ -73,5 +75,44 @@ export default class ResourceCellFormatHelper {
       return this.rgbComponentsToHex(r, g, b);
     }
     return option.color;
+  }
+
+  // Mirrors ResourcesService.UpdateCellFormatAsynchronous's own merge-not-
+  // replace semantics exactly, so the optimistic cache update (applied
+  // instantly, before the request even reaches the server) ends up
+  // byte-identical to what the server would compute - only the fields
+  // actually present on the request change anything, and a cell that ends
+  // up back at fully-default is dropped from the list rather than left
+  // behind as a no-op row, matching the backend's own "stay sparse" rule.
+  public applyOptimisticUpdate(
+    current: ResourceCellFormatInterfaceModel[],
+    request: UpdateResourceCellFormatRequestInterfaceModel
+  ): ResourceCellFormatInterfaceModel[] {
+    const byKey = new Map(current.map((format) => [`${format.resourceId}:${format.columnKey}`, format]));
+
+    for (const target of request.cells) {
+      const key = `${target.resourceId}:${target.columnKey}`;
+      const existing = byKey.get(key);
+
+      const merged: ResourceCellFormatInterfaceModel = {
+        resourceId: target.resourceId,
+        columnKey: target.columnKey,
+        isBold: request.isBold ?? existing?.isBold ?? false,
+        isItalic: request.isItalic ?? existing?.isItalic ?? false,
+        backgroundColorKey: request.clearBackgroundColor
+          ? null
+          : (request.backgroundColorKey ?? existing?.backgroundColorKey ?? null),
+      };
+
+      const isNowDefault = !merged.isBold && !merged.isItalic && merged.backgroundColorKey === null;
+
+      if (isNowDefault) {
+        byKey.delete(key);
+      } else {
+        byKey.set(key, merged);
+      }
+    }
+
+    return Array.from(byKey.values());
   }
 }
