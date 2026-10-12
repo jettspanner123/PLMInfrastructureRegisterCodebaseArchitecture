@@ -48,7 +48,7 @@ const string FrontendOriginPolicy = "FrontendOriginPolicy";
 // deployed Vercel URL) is optional - only set in deployed environments, so
 // this reads it via TryGetEnvKeyValue rather than the throwing
 // GetEnvKeyValue local dev never configures.
-List<string> allowedFrontendOrigins = new() { "http://localhost:5173" };
+List<string> allowedFrontendOrigins = new() { "http://localhost:4637" };
 if (ENValidatorHelper.Current.TryGetEnvKeyValue("FRONTEND_PRODUCTION_ORIGIN", out string? productionOrigin))
 {
     allowedFrontendOrigins.Add(productionOrigin!);
