@@ -307,5 +307,83 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
             await _applicationDatabaseContext.SaveChangesAsync();
         }
+
+        public async Task<List<EnvironmentOverviewCellFormatDTO>> GetCellFormatsAsynchronous()
+        {
+            return await _applicationDatabaseContext.EnvironmentOverviewCellFormats
+                .AsNoTracking()
+                .Select(cellFormat => new EnvironmentOverviewCellFormatDTO
+                {
+                    EnvironmentOverviewId = cellFormat.EnvironmentOverviewId,
+                    ColumnKey = cellFormat.ColumnKey,
+                    IsBold = cellFormat.IsBold,
+                    IsItalic = cellFormat.IsItalic,
+                    BackgroundColorKey = cellFormat.BackgroundColorKey,
+                    BackgroundOpacity = cellFormat.BackgroundOpacity,
+                    TextColorKey = cellFormat.TextColorKey,
+                })
+                .ToListAsync();
+        }
+
+        // Mirrors ResourcesService.UpdateCellFormatAsynchronous exactly - a
+        // merge per targeted cell, not a replace, and a cell that ends up
+        // back at fully-default is removed rather than left behind as a
+        // no-op row. See that method's own comment for the full rationale.
+        public async Task<List<EnvironmentOverviewCellFormatDTO>> UpdateCellFormatAsynchronous(UpdateEnvironmentOverviewCellFormatRequestDTO request)
+        {
+            foreach (EnvironmentOverviewCellFormatTargetDTO target in request.Cells)
+            {
+                EnvironmentOverviewCellFormatNexus? existing = await _applicationDatabaseContext.EnvironmentOverviewCellFormats
+                    .FirstOrDefaultAsync(cellFormat =>
+                        cellFormat.EnvironmentOverviewId == target.EnvironmentOverviewId && cellFormat.ColumnKey == target.ColumnKey);
+
+                EnvironmentOverviewCellFormatNexus cellFormatRow = existing ?? new EnvironmentOverviewCellFormatNexus
+                {
+                    Id = Guid.NewGuid(),
+                    EnvironmentOverviewId = target.EnvironmentOverviewId,
+                    ColumnKey = target.ColumnKey,
+                    BackgroundOpacity = 100,
+                };
+
+                if (request.IsBold.HasValue) cellFormatRow.IsBold = request.IsBold.Value;
+                if (request.IsItalic.HasValue) cellFormatRow.IsItalic = request.IsItalic.Value;
+                if (request.ClearBackgroundColor)
+                {
+                    cellFormatRow.BackgroundColorKey = null;
+                    cellFormatRow.BackgroundOpacity = 100;
+                }
+                else
+                {
+                    if (request.BackgroundColorKey is not null) cellFormatRow.BackgroundColorKey = request.BackgroundColorKey;
+                    if (request.BackgroundOpacity.HasValue) cellFormatRow.BackgroundOpacity = Math.Clamp(request.BackgroundOpacity.Value, 0, 100);
+                }
+
+                if (request.ClearTextColor || string.Equals(request.TextColorKey, "default", StringComparison.OrdinalIgnoreCase))
+                {
+                    cellFormatRow.TextColorKey = null;
+                }
+                else if (request.TextColorKey is not null)
+                {
+                    cellFormatRow.TextColorKey = request.TextColorKey.ToLowerInvariant();
+                }
+
+                cellFormatRow.UpdatedAt = DateTime.UtcNow;
+
+                bool isNowDefault = !cellFormatRow.IsBold && !cellFormatRow.IsItalic && cellFormatRow.BackgroundColorKey is null && cellFormatRow.TextColorKey is null;
+
+                if (existing is null)
+                {
+                    if (!isNowDefault) _applicationDatabaseContext.EnvironmentOverviewCellFormats.Add(cellFormatRow);
+                }
+                else if (isNowDefault)
+                {
+                    _applicationDatabaseContext.EnvironmentOverviewCellFormats.Remove(existing);
+                }
+            }
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return await GetCellFormatsAsynchronous();
+        }
     }
 }

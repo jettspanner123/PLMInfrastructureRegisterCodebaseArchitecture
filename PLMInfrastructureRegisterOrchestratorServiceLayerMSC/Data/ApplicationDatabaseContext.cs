@@ -26,6 +26,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<EnvironmentOverviewStatusHistoryNexus> EnvironmentOverviewStatusHistories =>
             Set<EnvironmentOverviewStatusHistoryNexus>();
 
+        public DbSet<EnvironmentOverviewCellFormatNexus> EnvironmentOverviewCellFormats =>
+            Set<EnvironmentOverviewCellFormatNexus>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ResourceNexus>(entity =>
@@ -43,6 +46,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 // format change on the same cell updates this same row
                 // rather than creating a duplicate.
                 entity.HasIndex(cellFormat => new { cellFormat.ResourceId, cellFormat.ColumnKey }).IsUnique();
+            });
+
+            modelBuilder.Entity<EnvironmentOverviewCellFormatNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentOverviewCellFormatTBL");
+                entity.HasKey(cellFormat => cellFormat.Id);
+                entity.HasIndex(cellFormat => new { cellFormat.EnvironmentOverviewId, cellFormat.ColumnKey }).IsUnique();
             });
 
             modelBuilder.Entity<ConfiguredSubscription>(entity =>

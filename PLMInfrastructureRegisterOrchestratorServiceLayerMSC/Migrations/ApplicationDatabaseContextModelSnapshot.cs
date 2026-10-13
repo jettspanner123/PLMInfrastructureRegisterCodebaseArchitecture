@@ -22,6 +22,45 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewCellFormatNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BackgroundColorKey")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BackgroundOpacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ColumnKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EnvironmentOverviewId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsBold")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsItalic")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TextColorKey")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnvironmentOverviewId", "ColumnKey")
+                        .IsUnique();
+
+                    b.ToTable("IG_EnvironmentOverviewCellFormatTBL", (string)null);
+                });
+
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewNexus", b =>
                 {
                     b.Property<Guid>("Id")
@@ -106,6 +145,45 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.HasIndex("EnvironmentOverviewId");
 
                     b.ToTable("IG_EnvironmentOverviewStatusHistoryTBL", (string)null);
+                });
+
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models.ResourceCellFormatNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BackgroundColorKey")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BackgroundOpacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ColumnKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsBold")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsItalic")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TextColorKey")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResourceId", "ColumnKey")
+                        .IsUnique();
+
+                    b.ToTable("IG_ResourceCellFormatTBL", (string)null);
                 });
 
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models.ResourceNexus", b =>
@@ -305,39 +383,6 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IG_ResourcesTBL", (string)null);
-                });
-
-            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models.ResourceCellFormatNexus", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("BackgroundColorKey")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ColumnKey")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsBold")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsItalic")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("ResourceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResourceId", "ColumnKey")
-                        .IsUnique();
-
-                    b.ToTable("IG_ResourceCellFormatTBL", (string)null);
                 });
 
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Models.ConfiguredSubscription", b =>

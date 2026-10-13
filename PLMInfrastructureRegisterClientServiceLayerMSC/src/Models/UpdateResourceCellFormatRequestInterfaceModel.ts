@@ -11,5 +11,8 @@ export default interface UpdateResourceCellFormatRequestInterfaceModel {
   isBold?: boolean;
   isItalic?: boolean;
   backgroundColorKey?: string;
+  backgroundOpacity?: number;
   clearBackgroundColor?: boolean;
+  textColorKey?: string;
+  clearTextColor?: boolean;
 }

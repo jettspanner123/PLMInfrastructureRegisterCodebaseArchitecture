@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX, Plus, Trash2, Columns3, ChevronDown } from 'lucide-react';
+import { ServerOff, FilterX, Plus, Trash2, Columns3, ChevronDown, Bold, Italic, X } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -11,11 +11,15 @@ import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
+import ContextMenuSharedComponent, { type ContextMenuItem } from '../../Shared/Components/ContextMenuSharedComponent';
 import CreateOptionModalController from './Components/CreateOptionModalController';
+import AddCustomColorModalController from '../Resources/Components/AddCustomColorModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
 import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
+import CellFormatCON from '../../Constants/CellFormatCON';
+import CellFormatHelper from '../../Utilities/CellFormatHelper';
 import ViewEditModeCON from '../../Constants/ViewEditModeCON';
 import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPreferenceKeyCON';
 import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPreferenceUtility';
@@ -25,6 +29,8 @@ import ActionItemsLineParserUtility from '../../Utilities/ActionItemsLineParserU
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
 import type DraftEnvironmentOverviewRowInterfaceModel from '../../Models/DraftEnvironmentOverviewRowInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
+import type EnvironmentOverviewCellFormatInterfaceModel from '../../Models/EnvironmentOverviewCellFormatInterfaceModel';
+import type EnvironmentOverviewCellFormatTargetInterfaceModel from '../../Models/EnvironmentOverviewCellFormatTargetInterfaceModel';
 
 export default function EnvironmentOverviewScreenController(): React.JSX.Element {
   const { data: environments = [], isLoading } =
@@ -214,6 +220,256 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const columnWidths = EnvironmentOverviewColumnWidthService.current.useColumnWidths(
     EnvironmentOverviewCON.DEFAULT_COLUMN_WIDTHS
   );
+
+  const { data: cellFormats = [] } =
+    TanstackQueryClientService.current.environmentOverview.useEnvironmentOverviewCellFormatsQuery();
+  const { data: customColors = [] } =
+    TanstackQueryClientService.current.resources.useCustomColorsQuery();
+  const updateCellFormatMutation =
+    TanstackQueryClientService.current.environmentOverview.useUpdateEnvironmentOverviewCellFormatMutation();
+
+  const cellFormatByKey = useMemo(() => {
+    const map = new Map<string, EnvironmentOverviewCellFormatInterfaceModel>();
+    cellFormats.forEach((format) => {
+      map.set(`${format.environmentOverviewId}:${format.columnKey}`, format);
+    });
+    return map;
+  }, [cellFormats]);
+
+  const [contextMenu, setContextMenu] = useState<{ isOpen: boolean; x: number; y: number }>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+  });
+  const [isAddColorModalOpen, setIsAddColorModalOpen] = useState<boolean>(false);
+
+  const getSelectedCellTargets = (): EnvironmentOverviewCellFormatTargetInterfaceModel[] => {
+    const selection = tableSelection.selection;
+    if (!selection) return [];
+    const targets: EnvironmentOverviewCellFormatTargetInterfaceModel[] = [];
+    for (let row = selection.startRow; row <= selection.endRow; row++) {
+      const environment = filteredEnvironments[row];
+      if (!environment) continue;
+      for (let col = selection.startCol; col <= selection.endCol; col++) {
+        const column = visibleColumns[col];
+        if (!column) continue;
+        targets.push({ environmentOverviewId: environment.id, columnKey: column.key });
+      }
+    }
+    return targets;
+  };
+
+  const handleCellContextMenu = (event: React.MouseEvent, rowIndex: number, colIndex: number): void => {
+    if (!isEditMode) return;
+    event.preventDefault();
+
+    if (!tableSelection.isCellSelected(rowIndex, colIndex)) {
+      tableSelection.selectCell(rowIndex, colIndex);
+    }
+
+    setContextMenu({ isOpen: true, x: event.clientX, y: event.clientY });
+  };
+
+  const handleCloseContextMenu = (): void => {
+    setContextMenu((previous) => ({ ...previous, isOpen: false }));
+  };
+
+  const isEveryTargetAlready = (
+    targets: EnvironmentOverviewCellFormatTargetInterfaceModel[],
+    key: 'isBold' | 'isItalic'
+  ): boolean =>
+    targets.length > 0 &&
+    targets.every(
+      (target) =>
+        cellFormatByKey.get(`${target.environmentOverviewId}:${target.columnKey}`)?.[key] === true
+    );
+
+  const handleToggleBold = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, isBold: !isEveryTargetAlready(targets, 'isBold') });
+  };
+
+  const handleToggleItalic = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, isItalic: !isEveryTargetAlready(targets, 'isItalic') });
+  };
+
+  const handleSetColor = (colorKey: string): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, backgroundColorKey: colorKey });
+  };
+
+  const handleClearColor = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, clearBackgroundColor: true });
+  };
+
+  const opacityDebounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const contextMenuTargets = getSelectedCellTargets();
+  const firstTargetFormat =
+    contextMenuTargets.length > 0
+      ? cellFormatByKey.get(`${contextMenuTargets[0]?.environmentOverviewId}:${contextMenuTargets[0]?.columnKey}`)
+      : undefined;
+  const hasActiveColor = contextMenuTargets.some((target) => {
+    const format = cellFormatByKey.get(`${target.environmentOverviewId}:${target.columnKey}`);
+    return !!format?.backgroundColorKey;
+  });
+  const currentOpacity = firstTargetFormat?.backgroundOpacity ?? 100;
+  const currentTextColorKey = firstTargetFormat?.textColorKey ?? 'default';
+
+  const handleOpacityChange = (newOpacity: number): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+
+    if (opacityDebounceTimerRef.current !== null) {
+      clearTimeout(opacityDebounceTimerRef.current);
+    }
+
+    // Immediate optimistic update
+    updateCellFormatMutation.mutate({ cells: targets, backgroundOpacity: newOpacity });
+
+    // Debounced persist is already handled because mutate triggers optimistic update immediately!
+  };
+
+  const handleSetTextColor = (textColorKey: string): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    if (textColorKey === 'default') {
+      updateCellFormatMutation.mutate({ cells: targets, clearTextColor: true });
+    } else {
+      updateCellFormatMutation.mutate({ cells: targets, textColorKey });
+    }
+    handleCloseContextMenu();
+  };
+
+  const contextMenuItems: ContextMenuItem[] = [
+    {
+      id: 'bold',
+      label: 'Bold',
+      icon: <Bold className="w-3.5 h-3.5" />,
+      onClick: handleToggleBold,
+      shortcut: isEveryTargetAlready(contextMenuTargets, 'isBold') ? '✓' : undefined,
+    },
+    {
+      id: 'italic',
+      label: 'Italic',
+      icon: <Italic className="w-3.5 h-3.5" />,
+      onClick: handleToggleItalic,
+      shortcut: isEveryTargetAlready(contextMenuTargets, 'isItalic') ? '✓' : undefined,
+    },
+    ...CellFormatCON.COLORS.map((color, index) => ({
+      id: `color-${color.key}`,
+      label: color.label,
+      icon: (
+        <span
+          className={`inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 ${color.swatchClassName}`}
+        />
+      ),
+      onClick: () => handleSetColor(color.key),
+      divider: index === 0,
+    })),
+    ...customColors.map((option) => ({
+      id: `color-${option.colorName}`,
+      label: option.colorName,
+      icon: (
+        <span
+          className="inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
+          style={CellFormatHelper.current.getSwatchStyleForCustomColor(option)}
+        />
+      ),
+      onClick: () => handleSetColor(CellFormatHelper.current.getApplicableColorKey(option)),
+    })),
+    {
+      id: 'add-color',
+      label: 'Add Color',
+      icon: <Plus className="w-3.5 h-3.5" />,
+      onClick: () => setIsAddColorModalOpen(true),
+    },
+    {
+      id: 'clear-color',
+      label: 'Clear Color',
+      icon: <X className="w-3.5 h-3.5" />,
+      onClick: handleClearColor,
+      divider: true,
+    },
+    ...(hasActiveColor
+      ? [
+          {
+            id: 'opacity-slider',
+            label: 'Opacity',
+            customRender: () => (
+              <div
+                className="px-2.5 py-2 space-y-1.5 border-t border-slate-100 dark:border-zinc-800/80"
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-600 dark:text-zinc-300">
+                  <span>Opacity</span>
+                  <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500">{currentOpacity}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={currentOpacity}
+                  onChange={(e) => handleOpacityChange(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[#0C2086] dark:accent-blue-500"
+                />
+              </div>
+            ),
+          },
+        ]
+      : []),
+    {
+      id: 'text-colors',
+      label: 'Text Color',
+      customRender: () => (
+        <div
+          className="px-2.5 py-2 border-t border-slate-100 dark:border-zinc-800/80"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-1.5 flex items-center justify-between">
+            <span>Text Color</span>
+            <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500 capitalize">
+              {currentTextColorKey}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {CellFormatCON.TEXT_COLORS.map((tc) => {
+              const isSelected = (currentTextColorKey || 'default').toLowerCase() === tc.key.toLowerCase();
+              return (
+                <button
+                  key={tc.key}
+                  type="button"
+                  title={tc.label}
+                  onClick={() => handleSetTextColor(tc.key)}
+                  className={`relative w-4 h-4 rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                    tc.swatchClassName
+                  } ${
+                    isSelected
+                      ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110'
+                      : 'hover:scale-110 opacity-80 hover:opacity-100'
+                  }`}
+                >
+                  {tc.key === 'default' && (
+                    <span className="text-[8px] font-bold text-slate-500 dark:text-zinc-400 leading-none">
+                      A
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ),
+    },
+  ];
 
   const createMutation = TanstackQueryClientService.current.environmentOverview.useCreateEnvironmentOverviewMutation({
     onSuccess: () => {
@@ -606,25 +862,43 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     environment: EnvironmentOverviewInterfaceModel,
     column: EnvironmentOverviewColumnDef,
     fieldName: string,
-    columnWidth: number
+    columnWidth: number,
+    rowIndex: number,
+    colIndex: number
   ): React.ReactNode => {
     const cellKey = `${environment.id}:${column.key}`;
     const isPending = pendingFieldEditKeys.has(cellKey);
     const cellError = fieldEditErrorByKey?.key === cellKey ? fieldEditErrorByKey.message : null;
     const currentValue = (environment[column.key] as string | null) ?? '';
 
+    const format = cellFormatByKey.get(`${environment.id}:${column.key}`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
     return (
-      <td key={column.key} style={{ width: columnWidth }} className="px-3 py-2 align-top">
+      <td
+        key={column.key}
+        style={{ width: columnWidth, ...formatStyle }}
+        onContextMenu={onCellContextMenu}
+        className={`px-3 py-2 align-top ${formatClassName}`}
+      >
         <textarea
           key={cellKey}
           defaultValue={currentValue}
           disabled={isPending}
           rows={2}
           aria-label={column.label}
+          style={CellFormatHelper.current.getTextStyle(format?.textColorKey)}
           onBlur={(event) =>
             handleFieldSave(environment.id, column.key, fieldName, event.target.value, currentValue)
           }
-          className={EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME}
+          className={`${EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME} ${formatClassName}`}
         />
         {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
       </td>
@@ -642,13 +916,24 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const columnWidth = columnWidths.getColumnWidth(column.key);
 
+    const format = cellFormatByKey.get(`${environment.id}:${column.key}`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const cellClassName = `${EnvironmentOverviewCON.CELL_CLASS_NAME} ${formatClassName}`;
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
     if (isEditMode && column.key === 'sponsor') {
-      return renderSponsorCell(environment, columnWidth);
+      return renderSponsorCell(environment, columnWidth, rowIndex, colIndex);
     }
 
     const editableFieldName = EnvironmentOverviewCON.EDITABLE_TEXT_FIELD_NAMES[column.key];
     if (isEditMode && editableFieldName) {
-      return renderEditableTextCell(environment, column, editableFieldName, columnWidth);
+      return renderEditableTextCell(environment, column, editableFieldName, columnWidth, rowIndex, colIndex);
     }
 
     if (displayValue === null || displayValue === '') {
@@ -657,8 +942,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           key={column.key}
           onMouseDown={cellHandlers.onMouseDown}
           onMouseEnter={cellHandlers.onMouseEnter}
-          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), width: columnWidth }}
-          className={EnvironmentOverviewCON.CELL_CLASS_NAME}
+          onContextMenu={onCellContextMenu}
+          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), width: columnWidth, ...formatStyle }}
+          className={cellClassName}
         >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
         </td>
@@ -672,10 +958,12 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         key={column.key}
         value={stringValue}
         ariaLabel={`Copy ${column.label}: ${stringValue}`}
-        className={EnvironmentOverviewCON.CELL_CLASS_NAME}
+        className={cellClassName}
+        buttonStyle={formatStyle}
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
+        onCellContextMenu={onCellContextMenu}
         verticalAlign="top"
         width={columnWidth}
       >
@@ -808,16 +1096,28 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       ? { visibleLines: allLines, hasMore: false }
       : getVisibleActionItemsLines(allLines);
 
+    const format = cellFormatByKey.get(`${environment.id}:actionItemsUpdates`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
     return (
       <td
         key="actionItemsUpdates"
         onMouseDown={cellHandlers.onMouseDown}
         onMouseEnter={cellHandlers.onMouseEnter}
+        onContextMenu={onCellContextMenu}
         style={{
           boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
           width: columnWidths.getColumnWidth('actionItemsUpdates'),
+          ...formatStyle,
         }}
-        className="px-3 py-2 align-top"
+        className={`px-3 py-2 align-top ${formatClassName}`}
       >
         {allLines.length > 0 || isEditMode ? (
           <div
@@ -825,6 +1125,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               if (el) actionItemsScrollRefs.current.set(environment.id, el);
               else actionItemsScrollRefs.current.delete(environment.id);
             }}
+            style={CellFormatHelper.current.getTextStyle(format?.textColorKey)}
             className="action-items-scroll-area max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
           >
             {isEditMode && renderActionItemDraftOrButton(environment.id)}
@@ -863,6 +1164,16 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
     const statusText = environment.status;
 
+    const format = cellFormatByKey.get(`${environment.id}:status`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
     if (isEditMode) {
       const isPending = pendingStatusRowId === environment.id;
       const rowError = statusErrorByRowId?.rowId === environment.id ? statusErrorByRowId.message : null;
@@ -870,8 +1181,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       return (
         <td
           key="status"
-          style={{ width: columnWidths.getColumnWidth('status') }}
-          className="px-3 py-2 align-top"
+          onContextMenu={onCellContextMenu}
+          style={{ width: columnWidths.getColumnWidth('status'), ...formatStyle }}
+          className={`px-3 py-2 align-top ${formatClassName}`}
         >
           <CustomSelectSharedComponent
             value={environment.status}
@@ -901,14 +1213,16 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         key="status"
         value={statusText}
         ariaLabel={`Copy Status: ${statusText}`}
-        className="px-3 py-2 align-top font-mono text-[11px]"
+        className={`px-3 py-2 align-top font-mono text-[11px] ${formatClassName}`}
+        buttonStyle={formatStyle}
         selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
+        onCellContextMenu={onCellContextMenu}
         verticalAlign="top"
         width={columnWidths.getColumnWidth('status')}
       >
-        <span className="inline-flex items-center gap-1.5">
+        <span className="inline-flex items-center gap-1.5" style={CellFormatHelper.current.getTextStyle(format?.textColorKey)}>
           <span
             className={`w-1.5 h-1.5 rounded-full shrink-0 ${
               environment.status === 'Live' ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-zinc-600'
@@ -927,13 +1241,33 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   // requirement. Pending/error state is the same Set-keyed one
   // Purpose/Priority/DNS URL's textareas already use, not Status's own
   // single-row pendingStatusRowId.
-  const renderSponsorCell = (environment: EnvironmentOverviewInterfaceModel, columnWidth: number): React.ReactNode => {
+  const renderSponsorCell = (
+    environment: EnvironmentOverviewInterfaceModel,
+    columnWidth: number,
+    rowIndex: number,
+    colIndex: number
+  ): React.ReactNode => {
     const cellKey = `${environment.id}:sponsor`;
     const isPending = pendingFieldEditKeys.has(cellKey);
     const cellError = fieldEditErrorByKey?.key === cellKey ? fieldEditErrorByKey.message : null;
 
+    const format = cellFormatByKey.get(`${environment.id}:sponsor`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
     return (
-      <td key="sponsor" style={{ width: columnWidth }} className="px-3 py-2 align-top">
+      <td
+        key="sponsor"
+        onContextMenu={onCellContextMenu}
+        style={{ width: columnWidth, ...formatStyle }}
+        className={`px-3 py-2 align-top ${formatClassName}`}
+      >
         <CustomSelectSharedComponent
           value={environment.sponsor ?? ''}
           onChange={(newSponsor) => handleSponsorChange(environment.id, newSponsor, environment.sponsor)}
@@ -1247,6 +1581,20 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         variant="danger"
         isLoading={deleteEnvironmentOverviewMutation.isPending}
         maxWidth="md"
+      />
+
+      <ContextMenuSharedComponent
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onClose={handleCloseContextMenu}
+        items={contextMenuItems}
+      />
+
+      <AddCustomColorModalController
+        isOpen={isAddColorModalOpen}
+        onClose={() => setIsAddColorModalOpen(false)}
+        onCreated={() => {}}
       />
     </div>
   );

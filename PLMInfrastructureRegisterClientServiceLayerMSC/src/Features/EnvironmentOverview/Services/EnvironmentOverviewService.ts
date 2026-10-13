@@ -5,6 +5,8 @@ import type CreateEnvironmentOverviewRequestInterfaceModel from '../../../Models
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../../../Models/AddActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
+import type EnvironmentOverviewCellFormatInterfaceModel from '../../../Models/EnvironmentOverviewCellFormatInterfaceModel';
+import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
 
 export default class EnvironmentOverviewService {
   public static current: EnvironmentOverviewService = new EnvironmentOverviewService();
@@ -126,6 +128,36 @@ export default class EnvironmentOverviewService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to delete the action item.');
+    }
+
+    return payload.data;
+  }
+
+  public async getCellFormats(): Promise<EnvironmentOverviewCellFormatInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CellFormats`);
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewCellFormatInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch cell formats.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateCellFormat(
+    request: UpdateEnvironmentOverviewCellFormatRequestInterfaceModel
+  ): Promise<EnvironmentOverviewCellFormatInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CellFormats`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewCellFormatInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the cell format.');
     }
 
     return payload.data;

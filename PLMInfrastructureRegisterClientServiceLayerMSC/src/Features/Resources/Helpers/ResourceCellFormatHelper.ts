@@ -21,21 +21,29 @@ export default class ResourceCellFormatHelper {
     return !!colorKey && ResourceCellFormatHelper.HEX_COLOR_PATTERN.test(colorKey);
   }
 
-  public getCellClassName(colorKey: string | null | undefined): string {
-    if (!colorKey || this.isCustomColor(colorKey)) return '';
-    return ResourceCellFormatCON.COLORS.find((color) => color.key === colorKey)?.cellClassName ?? '';
+  public getCellClassName(_colorKey: string | null | undefined): string {
+    return '';
   }
 
-  // Only a custom (hex) color needs an inline style - the 4 fixed colors
-  // are fully handled by getCellClassName's Tailwind classes instead.
-  public getCellStyle(colorKey: string | null | undefined): CSSProperties | undefined {
-    if (!this.isCustomColor(colorKey)) return undefined;
-    // ~25% opacity, matching the fixed colors' own muted cell tint (a
-    // -100/-900 Tailwind shade is similarly low-saturation against its own
-    // canvas) - the translucency itself is what keeps a custom color
-    // legible against both a white and near-black canvas, not a per-theme
-    // color swap the way the fixed ones get.
-    return { backgroundColor: this.hexToRgba(colorKey as string, 0.25) };
+  // Returns exact background color (solid at 100% opacity, or modulated by opacity).
+  public getCellStyle(colorKey: string | null | undefined, opacity: number = 100): CSSProperties | undefined {
+    if (!colorKey) return undefined;
+
+    let hex: string | undefined;
+    if (this.isCustomColor(colorKey)) {
+      hex = colorKey;
+    } else {
+      const fixedColor = ResourceCellFormatCON.COLORS.find((color) => color.key === colorKey);
+      hex = fixedColor?.hexColor;
+    }
+
+    if (!hex) return undefined;
+
+    const clampedOpacity = Math.max(0, Math.min(100, opacity));
+    if (clampedOpacity === 100) {
+      return { backgroundColor: hex };
+    }
+    return { backgroundColor: this.hexToRgba(hex, clampedOpacity / 100) };
   }
 
   // The menu's own swatch icon always wants the literal color at full
@@ -77,6 +85,17 @@ export default class ResourceCellFormatHelper {
     return option.color;
   }
 
+  public getTextStyle(textColorKey?: string | null): CSSProperties | undefined {
+    if (!textColorKey || textColorKey.toLowerCase() === 'default') return undefined;
+    const def = ResourceCellFormatCON.TEXT_COLORS.find(
+      (c) => c.key.toLowerCase() === textColorKey.toLowerCase()
+    );
+    if (def?.hexColor) {
+      return { color: def.hexColor };
+    }
+    return undefined;
+  }
+
   // Mirrors ResourcesService.UpdateCellFormatAsynchronous's own merge-not-
   // replace semantics exactly, so the optimistic cache update (applied
   // instantly, before the request even reaches the server) ends up
@@ -102,9 +121,16 @@ export default class ResourceCellFormatHelper {
         backgroundColorKey: request.clearBackgroundColor
           ? null
           : (request.backgroundColorKey ?? existing?.backgroundColorKey ?? null),
+        backgroundOpacity: request.clearBackgroundColor
+          ? 100
+          : (request.backgroundOpacity ?? existing?.backgroundOpacity ?? 100),
+        textColorKey: request.clearTextColor || request.textColorKey?.toLowerCase() === 'default'
+          ? null
+          : (request.textColorKey ?? existing?.textColorKey ?? null),
       };
 
-      const isNowDefault = !merged.isBold && !merged.isItalic && merged.backgroundColorKey === null;
+      const isNowDefault =
+        !merged.isBold && !merged.isItalic && merged.backgroundColorKey === null && !merged.textColorKey;
 
       if (isNowDefault) {
         byKey.delete(key);

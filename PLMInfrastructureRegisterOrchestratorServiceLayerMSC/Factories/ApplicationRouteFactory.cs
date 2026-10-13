@@ -79,6 +79,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             // EnvironmentOverviewNexus.IsDeleted for why this isn't a hard
             // DELETE.
             public const string DeleteEnvironmentOverview = "{id}";
+
+            // Right-click cell formatting (bold/italic/background color) -
+            // sparse, keyed by (EnvironmentOverviewId, ColumnKey). Mirrors
+            // ResourcesRoutes.GetCellFormats/UpdateCellFormat exactly; the
+            // custom-color palette itself is shared with Resources' own
+            // CellFormats/Colors routes rather than duplicated here.
+            public const string GetCellFormats = "CellFormats";
+
+            public const string UpdateCellFormat = "CellFormats";
         }
 
         public static class ConfigurationConstantsRoutes

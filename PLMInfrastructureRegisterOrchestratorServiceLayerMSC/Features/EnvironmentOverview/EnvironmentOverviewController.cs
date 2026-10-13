@@ -296,5 +296,67 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpGet(ApplicationRouteFactory.EnvironmentOverviewRoutes.GetCellFormats)]
+        public async Task<ActionResult<APIResponse<List<EnvironmentOverviewCellFormatDTO>>>> GetCellFormatsAsynchronous()
+        {
+            try
+            {
+                List<EnvironmentOverviewCellFormatDTO> cellFormats = await _environmentOverviewService.GetCellFormatsAsynchronous();
+
+                return Ok(
+                    APIResponse<List<EnvironmentOverviewCellFormatDTO>>.Succeeded(
+                        cellFormats,
+                        "Cell formats retrieved successfully.",
+                        200));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while retrieving cell formats.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<EnvironmentOverviewCellFormatDTO>>.Failed(
+                        "An unexpected error occurred while retrieving cell formats.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateCellFormat)]
+        public async Task<ActionResult<APIResponse<List<EnvironmentOverviewCellFormatDTO>>>> UpdateCellFormatAsynchronous(
+            [FromBody] UpdateEnvironmentOverviewCellFormatRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertUpdateCellFormatRequest(request);
+
+                List<EnvironmentOverviewCellFormatDTO> cellFormats = await _environmentOverviewService.UpdateCellFormatAsynchronous(request!);
+
+                return Ok(
+                    APIResponse<List<EnvironmentOverviewCellFormatDTO>>.Succeeded(
+                        cellFormats,
+                        "Cell format updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update cell format validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<EnvironmentOverviewCellFormatDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating a cell format.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<EnvironmentOverviewCellFormatDTO>>.Failed(
+                        "An unexpected error occurred while updating the cell format.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

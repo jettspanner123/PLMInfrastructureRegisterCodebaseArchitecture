@@ -14,6 +14,7 @@ export interface ContextMenuItem {
   isDestructive?: boolean;
   divider?: boolean;
   shortcut?: string;
+  customRender?: () => React.ReactNode;
 }
 
 export interface ContextMenuSharedComponentProps {
@@ -142,44 +143,48 @@ export default function ContextMenuSharedComponent({
                 {item.divider && (
                   <div className="h-px bg-slate-100 dark:bg-zinc-800/80 my-1 mx-1" />
                 )}
-                <button
-                  type="button"
-                  role="menuitem"
-                  disabled={item.disabled}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClose();
-                    item.onClick?.();
-                  }}
-                  className={`w-full flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg font-medium text-left transition-colors cursor-pointer ${
-                    item.disabled
-                      ? 'opacity-40 cursor-not-allowed'
-                      : item.isDestructive
-                      ? 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:bg-rose-100 dark:active:bg-rose-900/50'
-                      : 'text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800/70 active:bg-slate-200/70 dark:active:bg-zinc-700/60'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    {item.icon && (
-                      <span
-                        className={`shrink-0 ${
-                          item.isDestructive
-                            ? 'text-rose-500 dark:text-rose-400'
-                            : 'text-slate-400 dark:text-zinc-400'
-                        }`}
-                      >
-                        {item.icon}
+                {item.customRender ? (
+                  item.customRender()
+                ) : (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    disabled={item.disabled}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClose();
+                      item.onClick?.();
+                    }}
+                    className={`w-full flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg font-medium text-left transition-colors cursor-pointer ${
+                      item.disabled
+                        ? 'opacity-40 cursor-not-allowed'
+                        : item.isDestructive
+                        ? 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:bg-rose-100 dark:active:bg-rose-900/50'
+                        : 'text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800/70 active:bg-slate-200/70 dark:active:bg-zinc-700/60'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      {item.icon && (
+                        <span
+                          className={`shrink-0 ${
+                            item.isDestructive
+                              ? 'text-rose-500 dark:text-rose-400'
+                              : 'text-slate-400 dark:text-zinc-400'
+                          }`}
+                        >
+                          {item.icon}
+                        </span>
+                      )}
+                      <span className="truncate">{item.label}</span>
+                    </div>
+
+                    {item.shortcut && (
+                      <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 tracking-wider">
+                        {item.shortcut}
                       </span>
                     )}
-                    <span className="truncate">{item.label}</span>
-                  </div>
-
-                  {item.shortcut && (
-                    <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 tracking-wider">
-                      {item.shortcut}
-                    </span>
-                  )}
-                </button>
+                  </button>
+                )}
               </React.Fragment>
             ))}
           </div>

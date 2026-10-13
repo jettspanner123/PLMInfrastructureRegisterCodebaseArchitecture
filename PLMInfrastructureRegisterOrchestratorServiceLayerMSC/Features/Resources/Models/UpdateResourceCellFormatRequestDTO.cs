@@ -24,6 +24,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
 
         public string? BackgroundColorKey { get; set; }
 
+        public int? BackgroundOpacity { get; set; }
+
         public bool ClearBackgroundColor { get; set; }
+
+        public string? TextColorKey { get; set; }
+
+        public bool ClearTextColor { get; set; }
     }
 }

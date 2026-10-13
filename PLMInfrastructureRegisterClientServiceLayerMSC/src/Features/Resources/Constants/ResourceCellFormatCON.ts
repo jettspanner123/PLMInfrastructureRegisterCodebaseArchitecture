@@ -17,6 +17,7 @@
 export interface ResourceCellFormatColorDef {
   key: string;
   label: string;
+  hexColor: string;
   // Applied to the formatted cell itself.
   cellClassName: string;
   // The context menu's own item icon (a small circle) - a flat, literal
@@ -27,31 +28,93 @@ export interface ResourceCellFormatColorDef {
   swatchClassName: string;
 }
 
+export interface ResourceCellFormatTextColorDef {
+  key: string;
+  label: string;
+  hexColor: string | null;
+  swatchClassName: string;
+}
+
 export default class ResourceCellFormatCON {
   public static readonly COLORS: ResourceCellFormatColorDef[] = [
     {
       key: 'Yellow',
       label: 'Yellow',
-      cellClassName: 'bg-amber-100 dark:bg-amber-900/40',
+      hexColor: '#FACC15',
+      cellClassName: '',
       swatchClassName: 'bg-yellow-400',
     },
     {
       key: 'Green',
       label: 'Green',
-      cellClassName: 'bg-emerald-100 dark:bg-emerald-900/40',
+      hexColor: '#22C55E',
+      cellClassName: '',
       swatchClassName: 'bg-green-500',
     },
     {
       key: 'Blue',
       label: 'Blue',
-      cellClassName: 'bg-sky-100 dark:bg-sky-900/40',
+      hexColor: '#3B82F6',
+      cellClassName: '',
       swatchClassName: 'bg-blue-500',
     },
     {
       key: 'Red',
       label: 'Red',
-      cellClassName: 'bg-rose-100 dark:bg-rose-900/40',
+      hexColor: '#EF4444',
+      cellClassName: '',
       swatchClassName: 'bg-red-500',
+    },
+  ];
+
+  public static readonly TEXT_COLORS: ResourceCellFormatTextColorDef[] = [
+    {
+      key: 'default',
+      label: 'Default',
+      hexColor: null,
+      swatchClassName: 'bg-transparent border border-slate-400 dark:border-zinc-500',
+    },
+    {
+      key: 'white',
+      label: 'White',
+      hexColor: '#FFFFFF',
+      swatchClassName: 'bg-white border border-slate-300 dark:border-zinc-600',
+    },
+    {
+      key: 'black',
+      label: 'Black',
+      hexColor: '#000000',
+      swatchClassName: 'bg-black border border-slate-700 dark:border-zinc-700',
+    },
+    {
+      key: 'red',
+      label: 'Red',
+      hexColor: '#EF4444',
+      swatchClassName: 'bg-red-500',
+    },
+    {
+      key: 'yellow',
+      label: 'Yellow',
+      hexColor: '#FACC15',
+      swatchClassName: 'bg-yellow-400',
+    },
+    {
+      key: 'green',
+      label: 'Green',
+      hexColor: '#22C55E',
+      swatchClassName: 'bg-green-500',
+    },
+    {
+      key: 'orange',
+      label: 'Orange',
+      hexColor: '#F97316',
+      swatchClassName: 'bg-orange-500',
+    },
+    {
+      key: 'violet',
+      label: 'Violet',
+      hexColor: '#8B5CF6',
+      swatchClassName: 'bg-purple-500',
     },
   ];
 }

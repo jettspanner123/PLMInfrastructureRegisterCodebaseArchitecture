@@ -11,5 +11,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         public bool IsItalic { get; set; }
 
         public string? BackgroundColorKey { get; set; }
+        public int BackgroundOpacity { get; set; }
+        public string? TextColorKey { get; set; }
     }
 }

@@ -27,6 +27,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
 
         public string? BackgroundColorKey { get; set; }
 
+        public int BackgroundOpacity { get; set; } = 100;
+
+        public string? TextColorKey { get; set; }
+
         public DateTime UpdatedAt { get; set; }
     }
 }

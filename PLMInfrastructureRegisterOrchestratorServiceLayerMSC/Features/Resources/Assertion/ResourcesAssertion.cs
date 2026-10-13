@@ -40,6 +40,21 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         private static bool IsValidBackgroundColorKey(string colorKey) =>
             AllowedNamedBackgroundColorKeys.Contains(colorKey) || HexColorPattern.IsMatch(colorKey);
 
+        private static readonly HashSet<string> AllowedTextColorKeys = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "default",
+            "white",
+            "black",
+            "red",
+            "yellow",
+            "green",
+            "orange",
+            "violet",
+        };
+
+        private static bool IsValidTextColorKey(string textColorKey) =>
+            AllowedTextColorKeys.Contains(textColorKey);
+
         // Reflection against ResourceNexus's own property names rather than a
         // hand-maintained string list - this entity has ~60 properties and a
         // second, separately-maintained allow-list would inevitably drift out
@@ -75,7 +90,17 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                 throw new ValidationException($"'{request.BackgroundColorKey}' is not a valid background color.");
             }
 
-            if (request.IsBold is null && request.IsItalic is null && request.BackgroundColorKey is null && !request.ClearBackgroundColor)
+            if (request.BackgroundOpacity.HasValue && (request.BackgroundOpacity.Value < 0 || request.BackgroundOpacity.Value > 100))
+            {
+                throw new ValidationException("Background opacity must be between 0 and 100.");
+            }
+
+            if (request.TextColorKey is not null && !IsValidTextColorKey(request.TextColorKey))
+            {
+                throw new ValidationException($"'{request.TextColorKey}' is not a valid text color.");
+            }
+
+            if (request.IsBold is null && request.IsItalic is null && request.BackgroundColorKey is null && request.BackgroundOpacity is null && !request.ClearBackgroundColor && request.TextColorKey is null && !request.ClearTextColor)
             {
                 throw new ValidationException("At least one formatting change must be provided.");
             }

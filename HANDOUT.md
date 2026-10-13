@@ -1,0 +1,11 @@
+# What "Edit Mode" currently means
+
+"Edit Mode" is an existing toggle (`ViewEditModeToggleSharedComponent.tsx`), already built and shipped (commits `c8dfbfd` / `df0bf21`, both from earlier today), shown on both the Environment Overview and Infrastructure Register (Resources) screens. It's a two-option segmented control — **View Mode** / **Edit Mode** — switchable by clicking it or with Ctrl/Cmd+E from anywhere on the page.
+
+As of right now, it is **purely cosmetic**: flipping it to Edit Mode doesn't enable editing anything. The component's own code comment says so directly, and points at `ADMIN_GATED_ROW_DELETION_AND_EDIT_MODE_TODO.md` for what it's meant to grow into. A few things about its current state matter for building on top of it:
+
+- **Its state is local and not exposed.** The component owns its own `mode` state via `useState`, with no props for a controlled value or an `onChange` callback. The parent screen (e.g. `ResourcesScreenController.tsx`) currently has no way to know whether Edit Mode is active — it just renders `<ViewEditModeToggleSharedComponent />` with nothing wired up. Making anything respond to Edit Mode requires lifting this state up first.
+- **It isn't persisted.** Unlike table density/height preferences, it resets to View Mode on every reload and is independent per page (two instances on two screens don't share state).
+- **There's a standing, documented precondition before it does anything real.** The project's own TODO (`ADMIN_GATED_ROW_DELETION_AND_EDIT_MODE_TODO.md`, last touched in the same two commits above) explicitly says: once Edit Mode enables real behavior, both the toggle's visibility and the ability to actually enter Edit Mode need an admin-only check — frontend (hiding the toggle, the same way `PermissionGuardSharedComponent` gates other admin-only UI) and backend (the endpoint itself independently verifying admin rights). This is currently blocked on the project having a real authentication/authorization system, which doesn't exist yet.
+
+So: the Status-column-becomes-editable-in-Edit-Mode feature would be the *first* real behavior Edit Mode ever gates — which is exactly the trigger condition that TODO was written to anticipate.

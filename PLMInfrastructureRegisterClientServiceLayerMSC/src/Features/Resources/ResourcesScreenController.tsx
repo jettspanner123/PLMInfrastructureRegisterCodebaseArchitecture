@@ -16,6 +16,7 @@ import TanstackQueryClientService from '../../Services/TanstackQueryClientServic
 import TableSelectionService from '../../Services/TableSelectionService';
 import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import type ResourceCellFormatTargetInterfaceModel from '../../Models/ResourceCellFormatTargetInterfaceModel';
+import type ResourceCellFormatInterfaceModel from '../../Models/ResourceCellFormatInterfaceModel';
 import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceColumnCON';
 import ResourceCellFormatCON from './Constants/ResourceCellFormatCON';
 import ResourceCellFormatHelper from './Helpers/ResourceCellFormatHelper';
@@ -159,13 +160,9 @@ export default function ResourcesScreenController(): React.JSX.Element {
   // "<resourceId>:<columnKey>", independent of GetAllResources entirely.
   const { data: cellFormats = [] } = TanstackQueryClientService.current.resources.useResourceCellFormatsQuery();
   const cellFormatByKey = useMemo(() => {
-    const map = new Map<string, { isBold: boolean; isItalic: boolean; backgroundColorKey: string | null }>();
+    const map = new Map<string, ResourceCellFormatInterfaceModel>();
     cellFormats.forEach((format) => {
-      map.set(`${format.resourceId}:${format.columnKey}`, {
-        isBold: format.isBold,
-        isItalic: format.isItalic,
-        backgroundColorKey: format.backgroundColorKey,
-      });
+      map.set(`${format.resourceId}:${format.columnKey}`, format);
     });
     return map;
   }, [cellFormats]);
@@ -256,10 +253,45 @@ export default function ResourcesScreenController(): React.JSX.Element {
     updateCellFormatMutation.mutate({ cells: targets, clearBackgroundColor: true });
   };
 
+  const opacityDebounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Built fresh on every render (not memoized) - it must reflect whichever
   // cells are selected right now, which changes between the right-click
   // that opens the menu and whichever item the user actually clicks.
   const contextMenuTargets = getSelectedCellTargets();
+  const firstTargetFormat =
+    contextMenuTargets.length > 0
+      ? cellFormatByKey.get(`${contextMenuTargets[0]?.resourceId}:${contextMenuTargets[0]?.columnKey}`)
+      : undefined;
+  const hasActiveColor = contextMenuTargets.some((target) => {
+    const format = cellFormatByKey.get(`${target.resourceId}:${target.columnKey}`);
+    return !!format?.backgroundColorKey;
+  });
+  const currentOpacity = firstTargetFormat?.backgroundOpacity ?? 100;
+  const currentTextColorKey = firstTargetFormat?.textColorKey ?? 'default';
+
+  const handleOpacityChange = (newOpacity: number): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+
+    if (opacityDebounceTimerRef.current !== null) {
+      clearTimeout(opacityDebounceTimerRef.current);
+    }
+
+    updateCellFormatMutation.mutate({ cells: targets, backgroundOpacity: newOpacity });
+  };
+
+  const handleSetTextColor = (textColorKey: string): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    if (textColorKey === 'default') {
+      updateCellFormatMutation.mutate({ cells: targets, clearTextColor: true });
+    } else {
+      updateCellFormatMutation.mutate({ cells: targets, textColorKey });
+    }
+    handleCloseContextMenu();
+  };
+
   const contextMenuItems: ContextMenuItem[] = [
     {
       id: 'bold',
@@ -321,6 +353,78 @@ export default function ResourcesScreenController(): React.JSX.Element {
       onClick: handleClearColor,
       divider: true,
     },
+    ...(hasActiveColor
+      ? [
+          {
+            id: 'opacity-slider',
+            label: 'Opacity',
+            customRender: () => (
+              <div
+                className="px-2.5 py-2 space-y-1.5 border-t border-slate-100 dark:border-zinc-800/80"
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-600 dark:text-zinc-300">
+                  <span>Opacity</span>
+                  <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500">{currentOpacity}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={currentOpacity}
+                  onChange={(e) => handleOpacityChange(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[#0C2086] dark:accent-blue-500"
+                />
+              </div>
+            ),
+          },
+        ]
+      : []),
+    {
+      id: 'text-colors',
+      label: 'Text Color',
+      customRender: () => (
+        <div
+          className="px-2.5 py-2 border-t border-slate-100 dark:border-zinc-800/80"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-1.5 flex items-center justify-between">
+            <span>Text Color</span>
+            <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500 capitalize">
+              {currentTextColorKey}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {ResourceCellFormatCON.TEXT_COLORS.map((tc) => {
+              const isSelected = (currentTextColorKey || 'default').toLowerCase() === tc.key.toLowerCase();
+              return (
+                <button
+                  key={tc.key}
+                  type="button"
+                  title={tc.label}
+                  onClick={() => handleSetTextColor(tc.key)}
+                  className={`relative w-4 h-4 rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                    tc.swatchClassName
+                  } ${
+                    isSelected
+                      ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110'
+                      : 'hover:scale-110 opacity-80 hover:opacity-100'
+                  }`}
+                >
+                  {tc.key === 'default' && (
+                    <span className="text-[8px] font-bold text-slate-500 dark:text-zinc-400 leading-none">
+                      A
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ),
+    },
   ];
 
   // Presentation only (wraps ResourceTableUtility's plain-data result,
@@ -344,9 +448,11 @@ export default function ResourcesScreenController(): React.JSX.Element {
       ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${ResourceCellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const cellClassName = `${CELL_CLASS_NAME} ${formatClassName}`;
-    // Only a custom (hex) color needs this - the 4 fixed colors are fully
-    // handled by formatClassName's Tailwind classes above.
-    const formatStyle = ResourceCellFormatHelper.current.getCellStyle(format?.backgroundColorKey);
+    // Exact color (solid at 100% or opacity modulated) + text color
+    const formatStyle = {
+      ...ResourceCellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...ResourceCellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
     const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
 
     if (displayValue === null) {

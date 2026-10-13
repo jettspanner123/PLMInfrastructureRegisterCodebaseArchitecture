@@ -32,6 +32,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                     IsBold = cellFormat.IsBold,
                     IsItalic = cellFormat.IsItalic,
                     BackgroundColorKey = cellFormat.BackgroundColorKey,
+                    BackgroundOpacity = cellFormat.BackgroundOpacity,
+                    TextColorKey = cellFormat.TextColorKey,
                 })
                 .ToListAsync();
         }
@@ -39,7 +41,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         // A merge per targeted cell, not a replace - only fields actually
         // present on the request change anything (see
         // UpdateResourceCellFormatRequestDTO). A cell that ends up back at
-        // fully-default (not bold, not italic, no color) is removed rather
+        // fully-default (not bold, not italic, no bg color, no text color) is removed rather
         // than left behind as a no-op row, keeping this table genuinely
         // sparse rather than quietly accumulating empty rows over time.
         public async Task<List<ResourceCellFormatDTO>> UpdateCellFormatAsynchronous(UpdateResourceCellFormatRequestDTO request)
@@ -55,16 +57,34 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                     Id = Guid.NewGuid(),
                     ResourceId = target.ResourceId,
                     ColumnKey = target.ColumnKey,
+                    BackgroundOpacity = 100,
                 };
 
                 if (request.IsBold.HasValue) cellFormatRow.IsBold = request.IsBold.Value;
                 if (request.IsItalic.HasValue) cellFormatRow.IsItalic = request.IsItalic.Value;
-                if (request.ClearBackgroundColor) cellFormatRow.BackgroundColorKey = null;
-                else if (request.BackgroundColorKey is not null) cellFormatRow.BackgroundColorKey = request.BackgroundColorKey;
+                if (request.ClearBackgroundColor)
+                {
+                    cellFormatRow.BackgroundColorKey = null;
+                    cellFormatRow.BackgroundOpacity = 100;
+                }
+                else
+                {
+                    if (request.BackgroundColorKey is not null) cellFormatRow.BackgroundColorKey = request.BackgroundColorKey;
+                    if (request.BackgroundOpacity.HasValue) cellFormatRow.BackgroundOpacity = Math.Clamp(request.BackgroundOpacity.Value, 0, 100);
+                }
+
+                if (request.ClearTextColor || string.Equals(request.TextColorKey, "default", StringComparison.OrdinalIgnoreCase))
+                {
+                    cellFormatRow.TextColorKey = null;
+                }
+                else if (request.TextColorKey is not null)
+                {
+                    cellFormatRow.TextColorKey = request.TextColorKey.ToLowerInvariant();
+                }
 
                 cellFormatRow.UpdatedAt = DateTime.UtcNow;
 
-                bool isNowDefault = !cellFormatRow.IsBold && !cellFormatRow.IsItalic && cellFormatRow.BackgroundColorKey is null;
+                bool isNowDefault = !cellFormatRow.IsBold && !cellFormatRow.IsItalic && cellFormatRow.BackgroundColorKey is null && cellFormatRow.TextColorKey is null;
 
                 if (existing is null)
                 {

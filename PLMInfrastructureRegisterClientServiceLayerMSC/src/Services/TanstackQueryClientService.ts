@@ -19,6 +19,9 @@ import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatI
 import type CustomColorOptionInterfaceModel from '../Models/CustomColorOptionInterfaceModel';
 import type AddCustomColorOptionRequestInterfaceModel from '../Models/AddCustomColorOptionRequestInterfaceModel';
 import type UpdateCustomColorOptionRequestInterfaceModel from '../Models/UpdateCustomColorOptionRequestInterfaceModel';
+import type EnvironmentOverviewCellFormatInterfaceModel from '../Models/EnvironmentOverviewCellFormatInterfaceModel';
+import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
+import CellFormatHelper from '../Utilities/CellFormatHelper';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -299,6 +302,65 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to update the field.'));
+        },
+      });
+    },
+
+    useEnvironmentOverviewCellFormatsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CELL_FORMATS,
+        queryFn: () => EnvironmentOverviewService.current.getCellFormats(),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useUpdateEnvironmentOverviewCellFormatMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewCellFormatInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: UpdateEnvironmentOverviewCellFormatRequestInterfaceModel) =>
+          EnvironmentOverviewService.current.updateCellFormat(request),
+        onMutate: (request) => {
+          const previousFormats =
+            queryClient.getQueryData<EnvironmentOverviewCellFormatInterfaceModel[]>(
+              TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CELL_FORMATS
+            ) ?? [];
+
+          queryClient.setQueryData(
+            TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CELL_FORMATS,
+            CellFormatHelper.current.computeMergedSparseList(
+              previousFormats,
+              request.cells,
+              'environmentOverviewId',
+              (target, style) => ({
+                environmentOverviewId: target.environmentOverviewId,
+                columnKey: target.columnKey,
+                ...style,
+              }),
+              request
+            )
+          );
+          void queryClient.cancelQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CELL_FORMATS });
+
+          return { previousFormats };
+        },
+        onSuccess: (data) => {
+          queryClient.setQueryData(TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CELL_FORMATS, data);
+          options?.onSuccess?.(data);
+        },
+        onError: (error, _request, context) => {
+          if (context) {
+            queryClient.setQueryData(TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CELL_FORMATS, context.previousFormats);
+          }
+
+          toast.error('Failed to update cell formatting', {
+            description:
+              'Your change was rolled back. You might want to check your internet connection before making any more changes.',
+          });
+
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the cell format.'));
         },
       });
     },

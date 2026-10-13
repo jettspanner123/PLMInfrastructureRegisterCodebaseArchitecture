@@ -7,4 +7,6 @@ export default interface ResourceCellFormatInterfaceModel {
   isBold: boolean;
   isItalic: boolean;
   backgroundColorKey: string | null;
+  backgroundOpacity: number;
+  textColorKey?: string | null;
 }

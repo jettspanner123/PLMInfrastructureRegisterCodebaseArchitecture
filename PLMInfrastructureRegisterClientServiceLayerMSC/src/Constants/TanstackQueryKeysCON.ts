@@ -5,6 +5,7 @@ export default class TanstackQueryKeysCON {
   public static readonly CONFIGURED_SUBSCRIPTIONS: readonly string[] = ['configured-subscriptions'];
   public static readonly AVAILABLE_AZURE_SUBSCRIPTIONS: readonly string[] = ['available-azure-subscriptions'];
   public static readonly ENVIRONMENT_OVERVIEWS: readonly string[] = ['environment-overviews'];
+  public static readonly ENVIRONMENT_OVERVIEW_CELL_FORMATS: readonly string[] = ['environment-overview-cell-formats'];
   // Parameterized rather than one static key per field - Status, Sponsor,
   // Infrastructure Register's custom colors, and any future growable-
   // dropdown field across the whole app each get their own independently
