@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
@@ -78,18 +78,19 @@ export default function ProfileSettingsSharedComponent({
     ApplicationHorizontalScrollPillUtility.current.setPreference(next);
   };
 
-  // The trigger's slot in the header is stable while closed, so its rect
-  // only needs refreshing on resize — not on every open.
+  // The trigger's slot in the header is stable while closed, but refreshing
+  // on resize and right before open ensures exact subpixel placement.
+  const measureTriggerRect = useCallback((): void => {
+    if (!triggerButtonRef.current) return;
+    const rect = triggerButtonRef.current.getBoundingClientRect();
+    triggerRectRef.current = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  }, []);
+
   useEffect(() => {
-    const measureTriggerRect = (): void => {
-      if (!triggerButtonRef.current) return;
-      const rect = triggerButtonRef.current.getBoundingClientRect();
-      triggerRectRef.current = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
-    };
     measureTriggerRect();
     window.addEventListener('resize', measureTriggerRect);
     return () => window.removeEventListener('resize', measureTriggerRect);
-  }, []);
+  }, [measureTriggerRect]);
 
   // Manual flip on mount — see the guide for why this can't just be
   // automatic layoutId projection once the panel is portaled.
@@ -172,7 +173,10 @@ export default function ProfileSettingsSharedComponent({
             exit={{ opacity: 0 }}
             transition={SPRING_TRANSITION}
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              measureTriggerRect();
+              setIsOpen(true);
+            }}
             title={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
             aria-haspopup="dialog"
             aria-label={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
@@ -210,7 +214,7 @@ export default function ProfileSettingsSharedComponent({
                   aria-label="Profile and preferences"
                   tabIndex={-1}
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto relative w-full max-w-md max-h-[90dvh] overflow-y-auto bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl p-5 text-xs space-y-4 focus:outline-none"
+                  className="pointer-events-auto relative w-full max-w-2xl max-h-[90dvh] overflow-y-auto bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl p-5 sm:p-6 text-xs space-y-4 focus:outline-none"
                 >
                   {/* Floating close button */}
                   <button
@@ -222,7 +226,7 @@ export default function ProfileSettingsSharedComponent({
                     <X className="w-4 h-4" />
                   </button>
 
-                  {/* 1. Header: User Identity */}
+                  {/* 1. Header: User Identity (Full Width) */}
                   <div className="flex items-center gap-3 pb-3.5 pr-10 border-b border-slate-100 dark:border-zinc-800/80">
                     <div className="w-10 h-10 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold font-serif-headline text-sm shadow-xs shrink-0">
                       {NavigationCON.PROFILE_INITIALS}
@@ -241,110 +245,118 @@ export default function ProfileSettingsSharedComponent({
                     </div>
                   </div>
 
-                  {/* 2. Preferences & Controls */}
-                  <div className="space-y-3">
-                    <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
-                      Preferences & Controls
-                    </span>
+                  {/* 2. 2-Column Content Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-zinc-800/80">
+                    {/* Column 1: Appearance & Navigation */}
+                    <div className="space-y-3 sm:pr-6">
+                      <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
+                        Appearance & Navigation
+                      </span>
 
-                    <ControllBlockSharedComponent
-                      label="Theme Mode"
-                      layoutId="themeModeControlPill"
-                      value={currentTheme}
-                      onChange={() => onToggleTheme()}
-                      options={[
-                        { value: ApplicationThemeCON.LIGHT, label: 'Light Mode', icon: <Sun className="w-3.5 h-3.5" /> },
-                        { value: ApplicationThemeCON.DARK, label: 'Dark Mode', icon: <Moon className="w-3.5 h-3.5" /> },
-                      ]}
-                    />
+                      <ControllBlockSharedComponent
+                        label="Theme Mode"
+                        layoutId="themeModeControlPill"
+                        value={currentTheme}
+                        onChange={() => onToggleTheme()}
+                        options={[
+                          { value: ApplicationThemeCON.LIGHT, label: 'Light Mode', icon: <Sun className="w-3.5 h-3.5" /> },
+                          { value: ApplicationThemeCON.DARK, label: 'Dark Mode', icon: <Moon className="w-3.5 h-3.5" /> },
+                        ]}
+                      />
 
-                    <ControllBlockSharedComponent
-                      label="Table Width"
-                      layoutId="layoutWidthControlPill"
-                      value={layoutWidth}
-                      onChange={() => onToggleLayoutWidth()}
-                      animatedTransition={false}
-                      options={[
-                        {
-                          value: ApplicationLayoutWidthCON.CONSTRAINED,
-                          label: 'Current',
-                          icon: <Minimize2 className="w-3.5 h-3.5" />,
-                        },
-                        {
-                          value: ApplicationLayoutWidthCON.FULL_WIDTH,
-                          label: 'Max Width',
-                          icon: <Maximize2 className="w-3.5 h-3.5" />,
-                        },
-                      ]}
-                    />
+                      <ControllBlockSharedComponent
+                        label="Table Width"
+                        layoutId="layoutWidthControlPill"
+                        value={layoutWidth}
+                        onChange={() => onToggleLayoutWidth()}
+                        animatedTransition={false}
+                        options={[
+                          {
+                            value: ApplicationLayoutWidthCON.CONSTRAINED,
+                            label: 'Current',
+                            icon: <Minimize2 className="w-3.5 h-3.5" />,
+                          },
+                          {
+                            value: ApplicationLayoutWidthCON.FULL_WIDTH,
+                            label: 'Max Width',
+                            icon: <Maximize2 className="w-3.5 h-3.5" />,
+                          },
+                        ]}
+                      />
 
-                    <TableHeightControlStaticComponent />
+                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
+                        <button
+                          type="button"
+                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                          onClick={handleNavigateToSettings}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                        >
+                          <Settings className="w-4 h-4" />
+                          <span>Settings</span>
+                        </button>
+                      </div>
+                    </div>
 
-                    <ControllBlockSharedComponent
-                      label="Table Density"
-                      layoutId="tableDensityControlPill"
-                      value={tableDensity}
-                      onChange={handleChangeTableDensity}
-                      animatedTransition={false}
-                      options={[
-                        {
-                          value: ApplicationTableDensityCON.STANDARD,
-                          label: 'Standard',
-                          icon: <Rows3 className="w-3.5 h-3.5" />,
-                        },
-                        {
-                          value: ApplicationTableDensityCON.COMPACT,
-                          label: 'Compact',
-                          icon: <Rows4 className="w-3.5 h-3.5" />,
-                        },
-                      ]}
-                    />
+                    {/* Column 2: Table Controls & Session */}
+                    <div className="space-y-3 pt-4 sm:pt-0 sm:pl-6">
+                      <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
+                        Table Controls & Session
+                      </span>
 
-                    <ControllBlockSharedComponent
-                      label="Scroll Pill"
-                      layoutId="scrollPillControlPill"
-                      value={scrollPillPreference}
-                      onChange={(val) => handleChangeScrollPillPreference(val as HorizontalScrollPillPreference)}
-                      animatedTransition={false}
-                      options={[
-                        {
-                          value: ApplicationHorizontalScrollPillUtility.SHOW,
-                          label: 'Show',
-                          icon: <MoveHorizontal className="w-3.5 h-3.5" />,
-                        },
-                        {
-                          value: ApplicationHorizontalScrollPillUtility.HIDE,
-                          label: 'Hide',
-                          icon: <EyeOff className="w-3.5 h-3.5" />,
-                        },
-                      ]}
-                    />
-                  </div>
+                      <TableHeightControlStaticComponent />
 
-                  {/* 3. Administration */}
-                  <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
-                    <button
-                      type="button"
-                      onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-                      onClick={handleNavigateToSettings}
-                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
-                    >
-                      <Settings className="w-4 h-4" />
-                      <span>Settings</span>
-                    </button>
-                  </div>
+                      <ControllBlockSharedComponent
+                        label="Table Density"
+                        layoutId="tableDensityControlPill"
+                        value={tableDensity}
+                        onChange={handleChangeTableDensity}
+                        animatedTransition={false}
+                        options={[
+                          {
+                            value: ApplicationTableDensityCON.STANDARD,
+                            label: 'Standard',
+                            icon: <Rows3 className="w-3.5 h-3.5" />,
+                          },
+                          {
+                            value: ApplicationTableDensityCON.COMPACT,
+                            label: 'Compact',
+                            icon: <Rows4 className="w-3.5 h-3.5" />,
+                          },
+                        ]}
+                      />
 
-                  {/* 4. Footer: Sign Out */}
-                  <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
-                    <button
-                      type="button"
-                      onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-                      onClick={handleInitiateSignOut}
-                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer font-bold text-xs"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out</span>
-                    </button>
+                      <ControllBlockSharedComponent
+                        label="Scroll Pill"
+                        layoutId="scrollPillControlPill"
+                        value={scrollPillPreference}
+                        onChange={(val) => handleChangeScrollPillPreference(val as HorizontalScrollPillPreference)}
+                        animatedTransition={false}
+                        options={[
+                          {
+                            value: ApplicationHorizontalScrollPillUtility.SHOW,
+                            label: 'Show',
+                            icon: <MoveHorizontal className="w-3.5 h-3.5" />,
+                          },
+                          {
+                            value: ApplicationHorizontalScrollPillUtility.HIDE,
+                            label: 'Hide',
+                            icon: <EyeOff className="w-3.5 h-3.5" />,
+                          },
+                        ]}
+                      />
+
+                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
+                        <button
+                          type="button"
+                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                          onClick={handleInitiateSignOut}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer font-bold text-xs"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </div>
