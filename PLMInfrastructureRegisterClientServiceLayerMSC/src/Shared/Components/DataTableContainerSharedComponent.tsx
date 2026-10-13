@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import CardSharedComponent from './CardSharedComponent';
+import TableHorizontalScrollPillSharedComponent from './TableHorizontalScrollPillSharedComponent';
 
 export interface DataTableContainerSharedComponentProps {
   children: React.ReactNode;
@@ -19,12 +20,27 @@ export interface DataTableContainerSharedComponentProps {
 // Forwards its ref to the scroll-area div itself — TableSelectionService
 // attaches this as its selection's "outside click clears it" boundary.
 const DataTableContainerSharedComponent = React.forwardRef<HTMLDivElement, DataTableContainerSharedComponentProps>(
-  function DataTableContainerSharedComponent({ children }, ref): React.JSX.Element {
+  function DataTableContainerSharedComponent({ children }, forwardedRef): React.JSX.Element {
+    const internalRef = useRef<HTMLDivElement | null>(null);
+
+    const setMergedRef = useCallback(
+      (element: HTMLDivElement | null): void => {
+        internalRef.current = element;
+        if (typeof forwardedRef === 'function') {
+          forwardedRef(element);
+        } else if (forwardedRef) {
+          (forwardedRef as React.MutableRefObject<HTMLDivElement | null>).current = element;
+        }
+      },
+      [forwardedRef]
+    );
+
     return (
       <CardSharedComponent className="!p-0 data-table-card">
-        <div ref={ref} className="data-table-scroll-area">
+        <div ref={setMergedRef} className="data-table-scroll-area">
           {children}
         </div>
+        <TableHorizontalScrollPillSharedComponent scrollContainerRef={internalRef} />
       </CardSharedComponent>
     );
   }

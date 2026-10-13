@@ -105,7 +105,7 @@ export default function CopyableTableCellSharedComponent({
     // only by coincidence on tables where every cell's content is similarly
     // short (which is exactly why this went unnoticed until a table with
     // genuinely mixed row heights - Environment Overview - exposed it).
-    <td className="p-0 h-px" style={{ boxShadow: selectionBoxShadow, width }}>
+    <td className="p-0 h-px" style={{ width }}>
       <button
         type="button"
         onMouseDown={onCellMouseDown}
@@ -113,7 +113,10 @@ export default function CopyableTableCellSharedComponent({
         onContextMenu={onCellContextMenu}
         onClick={handleClick}
         aria-label={ariaLabel}
-        style={buttonStyle}
+        style={{
+          ...buttonStyle,
+          boxShadow: selectionBoxShadow,
+        }}
         className={`group relative w-full h-full flex ${
           verticalAlign === 'top' ? 'items-start' : 'items-center'
         } text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}

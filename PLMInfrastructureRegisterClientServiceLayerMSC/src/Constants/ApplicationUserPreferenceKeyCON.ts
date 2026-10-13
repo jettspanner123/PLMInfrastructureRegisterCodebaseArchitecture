@@ -8,6 +8,7 @@ export default class ApplicationUserPreferenceKeyCON {
   public static readonly TABLE_DENSITY: string = 'TABLE_DENSITY';
   public static readonly ENVIRONMENT_OVERVIEW_COLUMN_WIDTHS: string = 'ENVIRONMENT_OVERVIEW_COLUMN_WIDTHS';
   public static readonly ENVIRONMENT_OVERVIEW_TABLE_VISIBLE_COLUMNS: string = 'ENVIRONMENT_OVERVIEW_TABLE_VISIBLE_COLUMNS';
+  public static readonly HORIZONTAL_SCROLL_PILL_ENABLED: string = 'HORIZONTAL_SCROLL_PILL_ENABLED';
   // A per-browser random id, not a real user identity - this app has no
   // authentication system yet. See AnonymousClientIdentityUtility.ts.
   public static readonly ANONYMOUS_CLIENT_ID: string = 'ANONYMOUS_CLIENT_ID';

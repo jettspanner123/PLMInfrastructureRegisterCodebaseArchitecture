@@ -2,13 +2,16 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
-import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X } from 'lucide-react';
+import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff } from 'lucide-react';
 import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../Constants/ApplicationLayoutWidthCON';
 import ApplicationTableDensityCON from '../../Constants/ApplicationTableDensityCON';
 import ApplicationRouteCON from '../../Constants/ApplicationRouteCON';
 import ApplicationHapticsUtility from '../../Utilities/ApplicationHapticsUtility';
 import ApplicationTableDensityUtility from '../../Utilities/ApplicationTableDensityUtility';
+import ApplicationHorizontalScrollPillUtility, {
+  type HorizontalScrollPillPreference,
+} from '../../Utilities/ApplicationHorizontalScrollPillUtility';
 import NavigationCON from '../../Features/Navigation/Constants/NavigationCON';
 import TableHeightControlStaticComponent from '../../Features/Navigation/Components/static/TableHeightControlStaticComponent';
 import ConfirmationModalSharedComponent from './ConfirmationModalSharedComponent';
@@ -64,6 +67,15 @@ export default function ProfileSettingsSharedComponent({
   const handleChangeTableDensity = (next: string): void => {
     setTableDensity(next);
     ApplicationTableDensityUtility.current.applyDensity(next);
+  };
+
+  const [scrollPillPreference, setScrollPillPreference] = useState<HorizontalScrollPillPreference>(() =>
+    ApplicationHorizontalScrollPillUtility.current.getSavedPreference()
+  );
+
+  const handleChangeScrollPillPreference = (next: HorizontalScrollPillPreference): void => {
+    setScrollPillPreference(next);
+    ApplicationHorizontalScrollPillUtility.current.setPreference(next);
   };
 
   // The trigger's slot in the header is stable while closed, so its rect
@@ -284,6 +296,26 @@ export default function ProfileSettingsSharedComponent({
                           value: ApplicationTableDensityCON.COMPACT,
                           label: 'Compact',
                           icon: <Rows4 className="w-3.5 h-3.5" />,
+                        },
+                      ]}
+                    />
+
+                    <ControllBlockSharedComponent
+                      label="Scroll Pill"
+                      layoutId="scrollPillControlPill"
+                      value={scrollPillPreference}
+                      onChange={(val) => handleChangeScrollPillPreference(val as HorizontalScrollPillPreference)}
+                      animatedTransition={false}
+                      options={[
+                        {
+                          value: ApplicationHorizontalScrollPillUtility.SHOW,
+                          label: 'Show',
+                          icon: <MoveHorizontal className="w-3.5 h-3.5" />,
+                        },
+                        {
+                          value: ApplicationHorizontalScrollPillUtility.HIDE,
+                          label: 'Hide',
+                          icon: <EyeOff className="w-3.5 h-3.5" />,
                         },
                       ]}
                     />

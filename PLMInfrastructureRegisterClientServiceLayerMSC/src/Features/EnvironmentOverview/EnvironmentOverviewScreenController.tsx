@@ -880,11 +880,18 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
     };
     const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+    const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
 
     return (
       <td
         key={column.key}
-        style={{ width: columnWidth, ...formatStyle }}
+        style={{
+          boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
+          width: columnWidth,
+          ...formatStyle,
+        }}
+        onMouseDown={cellHandlers.onMouseDown}
+        onMouseEnter={cellHandlers.onMouseEnter}
         onContextMenu={onCellContextMenu}
         className={`px-3 py-2 align-top ${formatClassName}`}
       >
@@ -895,6 +902,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           rows={2}
           aria-label={column.label}
           style={CellFormatHelper.current.getTextStyle(format?.textColorKey)}
+          onMouseDown={(event) => event.stopPropagation()}
           onBlur={(event) =>
             handleFieldSave(environment.id, column.key, fieldName, event.target.value, currentValue)
           }
@@ -1182,7 +1190,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         <td
           key="status"
           onContextMenu={onCellContextMenu}
-          style={{ width: columnWidths.getColumnWidth('status'), ...formatStyle }}
+          style={{
+            boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
+            width: columnWidths.getColumnWidth('status'),
+            ...formatStyle,
+          }}
           className={`px-3 py-2 align-top ${formatClassName}`}
         >
           <CustomSelectSharedComponent
@@ -1265,7 +1277,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       <td
         key="sponsor"
         onContextMenu={onCellContextMenu}
-        style={{ width: columnWidth, ...formatStyle }}
+        style={{
+          boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
+          width: columnWidth,
+          ...formatStyle,
+        }}
         className={`px-3 py-2 align-top ${formatClassName}`}
       >
         <CustomSelectSharedComponent
