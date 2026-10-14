@@ -13,6 +13,7 @@ import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import ApplicationTableHeightUtility from '../Utilities/ApplicationTableHeightUtility';
 import ApplicationTableDensityUtility from '../Utilities/ApplicationTableDensityUtility';
+import ApplicationStickyHeaderUtility from '../Utilities/ApplicationStickyHeaderUtility';
 import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
 import SettingsScreenRoute from '../Routes/SettingsScreenRoute';
@@ -99,6 +100,12 @@ function RootLayout(): React.JSX.Element {
   // the same independent bootstrap here.
   useState(() => {
     ApplicationTableDensityUtility.current.applyDensity(ApplicationTableDensityUtility.current.getSavedDensity());
+  });
+
+  useState(() => {
+    ApplicationStickyHeaderUtility.current.applyPreference(
+      ApplicationStickyHeaderUtility.current.getSavedPreference()
+    );
   });
 
   const handleNavigateHome = (): void => {

@@ -150,12 +150,30 @@ html.full-width-layout .max-w-7xl {
    header there, and sticky only in Limited/Custom. */
 .data-table-scroll-area {
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: clip;
   max-height: none;
 }
 
 .data-table-card {
   overflow: hidden;
+}
+
+html.table-sticky-header .data-table-card {
+  overflow: visible;
+}
+
+.data-table-sticky-header-container {
+  position: static;
+  overflow: hidden;
+  background-color: #0c2086;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+html.table-sticky-header .data-table-sticky-header-container {
+  position: sticky;
+  top: 65px;
+  z-index: 25;
 }
 
 .data-table-header-cell {
@@ -172,8 +190,18 @@ html.table-height-custom .data-table-scroll-area {
   max-height: var(--table-custom-height, calc(100vh - 12rem));
 }
 
-html.table-height-limited .data-table-header-cell,
-html.table-height-custom .data-table-header-cell {
+html.table-height-limited .data-table-card,
+html.table-height-custom .data-table-card {
+  overflow: hidden;
+}
+
+html.table-height-limited .data-table-sticky-header-container,
+html.table-height-custom .data-table-sticky-header-container {
+  position: static;
+}
+
+html.table-sticky-header.table-height-limited .data-table-header-cell,
+html.table-sticky-header.table-height-custom .data-table-header-cell {
   position: sticky;
   top: 0;
   z-index: 10;

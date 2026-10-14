@@ -2,13 +2,15 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
-import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff } from 'lucide-react';
+import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff } from 'lucide-react';
 import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../Constants/ApplicationLayoutWidthCON';
 import ApplicationTableDensityCON from '../../Constants/ApplicationTableDensityCON';
+import ApplicationStickyHeaderCON from '../../Constants/ApplicationStickyHeaderCON';
 import ApplicationRouteCON from '../../Constants/ApplicationRouteCON';
 import ApplicationHapticsUtility from '../../Utilities/ApplicationHapticsUtility';
 import ApplicationTableDensityUtility from '../../Utilities/ApplicationTableDensityUtility';
+import ApplicationStickyHeaderUtility from '../../Utilities/ApplicationStickyHeaderUtility';
 import ApplicationHorizontalScrollPillUtility, {
   type HorizontalScrollPillPreference,
 } from '../../Utilities/ApplicationHorizontalScrollPillUtility';
@@ -76,6 +78,15 @@ export default function ProfileSettingsSharedComponent({
   const handleChangeScrollPillPreference = (next: HorizontalScrollPillPreference): void => {
     setScrollPillPreference(next);
     ApplicationHorizontalScrollPillUtility.current.setPreference(next);
+  };
+
+  const [stickyHeaderPreference, setStickyHeaderPreference] = useState<string>(() =>
+    ApplicationStickyHeaderUtility.current.getSavedPreference()
+  );
+
+  const handleChangeStickyHeaderPreference = (next: string): void => {
+    setStickyHeaderPreference(next);
+    ApplicationStickyHeaderUtility.current.applyPreference(next);
   };
 
   // The trigger's slot in the header is stable while closed, but refreshing
@@ -214,7 +225,7 @@ export default function ProfileSettingsSharedComponent({
                   aria-label="Profile and preferences"
                   tabIndex={-1}
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto relative w-full max-w-2xl max-h-[90dvh] overflow-y-auto bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl p-5 sm:p-6 text-xs space-y-4 focus:outline-none"
+                  className="pointer-events-auto relative w-full max-w-4xl max-h-[90dvh] overflow-y-auto bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl p-5 sm:p-6 text-xs space-y-4 focus:outline-none"
                 >
                   {/* Floating close button */}
                   <button
@@ -304,6 +315,26 @@ export default function ProfileSettingsSharedComponent({
                       </span>
 
                       <TableHeightControlStaticComponent />
+
+                      <ControllBlockSharedComponent
+                        label="Sticky Header"
+                        layoutId="stickyHeaderControlPill"
+                        value={stickyHeaderPreference}
+                        onChange={handleChangeStickyHeaderPreference}
+                        animatedTransition={false}
+                        options={[
+                          {
+                            value: ApplicationStickyHeaderCON.STICKY,
+                            label: 'Sticky',
+                            icon: <Pin className="w-3.5 h-3.5" />,
+                          },
+                          {
+                            value: ApplicationStickyHeaderCON.STATIC,
+                            label: 'Off',
+                            icon: <PinOff className="w-3.5 h-3.5" />,
+                          },
+                        ]}
+                      />
 
                       <ControllBlockSharedComponent
                         label="Table Density"

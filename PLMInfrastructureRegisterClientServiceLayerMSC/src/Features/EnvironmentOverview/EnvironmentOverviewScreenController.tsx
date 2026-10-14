@@ -17,6 +17,7 @@ import AddCustomColorModalController from '../Resources/Components/AddCustomColo
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
+import EnvironmentOverviewRowHeightService from './Services/EnvironmentOverviewRowHeightService';
 import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
 import CellFormatCON from '../../Constants/CellFormatCON';
 import CellFormatHelper from '../../Utilities/CellFormatHelper';
@@ -220,6 +221,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const columnWidths = EnvironmentOverviewColumnWidthService.current.useColumnWidths(
     EnvironmentOverviewCON.DEFAULT_COLUMN_WIDTHS
   );
+
+  // Excel-style draggable row heights, persisted to localStorage - see
+  // EnvironmentOverviewRowHeightService.ts.
+  const rowHeights = EnvironmentOverviewRowHeightService.current.useRowHeights();
 
   const { data: cellFormats = [] } =
     TanstackQueryClientService.current.environmentOverview.useEnvironmentOverviewCellFormatsQuery();
@@ -851,6 +856,44 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
+  // Draggable row height handle on the bottom edge of the SL. NO (row number)
+  // cell. Double-clicking resets the row to its default auto height. While
+  // actively dragging, a horizontal guide line extends across the row width.
+  const renderRowResizeHandle = (rowId: string, isLastRow = false): React.ReactNode => {
+    const isResizing = rowHeights.resizingRowId === rowId;
+    return (
+      <div
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          rowHeights.getResizeHandleProps(rowId).onMouseDown(event);
+        }}
+        onDoubleClick={(event) => {
+          event.stopPropagation();
+          rowHeights.getResizeHandleProps(rowId).onDoubleClick(event);
+        }}
+        title="Drag to resize row height · Double-click to reset"
+        className={`absolute inset-x-0 ${
+          isLastRow ? 'bottom-0 h-3' : '-bottom-2 h-4'
+        } cursor-row-resize select-none z-10 group/resize-row`}
+      >
+        <div
+          className={`absolute inset-x-0 ${
+            isLastRow ? 'bottom-0' : 'bottom-2'
+          } transition-colors ${
+            isResizing ? 'h-0.5 bg-blue-500 dark:bg-blue-400' : 'h-px bg-transparent group-hover/resize-row:bg-blue-400/70'
+          }`}
+        />
+        {isResizing && (
+          <div
+            className={`absolute left-0 ${
+              isLastRow ? 'bottom-0' : 'bottom-2'
+            } w-[9999px] h-0.5 bg-blue-500/80 dark:bg-blue-400/80 pointer-events-none z-20 shadow-xs`}
+          />
+        )}
+      </div>
+    );
+  };
+
   // Purpose/Priority1-3/DNS URL's Edit Mode rendering - an uncontrolled
   // textarea (defaultValue, not value) rather than React-controlled state
   // per keystroke: the DOM owns what's typed, so an unrelated re-render
@@ -1448,10 +1491,18 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {filteredEnvironments.map((environment, rowIndex) => (
-                <tr key={environment.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
+                <tr
+                  key={environment.id}
+                  style={
+                    rowHeights.getRowHeight(environment.id)
+                      ? { height: `${rowHeights.getRowHeight(environment.id)}px` }
+                      : undefined
+                  }
+                  className="divide-x divide-slate-200 dark:divide-zinc-800"
+                >
                   <td
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}
-                    className="whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center align-top cursor-pointer select-none"
+                    className="relative whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center align-top cursor-pointer select-none"
                   >
                     {isEditMode ? (
                       <span className="inline-flex items-center gap-1.5">
@@ -1469,6 +1520,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                     ) : (
                       rowIndex + 1
                     )}
+                    {renderRowResizeHandle(environment.id, !draftRow && rowIndex === filteredEnvironments.length - 1)}
                   </td>
                   {visibleColumns.map((column, colIndex) => {
                     if (column.key === 'actionItemsUpdates') return renderActionItemsCell(environment, rowIndex, colIndex);
@@ -1478,9 +1530,17 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                 </tr>
               ))}
               {draftRow && (
-                <tr className="divide-x divide-slate-200 dark:divide-zinc-800 bg-blue-50/50 dark:bg-blue-500/10">
-                  <td className="whitespace-nowrap px-3 py-2 font-mono text-slate-300 dark:text-zinc-700 text-center align-top">
+                <tr
+                  style={
+                    rowHeights.getRowHeight('draft')
+                      ? { height: `${rowHeights.getRowHeight('draft')}px` }
+                      : undefined
+                  }
+                  className="divide-x divide-slate-200 dark:divide-zinc-800 bg-blue-50/50 dark:bg-blue-500/10"
+                >
+                  <td className="relative whitespace-nowrap px-3 py-2 font-mono text-slate-300 dark:text-zinc-700 text-center align-top">
                     –
+                    {renderRowResizeHandle('draft', true)}
                   </td>
                   {visibleColumns.map((column) => {
                     if (column.key === 'actionItemsUpdates') return renderDraftActionItemsCell();
