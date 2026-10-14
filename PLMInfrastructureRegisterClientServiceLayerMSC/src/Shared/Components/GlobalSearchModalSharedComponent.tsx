@@ -88,9 +88,9 @@ export default function GlobalSearchModalSharedComponent(): React.JSX.Element | 
           <motion.div
             key="global-search-bar"
             onClick={(event) => event.stopPropagation()}
-            initial={{ y: -200, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -200, opacity: 0 }}
+            initial={{ y: -200 }}
+            animate={{ y: 0 }}
+            exit={{ y: -200 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="mx-auto mt-24 w-[calc(100%-2rem)] max-w-xl cursor-default"
           >
@@ -104,6 +104,16 @@ export default function GlobalSearchModalSharedComponent(): React.JSX.Element | 
                 autoComplete="off"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
+                // Handled directly on the input too (not just the window-
+                // level listener below) - guarantees a single Escape press
+                // closes this immediately even while focused, with no
+                // dependence on the keydown actually reaching window first.
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    event.preventDefault();
+                    setIsOpen(false);
+                  }
+                }}
                 placeholder="Search anything..."
                 className="flex-1 bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none"
               />
