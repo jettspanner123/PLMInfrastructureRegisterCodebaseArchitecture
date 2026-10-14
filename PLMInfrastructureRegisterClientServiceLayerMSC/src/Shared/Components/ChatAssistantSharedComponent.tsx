@@ -1,11 +1,15 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
-import { Bot, Send, X } from 'lucide-react';
+import { Bot, Send, X, Trash2, RotateCcw, Loader2 } from 'lucide-react';
+import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 
 interface ChatMessage {
   id: string;
+  sender: 'user' | 'assistant' | 'error';
   text: string;
+  timestamp?: string;
+  originalQuestion?: string;
 }
 
 interface SimpleRect {
@@ -24,58 +28,6 @@ const CHAT_ASSISTANT_LAYOUT_ID = 'chat-assistant-panel';
 
 const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
-// An icon button that morphs into a centered, backdrop-blurred chat panel.
-// UI shell only for now — sending a message appends it locally with no
-// reply, since nothing is wired up to answer yet.
-//
-// Load-bearing details worth not re-deriving if this ever looks broken:
-//
-// 1. `AnimatePresence mode="popLayout"` on the TRIGGER's own wrapper — pops
-//    it out of flow the instant it starts exiting, so the Columns button
-//    beside it reflows immediately instead of waiting on the exit animation.
-//
-// 2. `layoutRoot` on the panel — required because it lives inside a
-//    `position: fixed` portal (rendered into document.body, matching
-//    ModalSharedComponent's own convention — needed since the header's own
-//    `sm:backdrop-blur-md` creates a new containing block for `fixed`
-//    descendants, which would otherwise confine an un-portaled modal to the
-//    header's own small box instead of the full viewport).
-//
-// 3. The OPEN direction is a MANUAL flip (useAnimate + useLayoutEffect),
-//    not automatic layoutId projection, even though layoutId is still
-//    present on the panel (harmless; it just does nothing useful on
-//    mount). Three separate structural attempts at making layoutId bridge
-//    this automatically all failed, confirmed empirically each time, not
-//    guessed:
-//      a. Giving the trigger its own `exit` + matching `transition` (so
-//         AnimatePresence would hold it in a tracked exit phase) — no
-//         change; the panel still popped straight to full size.
-//      b. Wrapping both sides in `LayoutGroup` to bridge the two separate
-//         AnimatePresence instances (trigger's, in the normal tree; panel's,
-//         in the portaled tree) — no change either.
-//      c. Restructuring into ONE AnimatePresence with both states as
-//         branches of a single ternary, matching Motion's own documented
-//         canonical recipe exactly — this didn't just fail to animate, it
-//         silently rendered NOTHING at all: AnimatePresence does not seem
-//         to correctly track a `createPortal(...)` result as a direct
-//         conditional child, even though createPortal is itself a valid
-//         React node anywhere else in a tree.
-//    This matches a known class of bugs (framer/motion GitHub issue #1524,
-//    "Shared layout animations not working when rendered in React portal")
-//    — portal + layoutId projection is documented as a fragile combination,
-//    not something this component was misusing. The manual flip sidesteps
-//    the whole question: it measures the trigger's real screen position
-//    once (cached, since the toolbar slot never moves while closed) and
-//    animates the panel's own transform from that measured rect to neutral
-//    imperatively, using the exact same spring as the close direction — so
-//    both directions are actually symmetric by construction, not by hoping
-//    an automatic mechanism bridges a portal boundary it apparently can't.
-//
-// 4. The floating input bar lives back inside the panel's own clipped box
-//    (a normal flex-col child, with its own padding/margin and shadow, no
-//    border divider above it) rather than outside/overlapping it — an
-//    earlier round tried detaching it entirely past the panel's bottom
-//    edge, which read badly once seen live, so it moved back in.
 export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [draftMessage, setDraftMessage] = useState<string>('');
@@ -83,7 +35,20 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerRectRef = useRef<SimpleRect | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [panelScope, animatePanel] = useAnimate();
+
+  const askQuestionMutation = TanstackQueryClientService.current.chatAssistant.useAskQuestionMutation();
+
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth'): void => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom('smooth');
+    }
+  }, [messages, askQuestionMutation.isPending, isOpen]);
 
   // The trigger's slot in the toolbar is stable while the modal is closed,
   // so its rect only needs refreshing on resize — not on every open.
@@ -156,11 +121,60 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     setTimeout(() => triggerButtonRef.current?.focus(), 0);
   };
 
-  const handleSend = (): void => {
-    const trimmed = draftMessage.trim();
-    if (!trimmed) return;
-    setMessages((previous) => [...previous, { id: crypto.randomUUID(), text: trimmed }]);
+  const sendMessage = (questionText: string): void => {
+    const trimmed = questionText.trim();
+    if (!trimmed || askQuestionMutation.isPending) return;
+
+    const userMessage: ChatMessage = {
+      id: crypto.randomUUID(),
+      sender: 'user',
+      text: trimmed,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setMessages((previous) => [...previous, userMessage]);
     setDraftMessage('');
+
+    askQuestionMutation.mutate(
+      { question: trimmed },
+      {
+        onSuccess: (data) => {
+          setMessages((previous) => [
+            ...previous,
+            {
+              id: crypto.randomUUID(),
+              sender: 'assistant',
+              text: data.answer,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        },
+        onError: (error: Error) => {
+          setMessages((previous) => [
+            ...previous,
+            {
+              id: crypto.randomUUID(),
+              sender: 'error',
+              text: error.message || 'Failed to get an answer. Please try again.',
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              originalQuestion: trimmed,
+            },
+          ]);
+        },
+      }
+    );
+  };
+
+  const handleSend = (): void => {
+    sendMessage(draftMessage);
+  };
+
+  const handleRetry = (question: string): void => {
+    sendMessage(question);
+  };
+
+  const handleClearChat = (): void => {
+    setMessages([]);
   };
 
   return (
@@ -210,40 +224,132 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   transition={SPRING_TRANSITION}
                   className="pointer-events-auto relative w-full max-w-4xl h-[min(800px,90dvh)] bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col"
                 >
-                  {/* Floating close button — overlaid on scrolling message content */}
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    aria-label="Close Assistant"
-                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-
-                  {/* Messages */}
-                  <div className="flex-1 overflow-y-auto px-6 pt-14 pb-2 space-y-3">
-                    {messages.length === 0 ? (
-                      <div className="h-full flex flex-col items-center justify-center text-center gap-2 text-slate-400 dark:text-zinc-500">
-                        <Bot className="w-8 h-8" />
-                        <p className="text-xs max-w-[220px]">
-                          Ask me anything — I'm just a UI shell for now, not wired up to anything yet.
-                        </p>
-                      </div>
-                    ) : (
-                      messages.map((message) => (
-                        <div key={message.id} className="flex justify-end">
-                          <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[#0C2086] text-white text-xs px-3.5 py-2.5 break-words">
-                            {message.text}
-                          </div>
-                        </div>
-                      ))
+                  {/* Header actions: Clear chat + Close button */}
+                  <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+                    {messages.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleClearChat}
+                        title="Clear chat history"
+                        aria-label="Clear chat history"
+                        className="p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     )}
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      aria-label="Close Assistant"
+                      className="p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
 
-                  {/* Floating input bar — inset within the panel, margin on
-                      all sides, no border divider above it (just the gap
-                      plus its own shadow read as "floating over" the
-                      messages, rather than a docked footer). */}
+                  {/* Messages */}
+                  <div className="flex-1 overflow-y-auto px-6 pt-14 pb-2 space-y-4">
+                    {messages.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-center gap-3 text-slate-400 dark:text-zinc-500">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800/80 flex items-center justify-center text-[#0C2086] dark:text-blue-400 hairline-border">
+                          <Bot className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-700 dark:text-zinc-300">
+                            How can I help you today?
+                          </p>
+                          <p className="text-xs max-w-[260px] text-slate-400 dark:text-zinc-500">
+                            Ask any questions about infrastructure, environments, resource configurations, or general queries.
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      messages.map((message) => {
+                        if (message.sender === 'user') {
+                          return (
+                            <div key={message.id} className="flex flex-col items-end gap-1">
+                              <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[#0C2086] text-white text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap">
+                                {message.text}
+                              </div>
+                              {message.timestamp && (
+                                <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
+                                  {message.timestamp}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        }
+
+                        if (message.sender === 'error') {
+                          return (
+                            <div key={message.id} className="flex items-start gap-2.5 max-w-[85%]">
+                              <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0 mt-0.5">
+                                <Bot className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="flex flex-col items-start gap-1.5">
+                                <div className="rounded-2xl rounded-tl-sm bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed">
+                                  <p>{message.text}</p>
+                                  {message.originalQuestion && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRetry(message.originalQuestion!)}
+                                      disabled={askQuestionMutation.isPending}
+                                      className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-rose-700 dark:text-rose-300 hover:text-rose-900 dark:hover:text-rose-100 underline underline-offset-2 cursor-pointer disabled:opacity-50"
+                                    >
+                                      <RotateCcw className="w-3 h-3" />
+                                      Retry
+                                    </button>
+                                  )}
+                                </div>
+                                {message.timestamp && (
+                                  <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
+                                    {message.timestamp}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Assistant message
+                        return (
+                          <div key={message.id} className="flex items-start gap-2.5 max-w-[85%]">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 hairline-border flex items-center justify-center text-[#0C2086] dark:text-blue-400 shrink-0 mt-0.5">
+                              <Bot className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="flex flex-col items-start gap-1">
+                              <div className="rounded-2xl rounded-tl-sm bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap">
+                                {message.text}
+                              </div>
+                              {message.timestamp && (
+                                <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
+                                  {message.timestamp}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+
+                    {/* Animated 3-dot typing indicator */}
+                    {askQuestionMutation.isPending && (
+                      <div className="flex items-start gap-2.5 max-w-[85%]">
+                        <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 hairline-border flex items-center justify-center text-[#0C2086] dark:text-blue-400 shrink-0 mt-0.5">
+                          <Bot className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="rounded-2xl rounded-tl-sm bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-xs px-4 py-3 shadow-sm flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-500 dark:bg-zinc-400 animate-bounce [animation-delay:-0.3s]" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-500 dark:bg-zinc-400 animate-bounce [animation-delay:-0.15s]" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-500 dark:bg-zinc-400 animate-bounce" />
+                        </div>
+                      </div>
+                    )}
+
+                    <div ref={messagesEndRef} className="h-1" />
+                  </div>
+
+                  {/* Floating input bar */}
                   <div className="shrink-0 px-6 pb-6 pt-2">
                     <div className="flex items-center gap-2 px-3 py-2.5 rounded-full bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg">
                       <input
@@ -251,21 +357,30 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         type="text"
                         name="chatAssistantMessage"
                         value={draftMessage}
+                        disabled={askQuestionMutation.isPending}
                         onChange={(event) => setDraftMessage(event.target.value)}
                         onKeyDown={(event) => {
                           if (event.key === 'Enter') handleSend();
                         }}
-                        placeholder="Message the assistant…"
-                        className="flex-1 h-10 px-3.5 rounded-full bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
+                        placeholder={
+                          askQuestionMutation.isPending
+                            ? 'Assistant is thinking…'
+                            : 'Message the assistant…'
+                        }
+                        className="flex-1 h-10 px-3.5 rounded-full bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 disabled:opacity-60"
                       />
                       <button
                         type="button"
                         onClick={handleSend}
-                        disabled={!draftMessage.trim()}
+                        disabled={!draftMessage.trim() || askQuestionMutation.isPending}
                         aria-label="Send message"
                         className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors"
                       >
-                        <Send className="w-4 h-4" />
+                        {askQuestionMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Send className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>

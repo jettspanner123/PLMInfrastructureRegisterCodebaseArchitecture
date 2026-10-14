@@ -518,7 +518,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-1.5 flex items-center justify-between">
+            <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-2.5 flex items-center justify-between">
               <span>Background Color</span>
               <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500 capitalize">
                 {currentBackgroundColorName}
@@ -625,7 +625,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-1.5 flex items-center justify-between">
+          <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-2.5 flex items-center justify-between">
             <span>Text Color</span>
             <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500 capitalize">
               {currentTextColorKey}

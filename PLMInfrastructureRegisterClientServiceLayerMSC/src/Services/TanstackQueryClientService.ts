@@ -21,6 +21,9 @@ import type AddCustomColorOptionRequestInterfaceModel from '../Models/AddCustomC
 import type UpdateCustomColorOptionRequestInterfaceModel from '../Models/UpdateCustomColorOptionRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
+import type AskQuestionRequestInterfaceModel from '../Models/AskQuestionRequestInterfaceModel';
+import type AskQuestionResponseInterfaceModel from '../Models/AskQuestionResponseInterfaceModel';
+import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssistantService';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
 
 export default class TanstackQueryClientService {
@@ -422,6 +425,25 @@ export default class TanstackQueryClientService {
           await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.CONFIGURED_SUBSCRIPTIONS });
           await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCES });
           options?.onSuccess?.(data);
+        },
+      });
+    },
+  };
+
+  public readonly chatAssistant = {
+    useAskQuestionMutation: (options?: {
+      onSuccess?: (data: AskQuestionResponseInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      return useMutation({
+        mutationFn: (request: AskQuestionRequestInterfaceModel) =>
+          ChatAssistantService.current.askQuestion(request),
+        onSuccess: (data) => options?.onSuccess?.(data),
+        onError: (error: Error) => {
+          toast.error('Failed to get answer from assistant', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
         },
       });
     },
