@@ -176,6 +176,15 @@ html.table-sticky-header .data-table-sticky-header-container {
   z-index: 25;
 }
 
+/* Reserves room below the page's own content for the floating horizontal
+   scroll pill (fixed bottom-4, ~32px tall) so scrolling a page all the way
+   down never leaves its last content sitting underneath the pill. Only
+   applied while TableHorizontalScrollPillSharedComponent has actually
+   toggled this class on - see its own comment for why. */
+html.scroll-pill-visible main {
+  padding-bottom: calc(2rem + 56px);
+}
+
 .data-table-hidden-thead {
   visibility: collapse !important;
 }

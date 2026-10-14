@@ -65,6 +65,21 @@ export default function TableHorizontalScrollPillSharedComponent({
     setCanScrollRight(scrollLeft < maxScroll - 2);
   }, [scrollContainerRef]);
 
+  // Reserves bottom space on the page's own content wrapper for exactly as
+  // long as the pill is actually on-screen (enabled AND the table currently
+  // overflows horizontally) - mirrors ApplicationStickyHeaderUtility's own
+  // "toggle a class on <html>, let CSS react to it" pattern (see index.css's
+  // `scroll-pill-visible` rule). Cleanup removes the class on unmount so a
+  // page navigated away from never leaves stale padding behind on whatever's
+  // rendered next.
+  useEffect(() => {
+    const isVisible = isEnabled && canScroll;
+    document.documentElement.classList.toggle('scroll-pill-visible', isVisible);
+    return () => {
+      document.documentElement.classList.remove('scroll-pill-visible');
+    };
+  }, [isEnabled, canScroll]);
+
   // Listen to container scroll and window/element resizes
   useEffect(() => {
     const container = scrollContainerRef.current;

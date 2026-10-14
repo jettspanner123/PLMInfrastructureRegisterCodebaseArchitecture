@@ -932,6 +932,15 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   // would be disruptive. Works in both bounded Table Height modes (scrolls
   // the table's own container) and Extended mode (scrolls the page via
   // scrollIntoView), without needing to know which mode is active.
+  //
+  // The table-container scroll above only guarantees the new ROW itself is
+  // visible (inside the bounded card's own scroll area, if any) - it says
+  // nothing about the Cancel/Done button bar, which is a sibling rendered
+  // AFTER (outside) that same container in the page's normal flow. A second,
+  // independent scrollIntoView targeting that bar directly is what actually
+  // guarantees the buttons themselves end up on-screen, regardless of which
+  // Table Height mode is active or how tall the page's own content is.
+  const draftActionsBarRef = useRef<HTMLDivElement | null>(null);
   const hasDraftRow = draftRow !== null;
   useEffect(() => {
     if (!hasDraftRow) return;
@@ -943,6 +952,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         container.scrollIntoView({ block: 'end', behavior: 'smooth' });
       }
     }
+    draftActionsBarRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
     // preventScroll: true - a plain focus() on an off-screen element
     // triggers the browser's OWN native "scroll into view", which is
     // instant and fires immediately, snapping straight to the end position
@@ -1767,7 +1777,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     )}
 
       {draftRow && (
-        <div className="flex items-center justify-between px-1 -mt-2">
+        <div ref={draftActionsBarRef} className="flex items-center justify-between px-1 -mt-2">
           <span className="text-[11px] font-mono">
             {isDraftInvalid ? (
               <span className="text-red-500 dark:text-red-400">Environment name is required.</span>
