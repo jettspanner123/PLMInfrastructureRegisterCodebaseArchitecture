@@ -23,6 +23,7 @@ export interface CopyableTableCellSharedComponentProps {
   // inert everywhere else, since this just forwards to the inner button's
   // own onContextMenu when provided.
   onCellContextMenu?: (event: React.MouseEvent) => void;
+  onCellDoubleClick?: (event: React.MouseEvent) => void;
   // 'center' (default) matches every existing table's short, single-line
   // cells. 'top' is for tables whose content regularly wraps to several
   // lines (e.g. Environment Overview) — centering a multi-line block reads
@@ -60,6 +61,7 @@ export default function CopyableTableCellSharedComponent({
   onCellMouseDown,
   onCellMouseEnter,
   onCellContextMenu,
+  onCellDoubleClick,
   verticalAlign = 'center',
   width,
   buttonStyle,
@@ -111,6 +113,7 @@ export default function CopyableTableCellSharedComponent({
         onMouseDown={onCellMouseDown}
         onMouseEnter={onCellMouseEnter}
         onContextMenu={onCellContextMenu}
+        onDoubleClick={onCellDoubleClick}
         onClick={handleClick}
         aria-label={ariaLabel}
         style={{

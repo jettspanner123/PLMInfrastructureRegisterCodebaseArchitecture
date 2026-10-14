@@ -49,6 +49,7 @@ export interface CustomSelectSharedComponentProps {
   // last column), where growing rightward would overflow.
   dropdownAnchor?: 'left' | 'right';
   usePortal?: boolean;
+  initialOpen?: boolean;
 }
 
 export default function CustomSelectSharedComponent({
@@ -71,8 +72,9 @@ export default function CustomSelectSharedComponent({
   disabled = false,
   dropdownAnchor = 'left',
   usePortal = false,
+  initialOpen = false,
 }: CustomSelectSharedComponentProps): React.JSX.Element {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(initialOpen);
   const [searchTerm, setSearchTerm] = useState('');
   const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);

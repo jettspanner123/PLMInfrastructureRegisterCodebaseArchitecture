@@ -117,6 +117,82 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [fieldEditErrorByKey, setFieldEditErrorByKey] = useState<{ key: string; message: string } | null>(null);
   const fieldEditErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Which cell was double-clicked in View Mode to enter Edit Mode, if any -
+  // ensures the target textarea receives focus (with cursor at end) or the
+  // target dropdown (Sponsor or Status) mounts open.
+  const [activeDoubleClickedCell, setActiveDoubleClickedCell] = useState<{ rowId: string; columnKey: string } | null>(null);
+  const [isEditModeFromDoubleClick, setIsEditModeFromDoubleClick] = useState<boolean>(false);
+  const tableWrapperRef = useRef<HTMLDivElement | null>(null);
+  const editableTextareaRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map());
+
+  const handleCellDoubleClick = (rowId: string, columnKey: string): void => {
+    setActiveDoubleClickedCell({ rowId, columnKey });
+    setIsEditModeFromDoubleClick(true);
+    setEditMode(ViewEditModeCON.EDIT);
+  };
+
+  const handleModeChange = (newMode: string): void => {
+    setIsEditModeFromDoubleClick(false);
+    setEditMode(newMode);
+  };
+
+  useEffect(() => {
+    if (activeDoubleClickedCell && isEditMode) {
+      const key = `${activeDoubleClickedCell.rowId}:${activeDoubleClickedCell.columnKey}`;
+      const textarea = editableTextareaRefs.current.get(key);
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      }
+      setActiveDoubleClickedCell(null);
+    }
+  }, [activeDoubleClickedCell, isEditMode]);
+
+  useEffect(() => {
+    if (!isEditMode || !isEditModeFromDoubleClick) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent): void => {
+      // If a modal or delete confirmation dialog is open, don't revert
+      if (
+        isOptionModalOpen ||
+        deletingEnvironment !== null
+      ) {
+        return;
+      }
+
+      const target = event.target as Node | null;
+      if (!target) return;
+
+      // Inside table card/wrapper
+      if (tableWrapperRef.current?.contains(target)) return;
+
+      // Inside any modals, dialogs, dropdown panels, or context menus
+      if ((target as Element)?.closest?.('[role="dialog"], [role="menu"], [aria-modal="true"], [data-portal]')) {
+        return;
+      }
+
+      // Revert to View Mode
+      setIsEditModeFromDoubleClick(false);
+      setEditMode(ViewEditModeCON.VIEW);
+    };
+
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handlePointerDown);
+      document.addEventListener('touchstart', handlePointerDown);
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [
+    isEditMode,
+    isEditModeFromDoubleClick,
+    isOptionModalOpen,
+    deletingEnvironment,
+  ]);
+
   useEffect(() => {
     return () => {
       if (statusErrorTimerRef.current !== null) clearTimeout(statusErrorTimerRef.current);
@@ -940,6 +1016,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       >
         <textarea
           key={cellKey}
+          ref={(el) => {
+            if (el) editableTextareaRefs.current.set(cellKey, el);
+            else editableTextareaRefs.current.delete(cellKey);
+          }}
           defaultValue={currentValue}
           disabled={isPending}
           rows={2}
@@ -987,6 +1067,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       return renderEditableTextCell(environment, column, editableFieldName, columnWidth, rowIndex, colIndex);
     }
 
+    const isCellEditable =
+      Boolean(EnvironmentOverviewCON.EDITABLE_TEXT_FIELD_NAMES[column.key]) ||
+      column.key === 'sponsor';
+
     if (displayValue === null || displayValue === '') {
       return (
         <td
@@ -994,8 +1078,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           onMouseDown={cellHandlers.onMouseDown}
           onMouseEnter={cellHandlers.onMouseEnter}
           onContextMenu={onCellContextMenu}
+          onDoubleClick={isCellEditable ? () => handleCellDoubleClick(environment.id, column.key) : undefined}
           style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), width: columnWidth, ...formatStyle }}
-          className={cellClassName}
+          className={`${cellClassName} ${isCellEditable ? 'cursor-pointer select-none' : ''}`}
         >
           <span className="text-slate-300 dark:text-zinc-700">—</span>
         </td>
@@ -1015,6 +1100,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
         onCellContextMenu={onCellContextMenu}
+        onCellDoubleClick={isCellEditable ? () => handleCellDoubleClick(environment.id, column.key) : undefined}
         verticalAlign="top"
         width={columnWidth}
       >
@@ -1228,6 +1314,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     if (isEditMode) {
       const isPending = pendingStatusRowId === environment.id;
       const rowError = statusErrorByRowId?.rowId === environment.id ? statusErrorByRowId.message : null;
+      const shouldAutoOpen =
+        activeDoubleClickedCell?.rowId === environment.id &&
+        activeDoubleClickedCell?.columnKey === 'status';
 
       return (
         <td
@@ -1247,6 +1336,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             searchable
             size="sm"
             disabled={isPending}
+            initialOpen={shouldAutoOpen}
             // Status is this table's last (rightmost) column - a left-
             // anchored panel would grow further right and overflow past the
             // table/viewport edge, since the trigger itself is much
@@ -1274,6 +1364,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onCellMouseDown={cellHandlers.onMouseDown}
         onCellMouseEnter={cellHandlers.onMouseEnter}
         onCellContextMenu={onCellContextMenu}
+        onCellDoubleClick={() => handleCellDoubleClick(environment.id, 'status')}
         verticalAlign="top"
         width={columnWidths.getColumnWidth('status')}
       >
@@ -1316,6 +1407,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     };
     const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
 
+    const shouldAutoOpen =
+      activeDoubleClickedCell?.rowId === environment.id &&
+      activeDoubleClickedCell?.columnKey === 'sponsor';
+
     return (
       <td
         key="sponsor"
@@ -1334,6 +1429,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           searchable
           size="sm"
           disabled={isPending}
+          initialOpen={shouldAutoOpen}
           footerAction={{
             label: 'Add New Sponsor',
             icon: <Plus className="w-3.5 h-3.5" />,
@@ -1418,7 +1514,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <ViewEditModeToggleSharedComponent value={editMode} onChange={setEditMode} />
+          <ViewEditModeToggleSharedComponent value={editMode} onChange={handleModeChange} />
 
           <ExpandableSearchSharedComponent
             value={searchQuery}
@@ -1461,7 +1557,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       </div>
 
       {(environments.length > 0 || hasDraftRow) && (
-        <DataTableContainerSharedComponent ref={tableSelection.containerRef}>
+        <div ref={tableWrapperRef}>
+          <DataTableContainerSharedComponent ref={tableSelection.containerRef}>
           {/* table-fixed is load-bearing, not cosmetic: under the default
               auto layout, an explicit per-cell width is only a soft hint —
               once every column's hinted width is summed past the table's
@@ -1556,7 +1653,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             </tbody>
           </table>
         </DataTableContainerSharedComponent>
-      )}
+      </div>
+    )}
 
       {draftRow && (
         <div className="flex items-center justify-between px-1 -mt-2">
