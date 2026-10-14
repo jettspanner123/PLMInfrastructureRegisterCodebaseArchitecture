@@ -176,6 +176,17 @@ html.table-sticky-header .data-table-sticky-header-container {
   z-index: 25;
 }
 
+.data-table-hidden-thead {
+  visibility: collapse !important;
+}
+
+.data-table-sticky-header-container table,
+.data-table-scroll-area table,
+.data-table-header-cell,
+.data-table-row-header-cell {
+  transition: none !important;
+}
+
 .data-table-header-cell {
   position: static;
 }

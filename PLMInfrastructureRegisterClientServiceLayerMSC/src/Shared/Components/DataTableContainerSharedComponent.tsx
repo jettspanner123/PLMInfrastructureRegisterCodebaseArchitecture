@@ -46,7 +46,8 @@ const DataTableContainerSharedComponent = React.forwardRef<HTMLDivElement, DataT
       return () => scrollArea.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Ensure header table width exactly matches body table width when columns are resized.
+    // Ensure header table width and individual column widths exactly match body table
+    // with 0ms delay and no easing/animation.
     useLayoutEffect(() => {
       const scrollArea = internalRef.current;
       const headerContainer = headerContainerRef.current;
@@ -56,19 +57,59 @@ const DataTableContainerSharedComponent = React.forwardRef<HTMLDivElement, DataT
       const headerTable = headerContainer.querySelector('table');
       if (!bodyTable || !headerTable) return;
 
-      const syncWidth = (): void => {
+      const syncColumnWidths = (): void => {
         const bodyWidth = bodyTable.offsetWidth;
-        if (bodyWidth > 0) {
-          headerTable.style.width = `${bodyWidth}px`;
-          headerTable.style.minWidth = `${bodyWidth}px`;
+        if (bodyWidth <= 0) return;
+
+        const bodyWidthStr = `${bodyWidth}px`;
+        if (headerTable.style.width !== bodyWidthStr) {
+          headerTable.style.width = bodyWidthStr;
+          headerTable.style.minWidth = bodyWidthStr;
+        }
+
+        const bodyThs = bodyTable.querySelectorAll<HTMLTableCellElement>('thead.data-table-hidden-thead th');
+        const headerThs = headerTable.querySelectorAll<HTMLTableCellElement>('thead th');
+
+        if (bodyThs.length > 0 && bodyThs.length === headerThs.length) {
+          for (let i = 0; i < bodyThs.length; i++) {
+            const width = bodyThs[i].getBoundingClientRect().width;
+            if (width > 0) {
+              const headerTh = headerThs[i];
+              const widthStr = `${width}px`;
+              if (headerTh.style.width !== widthStr) {
+                headerTh.style.width = widthStr;
+                headerTh.style.minWidth = widthStr;
+                headerTh.style.maxWidth = widthStr;
+                headerTh.style.boxSizing = 'border-box';
+              }
+            }
+          }
+        } else {
+          const firstRowTds = bodyTable.querySelectorAll<HTMLTableCellElement>('tbody tr:first-child td');
+          if (firstRowTds.length > 0 && firstRowTds.length === headerThs.length) {
+            for (let i = 0; i < firstRowTds.length; i++) {
+              const width = firstRowTds[i].getBoundingClientRect().width;
+              if (width > 0) {
+                const headerTh = headerThs[i];
+                const widthStr = `${width}px`;
+                if (headerTh.style.width !== widthStr) {
+                  headerTh.style.width = widthStr;
+                  headerTh.style.minWidth = widthStr;
+                  headerTh.style.maxWidth = widthStr;
+                  headerTh.style.boxSizing = 'border-box';
+                }
+              }
+            }
+          }
         }
       };
 
-      syncWidth();
-      const observer = new ResizeObserver(syncWidth);
+      syncColumnWidths();
+
+      const observer = new ResizeObserver(syncColumnWidths);
       observer.observe(bodyTable);
       return () => observer.disconnect();
-    }, []);
+    }, [children]);
 
     // Check if children is a table with thead + tbody
     const tableElement =
@@ -90,7 +131,7 @@ const DataTableContainerSharedComponent = React.forwardRef<HTMLDivElement, DataT
     const childrenArray = React.Children.toArray(tableElement.props.children);
     const theadElement = childrenArray.find(
       (child) => React.isValidElement(child) && child.type === 'thead'
-    );
+    ) as React.ReactElement<React.HTMLAttributes<HTMLTableSectionElement>> | undefined;
     const restElements = childrenArray.filter((child) => child !== theadElement);
 
     return (
@@ -110,6 +151,16 @@ const DataTableContainerSharedComponent = React.forwardRef<HTMLDivElement, DataT
             {...tableElement.props}
             className={`${tableElement.props.className ?? ''} !border-t-0`}
           >
+            {theadElement && (
+              <thead
+                aria-hidden="true"
+                inert={true}
+                className="data-table-hidden-thead"
+                style={{ visibility: 'collapse' }}
+              >
+                {theadElement.props.children}
+              </thead>
+            )}
             {restElements}
           </table>
         </div>

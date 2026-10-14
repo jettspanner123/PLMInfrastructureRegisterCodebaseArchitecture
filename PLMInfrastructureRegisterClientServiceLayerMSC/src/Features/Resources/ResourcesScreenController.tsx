@@ -577,6 +577,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                           onChange={handleEnvironmentFilterChange}
                           size="sm"
                           className="w-full"
+                          usePortal={true}
                           triggerClassName="!h-auto !w-full !bg-transparent dark:!bg-transparent !border-0 !rounded-none !px-3 !py-2.5 !text-white hover:!bg-white/10 !text-[10px] font-mono font-bold uppercase tracking-wider transition-colors !justify-start"
                           chevronClassName="!text-white/60"
                           dropdownClassName="!text-slate-700 dark:!text-zinc-300 normal-case tracking-normal font-sans"

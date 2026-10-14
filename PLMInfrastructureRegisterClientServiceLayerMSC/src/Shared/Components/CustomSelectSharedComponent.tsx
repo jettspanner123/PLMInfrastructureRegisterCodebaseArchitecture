@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Check, Search, Sparkles } from 'lucide-react';
 import ApplicationHapticsUtility from '../../Utilities/ApplicationHapticsUtility';
@@ -47,6 +48,7 @@ export interface CustomSelectSharedComponentProps {
   // narrow trigger near the right edge of its container (e.g. a table's
   // last column), where growing rightward would overflow.
   dropdownAnchor?: 'left' | 'right';
+  usePortal?: boolean;
 }
 
 export default function CustomSelectSharedComponent({
@@ -68,13 +70,22 @@ export default function CustomSelectSharedComponent({
   onOpenChange,
   disabled = false,
   dropdownAnchor = 'left',
+  usePortal = false,
 }: CustomSelectSharedComponentProps): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
+
+  const updateTriggerRect = useCallback((): void => {
+    if (dropdownRef.current) {
+      setTriggerRect(dropdownRef.current.getBoundingClientRect());
+    }
+  }, []);
 
   useEffect(() => {
     onOpenChange?.(isOpen);
@@ -82,6 +93,17 @@ export default function CustomSelectSharedComponent({
       setSearchTerm('');
       return;
     }
+
+    const handleScrollOrResize = (): void => {
+      updateTriggerRect();
+    };
+
+    if (usePortal) {
+      updateTriggerRect();
+      window.addEventListener('scroll', handleScrollOrResize, { capture: true, passive: true });
+      window.addEventListener('resize', handleScrollOrResize, { passive: true });
+    }
+
     const isMobileOrTouch =
       typeof window !== 'undefined' &&
       (window.innerWidth < 768 ||
@@ -92,7 +114,9 @@ export default function CustomSelectSharedComponent({
       searchInputRef.current.focus();
     }
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const isInsideTrigger = dropdownRef.current?.contains(event.target as Node);
+      const isInsidePanel = panelRef.current?.contains(event.target as Node);
+      if (!isInsideTrigger && !isInsidePanel) {
         setIsOpen(false);
       }
     };
@@ -104,8 +128,12 @@ export default function CustomSelectSharedComponent({
       clearTimeout(timeoutId);
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
+      if (usePortal) {
+        window.removeEventListener('scroll', handleScrollOrResize, { capture: true });
+        window.removeEventListener('resize', handleScrollOrResize);
+      }
     };
-  }, [isOpen, searchable, enableCustomValue]);
+  }, [isOpen, searchable, enableCustomValue, usePortal, updateTriggerRect, onOpenChange]);
 
   const filteredOptions = React.useMemo(() => {
     if (!searchTerm.trim()) return options;
@@ -143,47 +171,36 @@ export default function CustomSelectSharedComponent({
 
   const isSearchActive = searchable || enableCustomValue;
 
-  return (
-    <div className={`relative self-start ${className}`} ref={dropdownRef}>
-      {label && (
-        <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1 block">
-          {label}
-        </label>
-      )}
-
-      <button
-        type="button"
-        disabled={disabled}
-        onPointerDown={() => !disabled && ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 select-none ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-        } ${triggerClassName || ''}`}
-      >
-        <div className="flex items-center gap-2 truncate font-medium">
-          {selectedOption?.icon}
-          <span className="truncate font-semibold">
-            {getDisplayLabel()}
-          </span>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${
-            isOpen ? 'rotate-180 text-slate-700 dark:text-zinc-200' : ''
-          } ${chevronClassName || ''}`}
-        />
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 4 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 4 }}
-            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className={`absolute ${
-              dropdownAnchor === 'right' ? 'right-0' : 'left-0 right-0'
-            } min-w-[200px] top-full mt-1.5 z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs space-y-1 sm:space-y-0.5 max-h-80 sm:max-h-72 overflow-y-auto ${dropdownClassName || ''}`}
-          >
+  const dropdownPanel = (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={panelRef}
+          initial={{ opacity: 0, scale: 0.96, y: 4 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 4 }}
+          transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          style={
+            usePortal && triggerRect
+              ? {
+                  position: 'fixed',
+                  top: `${triggerRect.bottom + 6}px`,
+                  left: dropdownAnchor === 'right' ? undefined : `${triggerRect.left}px`,
+                  right:
+                    dropdownAnchor === 'right'
+                      ? `${window.innerWidth - triggerRect.right}px`
+                      : undefined,
+                  minWidth: Math.max(200, triggerRect.width),
+                  zIndex: 9999,
+                }
+              : undefined
+          }
+          className={`${
+            usePortal
+              ? ''
+              : `absolute ${dropdownAnchor === 'right' ? 'right-0' : 'left-0 right-0'} top-full mt-1.5`
+          } min-w-[200px] z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs space-y-1 sm:space-y-0.5 max-h-80 sm:max-h-72 overflow-y-auto ${dropdownClassName || ''}`}
+        >
             {isSearchActive && (
               <div className="p-2 sm:p-1.5 border-b border-slate-100 dark:border-zinc-800/80 mb-1">
                 <div className="relative flex items-center">
@@ -287,6 +304,41 @@ export default function CustomSelectSharedComponent({
           </motion.div>
         )}
       </AnimatePresence>
+  );
+
+  return (
+    <div className={`relative self-start ${className}`} ref={dropdownRef}>
+      {label && (
+        <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1 block">
+          {label}
+        </label>
+      )}
+
+      <button
+        type="button"
+        disabled={disabled}
+        onPointerDown={() => !disabled && ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 select-none ${
+          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        } ${triggerClassName || ''}`}
+      >
+        <div className="flex items-center gap-2 truncate font-medium">
+          {selectedOption?.icon}
+          <span className="truncate font-semibold">
+            {getDisplayLabel()}
+          </span>
+        </div>
+        <ChevronDown
+          className={`w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${
+            isOpen ? 'rotate-180 text-slate-700 dark:text-zinc-200' : ''
+          } ${chevronClassName || ''}`}
+        />
+      </button>
+
+      {usePortal && typeof document !== 'undefined'
+        ? createPortal(dropdownPanel, document.body)
+        : dropdownPanel}
     </div>
   );
 }

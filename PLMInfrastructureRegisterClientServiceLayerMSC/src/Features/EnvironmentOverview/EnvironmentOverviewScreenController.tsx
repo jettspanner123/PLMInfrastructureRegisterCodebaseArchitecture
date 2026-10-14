@@ -1474,7 +1474,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           <table className="w-full table-fixed border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-white/10">
-                <TableHeaderCellSharedComponent align="center" className="w-12">
+                <TableHeaderCellSharedComponent align="center" className="w-12" style={{ width: 48, minWidth: 48, maxWidth: 48 }}>
                   SL. NO
                 </TableHeaderCellSharedComponent>
                 {visibleColumns.map((column, colIndex) => (
@@ -1502,7 +1502,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                 >
                   <td
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}
-                    className="relative whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center align-top cursor-pointer select-none"
+                    style={{ width: 48, minWidth: 48, maxWidth: 48 }}
+                    className="relative w-12 whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center align-top cursor-pointer select-none"
                   >
                     {isEditMode ? (
                       <span className="inline-flex items-center gap-1.5">
@@ -1538,7 +1539,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                   }
                   className="divide-x divide-slate-200 dark:divide-zinc-800 bg-blue-50/50 dark:bg-blue-500/10"
                 >
-                  <td className="relative whitespace-nowrap px-3 py-2 font-mono text-slate-300 dark:text-zinc-700 text-center align-top">
+                  <td
+                    style={{ width: 48, minWidth: 48, maxWidth: 48 }}
+                    className="relative w-12 whitespace-nowrap px-3 py-2 font-mono text-slate-300 dark:text-zinc-700 text-center align-top"
+                  >
                     –
                     {renderRowResizeHandle('draft', true)}
                   </td>
