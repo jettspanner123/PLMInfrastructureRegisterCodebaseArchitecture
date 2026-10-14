@@ -16,9 +16,11 @@ import CreateOptionModalController from './Components/CreateOptionModalControlle
 import AddCustomColorModalController from '../Resources/Components/AddCustomColorModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
+import { useGlobalSearchRowJump } from '../../Services/GlobalSearchNavigationService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
 import EnvironmentOverviewRowHeightService from './Services/EnvironmentOverviewRowHeightService';
 import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
+import EnvironmentOverviewTableUtility from './Utilities/EnvironmentOverviewTableUtility';
 import CellFormatCON from '../../Constants/CellFormatCON';
 import CellFormatHelper from '../../Utilities/CellFormatHelper';
 import ViewEditModeCON from '../../Constants/ViewEditModeCON';
@@ -266,12 +268,19 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     if (!lowerCaseQuery) return environments;
 
     return environments.filter((environment) =>
-      visibleColumns.some((column) => {
-        const value = environment[column.key];
-        return typeof value === 'string' && value.toLowerCase().includes(lowerCaseQuery);
-      })
+      EnvironmentOverviewTableUtility.current.matchesSearchQuery(environment, visibleColumns, lowerCaseQuery)
     );
   }, [environments, searchQuery, visibleColumns]);
+
+  // Jumped here from the global search modal (Ctrl/Cmd+K) - see
+  // ResourcesScreenController's own identical use of this hook for the full
+  // rationale.
+  const { highlightedId: highlightedEnvironmentId } = useGlobalSearchRowJump(
+    'environmentOverview',
+    filteredEnvironments,
+    (environment) => environment.id,
+    () => setSearchQuery('')
+  );
 
   // Excel-like multi-cell/row/column selection, shared with Resources and
   // Configure Subscriptions - see TableSelectionService.ts for the full
@@ -1710,12 +1719,15 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               {filteredEnvironments.map((environment, rowIndex) => (
                 <tr
                   key={environment.id}
+                  data-row-id={environment.id}
                   style={
                     rowHeights.getRowHeight(environment.id)
                       ? { height: `${rowHeights.getRowHeight(environment.id)}px` }
                       : undefined
                   }
-                  className="divide-x divide-slate-200 dark:divide-zinc-800"
+                  className={`divide-x divide-slate-200 dark:divide-zinc-800 ${
+                    highlightedEnvironmentId === environment.id ? 'global-search-row-highlight' : ''
+                  }`}
                 >
                   <td
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}

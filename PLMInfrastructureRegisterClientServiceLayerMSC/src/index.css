@@ -185,6 +185,39 @@ html.scroll-pill-visible main {
   padding-bottom: calc(2rem + 56px);
 }
 
+/* Brief flash applied to a row jumped-to from the global search modal (see
+   GlobalSearchNavigationService's useGlobalSearchRowJump) - fades from a
+   visible tint back to nothing over the same ~1.8s window the hook keeps
+   highlightedId set, so the two stay in sync without either side polling
+   the other. */
+@keyframes global-search-row-highlight-flash {
+  0%,
+  35% {
+    background-color: rgba(12, 32, 134, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+html.dark .global-search-row-highlight {
+  animation-name: global-search-row-highlight-flash-dark;
+}
+
+@keyframes global-search-row-highlight-flash-dark {
+  0%,
+  35% {
+    background-color: rgba(96, 165, 250, 0.25);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.global-search-row-highlight {
+  animation: global-search-row-highlight-flash 1.8s ease-out;
+}
+
 .data-table-hidden-thead {
   visibility: collapse !important;
 }

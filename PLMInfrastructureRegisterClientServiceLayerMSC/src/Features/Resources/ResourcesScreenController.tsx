@@ -14,6 +14,7 @@ import ApplicationUserPreferenceKeyCON from '../../Constants/ApplicationUserPref
 import ViewEditModeCON from '../../Constants/ViewEditModeCON';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import TableSelectionService from '../../Services/TableSelectionService';
+import { useGlobalSearchRowJump } from '../../Services/GlobalSearchNavigationService';
 import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import type ResourceCellFormatTargetInterfaceModel from '../../Models/ResourceCellFormatTargetInterfaceModel';
 import type ResourceCellFormatInterfaceModel from '../../Models/ResourceCellFormatInterfaceModel';
@@ -136,6 +137,22 @@ export default function ResourcesScreenController(): React.JSX.Element {
       ResourceTableUtility.current.matchesSearchQuery(resource, visibleColumns, lowerCaseQuery)
     );
   }, [environmentFilteredResources, visibleColumns, searchQuery]);
+
+  // Jumped here from the global search modal (Ctrl/Cmd+K) - clears whatever
+  // local filtering would otherwise hide the target row (this page's own
+  // search query, the Environment filter) before scrolling to and flashing
+  // it. Only touches local state, never the persisted Environment-filter
+  // preference itself - a search jump shouldn't silently override what the
+  // user had deliberately set as their default filter.
+  const { highlightedId: highlightedResourceId } = useGlobalSearchRowJump(
+    'resource',
+    filteredResources,
+    (resource) => resource.id,
+    () => {
+      setSearchQuery('');
+      setEnvironmentFilter(ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE);
+    }
+  );
 
   // Excel-like multi-cell/row/column selection, shared with Configure
   // Subscriptions - see TableSelectionService.ts for the full design.
@@ -700,7 +717,13 @@ export default function ResourcesScreenController(): React.JSX.Element {
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {filteredResources.map((resource, rowIndex) => (
-                <tr key={resource.id} className="divide-x divide-slate-200 dark:divide-zinc-800">
+                <tr
+                  key={resource.id}
+                  data-row-id={resource.id}
+                  className={`divide-x divide-slate-200 dark:divide-zinc-800 ${
+                    highlightedResourceId === resource.id ? 'global-search-row-highlight' : ''
+                  }`}
+                >
                   <td
                     {...tableSelection.getRowHeaderHandlers(rowIndex)}
                     className="data-table-row-header-cell whitespace-nowrap px-3 py-2 font-mono text-slate-400 dark:text-zinc-500 text-center select-none"
