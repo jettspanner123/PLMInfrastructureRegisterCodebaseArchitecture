@@ -937,10 +937,10 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   // visible (inside the bounded card's own scroll area, if any) - it says
   // nothing about the Cancel/Done button bar, which is a sibling rendered
   // AFTER (outside) that same container in the page's normal flow. A second,
-  // independent scrollIntoView targeting that bar directly is what actually
-  // guarantees the buttons themselves end up on-screen, regardless of which
-  // Table Height mode is active or how tall the page's own content is.
-  const draftActionsBarRef = useRef<HTMLDivElement | null>(null);
+  // unconditional scroll of the whole page to its true bottom (not just to
+  // the button bar's own edge, which would stop short of the page's reserved
+  // scroll-pill padding) is what actually guarantees the buttons end up
+  // fully on-screen, regardless of which Table Height mode is active.
   const hasDraftRow = draftRow !== null;
   useEffect(() => {
     if (!hasDraftRow) return;
@@ -952,7 +952,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         container.scrollIntoView({ block: 'end', behavior: 'smooth' });
       }
     }
-    draftActionsBarRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
     // preventScroll: true - a plain focus() on an off-screen element
     // triggers the browser's OWN native "scroll into view", which is
     // instant and fires immediately, snapping straight to the end position
@@ -1777,7 +1777,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     )}
 
       {draftRow && (
-        <div ref={draftActionsBarRef} className="flex items-center justify-between px-1 -mt-2">
+        <div className="flex items-center justify-between px-1 -mt-2">
           <span className="text-[11px] font-mono">
             {isDraftInvalid ? (
               <span className="text-red-500 dark:text-red-400">Environment name is required.</span>
