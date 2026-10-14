@@ -100,7 +100,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                 throw new ValidationException($"'{request.TextColorKey}' is not a valid text color.");
             }
 
-            if (request.IsBold is null && request.IsItalic is null && request.BackgroundColorKey is null && request.BackgroundOpacity is null && !request.ClearBackgroundColor && request.TextColorKey is null && !request.ClearTextColor)
+            if (request.IsBold is null && request.IsItalic is null && request.IsUnderline is null && request.BackgroundColorKey is null && request.BackgroundOpacity is null && !request.ClearBackgroundColor && request.TextColorKey is null && !request.ClearTextColor)
             {
                 throw new ValidationException("At least one formatting change must be provided.");
             }

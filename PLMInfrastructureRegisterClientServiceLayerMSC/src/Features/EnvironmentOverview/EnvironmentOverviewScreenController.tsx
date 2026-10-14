@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX, Plus, Trash2, Columns3, ChevronDown, Bold, Italic, X } from 'lucide-react';
+import { ServerOff, FilterX, Plus, Trash2, Columns3, ChevronDown, Bold, Italic, Underline, Ban } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -357,7 +357,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
   const isEveryTargetAlready = (
     targets: EnvironmentOverviewCellFormatTargetInterfaceModel[],
-    key: 'isBold' | 'isItalic'
+    key: 'isBold' | 'isItalic' | 'isUnderline'
   ): boolean =>
     targets.length > 0 &&
     targets.every(
@@ -377,16 +377,24 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     updateCellFormatMutation.mutate({ cells: targets, isItalic: !isEveryTargetAlready(targets, 'isItalic') });
   };
 
+  const handleToggleUnderline = (): void => {
+    const targets = getSelectedCellTargets();
+    if (targets.length === 0) return;
+    updateCellFormatMutation.mutate({ cells: targets, isUnderline: !isEveryTargetAlready(targets, 'isUnderline') });
+  };
+
   const handleSetColor = (colorKey: string): void => {
     const targets = getSelectedCellTargets();
     if (targets.length === 0) return;
     updateCellFormatMutation.mutate({ cells: targets, backgroundColorKey: colorKey });
+    handleCloseContextMenu();
   };
 
   const handleClearColor = (): void => {
     const targets = getSelectedCellTargets();
     if (targets.length === 0) return;
     updateCellFormatMutation.mutate({ cells: targets, clearBackgroundColor: true });
+    handleCloseContextMenu();
   };
 
   const opacityDebounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -402,6 +410,22 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   });
   const currentOpacity = firstTargetFormat?.backgroundOpacity ?? 100;
   const currentTextColorKey = firstTargetFormat?.textColorKey ?? 'default';
+
+  const currentBackgroundColorName = (() => {
+    const key = firstTargetFormat?.backgroundColorKey;
+    if (!key) return 'None';
+    const fixed = CellFormatCON.COLORS.find(
+      (c) => c.key.toLowerCase() === key.toLowerCase() || c.hexColor.toLowerCase() === key.toLowerCase()
+    );
+    if (fixed) return fixed.label;
+    const custom = customColors.find(
+      (c) =>
+        c.colorName.toLowerCase() === key.toLowerCase() ||
+        CellFormatHelper.current.getApplicableColorKey(c).toLowerCase() === key.toLowerCase()
+    );
+    if (custom) return custom.colorName;
+    return key;
+  })();
 
   const handleOpacityChange = (newOpacity: number): void => {
     const targets = getSelectedCellTargets();
@@ -430,53 +454,132 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
   const contextMenuItems: ContextMenuItem[] = [
     {
-      id: 'bold',
-      label: 'Bold',
-      icon: <Bold className="w-3.5 h-3.5" />,
-      onClick: handleToggleBold,
-      shortcut: isEveryTargetAlready(contextMenuTargets, 'isBold') ? '✓' : undefined,
+      id: 'text-formatting',
+      label: 'Formatting',
+      customRender: () => {
+        const isBoldActive = isEveryTargetAlready(contextMenuTargets, 'isBold');
+        const isItalicActive = isEveryTargetAlready(contextMenuTargets, 'isItalic');
+        const isUnderlineActive = isEveryTargetAlready(contextMenuTargets, 'isUnderline');
+
+        return (
+          <div
+            className="px-2.5 py-1.5 flex items-center gap-1"
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              title="Bold"
+              onClick={handleToggleBold}
+              className={`flex-1 flex items-center justify-center py-1.5 rounded-md border text-xs font-semibold transition-colors cursor-pointer ${
+                isBoldActive
+                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 shadow-xs'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-100 dark:hover:bg-zinc-800 border-slate-200/60 dark:border-zinc-800'
+              }`}
+            >
+              <Bold className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              title="Italic"
+              onClick={handleToggleItalic}
+              className={`flex-1 flex items-center justify-center py-1.5 rounded-md border text-xs font-semibold transition-colors cursor-pointer ${
+                isItalicActive
+                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 shadow-xs'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-100 dark:hover:bg-zinc-800 border-slate-200/60 dark:border-zinc-800'
+              }`}
+            >
+              <Italic className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              title="Underline"
+              onClick={handleToggleUnderline}
+              className={`flex-1 flex items-center justify-center py-1.5 rounded-md border text-xs font-semibold transition-colors cursor-pointer ${
+                isUnderlineActive
+                  ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 shadow-xs'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-100 dark:hover:bg-zinc-800 border-slate-200/60 dark:border-zinc-800'
+              }`}
+            >
+              <Underline className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        );
+      },
     },
     {
-      id: 'italic',
-      label: 'Italic',
-      icon: <Italic className="w-3.5 h-3.5" />,
-      onClick: handleToggleItalic,
-      shortcut: isEveryTargetAlready(contextMenuTargets, 'isItalic') ? '✓' : undefined,
-    },
-    ...CellFormatCON.COLORS.map((color, index) => ({
-      id: `color-${color.key}`,
-      label: color.label,
-      icon: (
-        <span
-          className={`inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 ${color.swatchClassName}`}
-        />
-      ),
-      onClick: () => handleSetColor(color.key),
-      divider: index === 0,
-    })),
-    ...customColors.map((option) => ({
-      id: `color-${option.colorName}`,
-      label: option.colorName,
-      icon: (
-        <span
-          className="inline-block w-3.5 h-3.5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
-          style={CellFormatHelper.current.getSwatchStyleForCustomColor(option)}
-        />
-      ),
-      onClick: () => handleSetColor(CellFormatHelper.current.getApplicableColorKey(option)),
-    })),
-    {
-      id: 'add-color',
-      label: 'Add Color',
-      icon: <Plus className="w-3.5 h-3.5" />,
-      onClick: () => setIsAddColorModalOpen(true),
-    },
-    {
-      id: 'clear-color',
-      label: 'Clear Color',
-      icon: <X className="w-3.5 h-3.5" />,
-      onClick: handleClearColor,
-      divider: true,
+      id: 'background-colors',
+      label: 'Background Color',
+      customRender: () => {
+        const isClearSelected = !firstTargetFormat?.backgroundColorKey;
+        return (
+          <div
+            className="px-2.5 py-2 border-t border-slate-100 dark:border-zinc-800/80"
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <div className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 mb-1.5 flex items-center justify-between">
+              <span>Background Color</span>
+              <span className="font-mono text-[10px] text-slate-400 dark:text-zinc-500 capitalize">
+                {currentBackgroundColorName}
+              </span>
+            </div>
+            <div className="grid grid-cols-6 gap-2 justify-items-center">
+              <button
+                type="button"
+                title="Clear background color"
+                onClick={handleClearColor}
+                className={`relative w-6 h-6 rounded-full transition-all cursor-pointer flex items-center justify-center border border-slate-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-slate-400 dark:text-zinc-500 hover:text-rose-500 dark:hover:text-rose-400 ${
+                  isClearSelected
+                    ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
+                    : 'hover:scale-110 opacity-80 hover:opacity-100'
+                }`}
+              >
+                <Ban className="w-3.5 h-3.5" />
+              </button>
+              {CellFormatCON.COLORS.map((color) => {
+                const isSelected =
+                  firstTargetFormat?.backgroundColorKey?.toLowerCase() === color.key.toLowerCase() ||
+                  firstTargetFormat?.backgroundColorKey?.toLowerCase() === color.hexColor.toLowerCase();
+                return (
+                  <button
+                    key={color.key}
+                    type="button"
+                    title={color.label}
+                    onClick={() => handleSetColor(color.key)}
+                    className={`relative w-6 h-6 rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                      color.swatchClassName
+                    } ${
+                      isSelected
+                        ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
+                        : 'hover:scale-110 opacity-80 hover:opacity-100'
+                    }`}
+                  />
+                );
+              })}
+              {customColors.map((option) => {
+                const applicableKey = CellFormatHelper.current.getApplicableColorKey(option);
+                const isSelected =
+                  firstTargetFormat?.backgroundColorKey?.toLowerCase() === applicableKey.toLowerCase();
+                return (
+                  <button
+                    key={option.colorName}
+                    type="button"
+                    title={option.colorName}
+                    onClick={() => handleSetColor(applicableKey)}
+                    style={CellFormatHelper.current.getSwatchStyleForCustomColor(option)}
+                    className={`relative w-6 h-6 rounded-full transition-all cursor-pointer flex items-center justify-center ring-1 ring-inset ring-black/10 dark:ring-white/10 ${
+                      isSelected
+                        ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
+                        : 'hover:scale-110 opacity-80 hover:opacity-100'
+                    }`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        );
+      },
     },
     ...(hasActiveColor
       ? [
@@ -507,6 +610,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         ]
       : []),
     {
+      id: 'add-color',
+      label: 'Add Color',
+      icon: <Plus className="w-3.5 h-3.5" />,
+      onClick: () => setIsAddColorModalOpen(true),
+      divider: true,
+    },
+    {
       id: 'text-colors',
       label: 'Text Color',
       customRender: () => (
@@ -521,7 +631,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               {currentTextColorKey}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="grid grid-cols-6 gap-2 justify-items-center">
             {CellFormatCON.TEXT_COLORS.map((tc) => {
               const isSelected = (currentTextColorKey || 'default').toLowerCase() === tc.key.toLowerCase();
               return (
@@ -530,16 +640,16 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                   type="button"
                   title={tc.label}
                   onClick={() => handleSetTextColor(tc.key)}
-                  className={`relative w-4 h-4 rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                  className={`relative w-6 h-6 rounded-full transition-all cursor-pointer flex items-center justify-center ${
                     tc.swatchClassName
                   } ${
                     isSelected
-                      ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110'
+                      ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
                       : 'hover:scale-110 opacity-80 hover:opacity-100'
                   }`}
                 >
                   {tc.key === 'default' && (
-                    <span className="text-[8px] font-bold text-slate-500 dark:text-zinc-400 leading-none">
+                    <span className="text-[11px] font-bold text-slate-600 dark:text-zinc-300 leading-none">
                       A
                     </span>
                   )}
@@ -992,7 +1102,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const format = cellFormatByKey.get(`${environment.id}:${column.key}`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const formatStyle = {
       ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
@@ -1049,7 +1159,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const format = cellFormatByKey.get(`${environment.id}:${column.key}`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const cellClassName = `${EnvironmentOverviewCON.CELL_CLASS_NAME} ${formatClassName}`;
     const formatStyle = {
@@ -1235,7 +1345,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const format = cellFormatByKey.get(`${environment.id}:actionItemsUpdates`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const formatStyle = {
       ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
@@ -1303,7 +1413,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const format = cellFormatByKey.get(`${environment.id}:status`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const formatStyle = {
       ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
@@ -1399,7 +1509,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const format = cellFormatByKey.get(`${environment.id}:sponsor`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const formatStyle = {
       ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
@@ -1767,6 +1877,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         y={contextMenu.y}
         onClose={handleCloseContextMenu}
         items={contextMenuItems}
+        minWidth={216}
       />
 
       <AddCustomColorModalController

@@ -116,6 +116,7 @@ export default class CellFormatHelper {
       columnKey: string;
       isBold: boolean;
       isItalic: boolean;
+      isUnderline: boolean;
       backgroundColorKey: string | null;
       backgroundOpacity: number;
       textColorKey?: string | null;
@@ -130,6 +131,7 @@ export default class CellFormatHelper {
       style: {
         isBold: boolean;
         isItalic: boolean;
+        isUnderline: boolean;
         backgroundColorKey: string | null;
         backgroundOpacity: number;
         textColorKey?: string | null;
@@ -138,6 +140,7 @@ export default class CellFormatHelper {
     overrides: {
       isBold?: boolean;
       isItalic?: boolean;
+      isUnderline?: boolean;
       backgroundColorKey?: string;
       backgroundOpacity?: number;
       clearBackgroundColor?: boolean;
@@ -157,6 +160,7 @@ export default class CellFormatHelper {
       const style = {
         isBold: overrides.isBold ?? existing?.isBold ?? false,
         isItalic: overrides.isItalic ?? existing?.isItalic ?? false,
+        isUnderline: overrides.isUnderline ?? existing?.isUnderline ?? false,
         backgroundColorKey: overrides.clearBackgroundColor
           ? null
           : (overrides.backgroundColorKey ?? existing?.backgroundColorKey ?? null),
@@ -169,7 +173,7 @@ export default class CellFormatHelper {
       };
 
       const isNowDefault =
-        !style.isBold && !style.isItalic && style.backgroundColorKey === null && !style.textColorKey;
+        !style.isBold && !style.isItalic && !style.isUnderline && style.backgroundColorKey === null && !style.textColorKey;
 
       if (isNowDefault) {
         byKey.delete(key);

@@ -47,6 +47,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.Property<bool>("IsItalic")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsUnderline")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("TextColorKey")
                         .HasColumnType("text");
 
@@ -167,6 +170,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsItalic")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUnderline")
                         .HasColumnType("boolean");
 
                     b.Property<Guid>("ResourceId")

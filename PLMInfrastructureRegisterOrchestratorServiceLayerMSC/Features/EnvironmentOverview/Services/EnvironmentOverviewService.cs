@@ -318,6 +318,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     ColumnKey = cellFormat.ColumnKey,
                     IsBold = cellFormat.IsBold,
                     IsItalic = cellFormat.IsItalic,
+                    IsUnderline = cellFormat.IsUnderline,
                     BackgroundColorKey = cellFormat.BackgroundColorKey,
                     BackgroundOpacity = cellFormat.BackgroundOpacity,
                     TextColorKey = cellFormat.TextColorKey,
@@ -347,6 +348,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
                 if (request.IsBold.HasValue) cellFormatRow.IsBold = request.IsBold.Value;
                 if (request.IsItalic.HasValue) cellFormatRow.IsItalic = request.IsItalic.Value;
+                if (request.IsUnderline.HasValue) cellFormatRow.IsUnderline = request.IsUnderline.Value;
                 if (request.ClearBackgroundColor)
                 {
                     cellFormatRow.BackgroundColorKey = null;
@@ -369,7 +371,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
                 cellFormatRow.UpdatedAt = DateTime.UtcNow;
 
-                bool isNowDefault = !cellFormatRow.IsBold && !cellFormatRow.IsItalic && cellFormatRow.BackgroundColorKey is null && cellFormatRow.TextColorKey is null;
+                bool isNowDefault = !cellFormatRow.IsBold && !cellFormatRow.IsItalic && !cellFormatRow.IsUnderline && cellFormatRow.BackgroundColorKey is null && cellFormatRow.TextColorKey is null;
 
                 if (existing is null)
                 {

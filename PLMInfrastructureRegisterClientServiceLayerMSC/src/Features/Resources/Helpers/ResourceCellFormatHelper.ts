@@ -118,6 +118,7 @@ export default class ResourceCellFormatHelper {
         columnKey: target.columnKey,
         isBold: request.isBold ?? existing?.isBold ?? false,
         isItalic: request.isItalic ?? existing?.isItalic ?? false,
+        isUnderline: request.isUnderline ?? existing?.isUnderline ?? false,
         backgroundColorKey: request.clearBackgroundColor
           ? null
           : (request.backgroundColorKey ?? existing?.backgroundColorKey ?? null),
@@ -130,7 +131,7 @@ export default class ResourceCellFormatHelper {
       };
 
       const isNowDefault =
-        !merged.isBold && !merged.isItalic && merged.backgroundColorKey === null && !merged.textColorKey;
+        !merged.isBold && !merged.isItalic && !merged.isUnderline && merged.backgroundColorKey === null && !merged.textColorKey;
 
       if (isNowDefault) {
         byKey.delete(key);

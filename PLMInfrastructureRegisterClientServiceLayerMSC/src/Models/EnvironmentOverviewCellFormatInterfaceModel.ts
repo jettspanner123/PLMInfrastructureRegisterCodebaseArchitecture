@@ -6,6 +6,7 @@ export default interface EnvironmentOverviewCellFormatInterfaceModel {
   columnKey: string;
   isBold: boolean;
   isItalic: boolean;
+  isUnderline: boolean;
   backgroundColorKey: string | null;
   backgroundOpacity: number;
   textColorKey?: string | null;

@@ -18,6 +18,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public bool? IsItalic { get; set; }
 
+        public bool? IsUnderline { get; set; }
+
         public string? BackgroundColorKey { get; set; }
 
         public int? BackgroundOpacity { get; set; }
