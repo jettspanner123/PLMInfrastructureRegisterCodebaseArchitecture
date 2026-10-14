@@ -23,6 +23,7 @@ import SubscriptionsScreenController from '../Features/Subscriptions/Subscriptio
 import SettingsColorEditingScreenController from '../Features/Settings/SettingsColorEditingScreenController';
 import SettingsSidebarStaticComponent from '../Features/Settings/Components/SettingsSidebarStaticComponent';
 import ApplicationToasterSharedComponent from '../Shared/Components/ApplicationToasterSharedComponent';
+import GlobalSearchModalSharedComponent from '../Shared/Components/GlobalSearchModalSharedComponent';
 
 // ==========================================
 // 1. Root Route & Theme Shell
@@ -125,6 +126,7 @@ function RootLayout(): React.JSX.Element {
         <Outlet />
       </NavigationController>
       <ApplicationToasterSharedComponent />
+      <GlobalSearchModalSharedComponent />
     </React.Fragment>
   );
 }

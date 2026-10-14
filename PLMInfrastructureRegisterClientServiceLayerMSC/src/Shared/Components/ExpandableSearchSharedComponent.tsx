@@ -15,17 +15,19 @@ export interface ExpandableSearchSharedComponentProps {
   autoCollapseIdleMs?: number;
 }
 
-// An icon-only button that expands into a search input — Ctrl/Cmd+K opens
-// and focuses it from anywhere while mounted. The search icon is a single
-// persistent element at a fixed position throughout (never re-mounted or
-// repositioned). Width is driven by Tailwind's own scale (`w-9` collapsed —
-// the same token family as `h-9`, guaranteeing a perfect square — `w-56`/
-// `sm:w-64` expanded) transitioned via plain CSS, not a Framer-Motion-animated
-// raw pixel number: the box is correctly sized from the very first paint,
-// with no JS computation standing between it and the DOM. Only the input's
-// fade-in is Framer-Motion-driven. Collapses back on Escape, the clear (X)
-// button, or after `autoCollapseIdleMs` of no typing — never on blur, so
-// clicking elsewhere never silently discards an active search.
+// An icon-only button that expands into a search input, opened by clicking
+// the icon (Ctrl/Cmd+K belongs to GlobalSearchModalSharedComponent now, not
+// this per-page one - see that component's own doc comment). The search icon
+// is a single persistent element at a fixed position throughout (never
+// re-mounted or repositioned). Width is driven by Tailwind's own scale
+// (`w-9` collapsed — the same token family as `h-9`, guaranteeing a perfect
+// square — `w-56`/`sm:w-64` expanded) transitioned via plain CSS, not a
+// Framer-Motion-animated raw pixel number: the box is correctly sized from
+// the very first paint, with no JS computation standing between it and the
+// DOM. Only the input's fade-in is Framer-Motion-driven. Collapses back on
+// Escape, the clear (X) button, or after `autoCollapseIdleMs` of no typing —
+// never on blur, so clicking elsewhere never silently discards an active
+// search.
 export default function ExpandableSearchSharedComponent({
   value,
   onChange,
@@ -77,29 +79,6 @@ export default function ExpandableSearchSharedComponent({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
-      const isSearchShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
-
-      if (isSearchShortcut) {
-        // Don't hijack focus away from some other input/textarea the user
-        // is actively typing into elsewhere on the page.
-        const activeElement = document.activeElement;
-        const isTypingElsewhere =
-          activeElement !== inputRef.current &&
-          (activeElement instanceof HTMLInputElement ||
-            activeElement instanceof HTMLTextAreaElement ||
-            (activeElement instanceof HTMLElement && activeElement.isContentEditable));
-        if (isTypingElsewhere) return;
-
-        event.preventDefault();
-        if (isExpanded) {
-          inputRef.current?.focus();
-          scheduleAutoCollapse();
-        } else {
-          handleExpand();
-        }
-        return;
-      }
-
       if (event.key === 'Escape' && isExpanded) {
         handleCollapse();
       }
