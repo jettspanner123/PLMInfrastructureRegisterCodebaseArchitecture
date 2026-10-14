@@ -4,14 +4,14 @@ import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
-import ResourceCellFormatHelper from '../Resources/Helpers/ResourceCellFormatHelper';
+import CellFormatHelper from '../../Utilities/CellFormatHelper';
 import AddCustomColorModalController from '../Resources/Components/AddCustomColorModalController';
 import type CustomColorOptionInterfaceModel from '../../Models/CustomColorOptionInterfaceModel';
 
-// Full CRUD on the named custom-color palette Infrastructure Register's
-// right-click cell formatting menu offers - the 4 fixed named colors
-// (Yellow/Green/Blue/Red) aren't managed here; they stay exactly as they are
-// today (see ResourceCellFormatCON).
+// Full CRUD on the named custom-color palette shared by Infrastructure
+// Register's and Environment Overview's right-click cell formatting menus -
+// the 4 fixed named colors (Yellow/Green/Blue/Red) aren't managed here; they
+// stay exactly as they are today (see CellFormatCON).
 export default function SettingsColorEditingScreenController(): React.JSX.Element {
   const { data: colors = [], isLoading } = TanstackQueryClientService.current.resources.useCustomColorsQuery();
 
@@ -42,7 +42,7 @@ export default function SettingsColorEditingScreenController(): React.JSX.Elemen
             Cell Format Colors
           </h2>
           <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
-            The named custom colors available in Infrastructure Register&apos;s right-click cell formatting menu.
+            The named custom colors available in Infrastructure Register&apos;s and Environment Overview&apos;s right-click cell formatting menus.
           </p>
         </div>
         <ButtonSharedComponent
@@ -58,7 +58,7 @@ export default function SettingsColorEditingScreenController(): React.JSX.Elemen
         <EmptyStateSharedComponent
           icon={<Plus className="w-6 h-6" />}
           title="No custom colors yet"
-          description="Add one to make it available in Infrastructure Register's formatting menu."
+          description="Add one to make it available in both tables' formatting menus."
         />
       ) : (
         <div className="hairline-border rounded-xl overflow-hidden divide-y divide-slate-200 dark:divide-zinc-800">
@@ -67,7 +67,7 @@ export default function SettingsColorEditingScreenController(): React.JSX.Elemen
               <span
                 aria-hidden="true"
                 className="w-5 h-5 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10 shrink-0"
-                style={ResourceCellFormatHelper.current.getSwatchStyleForCustomColor(color)}
+                style={CellFormatHelper.current.getSwatchStyleForCustomColor(color)}
               />
               <span className="flex-1 text-xs font-semibold text-slate-700 dark:text-zinc-300 truncate">
                 {color.colorName}

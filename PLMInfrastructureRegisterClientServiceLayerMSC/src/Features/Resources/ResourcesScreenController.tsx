@@ -18,8 +18,8 @@ import type ResourceInterfaceModel from '../../Models/ResourceInterfaceModel';
 import type ResourceCellFormatTargetInterfaceModel from '../../Models/ResourceCellFormatTargetInterfaceModel';
 import type ResourceCellFormatInterfaceModel from '../../Models/ResourceCellFormatInterfaceModel';
 import ResourceColumnCON, { type ResourceColumnDef } from './Constants/ResourceColumnCON';
-import ResourceCellFormatCON from './Constants/ResourceCellFormatCON';
-import ResourceCellFormatHelper from './Helpers/ResourceCellFormatHelper';
+import CellFormatCON from '../../Constants/CellFormatCON';
+import CellFormatHelper from '../../Utilities/CellFormatHelper';
 import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import TableColumnVisibilityUtility from '../../Utilities/TableColumnVisibilityUtility';
 import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
@@ -288,14 +288,14 @@ export default function ResourcesScreenController(): React.JSX.Element {
   const currentBackgroundColorName = (() => {
     const key = firstTargetFormat?.backgroundColorKey;
     if (!key) return 'None';
-    const fixed = ResourceCellFormatCON.COLORS.find(
+    const fixed = CellFormatCON.COLORS.find(
       (c) => c.key.toLowerCase() === key.toLowerCase() || c.hexColor.toLowerCase() === key.toLowerCase()
     );
     if (fixed) return fixed.label;
     const custom = customColors.find(
       (c) =>
         c.colorName.toLowerCase() === key.toLowerCase() ||
-        ResourceCellFormatHelper.current.getApplicableColorKey(c).toLowerCase() === key.toLowerCase()
+        CellFormatHelper.current.getApplicableColorKey(c).toLowerCase() === key.toLowerCase()
     );
     if (custom) return custom.colorName;
     return key;
@@ -408,7 +408,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
               >
                 <Ban className="w-3.5 h-3.5" />
               </button>
-              {ResourceCellFormatCON.COLORS.map((color) => {
+              {CellFormatCON.COLORS.map((color) => {
                 const isSelected =
                   firstTargetFormat?.backgroundColorKey?.toLowerCase() === color.key.toLowerCase() ||
                   firstTargetFormat?.backgroundColorKey?.toLowerCase() === color.hexColor.toLowerCase();
@@ -429,7 +429,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                 );
               })}
               {customColors.map((option) => {
-                const applicableKey = ResourceCellFormatHelper.current.getApplicableColorKey(option);
+                const applicableKey = CellFormatHelper.current.getApplicableColorKey(option);
                 const isSelected =
                   firstTargetFormat?.backgroundColorKey?.toLowerCase() === applicableKey.toLowerCase();
                 return (
@@ -438,7 +438,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                     type="button"
                     title={option.colorName}
                     onClick={() => handleSetColor(applicableKey)}
-                    style={ResourceCellFormatHelper.current.getSwatchStyleForCustomColor(option)}
+                    style={CellFormatHelper.current.getSwatchStyleForCustomColor(option)}
                     className={`relative w-6 h-6 rounded-full transition-all cursor-pointer flex items-center justify-center ring-1 ring-inset ring-black/10 dark:ring-white/10 ${
                       isSelected
                         ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
@@ -503,7 +503,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
             </span>
           </div>
           <div className="grid grid-cols-6 gap-2 justify-items-center">
-            {ResourceCellFormatCON.TEXT_COLORS.map((tc) => {
+            {CellFormatCON.TEXT_COLORS.map((tc) => {
               const isSelected = (currentTextColorKey || 'default').toLowerCase() === tc.key.toLowerCase();
               return (
                 <button
@@ -551,13 +551,13 @@ export default function ResourcesScreenController(): React.JSX.Element {
 
     const format = cellFormatByKey.get(`${resource.id}:${column.key}`);
     const formatClassName = format
-      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${ResourceCellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
       : '';
     const cellClassName = `${CELL_CLASS_NAME} ${formatClassName}`;
     // Exact color (solid at 100% or opacity modulated) + text color
     const formatStyle = {
-      ...ResourceCellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
-      ...ResourceCellFormatHelper.current.getTextStyle(format?.textColorKey),
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
     };
     const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
 

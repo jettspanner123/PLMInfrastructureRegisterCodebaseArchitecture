@@ -6,7 +6,7 @@ import SegmentedControlSharedComponent from '../../../Shared/Components/Segmente
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
 import AnonymousClientIdentityUtility from '../../../Utilities/AnonymousClientIdentityUtility';
-import ResourceCellFormatHelper from '../Helpers/ResourceCellFormatHelper';
+import CellFormatHelper from '../../../Utilities/CellFormatHelper';
 import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
 
 export interface AddCustomColorModalControllerProps {
@@ -117,7 +117,7 @@ export default function AddCustomColorModalController({
         ? `#${hexInput.trim().replace('#', '').toUpperCase()}`
         : null
       : isRgbInputValid
-        ? ResourceCellFormatHelper.current.rgbComponentsToHex(Number(redInput), Number(greenInput), Number(blueInput))
+        ? CellFormatHelper.current.rgbComponentsToHex(Number(redInput), Number(greenInput), Number(blueInput))
         : null;
 
   const isNameValid = colorNameInput.trim().length > 0;
@@ -199,7 +199,7 @@ export default function AddCustomColorModalController({
           <span
             aria-hidden="true"
             className="shrink-0 w-9 h-9 rounded-full ring-1 ring-inset ring-black/10 dark:ring-white/10"
-            style={resolvedHex ? ResourceCellFormatHelper.current.getSwatchStyle(resolvedHex) : undefined}
+            style={resolvedHex ? CellFormatHelper.current.getSwatchStyle(resolvedHex) : undefined}
           />
 
           {inputMode === 'HEX' ? (

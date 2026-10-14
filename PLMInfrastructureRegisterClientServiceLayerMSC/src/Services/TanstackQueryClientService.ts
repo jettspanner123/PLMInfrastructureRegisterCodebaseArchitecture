@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 import TanstackQueryKeysCON from '../Constants/TanstackQueryKeysCON';
 import EnvironmentOverviewService from '../Features/EnvironmentOverview/Services/EnvironmentOverviewService';
 import ResourcesService from '../Features/Resources/Services/ResourcesService';
-import ResourceCellFormatHelper from '../Features/Resources/Helpers/ResourceCellFormatHelper';
 import SubscriptionsService from '../Features/Subscriptions/Services/SubscriptionsService';
 import ConfigurationConstantsService from './ConfigurationConstantsService';
 import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubscriptionInterfaceModel';
@@ -72,7 +71,17 @@ export default class TanstackQueryClientService {
           // either; it just needs to be in flight before this returns).
           queryClient.setQueryData(
             TanstackQueryKeysCON.RESOURCE_CELL_FORMATS,
-            ResourceCellFormatHelper.current.applyOptimisticUpdate(previousFormats, request)
+            CellFormatHelper.current.computeMergedSparseList(
+              previousFormats,
+              request.cells,
+              'resourceId',
+              (target, style) => ({
+                resourceId: target.resourceId,
+                columnKey: target.columnKey,
+                ...style,
+              }),
+              request
+            )
           );
           void queryClient.cancelQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_CELL_FORMATS });
 
