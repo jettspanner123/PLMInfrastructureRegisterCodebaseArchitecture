@@ -62,6 +62,30 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [flyingMessage, setFlyingMessage] = useState<{ id: string; text: string } | null>(null);
   const [ghostPhase, setGhostPhase] = useState<'at-input' | 'in-list'>('at-input');
 
+  // The input bar now floats (position: absolute) over the message list
+  // rather than sitting in it as a normal flex-column footer - so messages
+  // can be seen scrolling underneath its transparent surrounding padding,
+  // not just stopping at a solid edge. That means the message list's own
+  // bottom padding has to be kept in sync with however tall the floating
+  // bar currently is (it grows with the textarea), or the newest message
+  // would end up hidden behind it - a ResizeObserver, same pattern already
+  // used elsewhere in this app for syncing dynamic measurements (see
+  // DataTableContainerSharedComponent's column-width sync).
+  const inputBarRef = useRef<HTMLDivElement | null>(null);
+  const [inputBarHeight, setInputBarHeight] = useState<number>(0);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const el = inputBarRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) setInputBarHeight(entry.contentRect.height);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isOpen]);
+
   const askQuestionMutation = TanstackQueryClientService.current.chatAssistant.useAskQuestionMutation();
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth'): void => {
@@ -307,7 +331,10 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto px-6 pt-14 pb-2 space-y-4">
+                  <div
+                    style={{ paddingBottom: inputBarHeight + 16 }}
+                    className="flex-1 overflow-y-auto px-6 pt-14 space-y-4"
+                  >
                     {messages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center gap-3 text-slate-400 dark:text-zinc-500">
                         <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800/80 flex items-center justify-center text-[#0C2086] dark:text-blue-400 hairline-border">
@@ -437,9 +464,19 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     <div ref={messagesEndRef} className="h-1" />
                   </div>
 
-                  {/* Floating input bar */}
-                  <div className="shrink-0 px-6 pb-6 pt-2">
-                    <div className="relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg">
+                  {/* Floating input bar - absolutely positioned (not a
+                      normal flex-column footer) so the message list behind
+                      it stays visible through this wrapper's own transparent
+                      padding as it scrolls, rather than disappearing behind
+                      a solid footer strip. pointer-events-none on the
+                      wrapper lets clicks in that transparent gutter reach
+                      the messages underneath; the pill itself opts back
+                      in so it's still fully interactive. */}
+                  <div
+                    ref={inputBarRef}
+                    className="absolute inset-x-0 bottom-0 px-6 pb-6 pt-2 pointer-events-none"
+                  >
+                    <div className="relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg pointer-events-auto">
                       {/* The morph's starting frame - an invisible (same
                           color as the input's own text) clone of what was
                           just typed, filling this exact pill's current
