@@ -11,11 +11,6 @@ export interface ResourceColumnDef {
 }
 
 export default class ResourceColumnCON {
-  public static readonly ENVIRONMENT_COLUMN_KEY: string = 'environmentTag';
-  // Sentinel for the environment header-filter's "no filter, show every
-  // machine" option - not a real EnvironmentTag value itself.
-  public static readonly ALL_ENVIRONMENTS_FILTER_VALUE: string = 'ALL';
-
   public static readonly COLUMNS: ResourceColumnDef[] = [
     { key: 'hostname', label: 'HOSTNAME', locked: true },
     { key: 'environmentTag', label: 'ENVIRONMENT (TAG)', locked: true },
@@ -87,5 +82,49 @@ export default class ResourceColumnCON {
 
   public static readonly LOCKED_COLUMN_KEYS: Set<string> = new Set(
     ResourceColumnCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
+  );
+
+  // Columns whose values repeat often enough across resources that a
+  // multi-select dropdown filter in the header is actually useful - everything
+  // else here is either free-text/near-unique per row (hostname, IPs, URLs,
+  // comments) or a date better served by a range control than a value list.
+  public static readonly FILTERABLE_COLUMN_KEYS: string[] = [
+    'environmentTag',
+    'status',
+    'subscription',
+    'resourceGroup',
+    'location',
+    'operatingSystem',
+    'size',
+    'category',
+    'function',
+    'proximityGroup',
+    'virtualNetworkSubnet',
+    'protocol',
+    'infrastructureSupportServiceLevel',
+    'dbaSupportServiceLevel',
+    'backupStatus',
+    'cronJobsTaskScheduler',
+    'responseSLARequirement',
+    'disk1OSPerformance',
+    'disk2DataPerformance',
+    'disk3DataType',
+    'disk4DataType',
+    'disk5DataType',
+    'disk6DataType',
+    'autoShutdownEnabled',
+    'smtpEnabled',
+    'backupRequired',
+    'oracleDBASupportRequired',
+    'javaSupportRequired',
+    'apacheSupportRequired',
+    'osSupportIncludingPatching',
+    'azureMonitoringSetupRequired',
+    'atosAgentDeployed',
+    'threeDExperienceSXILicense',
+  ];
+
+  public static readonly FILTERABLE_COLUMN_KEY_SET: Set<string> = new Set(
+    ResourceColumnCON.FILTERABLE_COLUMN_KEYS
   );
 }

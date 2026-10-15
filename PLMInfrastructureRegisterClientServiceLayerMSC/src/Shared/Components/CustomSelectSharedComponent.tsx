@@ -19,9 +19,18 @@ export interface SelectFooterAction {
 
 export interface CustomSelectSharedComponentProps {
   label?: string;
-  value: string;
+  // Single-select (default): value/onChange carry the one selected value.
+  // Multi-select (multiple: true): values/onChangeMultiple carry the set
+  // instead, value/onChange are ignored, and `placeholder` doubles as the
+  // label for the "select everything off" row at the top of the list (and
+  // for the trigger's own 0-selected text) - the same "All ___" convention
+  // single-select already uses for its own empty state.
+  value?: string;
   options: SelectOption[];
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  multiple?: boolean;
+  values?: string[];
+  onChangeMultiple?: (values: string[]) => void;
   placeholder?: string;
   className?: string;
   triggerClassName?: string;
@@ -57,6 +66,9 @@ export default function CustomSelectSharedComponent({
   value,
   options,
   onChange,
+  multiple = false,
+  values = [],
+  onChangeMultiple,
   placeholder = 'Select option...',
   className = 'w-full',
   triggerClassName,
@@ -81,7 +93,7 @@ export default function CustomSelectSharedComponent({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const selectedOption = options.find((opt) => opt.value === value);
+  const selectedOption = multiple ? undefined : options.find((opt) => opt.value === value);
 
   const updateTriggerRect = useCallback((): void => {
     if (dropdownRef.current) {
@@ -156,13 +168,28 @@ export default function CustomSelectSharedComponent({
 
   const handleApplyCustom = (customVal: string) => {
     if (!customVal.trim()) return;
-    onChange(customVal.trim());
+    onChange?.(customVal.trim());
     setIsOpen(false);
+  };
+
+  const toggleMultiValue = (optionValue: string): void => {
+    const next = values.includes(optionValue)
+      ? values.filter((v) => v !== optionValue)
+      : [...values, optionValue];
+    onChangeMultiple?.(next);
   };
 
   const heightClass = size === 'sm' ? 'h-11 sm:h-9 px-3.5 sm:px-2.5 text-sm sm:text-xs' : 'h-11 sm:h-10 px-3.5 sm:px-3 text-sm sm:text-xs';
 
   const getDisplayLabel = () => {
+    if (multiple) {
+      if (values.length === 0) return placeholder;
+      if (values.length === 1) {
+        const match = options.find((opt) => opt.value === values[0]);
+        return match ? match.label : values[0];
+      }
+      return `${values.length} selected`;
+    }
     if (selectedOption) return selectedOption.label;
     if (value !== undefined && value !== null && String(value).trim() !== '') {
       if (formatDisplayValue) return formatDisplayValue(String(value));
@@ -221,8 +248,12 @@ export default function CustomSelectSharedComponent({
                       if (e.key === 'Enter') {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (filteredOptions.length === 1 && exactMatchExists) {
-                          onChange(filteredOptions[0].value);
+                        if (multiple) {
+                          if (filteredOptions.length >= 1) {
+                            toggleMultiValue(filteredOptions[0].value);
+                          }
+                        } else if (filteredOptions.length === 1 && exactMatchExists) {
+                          onChange?.(filteredOptions[0].value);
                           setIsOpen(false);
                         } else if (enableCustomValue && searchTerm.trim()) {
                           handleApplyCustom(searchTerm);
@@ -232,6 +263,23 @@ export default function CustomSelectSharedComponent({
                   />
                 </div>
               </div>
+            )}
+
+            {multiple && !searchTerm.trim() && (
+              <button
+                type="button"
+                onClick={() => onChangeMultiple?.([])}
+                className={`w-full min-h-[48px] sm:min-h-0 flex items-center justify-between px-3.5 sm:px-3 py-3 sm:py-2 rounded-xl sm:rounded-lg transition-colors cursor-pointer text-left mb-1 ${
+                  values.length === 0
+                    ? 'bg-slate-100 dark:bg-zinc-800/90 text-slate-900 dark:text-white font-bold'
+                    : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60'
+                }`}
+              >
+                <span className="font-medium truncate text-sm sm:text-xs leading-snug">{placeholder}</span>
+                {values.length === 0 && (
+                  <Check className="w-4 h-4 text-[#0C2086] dark:text-blue-400 shrink-0" />
+                )}
+              </button>
             )}
 
             {enableCustomValue && searchTerm.trim() && !exactMatchExists && (
@@ -253,13 +301,17 @@ export default function CustomSelectSharedComponent({
               </div>
             ) : (
               filteredOptions.map((option) => {
-                const isSelected = option.value === value;
+                const isSelected = multiple ? values.includes(option.value) : option.value === value;
                 return (
                   <button
                     key={option.value}
                     type="button"
                     onClick={() => {
-                      onChange(option.value);
+                      if (multiple) {
+                        toggleMultiValue(option.value);
+                        return;
+                      }
+                      onChange?.(option.value);
                       setIsOpen(false);
                     }}
                     className={`w-full min-h-[48px] sm:min-h-0 flex items-center justify-between px-3.5 sm:px-3 py-3 sm:py-2 rounded-xl sm:rounded-lg transition-colors cursor-pointer text-left ${

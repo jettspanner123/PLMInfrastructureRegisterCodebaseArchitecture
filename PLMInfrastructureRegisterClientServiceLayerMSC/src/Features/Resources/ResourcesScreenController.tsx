@@ -82,75 +82,88 @@ export default function ResourcesScreenController(): React.JSX.Element {
 
   const visibleColumns = ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
 
-  const [environmentFilter, setEnvironmentFilter] = useState<string>(
-    () =>
-      ApplicationUserPreferenceUtility.current.getPreference(
-        ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_ENVIRONMENT_FILTER
-      ) ?? ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE
-  );
+  // One entry per column in ResourceColumnCON.FILTERABLE_COLUMN_KEYS - an
+  // empty array means "no filter, show every machine" (the multi-select's own
+  // "All ___" row clears back to this), a non-empty array means "show rows
+  // whose value for this column is one of these" (OR within the column, AND
+  // across different columns' filters below).
+  const [columnFilters, setColumnFilters] = useState<Record<string, string[]>>(() => {
+    const initial: Record<string, string[]> = {};
+    ResourceColumnCON.FILTERABLE_COLUMN_KEYS.forEach((columnKey) => {
+      const preferenceKey = ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_COLUMN_FILTER_KEYS[columnKey];
+      initial[columnKey] = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(preferenceKey, []);
+    });
+    return initial;
+  });
 
-  const handleEnvironmentFilterChange = (value: string): void => {
-    setEnvironmentFilter(value);
-    ApplicationUserPreferenceUtility.current.setPreference(
-      ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_ENVIRONMENT_FILTER,
-      value
-    );
+  const handleColumnFilterChange = (columnKey: string, values: string[]): void => {
+    setColumnFilters((previous) => ({ ...previous, [columnKey]: values }));
+    const preferenceKey = ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_COLUMN_FILTER_KEYS[columnKey];
+    ApplicationUserPreferenceUtility.current.setJSONPreference(preferenceKey, values);
   };
 
-  // Only ever offers tags actually present on at least one machine right now
-  // - IG_ConfigurationConstantTBL's full approved list is the right source
-  // for an edit dropdown later, but a filter listing tags nothing currently
-  // has would just be dead options.
-  const environmentFilterOptions: SelectOption[] = useMemo(() => {
-    const counts = new Map<string, number>();
-    resources.forEach((resource) => {
-      const tag = resource.environmentTag;
-      if (!tag) return;
-      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  // Only ever offers values actually present on at least one machine right
+  // now - IG_ConfigurationConstantTBL's full approved list is the right
+  // source for an edit dropdown later, but a filter listing values nothing
+  // currently has would just be dead options.
+  const columnFilterOptionsByKey: Record<string, SelectOption[]> = useMemo(() => {
+    const result: Record<string, SelectOption[]> = {};
+    ResourceColumnCON.FILTERABLE_COLUMN_KEYS.forEach((columnKey) => {
+      const counts = new Map<string, number>();
+      resources.forEach((resource) => {
+        const displayValue = ResourceTableUtility.current.getDisplayValue(resource, columnKey);
+        if (displayValue === null) return;
+        counts.set(displayValue, (counts.get(displayValue) ?? 0) + 1);
+      });
+      result[columnKey] = Array.from(counts.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([val, count]) => ({
+          value: val,
+          label: val,
+          sublabel: `${count} machine${count === 1 ? '' : 's'}`,
+        }));
     });
-
-    const tagOptions: SelectOption[] = Array.from(counts.entries())
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([tag, count]) => ({
-        value: tag,
-        label: tag,
-        sublabel: `${count} machine${count === 1 ? '' : 's'}`,
-      }));
-
-    return [
-      { value: ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE, label: 'All Environments' },
-      ...tagOptions,
-    ];
+    return result;
   }, [resources]);
 
-  const environmentFilteredResources = useMemo(() => {
-    if (environmentFilter === ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE) return resources;
-    return resources.filter((resource) => resource.environmentTag === environmentFilter);
-  }, [resources, environmentFilter]);
+  const columnFilteredResources = useMemo(() => {
+    const activeFilters = ResourceColumnCON.FILTERABLE_COLUMN_KEYS.map(
+      (columnKey) => [columnKey, columnFilters[columnKey] ?? []] as const
+    ).filter(([, values]) => values.length > 0);
+
+    if (activeFilters.length === 0) return resources;
+
+    return resources.filter((resource) =>
+      activeFilters.every(([columnKey, values]) => {
+        const displayValue = ResourceTableUtility.current.getDisplayValue(resource, columnKey);
+        return displayValue !== null && values.includes(displayValue);
+      })
+    );
+  }, [resources, columnFilters]);
 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const filteredResources = useMemo(() => {
     const lowerCaseQuery = searchQuery.trim().toLowerCase();
-    if (!lowerCaseQuery) return environmentFilteredResources;
-    return environmentFilteredResources.filter((resource) =>
+    if (!lowerCaseQuery) return columnFilteredResources;
+    return columnFilteredResources.filter((resource) =>
       ResourceTableUtility.current.matchesSearchQuery(resource, visibleColumns, lowerCaseQuery)
     );
-  }, [environmentFilteredResources, visibleColumns, searchQuery]);
+  }, [columnFilteredResources, visibleColumns, searchQuery]);
 
   // Jumped here from the global search modal (Ctrl/Cmd+K) - clears whatever
   // local filtering would otherwise hide the target row (this page's own
-  // search query, the Environment filter) before scrolling to and flashing
-  // it. Only touches local state, never the persisted Environment-filter
-  // preference itself - a search jump shouldn't silently override what the
-  // user had deliberately set as their default filter.
+  // search query, every column filter) before scrolling to and flashing it.
+  // Only touches local state, never any persisted filter preference itself -
+  // a search jump shouldn't silently override what the user had deliberately
+  // set as their default filters.
   const { highlightedId: highlightedResourceId } = useGlobalSearchRowJump(
     'resource',
     filteredResources,
     (resource) => resource.id,
     () => {
       setSearchQuery('');
-      setEnvironmentFilter(ResourceColumnCON.ALL_ENVIRONMENTS_FILTER_VALUE);
+      setColumnFilters({});
     }
   );
 
@@ -681,7 +694,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                   SL. NO
                 </TableHeaderCellSharedComponent>
                 {visibleColumns.map((column, colIndex) =>
-                  column.key === ResourceColumnCON.ENVIRONMENT_COLUMN_KEY ? (
+                  ResourceColumnCON.FILTERABLE_COLUMN_KEY_SET.has(column.key) ? (
                     <TableHeaderCellSharedComponent
                       key={column.key}
                       className="!p-0"
@@ -695,9 +708,12 @@ export default function ResourcesScreenController(): React.JSX.Element {
                           normally, since only mousedown is stopped here. */}
                       <div onMouseDown={(event) => event.stopPropagation()}>
                         <CustomSelectSharedComponent
-                          value={environmentFilter}
-                          options={environmentFilterOptions}
-                          onChange={handleEnvironmentFilterChange}
+                          multiple
+                          values={columnFilters[column.key] ?? []}
+                          onChangeMultiple={(values) => handleColumnFilterChange(column.key, values)}
+                          options={columnFilterOptionsByKey[column.key] ?? []}
+                          placeholder={`All ${column.label}`}
+                          searchable
                           size="sm"
                           className="w-full"
                           usePortal={true}
