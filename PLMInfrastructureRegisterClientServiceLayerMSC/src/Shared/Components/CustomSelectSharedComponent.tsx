@@ -125,7 +125,11 @@ export default function CustomSelectSharedComponent({
         'ontouchstart' in window);
 
     if ((searchable || enableCustomValue) && searchInputRef.current && !isMobileOrTouch) {
-      searchInputRef.current.focus();
+      // preventScroll: true is defense-in-depth, not the real fix (that's
+      // the click-time measurement above) - keeps a dropdown opened near
+      // the bottom of a long page from ever over-scrolling past what's
+      // actually needed to reveal it.
+      searchInputRef.current.focus({ preventScroll: true });
     }
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
       const isInsideTrigger = dropdownRef.current?.contains(event.target as Node);
@@ -372,7 +376,19 @@ export default function CustomSelectSharedComponent({
         type="button"
         disabled={disabled}
         onPointerDown={() => !disabled && ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={() => {
+          if (disabled) return;
+          // Measured here (not left to the effect below) so this same
+          // click's render batch already carries the correct position -
+          // otherwise the panel's first frame renders unpositioned
+          // (flowing to wherever its portal target's normal document flow
+          // puts it) and autofocusing the search input inside it, in that
+          // gap, makes the browser auto-scroll the whole page to reveal it.
+          if (!isOpen && usePortal && dropdownRef.current) {
+            setTriggerRect(dropdownRef.current.getBoundingClientRect());
+          }
+          setIsOpen(!isOpen);
+        }}
         className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 select-none ${
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
         } ${triggerClassName || ''}`}
