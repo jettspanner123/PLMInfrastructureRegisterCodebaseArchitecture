@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
-import { Bot, Send, X, Trash2, RotateCcw, Loader2 } from 'lucide-react';
+import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2 } from 'lucide-react';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 
 interface ChatMessage {
@@ -37,6 +37,14 @@ const MAX_TEXTAREA_HEIGHT_PX = 120;
 
 export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  // Deliberately NOT reset on close - only ever reset back to false at the
+  // moment the trigger button opens a fresh panel (see its own onClick).
+  // That's what lets the close/exit animation shrink smoothly from
+  // whatever size the panel actually was (fullscreen included) toward the
+  // trigger, via the exact same layoutId mechanism already handling the
+  // normal-size close - nothing has to special-case "closing from
+  // fullscreen" when isFullscreen simply never changes mid-exit.
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [draftMessage, setDraftMessage] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -169,6 +177,21 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     setTimeout(() => triggerButtonRef.current?.focus(), 0);
   };
 
+  // Deliberately NOT a Framer animation. This node carries `layoutId` +
+  // `layoutRoot` for the open/close shared-element swap with the trigger
+  // button, and - confirmed by direct testing - that setup silently
+  // swallows every imperative `animate()` call aimed at this same node
+  // (tried both a transform/position FLIP and a trivial opacity tween;
+  // neither ever interpolated, snapping straight to the end value). Rather
+  // than fight whatever is suppressing those, the resize itself is handled
+  // by a plain CSS transition on the panel's own width/height/border-radius
+  // (see its className below) - fully browser-native, and orthogonal to
+  // Framer's own transform-based FLIP (which only ever touches `transform`,
+  // never box width/height), so the two can never collide.
+  const handleToggleFullscreen = (): void => {
+    setIsFullscreen((previous) => !previous);
+  };
+
   const resetTextareaHeight = (): void => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
@@ -271,7 +294,10 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
             exit={{ opacity: 0 }}
             transition={SPRING_TRANSITION}
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsFullscreen(false);
+              setIsOpen(true);
+            }}
             aria-label="Open Assistant"
             aria-haspopup="dialog"
             className="relative h-9 w-9 rounded-lg bg-slate-100 dark:bg-zinc-800/80 hairline-border flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
@@ -295,7 +321,11 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                 className="fixed inset-0 z-[60] bg-slate-900/60 dark:bg-black/60 backdrop-blur-sm cursor-pointer"
               />
 
-              <div className="fixed inset-0 z-[61] flex items-center justify-center p-4 pointer-events-none">
+              <div
+                className={`fixed inset-0 z-[61] flex items-center justify-center pointer-events-none transition-[padding] duration-300 ease-in-out ${
+                  isFullscreen ? 'p-0' : 'p-4'
+                }`}
+              >
                 <motion.div
                   key="chat-assistant-panel"
                   ref={panelScope}
@@ -305,9 +335,14 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   aria-modal="true"
                   aria-label="Assistant"
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto relative w-full max-w-4xl h-[min(800px,90dvh)] bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+                  className={`pointer-events-auto relative bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-2xl overflow-hidden flex flex-col w-full transition-[max-width,height,border-radius] duration-300 ease-in-out ${
+                    isFullscreen ? 'max-w-[100vw] h-full rounded-none' : 'max-w-4xl h-[min(800px,90dvh)] rounded-2xl'
+                  }`}
                 >
-                  {/* Header actions: Clear chat + Close button */}
+                  {/* Header actions: Clear chat + Fullscreen toggle + Close
+                      button - Close stays last/rightmost either way, the
+                      most predictable spot for it regardless of what sits
+                      beside it. */}
                   <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
                     {messages.length > 0 && (
                       <button
@@ -320,6 +355,15 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     )}
+                    <button
+                      type="button"
+                      onClick={handleToggleFullscreen}
+                      title={isFullscreen ? 'Exit full screen' : 'Full screen'}
+                      aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}
+                      className="p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                    >
+                      {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                    </button>
                     <button
                       type="button"
                       onClick={handleClose}
