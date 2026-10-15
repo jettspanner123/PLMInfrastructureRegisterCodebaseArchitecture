@@ -9,7 +9,7 @@ import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditM
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
-import UptimeScheduleDropdownController from './Components/UptimeScheduleDropdownController';
+import UptimeScheduleModalController from './Components/UptimeScheduleModalController';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
 import ContextMenuSharedComponent, { type ContextMenuItem } from '../../Shared/Components/ContextMenuSharedComponent';
@@ -178,6 +178,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const tableWrapperRef = useRef<HTMLDivElement | null>(null);
   const editableTextareaRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map());
 
+  // Which row's Current Uptime Schedule modal is open, if any - declared up
+  // here (not alongside its own draft-selection state further down) purely
+  // so the outside-click-revert effect below can depend on it without a
+  // temporal-dead-zone error (that effect's dependency array is evaluated
+  // during this same render pass, unlike the effect body itself).
+  const [editingUptimeScheduleRowId, setEditingUptimeScheduleRowId] = useState<string | null>(null);
+
   const handleCellDoubleClick = (rowId: string, columnKey: string): void => {
     setActiveDoubleClickedCell({ rowId, columnKey });
     setIsEditModeFromDoubleClick(true);
@@ -208,7 +215,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       // If a modal or delete confirmation dialog is open, don't revert
       if (
         isOptionModalOpen ||
-        deletingEnvironment !== null
+        deletingEnvironment !== null ||
+        editingUptimeScheduleRowId !== null
       ) {
         return;
       }
@@ -244,6 +252,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     isEditModeFromDoubleClick,
     isOptionModalOpen,
     deletingEnvironment,
+    editingUptimeScheduleRowId,
   ]);
 
   useEffect(() => {
@@ -272,14 +281,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const { data: onDemandStatusOptions = [] } =
     TanstackQueryClientService.current.configurationConstants.useOptionsQuery('OnDemandStatus');
 
-  // Which row's Current Uptime Schedule dropdown is open, if any - single-
-  // open-at-a-time like every other per-row editor on this screen. Draft
-  // state lives here (not in UptimeScheduleDropdownController itself) so a
-  // freshly-created "Add New Type"/"Add New Status" option - created via the
-  // SAME shared CreateOptionModalController every other growable dropdown on
-  // this screen already uses - can flow straight into whichever row opened
-  // it (see handleOptionCreated below).
-  const [editingUptimeScheduleRowId, setEditingUptimeScheduleRowId] = useState<string | null>(null);
+  // Single-open-at-a-time like every other per-row editor on this screen
+  // (editingUptimeScheduleRowId itself is declared further up, see its own
+  // comment there). Draft state lives here (not in UptimeScheduleModalController
+  // itself) so a freshly-created "Add New Type"/"Add New Status" option -
+  // created via the SAME shared CreateOptionModalController every other
+  // growable dropdown on this screen already uses - can flow straight into
+  // whichever row opened it (see handleOptionCreated below).
   const [uptimeScheduleDraftDays, setUptimeScheduleDraftDays] = useState<Set<string>>(new Set());
   const [uptimeScheduleDraftSpecialMode, setUptimeScheduleDraftSpecialMode] = useState<string | null>(null);
   const [uptimeScheduleDraftOnDemandStatus, setUptimeScheduleDraftOnDemandStatus] = useState<string | null>(null);
@@ -1963,11 +1971,21 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         }}
         className={`px-3 py-2 align-top ${formatClassName}`}
       >
-        <UptimeScheduleDropdownController
+        <button
+          type="button"
+          onClick={() => handleOpenUptimeScheduleEditor(environment.id, environment.currentUptimeSchedule)}
+          className="w-full text-left font-mono text-xs text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60 rounded-lg px-1 py-1 -mx-1 -my-1 transition-colors cursor-pointer whitespace-pre-wrap break-words"
+        >
+          {environment.currentUptimeSchedule ?? (
+            <span className="text-slate-400 dark:text-zinc-500">Set schedule…</span>
+          )}
+        </button>
+        {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
+
+        <UptimeScheduleModalController
           isOpen={isOpen}
-          onOpen={() => handleOpenUptimeScheduleEditor(environment.id, environment.currentUptimeSchedule)}
           onClose={handleCloseUptimeScheduleEditor}
-          displayLabel={environment.currentUptimeSchedule ?? 'Set schedule…'}
+          environmentName={environment.environment}
           specialModeOptions={uptimeScheduleTypeOptions}
           onDemandStatusOptions={onDemandStatusOptions}
           selectedDays={isOpen ? uptimeScheduleDraftDays : new Set()}
@@ -1987,7 +2005,6 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           onRequestAddSpecialMode={() => handleOpenOptionModal('UptimeScheduleType', environment.id)}
           onRequestAddOnDemandStatus={() => handleOpenOptionModal('OnDemandStatus', environment.id)}
         />
-        {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
       </td>
     );
   };
