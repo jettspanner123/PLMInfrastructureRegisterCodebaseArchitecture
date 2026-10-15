@@ -743,6 +743,20 @@ export default function ResourcesScreenController(): React.JSX.Element {
                         />
                       </div>
                     </TableHeaderCellSharedComponent>
+                  ) : column.key.startsWith('StartStop_') ? (
+                    // Ruby, distinguishing these as Azure-tag-sourced rather
+                    // than part of the original spreadsheet's own columns -
+                    // !-prefixed since TableHeaderCellSharedComponent's own
+                    // bg-[#0C2086] is baked into its className template, and
+                    // two unprefixed utility classes targeting the same
+                    // property don't reliably resolve by DOM/JSX order.
+                    <TableHeaderCellSharedComponent
+                      key={column.key}
+                      className="!bg-[#9B111E]"
+                      {...tableSelection.getColumnHeaderHandlers(colIndex)}
+                    >
+                      {column.label}
+                    </TableHeaderCellSharedComponent>
                   ) : (
                     <TableHeaderCellSharedComponent key={column.key} {...tableSelection.getColumnHeaderHandlers(colIndex)}>
                       {column.label}
