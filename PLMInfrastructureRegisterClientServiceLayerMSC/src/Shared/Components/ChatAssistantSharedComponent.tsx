@@ -28,15 +28,39 @@ const CHAT_ASSISTANT_LAYOUT_ID = 'chat-assistant-panel';
 
 const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
+// The iMessage send morph's own spring - a touch snappier than the panel's
+// own open/close feel, matching the real thing's quick "flick" rather than
+// a slow glide.
+const SEND_MORPH_SPRING = { type: 'spring' as const, stiffness: 380, damping: 32 };
+
+const MAX_TEXTAREA_HEIGHT_PX = 120;
+
 export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [draftMessage, setDraftMessage] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerRectRef = useRef<SimpleRect | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [panelScope, animatePanel] = useAnimate();
+
+  // The one user message currently mid-morph, if any - everything about the
+  // "iMessage send" effect hangs off this single piece of state:
+  // - 'at-input': a ghost clone is overlaid on the now-emptied input, still
+  //   shaped/colored like the input itself (not yet in `messages`).
+  // - 'in-list': the real entry now exists in `messages`, and THIS message's
+  //   row (found by id, in the map below) renders the same layoutId'd
+  //   element instead of the normal static bubble, so Framer bridges the
+  //   jump from the input's position/shape to the list's with one smooth
+  //   FLIP - including backgroundColor/borderRadius, since those are plain
+  //   inline style values on the SAME motion.div across both phases, not
+  //   Tailwind classes swapped out from under it.
+  // Clearing this (onLayoutAnimationComplete) hands the row back to the
+  // normal map-rendered static bubble, which is what actually owns the
+  // tail-nub `rounded-br-sm` corner - an imperceptible last-frame swap.
+  const [flyingMessage, setFlyingMessage] = useState<{ id: string; text: string } | null>(null);
+  const [ghostPhase, setGhostPhase] = useState<'at-input' | 'in-list'>('at-input');
 
   const askQuestionMutation = TanstackQueryClientService.current.chatAssistant.useAskQuestionMutation();
 
@@ -121,6 +145,24 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     setTimeout(() => triggerButtonRef.current?.focus(), 0);
   };
 
+  const resetTextareaHeight = (): void => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
+  };
+
+  const handleDraftChange = (value: string): void => {
+    setDraftMessage(value);
+    // Auto-grow, capped - the raw DOM textarea already reflects this
+    // keystroke's new value by the time this handler runs (the native
+    // input event fires before React's own re-render), so measuring
+    // scrollHeight here needs no extra frame to be accurate.
+    const textarea = inputRef.current;
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT_PX)}px`;
+  };
+
   const sendMessage = (questionText: string): void => {
     const trimmed = questionText.trim();
     if (!trimmed || askQuestionMutation.isPending) return;
@@ -132,8 +174,25 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
-    setMessages((previous) => [...previous, userMessage]);
+    // The real input clears and is immediately usable for the next message
+    // - nothing about typing again waits on the ghost's own flight below,
+    // which is a purely visual clone with no bearing on input state.
     setDraftMessage('');
+    resetTextareaHeight();
+
+    setGhostPhase('at-input');
+    setFlyingMessage({ id: userMessage.id, text: trimmed });
+
+    // One rAF guarantees the ghost's "at-input" shape/position is actually
+    // painted and measured by Framer's layout-projection system before it
+    // flips to the list - without this gap, React would likely batch both
+    // state updates into a single commit and Framer would never see an
+    // "at-input" frame to FLIP from, so the bubble would just appear with
+    // no animation at all.
+    requestAnimationFrame(() => {
+      setMessages((previous) => [...previous, userMessage]);
+      setGhostPhase('in-list');
+    });
 
     askQuestionMutation.mutate(
       { question: trimmed },
@@ -266,6 +325,35 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     ) : (
                       messages.map((message) => {
                         if (message.sender === 'user') {
+                          // Mid-morph: the layoutId'd element Framer bridges
+                          // from the input-area ghost's last measured
+                          // position/shape to this one. backgroundColor and
+                          // borderRadius are plain inline style values (not
+                          // Tailwind classes) specifically so Framer can
+                          // interpolate them smoothly as part of the same
+                          // layout transition, alongside the position/size
+                          // FLIP it already does automatically.
+                          if (flyingMessage?.id === message.id && ghostPhase === 'in-list') {
+                            return (
+                              <div key={message.id} className="flex flex-col items-end gap-1">
+                                <motion.div
+                                  layoutId={`chat-send-morph-${message.id}`}
+                                  onLayoutAnimationComplete={() => setFlyingMessage(null)}
+                                  transition={SEND_MORPH_SPRING}
+                                  style={{ backgroundColor: '#0C2086', color: '#ffffff', borderRadius: 16 }}
+                                  className="max-w-[80%] text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap"
+                                >
+                                  {message.text}
+                                </motion.div>
+                                {message.timestamp && (
+                                  <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
+                                    {message.timestamp}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          }
+
                           return (
                             <div key={message.id} className="flex flex-col items-end gap-1">
                               <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[#0C2086] text-white text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap">
@@ -351,23 +439,44 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
 
                   {/* Floating input bar */}
                   <div className="shrink-0 px-6 pb-6 pt-2">
-                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-full bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg">
-                      <input
+                    <div className="relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg">
+                      {/* The morph's starting frame - an invisible (same
+                          color as the input's own text) clone of what was
+                          just typed, filling this exact pill's current
+                          bounding box. Framer bridges FROM this shape/
+                          position/color TO the real bubble's once the
+                          sibling render above mounts with the same
+                          layoutId, one rAF later. */}
+                      {flyingMessage && ghostPhase === 'at-input' && (
+                        <motion.div
+                          layoutId={`chat-send-morph-${flyingMessage.id}`}
+                          transition={SEND_MORPH_SPRING}
+                          style={{ backgroundColor: 'rgba(12, 32, 134, 0)', color: 'inherit', borderRadius: 24 }}
+                          className="absolute inset-0 px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 whitespace-pre-wrap break-words overflow-hidden pointer-events-none"
+                        >
+                          {flyingMessage.text}
+                        </motion.div>
+                      )}
+                      <textarea
                         ref={inputRef}
-                        type="text"
                         name="chatAssistantMessage"
+                        rows={1}
                         value={draftMessage}
                         disabled={askQuestionMutation.isPending}
-                        onChange={(event) => setDraftMessage(event.target.value)}
+                        onChange={(event) => handleDraftChange(event.target.value)}
                         onKeyDown={(event) => {
-                          if (event.key === 'Enter') handleSend();
+                          if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            handleSend();
+                          }
                         }}
                         placeholder={
                           askQuestionMutation.isPending
                             ? 'Assistant is thinking…'
                             : 'Message the assistant…'
                         }
-                        className="flex-1 h-10 px-3.5 rounded-full bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 disabled:opacity-60"
+                        style={{ maxHeight: MAX_TEXTAREA_HEIGHT_PX }}
+                        className="flex-1 min-h-10 py-2 px-3.5 rounded-3xl bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 disabled:opacity-60 resize-none overflow-y-auto"
                       />
                       <button
                         type="button"
