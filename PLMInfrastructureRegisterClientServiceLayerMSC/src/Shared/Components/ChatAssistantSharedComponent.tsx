@@ -377,8 +377,13 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   {/* Messages */}
                   <div
                     style={{ paddingBottom: inputBarHeight + 16 }}
-                    className="flex-1 overflow-y-auto px-6 pt-14 space-y-4"
+                    className="flex-1 overflow-y-auto px-6 pt-14"
                   >
+                    {/* Capped and centered so lines don't stretch edge-to-
+                        edge once the panel itself goes full-width in
+                        Fullscreen mode - a no-op in normal mode, since the
+                        panel there is already narrower than this cap. */}
+                    <div className="max-w-4xl mx-auto w-full space-y-4">
                     {messages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center gap-3 text-slate-400 dark:text-zinc-500">
                         <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800/80 flex items-center justify-center text-[#0C2086] dark:text-blue-400 hairline-border">
@@ -506,6 +511,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     )}
 
                     <div ref={messagesEndRef} className="h-1" />
+                    </div>
                   </div>
 
                   {/* Floating input bar - absolutely positioned (not a
@@ -520,7 +526,11 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     ref={inputBarRef}
                     className="absolute inset-x-0 bottom-0 px-6 pb-6 pt-2 pointer-events-none"
                   >
-                    <div className="relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg pointer-events-auto">
+                    {/* Same max-w-4xl cap as the messages above - stays the
+                        same width it already had in normal mode instead of
+                        stretching to the panel's own full width once that
+                        goes edge-to-edge in Fullscreen. */}
+                    <div className="max-w-4xl mx-auto relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg pointer-events-auto">
                       {/* The morph's starting frame - an invisible (same
                           color as the input's own text) clone of what was
                           just typed, filling this exact pill's current
