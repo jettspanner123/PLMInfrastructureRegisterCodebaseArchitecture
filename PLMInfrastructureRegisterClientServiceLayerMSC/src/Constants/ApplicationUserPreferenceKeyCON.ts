@@ -2,6 +2,14 @@ export default class ApplicationUserPreferenceKeyCON {
   public static readonly THEME_PREFERENCE: string = 'THEME_PREFERENCE';
   public static readonly LAYOUT_WIDTH_PREFERENCE: string = 'LAYOUT_WIDTH_PREFERENCE';
   public static readonly RESOURCE_TABLE_VISIBLE_COLUMNS: string = 'RESOURCE_TABLE_VISIBLE_COLUMNS';
+  // Opt-OUT, unlike RESOURCE_TABLE_VISIBLE_COLUMNS' opt-in list above - the
+  // "StartStop_*" dynamic columns aren't known at compile time (see
+  // ResourceColumnCON.COLUMNS' own comment), so they can't be seeded into
+  // that static list on first load. Defaulting to visible and persisting
+  // only the ones a user explicitly hid is the only way to make "a brand-
+  // new StartStop_X tag just shows up" and "I can still hide one I don't
+  // want" both true at once.
+  public static readonly RESOURCE_TABLE_HIDDEN_DYNAMIC_COLUMNS: string = 'RESOURCE_TABLE_HIDDEN_DYNAMIC_COLUMNS';
   public static readonly RESOURCE_TABLE_ENVIRONMENT_FILTER: string = 'RESOURCE_TABLE_ENVIRONMENT_FILTER';
   public static readonly RESOURCE_TABLE_STATUS_FILTER: string = 'RESOURCE_TABLE_STATUS_FILTER';
   public static readonly RESOURCE_TABLE_SUBSCRIPTION_FILTER: string = 'RESOURCE_TABLE_SUBSCRIPTION_FILTER';

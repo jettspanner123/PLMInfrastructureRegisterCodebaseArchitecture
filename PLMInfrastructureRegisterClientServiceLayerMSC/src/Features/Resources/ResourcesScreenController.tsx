@@ -55,7 +55,36 @@ export default function ResourcesScreenController(): React.JSX.Element {
     return TableColumnVisibilityUtility.current.withLockedColumnsIncluded(saved, ResourceColumnCON.LOCKED_COLUMN_KEYS);
   });
 
+  // Which "StartStop_*" dynamic columns a user explicitly hid - see
+  // ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_HIDDEN_DYNAMIC_COLUMNS for
+  // why this is a separate opt-out set rather than folded into
+  // visibleColumnKeys' own opt-in one.
+  const [hiddenDynamicColumnKeys, setHiddenDynamicColumnKeys] = useState<Set<string>>(() => {
+    const saved = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(
+      ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_HIDDEN_DYNAMIC_COLUMNS,
+      []
+    );
+    return new Set(saved);
+  });
+
   const handleToggleColumn = (key: string): void => {
+    if (key.startsWith('StartStop_')) {
+      setHiddenDynamicColumnKeys((previous) => {
+        const next = new Set(previous);
+        if (next.has(key)) {
+          next.delete(key);
+        } else {
+          next.add(key);
+        }
+        ApplicationUserPreferenceUtility.current.setJSONPreference(
+          ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_HIDDEN_DYNAMIC_COLUMNS,
+          Array.from(next)
+        );
+        return next;
+      });
+      return;
+    }
+
     if (ResourceColumnCON.LOCKED_COLUMN_KEYS.has(key)) return;
 
     setVisibleColumnKeys((previous) => {
@@ -78,14 +107,15 @@ export default function ResourcesScreenController(): React.JSX.Element {
     // bulk action does not touch the persisted preference, so a reload
     // brings back whatever was last actually saved, not this cleared state.
     setVisibleColumnKeys(new Set(ResourceColumnCON.LOCKED_COLUMN_KEYS));
+    setHiddenDynamicColumnKeys(new Set(dynamicStartStopColumns.map((column) => column.key)));
   };
 
   // One column per distinct "StartStop_*" Azure tag key actually present
   // across the currently-loaded resources - not a fixed list, since the set
   // of tag keys isn't known at compile time (see ResourceColumnCON.COLUMNS'
-  // own comment on why these aren't declared there). Always shown, appended
-  // after every other visible column - unlike the rest of the table, these
-  // aren't part of the Columns-visibility toggle/hide mechanism yet.
+  // own comment on why these aren't declared there). Visible by default
+  // (absent from hiddenDynamicColumnKeys), appended after every other
+  // visible column.
   const dynamicStartStopColumns: ResourceColumnDef[] = useMemo(() => {
     const keys = new Set<string>();
     resources.forEach((resource) => {
@@ -99,8 +129,25 @@ export default function ResourcesScreenController(): React.JSX.Element {
 
   const visibleColumns = [
     ...ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key)),
-    ...dynamicStartStopColumns,
+    ...dynamicStartStopColumns.filter((column) => !hiddenDynamicColumnKeys.has(column.key)),
   ];
+
+  // The Columns dropdown needs one combined set to decide every checkbox's
+  // checked state, static and dynamic columns alike - visibleColumnKeys
+  // (opt-in) and hiddenDynamicColumnKeys (opt-out) stay separate stores
+  // internally (see handleToggleColumn), merged only for this one display
+  // purpose.
+  const allColumnsForVisibilityDropdown = useMemo(
+    () => [...ResourceColumnCON.COLUMNS, ...dynamicStartStopColumns],
+    [dynamicStartStopColumns]
+  );
+  const combinedVisibleColumnKeysForDropdown = useMemo(() => {
+    const combined = new Set(visibleColumnKeys);
+    dynamicStartStopColumns.forEach((column) => {
+      if (!hiddenDynamicColumnKeys.has(column.key)) combined.add(column.key);
+    });
+    return combined;
+  }, [visibleColumnKeys, dynamicStartStopColumns, hiddenDynamicColumnKeys]);
 
   // One entry per column in ResourceColumnCON.FILTERABLE_COLUMN_KEYS - an
   // empty array means "no filter, show every machine" (the multi-select's own
@@ -696,8 +743,8 @@ export default function ResourcesScreenController(): React.JSX.Element {
             <ColumnVisibilityDropdownSharedComponent
               isOpen={isColumnDropdownOpen}
               onClose={handleCloseColumnDropdown}
-              columns={ResourceColumnCON.COLUMNS}
-              visibleColumnKeys={visibleColumnKeys}
+              columns={allColumnsForVisibilityDropdown}
+              visibleColumnKeys={combinedVisibleColumnKeysForDropdown}
               onToggleColumn={handleToggleColumn}
               onClearAll={handleClearAllColumns}
             />
