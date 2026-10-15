@@ -486,6 +486,22 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                             ConfigurationValue = "[]",
                             CreatedAt = new DateTime(2026, 10, 9, 0, 0, 0, 0, DateTimeKind.Utc),
                             Notes = "User-added custom background colors (raw \"#RRGGBB\" hex strings) for Infrastructure Register's right-click cell formatting, growable via its context menu's \"Add Color\" option - starts empty, unlike Status/Sponsor there's no existing data to seed from."
+                        },
+                        new
+                        {
+                            Id = new Guid("4a6b1c2d-3e4f-4a5b-8c6d-7e8f9a0b1c2d"),
+                            ConfigurationKey = "ENVIRONMENT_OVERVIEW_UPTIME_SCHEDULE_TYPE_OPTIONS",
+                            ConfigurationValue = "[\"24 x 7 Uptime\",\"On Demand\",\"N/A\"]",
+                            CreatedAt = new DateTime(2026, 10, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Notes = "Valid \"special\" (non-weekday) values for the Current Uptime Schedule dropdown's mutually-exclusive mode selector, growable via its own \"Add New\" button."
+                        },
+                        new
+                        {
+                            Id = new Guid("5b7c2d3e-4f5a-4b6c-9d7e-8f9a0b1c2d3e"),
+                            ConfigurationKey = "ENVIRONMENT_OVERVIEW_ON_DEMAND_STATUS_OPTIONS",
+                            ConfigurationValue = "[\"Currently Stopped\",\"Currently Running\"]",
+                            CreatedAt = new DateTime(2026, 10, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Notes = "Valid second-line values when Current Uptime Schedule's mode is \"On Demand\", growable via its own \"Add New\" button."
                         });
                 });
 #pragma warning restore 612, 618

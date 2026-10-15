@@ -306,6 +306,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 case "Sponsor":
                     environment.Sponsor = normalisedValue;
                     break;
+                case "CurrentUptimeSchedule":
+                    environment.CurrentUptimeSchedule = normalisedValue;
+                    break;
                 case "Priority1":
                     environment.Priority1 = normalisedValue;
                     break;

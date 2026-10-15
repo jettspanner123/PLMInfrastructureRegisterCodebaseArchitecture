@@ -28,6 +28,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Configur
             ["Status"] = "ENVIRONMENT_OVERVIEW_STATUS_OPTIONS",
             ["Sponsor"] = "ENVIRONMENT_OVERVIEW_SPONSOR_OPTIONS",
             ["ResourceCellFormatColor"] = "RESOURCE_CELL_FORMAT_CUSTOM_COLORS",
+            ["UptimeScheduleType"] = "ENVIRONMENT_OVERVIEW_UPTIME_SCHEDULE_TYPE_OPTIONS",
+            ["OnDemandStatus"] = "ENVIRONMENT_OVERVIEW_ON_DEMAND_STATUS_OPTIONS",
         };
 
         public string AssertOptionsFieldName(string? fieldName)

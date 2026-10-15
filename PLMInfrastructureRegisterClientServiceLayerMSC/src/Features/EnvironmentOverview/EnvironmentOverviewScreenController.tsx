@@ -9,6 +9,7 @@ import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditM
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
 import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
+import UptimeScheduleDropdownController from './Components/UptimeScheduleDropdownController';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
 import ContextMenuSharedComponent, { type ContextMenuItem } from '../../Shared/Components/ContextMenuSharedComponent';
@@ -29,11 +30,46 @@ import ApplicationUserPreferenceUtility from '../../Utilities/ApplicationUserPre
 import TableColumnVisibilityUtility from '../../Utilities/TableColumnVisibilityUtility';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import ActionItemsLineParserUtility from '../../Utilities/ActionItemsLineParserUtility';
+import UptimeScheduleTextUtility from './Utilities/UptimeScheduleTextUtility';
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
 import type DraftEnvironmentOverviewRowInterfaceModel from '../../Models/DraftEnvironmentOverviewRowInterfaceModel';
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type EnvironmentOverviewCellFormatTargetInterfaceModel from '../../Models/EnvironmentOverviewCellFormatTargetInterfaceModel';
+
+// One entry per growable-dropdown fieldName this screen's shared
+// CreateOptionModalController can be opened for - keeps that one JSX usage
+// a simple lookup instead of a growing nested ternary chain as more fields
+// (Current Uptime Schedule's two option lists, now) get their own "Add New".
+const CREATE_OPTION_MODAL_COPY_BY_FIELD_NAME: Record<
+  string,
+  { title: string; subtitle: string; inputLabel: string; inputPlaceholder: string }
+> = {
+  Status: {
+    title: 'Create Status',
+    subtitle: 'Adds a new option to the Status dropdown for every environment.',
+    inputLabel: 'Status Name',
+    inputPlaceholder: 'e.g. Maintenance',
+  },
+  Sponsor: {
+    title: 'Create Sponsor',
+    subtitle: 'Adds a new option to the Sponsor dropdown for every environment.',
+    inputLabel: 'Sponsor Name',
+    inputPlaceholder: 'e.g. Jane Doe',
+  },
+  UptimeScheduleType: {
+    title: 'Create Uptime Schedule Type',
+    subtitle: 'Adds a new special mode to the Current Uptime Schedule dropdown for every environment.',
+    inputLabel: 'Type Name',
+    inputPlaceholder: 'e.g. Maintenance Mode',
+  },
+  OnDemandStatus: {
+    title: 'Create On Demand Status',
+    subtitle: 'Adds a new status option for "On Demand" environments.',
+    inputLabel: 'Status Name',
+    inputPlaceholder: 'e.g. Currently Running',
+  },
+};
 
 export default function EnvironmentOverviewScreenController(): React.JSX.Element {
   const { data: environments = [], isLoading } =
@@ -230,6 +266,107 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     () => sponsorOptions.map((option) => ({ value: option, label: option })),
     [sponsorOptions]
   );
+
+  const { data: uptimeScheduleTypeOptions = [] } =
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('UptimeScheduleType');
+  const { data: onDemandStatusOptions = [] } =
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('OnDemandStatus');
+
+  // Which row's Current Uptime Schedule dropdown is open, if any - single-
+  // open-at-a-time like every other per-row editor on this screen. Draft
+  // state lives here (not in UptimeScheduleDropdownController itself) so a
+  // freshly-created "Add New Type"/"Add New Status" option - created via the
+  // SAME shared CreateOptionModalController every other growable dropdown on
+  // this screen already uses - can flow straight into whichever row opened
+  // it (see handleOptionCreated below).
+  const [editingUptimeScheduleRowId, setEditingUptimeScheduleRowId] = useState<string | null>(null);
+  const [uptimeScheduleDraftDays, setUptimeScheduleDraftDays] = useState<Set<string>>(new Set());
+  const [uptimeScheduleDraftSpecialMode, setUptimeScheduleDraftSpecialMode] = useState<string | null>(null);
+  const [uptimeScheduleDraftOnDemandStatus, setUptimeScheduleDraftOnDemandStatus] = useState<string | null>(null);
+  const [uptimeScheduleDraftStartTime, setUptimeScheduleDraftStartTime] = useState<string>('');
+  const [uptimeScheduleDraftEndTime, setUptimeScheduleDraftEndTime] = useState<string>('');
+
+  const handleOpenUptimeScheduleEditor = (rowId: string, currentValue: string | null): void => {
+    const parsed = UptimeScheduleTextUtility.current.parse(currentValue, uptimeScheduleTypeOptions);
+    setEditingUptimeScheduleRowId(rowId);
+    setUptimeScheduleDraftDays(new Set(parsed.days));
+    setUptimeScheduleDraftSpecialMode(parsed.specialMode);
+    setUptimeScheduleDraftOnDemandStatus(parsed.onDemandStatus);
+    setUptimeScheduleDraftStartTime(parsed.startTime);
+    setUptimeScheduleDraftEndTime(parsed.endTime);
+  };
+
+  const handleCloseUptimeScheduleEditor = (): void => {
+    setEditingUptimeScheduleRowId(null);
+  };
+
+  // Double-click-to-edit for this column specifically - there's no single
+  // ref to just .focus() the way the generic textarea effect above does, so
+  // this opens the (parsed, draft-seeded) editor directly instead. Mirrors
+  // that effect's own activeDoubleClickedCell-clearing, harmless to run
+  // alongside it since each effect only acts on the columnKey it recognizes.
+  useEffect(() => {
+    if (activeDoubleClickedCell?.columnKey !== 'currentUptimeSchedule') return;
+    const environment = environments.find((candidate) => candidate.id === activeDoubleClickedCell.rowId);
+    if (environment && environment.status !== 'Decommissioned') {
+      handleOpenUptimeScheduleEditor(activeDoubleClickedCell.rowId, environment.currentUptimeSchedule);
+    }
+    setActiveDoubleClickedCell(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeDoubleClickedCell]);
+
+  // Mutually exclusive, both directions - a weekday schedule and a special
+  // mode ("24 x 7 Uptime", "On Demand", "N/A") describe fundamentally
+  // different things, never both at once.
+  const handleToggleUptimeScheduleDay = (day: string): void => {
+    setUptimeScheduleDraftSpecialMode(null);
+    setUptimeScheduleDraftOnDemandStatus(null);
+    setUptimeScheduleDraftDays((previous) => {
+      const next = new Set(previous);
+      if (next.has(day)) {
+        next.delete(day);
+      } else {
+        next.add(day);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectUptimeScheduleSpecialMode = (mode: string): void => {
+    setUptimeScheduleDraftDays(new Set());
+    setUptimeScheduleDraftStartTime('');
+    setUptimeScheduleDraftEndTime('');
+    if (mode !== 'On Demand') setUptimeScheduleDraftOnDemandStatus(null);
+    setUptimeScheduleDraftSpecialMode(mode);
+  };
+
+  const uptimeSchedulePreviewValue = UptimeScheduleTextUtility.current.buildValue(
+    uptimeScheduleDraftSpecialMode,
+    uptimeScheduleDraftOnDemandStatus,
+    Array.from(uptimeScheduleDraftDays),
+    uptimeScheduleDraftStartTime,
+    uptimeScheduleDraftEndTime
+  );
+
+  const canSaveUptimeSchedule =
+    uptimeScheduleDraftSpecialMode === 'On Demand'
+      ? Boolean(uptimeScheduleDraftOnDemandStatus)
+      : uptimeScheduleDraftSpecialMode !== null
+        ? true
+        : uptimeScheduleDraftDays.size > 0 && Boolean(uptimeScheduleDraftStartTime) && Boolean(uptimeScheduleDraftEndTime);
+
+  const handleSaveUptimeSchedule = (): void => {
+    if (!editingUptimeScheduleRowId || !canSaveUptimeSchedule) return;
+    const environment = environments.find((candidate) => candidate.id === editingUptimeScheduleRowId);
+    handleFieldSave(
+      editingUptimeScheduleRowId,
+      'currentUptimeSchedule',
+      'CurrentUptimeSchedule',
+      uptimeSchedulePreviewValue,
+      environment?.currentUptimeSchedule ?? null
+    );
+    setEditingUptimeScheduleRowId(null);
+  };
 
   // Columns dropdown - same mechanism as Resources' own (see
   // TableColumnVisibilityUtility/ColumnVisibilityDropdownSharedComponent),
@@ -743,6 +880,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     } else if (fieldName === 'Sponsor') {
       const environment = environments.find((candidate) => candidate.id === rowId);
       handleSponsorChange(rowId, newValue, environment?.sponsor ?? null);
+    } else if (fieldName === 'UptimeScheduleType') {
+      // Unlike Status/Sponsor, this doesn't save immediately - it just
+      // selects the freshly-created mode into the still-open draft editor,
+      // same as clicking any other mode option would.
+      handleSelectUptimeScheduleSpecialMode(newValue);
+    } else if (fieldName === 'OnDemandStatus') {
+      setUptimeScheduleDraftOnDemandStatus(newValue);
     }
     setOptionModalTarget(null);
   };
@@ -1293,6 +1437,31 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       return renderSponsorCell(environment, columnWidth, rowIndex, colIndex);
     }
 
+    // Decommissioned overrides the raw stored value entirely, in both View
+    // and Edit Mode - Status already owns "is this environment alive"
+    // (a real controlled dropdown), so this column shouldn't try to also
+    // encode that a second time via whatever schedule text happened to be
+    // left over from when it was still running. See the grilling session
+    // that designed this feature for why that text isn't preserved anywhere.
+    if (column.key === 'currentUptimeSchedule' && environment.status === 'Decommissioned') {
+      return (
+        <td
+          key={column.key}
+          onContextMenu={onCellContextMenu}
+          style={{ boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), width: columnWidth }}
+          className={EnvironmentOverviewCON.CELL_CLASS_NAME}
+        >
+          <span className="inline-block px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono font-bold text-[11px]">
+            Decommissioned
+          </span>
+        </td>
+      );
+    }
+
+    if (isEditMode && column.key === 'currentUptimeSchedule') {
+      return renderCurrentUptimeScheduleCell(environment, columnWidth, rowIndex, colIndex);
+    }
+
     const editableFieldName = EnvironmentOverviewCON.EDITABLE_TEXT_FIELD_NAMES[column.key];
     if (isEditMode && editableFieldName) {
       return renderEditableTextCell(environment, column, editableFieldName, columnWidth, rowIndex, colIndex);
@@ -1300,7 +1469,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     const isCellEditable =
       Boolean(EnvironmentOverviewCON.EDITABLE_TEXT_FIELD_NAMES[column.key]) ||
-      column.key === 'sponsor';
+      column.key === 'sponsor' ||
+      (column.key === 'currentUptimeSchedule' && environment.status !== 'Decommissioned');
 
     if (displayValue === null || displayValue === '') {
       return (
@@ -1754,6 +1924,74 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
+  // Current Uptime Schedule's Edit Mode rendering - not a plain searchable
+  // single-select like Status/Sponsor, since the value is composite
+  // (weekday checkboxes OR a special mode, plus a conditional time range or
+  // on-demand status) - see UptimeScheduleDropdownController for the
+  // panel's own positioning mechanics and UptimeScheduleTextUtility for how
+  // the selection becomes the stored two-line string.
+  const renderCurrentUptimeScheduleCell = (
+    environment: EnvironmentOverviewInterfaceModel,
+    columnWidth: number,
+    rowIndex: number,
+    colIndex: number
+  ): React.ReactNode => {
+    const cellKey = `${environment.id}:currentUptimeSchedule`;
+    const isPending = pendingFieldEditKeys.has(cellKey);
+    const cellError = fieldEditErrorByKey?.key === cellKey ? fieldEditErrorByKey.message : null;
+
+    const format = cellFormatByKey.get(`${environment.id}:currentUptimeSchedule`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
+    const isOpen = editingUptimeScheduleRowId === environment.id;
+
+    return (
+      <td
+        key="currentUptimeSchedule"
+        onContextMenu={onCellContextMenu}
+        style={{
+          boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
+          width: columnWidth,
+          ...formatStyle,
+        }}
+        className={`px-3 py-2 align-top ${formatClassName}`}
+      >
+        <UptimeScheduleDropdownController
+          isOpen={isOpen}
+          onOpen={() => handleOpenUptimeScheduleEditor(environment.id, environment.currentUptimeSchedule)}
+          onClose={handleCloseUptimeScheduleEditor}
+          displayLabel={environment.currentUptimeSchedule ?? 'Set schedule…'}
+          specialModeOptions={uptimeScheduleTypeOptions}
+          onDemandStatusOptions={onDemandStatusOptions}
+          selectedDays={isOpen ? uptimeScheduleDraftDays : new Set()}
+          onToggleDay={handleToggleUptimeScheduleDay}
+          specialMode={isOpen ? uptimeScheduleDraftSpecialMode : null}
+          onSelectSpecialMode={handleSelectUptimeScheduleSpecialMode}
+          onDemandStatus={isOpen ? uptimeScheduleDraftOnDemandStatus : null}
+          onSelectOnDemandStatus={setUptimeScheduleDraftOnDemandStatus}
+          startTime={isOpen ? uptimeScheduleDraftStartTime : ''}
+          endTime={isOpen ? uptimeScheduleDraftEndTime : ''}
+          onStartTimeChange={setUptimeScheduleDraftStartTime}
+          onEndTimeChange={setUptimeScheduleDraftEndTime}
+          previewValue={uptimeSchedulePreviewValue}
+          canSave={canSaveUptimeSchedule}
+          isSaving={isPending}
+          onSave={handleSaveUptimeSchedule}
+          onRequestAddSpecialMode={() => handleOpenOptionModal('UptimeScheduleType', environment.id)}
+          onRequestAddOnDemandStatus={() => handleOpenOptionModal('OnDemandStatus', environment.id)}
+        />
+        {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
+      </td>
+    );
+  };
+
   const renderDraftTextCell = (column: EnvironmentOverviewColumnDef): React.ReactNode => {
     const columnWidth = columnWidths.getColumnWidth(column.key);
     const isEnvironmentColumn = column.key === 'environment';
@@ -2017,14 +2255,12 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           setOptionModalTarget(null);
         }}
         fieldName={optionModalTarget?.fieldName ?? 'Status'}
-        title={optionModalTarget?.fieldName === 'Sponsor' ? 'Create Sponsor' : 'Create Status'}
-        subtitle={
-          optionModalTarget?.fieldName === 'Sponsor'
-            ? 'Adds a new option to the Sponsor dropdown for every environment.'
-            : 'Adds a new option to the Status dropdown for every environment.'
+        title={CREATE_OPTION_MODAL_COPY_BY_FIELD_NAME[optionModalTarget?.fieldName ?? 'Status'].title}
+        subtitle={CREATE_OPTION_MODAL_COPY_BY_FIELD_NAME[optionModalTarget?.fieldName ?? 'Status'].subtitle}
+        inputLabel={CREATE_OPTION_MODAL_COPY_BY_FIELD_NAME[optionModalTarget?.fieldName ?? 'Status'].inputLabel}
+        inputPlaceholder={
+          CREATE_OPTION_MODAL_COPY_BY_FIELD_NAME[optionModalTarget?.fieldName ?? 'Status'].inputPlaceholder
         }
-        inputLabel={optionModalTarget?.fieldName === 'Sponsor' ? 'Sponsor Name' : 'Status Name'}
-        inputPlaceholder={optionModalTarget?.fieldName === 'Sponsor' ? 'e.g. Jane Doe' : 'e.g. Maintenance'}
         onCreated={handleOptionCreated}
       />
 

@@ -131,6 +131,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             "Environment",
             "Purpose",
             "Sponsor",
+            "CurrentUptimeSchedule",
             "Priority1",
             "Priority2",
             "Priority3",
