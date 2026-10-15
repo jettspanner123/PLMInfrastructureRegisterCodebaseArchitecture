@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Azure.Core;
 using Azure.Identity;
 using Azure.ResourceManager;
@@ -142,6 +143,34 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Sync.Ser
             (int? cpuCores, int? ramGB) = await GetVmSizeSpecsAsynchronous(virtualMachine.Id.SubscriptionId!, data);
             resource.CpuCores = cpuCores;
             resource.RamGB = ramGB;
+
+            resource.StartStopTagsJson = BuildStartStopTagsJson(data.Tags);
+        }
+
+        // Mirrors every "StartStop_" prefixed tag verbatim (key included) from
+        // Azure onto the resource - auto-discovers new tag keys automatically
+        // (no code change needed if a new "StartStop_X" tag appears later),
+        // rather than a fixed set of hardcoded columns. A value that's exactly
+        // "true"/"false" (case-insensitive) is stored as a real JSON boolean
+        // instead of a string, so it renders the same Yes/No way every other
+        // boolean column already does - applied uniformly to any StartStop_
+        // tag, not just the one (StartStop_SystemShutdown) that happens to be
+        // boolean-shaped today, so a future boolean-valued tag gets the same
+        // treatment with no code change either.
+        private static string? BuildStartStopTagsJson(IDictionary<string, string> tags)
+        {
+            var startStopTags = new Dictionary<string, object>(StringComparer.Ordinal);
+
+            foreach (KeyValuePair<string, string> tag in tags)
+            {
+                if (!tag.Key.StartsWith("StartStop_", StringComparison.OrdinalIgnoreCase)) continue;
+
+                startStopTags[tag.Key] = bool.TryParse(tag.Value, out bool boolValue)
+                    ? boolValue
+                    : tag.Value;
+            }
+
+            return startStopTags.Count > 0 ? JsonSerializer.Serialize(startStopTags) : null;
         }
 
         private static async Task<ResourceStatus> GetResourceStatusAsynchronous(VirtualMachineResource virtualMachine)

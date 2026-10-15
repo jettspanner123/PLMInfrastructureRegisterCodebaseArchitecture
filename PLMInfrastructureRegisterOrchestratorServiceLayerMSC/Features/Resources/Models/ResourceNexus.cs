@@ -1,3 +1,7 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models
 {
     public sealed class ResourceNexus
@@ -17,13 +21,20 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
 
         public string? Subscription { get; set; }
 
-        public bool AutoShutdownEnabled { get; set; }
+        // Raw JSON object of every Azure tag whose key starts with
+        // "StartStop_", keys preserved verbatim (e.g. "StartStop_ContactEmail") -
+        // auto-discovered by Sync from whatever tags actually exist on each VM,
+        // not a fixed set of columns, so a brand-new "StartStop_X" tag shows up
+        // automatically on its next sync with no code change (see
+        // SyncService.BuildStartStopTagsJson for how values get typed). Replaces
+        // the four Auto Shutdown columns that used to live here - this comment
+        // section's own name notwithstanding, Sync never actually wrote them.
+        [JsonIgnore]
+        public string? StartStopTagsJson { get; set; }
 
-        public string? AutoShutdownSchedule { get; set; }
-
-        public TimeOnly? AutoShutdownStartTime { get; set; }
-
-        public TimeOnly? AutoShutdownEndTime { get; set; }
+        [NotMapped]
+        public Dictionary<string, object>? StartStopTags =>
+            StartStopTagsJson is null ? null : JsonSerializer.Deserialize<Dictionary<string, object>>(StartStopTagsJson);
 
         public string? ResourceGroup { get; set; }
 

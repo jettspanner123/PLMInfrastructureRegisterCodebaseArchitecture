@@ -26,7 +26,6 @@ export default class ApplicationUserPreferenceKeyCON {
   public static readonly RESOURCE_TABLE_DISK4_DATA_TYPE_FILTER: string = 'RESOURCE_TABLE_DISK4_DATA_TYPE_FILTER';
   public static readonly RESOURCE_TABLE_DISK5_DATA_TYPE_FILTER: string = 'RESOURCE_TABLE_DISK5_DATA_TYPE_FILTER';
   public static readonly RESOURCE_TABLE_DISK6_DATA_TYPE_FILTER: string = 'RESOURCE_TABLE_DISK6_DATA_TYPE_FILTER';
-  public static readonly RESOURCE_TABLE_AUTO_SHUTDOWN_ENABLED_FILTER: string = 'RESOURCE_TABLE_AUTO_SHUTDOWN_ENABLED_FILTER';
   public static readonly RESOURCE_TABLE_SMTP_ENABLED_FILTER: string = 'RESOURCE_TABLE_SMTP_ENABLED_FILTER';
   public static readonly RESOURCE_TABLE_BACKUP_REQUIRED_FILTER: string = 'RESOURCE_TABLE_BACKUP_REQUIRED_FILTER';
   public static readonly RESOURCE_TABLE_ORACLE_DBA_SUPPORT_REQUIRED_FILTER: string = 'RESOURCE_TABLE_ORACLE_DBA_SUPPORT_REQUIRED_FILTER';
@@ -68,7 +67,6 @@ export default class ApplicationUserPreferenceKeyCON {
     disk4DataType: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_DISK4_DATA_TYPE_FILTER,
     disk5DataType: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_DISK5_DATA_TYPE_FILTER,
     disk6DataType: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_DISK6_DATA_TYPE_FILTER,
-    autoShutdownEnabled: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_AUTO_SHUTDOWN_ENABLED_FILTER,
     smtpEnabled: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_SMTP_ENABLED_FILTER,
     backupRequired: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_BACKUP_REQUIRED_FILTER,
     oracleDBASupportRequired: ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_ORACLE_DBA_SUPPORT_REQUIRED_FILTER,

@@ -80,7 +80,27 @@ export default function ResourcesScreenController(): React.JSX.Element {
     setVisibleColumnKeys(new Set(ResourceColumnCON.LOCKED_COLUMN_KEYS));
   };
 
-  const visibleColumns = ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
+  // One column per distinct "StartStop_*" Azure tag key actually present
+  // across the currently-loaded resources - not a fixed list, since the set
+  // of tag keys isn't known at compile time (see ResourceColumnCON.COLUMNS'
+  // own comment on why these aren't declared there). Always shown, appended
+  // after every other visible column - unlike the rest of the table, these
+  // aren't part of the Columns-visibility toggle/hide mechanism yet.
+  const dynamicStartStopColumns: ResourceColumnDef[] = useMemo(() => {
+    const keys = new Set<string>();
+    resources.forEach((resource) => {
+      if (!resource.startStopTags) return;
+      Object.keys(resource.startStopTags).forEach((key) => keys.add(key));
+    });
+    return Array.from(keys)
+      .sort((a, b) => a.localeCompare(b))
+      .map((key) => ({ key, label: key }));
+  }, [resources]);
+
+  const visibleColumns = [
+    ...ResourceColumnCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key)),
+    ...dynamicStartStopColumns,
+  ];
 
   // One entry per column in ResourceColumnCON.FILTERABLE_COLUMN_KEYS - an
   // empty array means "no filter, show every machine" (the multi-select's own

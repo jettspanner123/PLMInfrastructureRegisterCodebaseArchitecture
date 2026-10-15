@@ -11,6 +11,14 @@ export interface ResourceColumnDef {
 }
 
 export default class ResourceColumnCON {
+  // The four Auto Shutdown columns that used to live here were removed -
+  // Sync never actually wrote them (the schema anticipated it, the mapping
+  // code never shipped), replaced by auto-discovered "StartStop_*" Azure
+  // tag columns instead (see ResourceInterfaceModel.startStopTags and
+  // ResourcesScreenController's own dynamicStartStopColumns). Those columns
+  // aren't listed here since the set of tag keys isn't fixed/known at
+  // compile time - a brand-new "StartStop_X" tag in Azure shows up as a new
+  // column automatically on its next sync, no code change needed.
   public static readonly COLUMNS: ResourceColumnDef[] = [
     { key: 'hostname', label: 'HOSTNAME', locked: true },
     { key: 'environmentTag', label: 'ENVIRONMENT (TAG)', locked: true },
@@ -24,10 +32,6 @@ export default class ResourceColumnCON {
     { key: 'category', label: 'TYPE' },
     { key: 'subscription', label: 'SUBSCRIPTION' },
     { key: 'spinner', label: 'Spinner_R2024x_AtlasCopco_Exp29Oct2026' },
-    { key: 'autoShutdownEnabled', label: 'Auto Shutdown' },
-    { key: 'autoShutdownSchedule', label: 'Auto Shutdown Schedule' },
-    { key: 'autoShutdownStartTime', label: 'Auto Shutdown Start Time (CET)' },
-    { key: 'autoShutdownEndTime', label: 'Auto Shutdown End Time (CET)' },
     { key: 'resourceGroup', label: 'RESOURCE GROUP' },
     { key: 'location', label: 'LOCATION' },
     { key: 'virtualNetworkSubnet', label: 'VIRTUAL NETWORK/SUBNET' },
@@ -112,7 +116,6 @@ export default class ResourceColumnCON {
     'disk4DataType',
     'disk5DataType',
     'disk6DataType',
-    'autoShutdownEnabled',
     'smtpEnabled',
     'backupRequired',
     'oracleDBASupportRequired',

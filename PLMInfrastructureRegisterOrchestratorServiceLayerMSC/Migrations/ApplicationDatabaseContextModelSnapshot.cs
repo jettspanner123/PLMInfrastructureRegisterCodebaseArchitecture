@@ -204,18 +204,6 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.Property<string>("AtosAgentDeployed")
                         .HasColumnType("text");
 
-                    b.Property<bool>("AutoShutdownEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<TimeOnly?>("AutoShutdownEndTime")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("AutoShutdownSchedule")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("AutoShutdownStartTime")
-                        .HasColumnType("time without time zone");
-
                     b.Property<string>("AzureMonitoringSetupRequired")
                         .HasColumnType("text");
 
@@ -359,6 +347,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Spinner")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StartStopTagsJson")
                         .HasColumnType("text");
 
                     b.Property<string>("Status")

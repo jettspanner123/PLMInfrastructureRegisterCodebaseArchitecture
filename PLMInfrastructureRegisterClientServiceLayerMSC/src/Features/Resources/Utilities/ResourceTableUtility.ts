@@ -15,7 +15,12 @@ export default class ResourceTableUtility {
   // null means "no value" - left to the caller to render as an em dash, a
   // blank cell, or whatever else fits the context.
   public getDisplayValue(resource: ResourceInterfaceModel, key: string): string | null {
-    const value = (resource as unknown as Record<string, unknown>)[key];
+    // Dynamic "StartStop_*" Azure tag columns aren't real ResourceInterfaceModel
+    // properties - their values live in the startStopTags bag instead, keyed
+    // by the tag's own name (see ResourceInterfaceModel.startStopTags).
+    const value = key.startsWith('StartStop_')
+      ? (resource.startStopTags?.[key] ?? null)
+      : (resource as unknown as Record<string, unknown>)[key];
 
     if (value === null || value === undefined || value === '') return null;
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';

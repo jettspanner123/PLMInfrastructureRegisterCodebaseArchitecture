@@ -10,10 +10,14 @@ export default interface ResourceInterfaceModel {
   status: 'Running' | 'Stopped' | 'Decommissioned';
   privateIPAddress: string | null;
   subscription: string | null;
-  autoShutdownEnabled: boolean;
-  autoShutdownSchedule: string | null;
-  autoShutdownStartTime: string | null;
-  autoShutdownEndTime: string | null;
+  // Every Azure tag whose key starts with "StartStop_", verbatim (e.g.
+  // "StartStop_ContactEmail"), auto-discovered by Sync - null when the VM
+  // has none. A tag whose value is literally "true"/"false" comes through
+  // as a real boolean (renders Yes/No, same as every other boolean column);
+  // everything else is a string, exactly as Azure has it. Replaces the four
+  // Auto Shutdown columns that used to live here (Sync never actually wrote
+  // them).
+  startStopTags: Record<string, string | boolean> | null;
   resourceGroup: string | null;
   location: string | null;
   virtualNetworkSubnet: string | null;
