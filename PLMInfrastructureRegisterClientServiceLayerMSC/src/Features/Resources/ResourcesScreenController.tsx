@@ -752,7 +752,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
                     // property don't reliably resolve by DOM/JSX order.
                     <TableHeaderCellSharedComponent
                       key={column.key}
-                      className="!bg-[#9B111E]"
+                      className="!bg-[#C41E3A]"
                       {...tableSelection.getColumnHeaderHandlers(colIndex)}
                     >
                       {column.label}
