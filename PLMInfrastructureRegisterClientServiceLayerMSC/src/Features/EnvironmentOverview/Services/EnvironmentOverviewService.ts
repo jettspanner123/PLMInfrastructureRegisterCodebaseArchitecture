@@ -4,6 +4,7 @@ import type EnvironmentOverviewInterfaceModel from '../../../Models/EnvironmentO
 import type CreateEnvironmentOverviewRequestInterfaceModel from '../../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../../../Models/AddActionItemRequestInterfaceModel';
+import type UpdateActionItemRequestInterfaceModel from '../../../Models/UpdateActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../../../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
@@ -114,6 +115,26 @@ export default class EnvironmentOverviewService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to add the action item.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateActionItem(
+    id: string,
+    lineIndex: number,
+    request: UpdateActionItemRequestInterfaceModel
+  ): Promise<EnvironmentOverviewInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/${id}/ActionItems/${lineIndex}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the action item.');
     }
 
     return payload.data;

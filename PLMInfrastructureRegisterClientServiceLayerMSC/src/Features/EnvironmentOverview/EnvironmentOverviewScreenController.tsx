@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX, Plus, Trash2, Columns3, ChevronDown, Bold, Italic, Underline, Ban } from 'lucide-react';
+import { ServerOff, FilterX, Plus, Trash2, Pencil, Columns3, ChevronDown, Bold, Italic, Underline, Ban } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -73,6 +73,21 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     lineIndex: number;
     lineText: string;
   } | null>(null);
+
+  // The one Action Items entry currently being edited, if any - mirrors
+  // actionItemDraftRowId's own single-at-a-time convention (opening this
+  // closes any other open draft/edit, matching how only one modal/dropdown
+  // is normally open at once elsewhere in this app). originalLine is kept so
+  // the save step can rebuild the line's untouched date/tag prefix around
+  // the edited note - see ActionItemsLineParserUtility.buildReplacementLine.
+  const [editingActionItem, setEditingActionItem] = useState<{
+    rowId: string;
+    lineIndex: number;
+    originalLine: string;
+  } | null>(null);
+  const [editingActionItemText, setEditingActionItemText] = useState<string>('');
+  const [editingActionItemError, setEditingActionItemError] = useState<string | null>(null);
+  const editingActionItemInputRef = useRef<HTMLTextAreaElement | null>(null);
 
   // The one row currently pending whole-environment delete confirmation, if
   // any - environmentName is kept only for the confirmation modal's own
@@ -812,6 +827,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   };
 
   const handleOpenActionItemDraft = (rowId: string): void => {
+    setEditingActionItem(null);
     setActionItemDraftRowId(rowId);
     setActionItemDraftText('');
     setActionItemDraftError(null);
@@ -854,6 +870,85 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     if (actionItemDraftRowId) actionItemDraftInputRef.current?.focus();
   }, [actionItemDraftRowId]);
 
+  const updateActionItemMutation = TanstackQueryClientService.current.environmentOverview.useUpdateActionItemMutation({
+    onSuccess: () => {
+      setEditingActionItem(null);
+      setEditingActionItemText('');
+      setEditingActionItemError(null);
+    },
+    onError: (error) => {
+      setEditingActionItemError(error.message);
+    },
+  });
+
+  const handleOpenActionItemEdit = (rowId: string, lineIndex: number, line: string): void => {
+    setActionItemDraftRowId(null);
+    setEditingActionItem({ rowId, lineIndex, originalLine: line });
+    setEditingActionItemText(ActionItemsLineParserUtility.current.parseLine(line).note);
+    setEditingActionItemError(null);
+  };
+
+  const handleDiscardActionItemEdit = (): void => {
+    setEditingActionItem(null);
+    setEditingActionItemText('');
+    setEditingActionItemError(null);
+  };
+
+  const handleSaveActionItemEdit = (): void => {
+    if (!editingActionItem) return;
+    const trimmedNote = editingActionItemText.trim();
+    if (!trimmedNote) {
+      setEditingActionItemError('A note is required.');
+      return;
+    }
+    const replacementLineText = ActionItemsLineParserUtility.current.buildReplacementLine(
+      editingActionItem.originalLine,
+      trimmedNote
+    );
+    updateActionItemMutation.mutate({
+      id: editingActionItem.rowId,
+      lineIndex: editingActionItem.lineIndex,
+      request: { replacementLineText },
+    });
+  };
+
+  // Same Escape-discards / Ctrl+Cmd+Enter-saves convention as the Add Entry
+  // draft's own handleActionItemDraftKeyDown, for the same reason.
+  const handleActionItemEditKeyDown = (event: React.KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      handleDiscardActionItemEdit();
+      return;
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.stopPropagation();
+      handleSaveActionItemEdit();
+    }
+  };
+
+  useEffect(() => {
+    if (editingActionItem) editingActionItemInputRef.current?.focus();
+  }, [editingActionItem]);
+
+  // Double-click, like every other column, enters Edit Mode AND focuses
+  // whatever was actually double-clicked - unlike a plain textarea column
+  // though, there's no single field here, so WHERE the double-click landed
+  // decides the target: see the per-entry handler in renderActionItemsLine
+  // for "double-clicked an existing entry" (opens that entry's edit
+  // directly, no need for this one). This one is "double-clicked empty cell
+  // space" - closest parallel is the Add Entry draft, same as how
+  // Purpose/Priority auto-focus their one textarea. Guarded against an
+  // already-open draft/edit for this same row so an accidental second
+  // double-click can't silently wipe unsaved text - the Pencil icon has no
+  // equivalent guard since switching between EXISTING entries is already
+  // today's accepted behavior there, but this empty-space path is new
+  // surface area double-click introduces.
+  const handleActionItemsCellDoubleClick = (rowId: string): void => {
+    if (actionItemDraftRowId === rowId || editingActionItem?.rowId === rowId) return;
+    handleCellDoubleClick(rowId, 'actionItemsUpdates');
+    handleOpenActionItemDraft(rowId);
+  };
+
   const deleteActionItemMutation = TanstackQueryClientService.current.environmentOverview.useDeleteActionItemMutation({
     onSuccess: () => {
       setDeletingActionItem(null);
@@ -870,6 +965,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       id: deletingActionItem.rowId,
       lineIndex: deletingActionItem.lineIndex,
     });
+    // Deleting a line shifts every later line's index down by one, so any
+    // open edit (whether on the deleted line itself or one after it) would
+    // otherwise be left pointing at the wrong entry - simplest safe move is
+    // to just close it, same as closing the delete-confirmation modal itself.
+    if (editingActionItem?.rowId === deletingActionItem.rowId) {
+      handleDiscardActionItemEdit();
+    }
   };
 
   const deleteEnvironmentOverviewMutation =
@@ -1248,33 +1350,114 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const renderActionItemsLine = (rowId: string, line: string, lineIndex: number): React.ReactNode => {
     const parsed = ActionItemsLineParserUtility.current.parseLine(line);
     const hasDate = parsed.date !== null;
+    const isEditingThisLine =
+      editingActionItem?.rowId === rowId && editingActionItem.lineIndex === lineIndex;
+
+    const dateTag = (
+      <span
+        className={`shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap ${
+          hasDate ? 'bg-[#0C2086] dark:bg-blue-600' : 'bg-slate-400 dark:bg-zinc-600'
+        }`}
+      >
+        {hasDate ? (
+          <>
+            {parsed.date}
+            {parsed.tag ? ` (${parsed.tag})` : ''}
+          </>
+        ) : (
+          'Unrevealed'
+        )}
+      </span>
+    );
+
+    // Date pill stays fixed/non-editable even while editing - a date is a
+    // historical fact about when something happened, not something a note
+    // fix should be able to silently rewrite (see handleSaveActionItemEdit,
+    // which rebuilds the line around the ORIGINAL prefix, never this text).
+    if (isEditingThisLine) {
+      return (
+        <div key={lineIndex} className="flex items-start gap-1.5">
+          {dateTag}
+          <div className="flex-1 min-w-0">
+            <textarea
+              ref={editingActionItemInputRef}
+              name="edit-action-item-note"
+              aria-label="Edit this entry's note"
+              value={editingActionItemText}
+              onChange={(event) => {
+                setEditingActionItemText(event.target.value);
+                if (editingActionItemError) setEditingActionItemError(null);
+              }}
+              onKeyDown={handleActionItemEditKeyDown}
+              rows={2}
+              className="w-full bg-transparent border-b border-dashed border-[#0C2086]/30 dark:border-blue-400/40 focus:border-solid focus:border-[#0C2086] dark:focus:border-blue-400 focus:outline-none resize-y whitespace-pre-wrap break-words"
+            />
+            <div className="flex items-center justify-between mt-0.5">
+              <span className="text-[9px]">
+                {editingActionItemError ? (
+                  <span className="text-rose-500 dark:text-rose-400">{editingActionItemError}</span>
+                ) : (
+                  <span className="text-slate-400 dark:text-zinc-500">Ctrl+Enter to save · Esc to discard</span>
+                )}
+              </span>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleDiscardActionItemEdit}
+                  className="font-bold text-slate-400 dark:text-zinc-500 hover:opacity-80 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveActionItemEdit}
+                  disabled={updateActionItemMutation.isPending || !editingActionItemText.trim()}
+                  className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {updateActionItemMutation.isPending ? 'Saving…' : 'Done'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
-      <div key={lineIndex} className="flex items-start gap-1.5 group/action-item">
-        <span
-          className={`shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap ${
-            hasDate ? 'bg-[#0C2086] dark:bg-blue-600' : 'bg-slate-400 dark:bg-zinc-600'
-          }`}
-        >
-          {hasDate ? (
-            <>
-              {parsed.date}
-              {parsed.tag ? ` (${parsed.tag})` : ''}
-            </>
-          ) : (
-            'Unrevealed'
-          )}
-        </span>
+      <div
+        key={lineIndex}
+        className="flex items-start gap-1.5 group/action-item"
+        onDoubleClick={(event) => {
+          // Stops the cell-level handler above (handleActionItemsCellDoubleClick)
+          // from ALSO firing and opening a fresh Add Entry draft on top of
+          // this - double-clicking a specific existing entry means "edit
+          // this one", never "add a new one".
+          event.stopPropagation();
+          handleCellDoubleClick(rowId, 'actionItemsUpdates');
+          handleOpenActionItemEdit(rowId, lineIndex, line);
+        }}
+      >
+        {dateTag}
         <span className="flex-1 whitespace-pre-wrap break-words">{parsed.note}</span>
         {isEditMode && (
-          <button
-            type="button"
-            onClick={() => handleRequestDeleteActionItem(rowId, lineIndex, line)}
-            aria-label="Delete this entry"
-            className="shrink-0 mt-px text-slate-300 dark:text-zinc-700 hover:text-rose-500 dark:hover:text-rose-400 opacity-0 group-hover/action-item:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer"
-          >
-            <Trash2 className="w-3 h-3" />
-          </button>
+          <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover/action-item:opacity-100 focus-within:opacity-100 transition-opacity">
+            <button
+              type="button"
+              onClick={() => handleOpenActionItemEdit(rowId, lineIndex, line)}
+              aria-label="Edit this entry"
+              className="mt-px text-slate-300 dark:text-zinc-700 hover:text-[#0C2086] dark:hover:text-blue-400 cursor-pointer"
+            >
+              <Pencil className="w-3 h-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleRequestDeleteActionItem(rowId, lineIndex, line)}
+              aria-label="Delete this entry"
+              className="mt-px text-slate-300 dark:text-zinc-700 hover:text-rose-500 dark:hover:text-rose-400 cursor-pointer"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          </div>
         )}
       </div>
     );
@@ -1378,6 +1561,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onMouseDown={cellHandlers.onMouseDown}
         onMouseEnter={cellHandlers.onMouseEnter}
         onContextMenu={onCellContextMenu}
+        onDoubleClick={() => handleActionItemsCellDoubleClick(environment.id)}
         style={{
           boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex),
           width: columnWidths.getColumnWidth('actionItemsUpdates'),

@@ -52,13 +52,15 @@ export default class EnvironmentOverviewCON {
     'px-3 py-2 align-top whitespace-pre-wrap break-words font-mono text-slate-700 dark:text-zinc-300';
 
   // The only TEXT_COLUMNS keys Edit Mode lets a user type into directly -
-  // Environment, Sponsor, Current Uptime Schedule and Configuration &
-  // Customisation Version aren't part of this request and keep their
-  // read-only rendering. Maps each editable key to the PascalCase
-  // FieldName the backend's generic PUT /{id}/Field endpoint expects (see
-  // EnvironmentOverviewAssertion.AssertUpdateFieldRequest on the backend
-  // for the matching allow-list).
+  // Sponsor, Current Uptime Schedule and Configuration & Customisation
+  // Version aren't part of this request and keep their read-only rendering
+  // (Sponsor has its own bespoke cell renderer - see renderSponsorCell -
+  // even though it shares this same backend endpoint). Maps each editable
+  // key to the PascalCase FieldName the backend's generic PUT /{id}/Field
+  // endpoint expects (see EnvironmentOverviewAssertion.AssertUpdateFieldRequest
+  // on the backend for the matching allow-list).
   public static readonly EDITABLE_TEXT_FIELD_NAMES: Partial<Record<keyof EnvironmentOverviewInterfaceModel, string>> = {
+    environment: 'Environment',
     purpose: 'Purpose',
     priority1: 'Priority1',
     priority2: 'Priority2',

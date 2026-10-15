@@ -175,6 +175,53 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             };
         }
 
+        // lineIndex addressing and the "no per-entry identity" reasoning are
+        // the same as DeleteActionItemAsynchronous below - this just swaps
+        // one line's text wholesale instead of removing it. Trusts
+        // replacementLineText completely (no parsing here) - the frontend is
+        // what preserves the original date/tag prefix byte-for-byte before
+        // calling this, see UpdateActionItemRequestDTO.
+        public async Task<EnvironmentOverviewDTO> UpdateActionItemAsynchronous(Guid id, int lineIndex, string replacementLineText)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            List<string> lines = (environment.ActionItemsUpdates ?? string.Empty)
+                .Split('\n')
+                .ToList();
+
+            if (lineIndex < 0 || lineIndex >= lines.Count)
+            {
+                throw new ValidationException("That entry no longer exists - it may have already been changed or removed.");
+            }
+
+            lines[lineIndex] = replacementLineText.Trim();
+            environment.ActionItemsUpdates = string.Join("\n", lines);
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = environment.Id,
+                Environment = environment.Environment,
+                Purpose = environment.Purpose,
+                Sponsor = environment.Sponsor,
+                CurrentUptimeSchedule = environment.CurrentUptimeSchedule,
+                Priority1 = environment.Priority1,
+                Priority2 = environment.Priority2,
+                Priority3 = environment.Priority3,
+                ActionItemsUpdates = environment.ActionItemsUpdates,
+                ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
+                DNSURL = environment.DNSURL,
+                Status = environment.Status,
+            };
+        }
+
         // lineIndex is the entry's position in the current line-split list,
         // exactly as the frontend is already displaying it (every "visible"
         // line is always a genuine prefix of the full list - see
@@ -245,6 +292,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
             switch (fieldName)
             {
+                // normalisedValue is guaranteed non-null here specifically -
+                // AssertUpdateFieldRequest already rejects a blank value for
+                // "Environment" before this runs, unlike every other case
+                // below where null (cleared back to "not set") is the
+                // legitimate blank state.
+                case "Environment":
+                    environment.Environment = normalisedValue!;
+                    break;
                 case "Purpose":
                     environment.Purpose = normalisedValue;
                     break;

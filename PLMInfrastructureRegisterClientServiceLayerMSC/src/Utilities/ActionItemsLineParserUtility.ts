@@ -74,6 +74,22 @@ export default class ActionItemsLineParserUtility {
     return { date, tag: tag ?? null, note };
   }
 
+  // Rebuilds a line for an in-place note edit - keeps everything before the
+  // note (the date, optional tag, and whatever separator the original line
+  // used) byte-for-byte, replacing only the note itself. A date is a
+  // historical fact about when something happened, not something a note
+  // typo-fix should silently rewrite. `note` is always the LAST captured
+  // group against the full original string (the regex is anchored start to
+  // end), so the prefix is recoverable purely by length - no need to
+  // re-match or re-derive it. A line with no recognizable date (parseLine's
+  // own `date: null` case) has nothing to preserve, so this just becomes the
+  // new note text outright.
+  public buildReplacementLine(originalLine: string, newNote: string): string {
+    const parsed = this.parseLine(originalLine);
+    const prefix = originalLine.slice(0, originalLine.length - parsed.note.length);
+    return `${prefix}${newNote}`;
+  }
+
   private buildNormalizedDate(rawDay: string | undefined, rawMonth: string, rawYear: string): string {
     const monthAbbreviation = MONTH_ABBREVIATIONS[rawMonth.toLowerCase()] ?? rawMonth;
     const year = rawYear.length >= 4 ? rawYear : `20${rawYear.padStart(2, '0')}`;

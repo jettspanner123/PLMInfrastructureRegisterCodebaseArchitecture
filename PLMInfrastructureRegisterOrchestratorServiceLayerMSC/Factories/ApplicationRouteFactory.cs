@@ -71,6 +71,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string AddActionItem = "{id}/ActionItems";
 
+            // Same route template as DeleteActionItem (PUT vs DELETE on the
+            // same addressed line is a standard REST pairing) - not a typo.
+            public const string UpdateActionItem = "{id}/ActionItems/{lineIndex}";
+
             public const string DeleteActionItem = "{id}/ActionItems/{lineIndex}";
 
             public const string UpdateField = "{id}/Field";

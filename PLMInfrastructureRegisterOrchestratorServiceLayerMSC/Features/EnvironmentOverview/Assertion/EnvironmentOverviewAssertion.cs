@@ -114,12 +114,21 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             }
         }
 
+        public void AssertUpdateActionItemRequest(UpdateActionItemRequestDTO? request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.ReplacementLineText))
+            {
+                throw new ValidationException("A note must be provided.");
+            }
+        }
+
         // The only columns this generic single-field endpoint is allowed to
-        // touch - anything else (Environment, Status, ActionItemsUpdates,
-        // etc.) has its own dedicated endpoint with its own business rules
-        // and must never be reachable through this one.
+        // touch - anything else (Status, ActionItemsUpdates, etc.) has its
+        // own dedicated endpoint with its own business rules and must never
+        // be reachable through this one.
         private static readonly HashSet<string> AllowedUpdateFieldNames = new(StringComparer.Ordinal)
         {
+            "Environment",
             "Purpose",
             "Sponsor",
             "Priority1",
@@ -138,6 +147,17 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             if (!AllowedUpdateFieldNames.Contains(request.FieldName))
             {
                 throw new ValidationException($"'{request.FieldName}' is not an editable field.");
+            }
+
+            // Environment is the one field on this allow-list that isn't
+            // nullable in the database - it's the row's own identifying
+            // label throughout the page, so unlike Purpose/Priority/DNSURL
+            // (blank is just "not set yet"), a blank Environment would leave
+            // the row with no name at all. Same required-field treatment as
+            // AssertAddActionItemRequest/AssertUpdateStatusRequest above.
+            if (request.FieldName == "Environment" && string.IsNullOrWhiteSpace(request.Value))
+            {
+                throw new ValidationException("An Environment name must be provided.");
             }
         }
     }

@@ -12,6 +12,7 @@ import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/Creat
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
 import type AddConfigurationConstantOptionRequestInterfaceModel from '../Models/AddConfigurationConstantOptionRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
+import type UpdateActionItemRequestInterfaceModel from '../Models/UpdateActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
 import type UpdateResourceCellFormatRequestInterfaceModel from '../Models/UpdateResourceCellFormatRequestInterfaceModel';
 import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatInterfaceModel';
@@ -261,6 +262,31 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to add the action item.'));
+        },
+      });
+    },
+
+    useUpdateActionItemMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({
+          id,
+          lineIndex,
+          request,
+        }: {
+          id: string;
+          lineIndex: number;
+          request: UpdateActionItemRequestInterfaceModel;
+        }) => EnvironmentOverviewService.current.updateActionItem(id, lineIndex, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the action item.'));
         },
       });
     },

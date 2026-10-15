@@ -176,6 +176,52 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             }
         }
 
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateActionItem)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> UpdateActionItemAsynchronous(
+            [FromRoute] Guid id,
+            [FromRoute] int lineIndex,
+            [FromBody] UpdateActionItemRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertUpdateActionItemRequest(request);
+
+                EnvironmentOverviewDTO updatedEnvironment =
+                    await _environmentOverviewService.UpdateActionItemAsynchronous(id, lineIndex, request!.ReplacementLineText!);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Action item updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update action item validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update action item not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating an action item.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while updating the action item.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
         [HttpDelete(ApplicationRouteFactory.EnvironmentOverviewRoutes.DeleteActionItem)]
         public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> DeleteActionItemAsynchronous(
             [FromRoute] Guid id,
