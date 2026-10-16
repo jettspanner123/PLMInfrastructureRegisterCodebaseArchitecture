@@ -7,6 +7,7 @@ import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdent
 import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
 import { containsMarkdownTable } from '../../Utilities/MarkdownTableDetectionUtility';
 import dancingAIAgentAnimation from '../../Assets/DancingAIAgentAnimation.webm?url';
+import dancingAIAgentMascotImage from '../../Assets/Images/DancingAIAgentMascotImage.png';
 
 interface ChatMessage {
   id: string;
@@ -354,9 +355,13 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
             }}
             aria-label="Open Assistant"
             aria-haspopup="dialog"
-            className="relative h-9 w-9 rounded-lg bg-slate-100 dark:bg-zinc-800/80 hairline-border flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
+            className="relative h-9 w-9 rounded-lg bg-slate-100 dark:bg-zinc-800/80 hairline-border flex items-center justify-center overflow-hidden hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
           >
-            <Bot className="w-3.5 h-3.5" />
+            <img
+              src={dancingAIAgentMascotImage}
+              alt=""
+              className="w-full h-full object-cover rounded-lg pointer-events-none select-none"
+            />
           </motion.button>
         )}
       </AnimatePresence>
