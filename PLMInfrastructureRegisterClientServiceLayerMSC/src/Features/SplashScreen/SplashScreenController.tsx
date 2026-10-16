@@ -11,18 +11,24 @@ export interface SplashScreenControllerProps {
 export default function SplashScreenController({
   onReady,
 }: SplashScreenControllerProps): React.JSX.Element {
-  // Pre-fetch Resources and Environment Overview so they're already cached
-  // by the time either screen mounts — same pattern SignForge uses for its
-  // own dashboard/config queries.
+  // Pre-fetch Resources, Environment Overview, and the Infrastructure
+  // Register legend row so they're already cached by the time either screen
+  // mounts — same pattern SignForge uses for its own dashboard/config
+  // queries. Legends is included here (not just Resources/Environment
+  // Overview) so the legend row never has its own separate loading flash
+  // right after the splash screen dismisses.
   const resourcesQuery = TanstackQueryClientService.current.resources.useResourcesQuery();
   const environmentOverviewsQuery =
     TanstackQueryClientService.current.environmentOverview.useEnvironmentOverviewsQuery();
+  const legendsQuery = TanstackQueryClientService.current.resources.useLegendsQuery();
 
   const allQueriesSettled =
     !resourcesQuery.isLoading &&
     (resourcesQuery.isFetched || resourcesQuery.isError) &&
     !environmentOverviewsQuery.isLoading &&
-    (environmentOverviewsQuery.isFetched || environmentOverviewsQuery.isError);
+    (environmentOverviewsQuery.isFetched || environmentOverviewsQuery.isError) &&
+    !legendsQuery.isLoading &&
+    (legendsQuery.isFetched || legendsQuery.isError);
 
   const [isReadyToDismiss, setIsReadyToDismiss] = useState(false);
 
