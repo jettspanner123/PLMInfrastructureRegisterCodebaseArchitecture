@@ -432,17 +432,17 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                               smaller asset than the one the empty-state
                               placeholder uses) beside the assistant's name
                               and a short tagline. */}
-                          <div className="flex items-center gap-2.5 pb-1">
+                          <div className="flex items-center gap-2.5 pb-1 h-[3rem]">
                             <video
                               autoPlay
                               loop
                               muted
                               playsInline
-                              className="w-9 h-9 object-contain pointer-events-none select-none shrink-0"
+                              className="w-16 h-16 object-contain pointer-events-none select-none shrink-0"
                             >
                               <source src={dancingAIAgentMascotAnimation} type="video/webm" />
                             </video>
-                            <div className="flex flex-col min-w-0">
+                            <div className="flex flex-col min-w-0 -translate-x-[15px]">
                               <span className="text-sm font-semibold text-slate-800 dark:text-zinc-100 truncate">
                                 Genie
                               </span>
@@ -761,7 +761,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         same width it already had in normal mode instead of
                         stretching to the panel's own full width once that
                         goes edge-to-edge in Fullscreen. */}
-                    <div className="max-w-4xl mx-auto relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#1b1b1b] hairline-border-strong shadow-lg pointer-events-auto">
+                    <div className="max-w-4xl mx-auto relative flex items-end gap-2 px-3 py-2 rounded-full bg-white dark:bg-[#1b1b1b] hairline-border-strong shadow-lg pointer-events-auto">
                       {/* The morph's starting frame - an invisible (same
                           color as the input's own text) clone of what was
                           just typed, filling this exact pill's current
@@ -773,12 +773,23 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         <motion.div
                           layoutId={`chat-send-morph-${flyingMessage.id}`}
                           transition={SEND_MORPH_SPRING}
-                          style={{ backgroundColor: 'rgba(12, 32, 134, 0)', color: 'inherit', borderRadius: 24 }}
+                          style={{ backgroundColor: 'rgba(12, 32, 134, 0)', color: 'inherit', borderRadius: 9999 }}
                           className="absolute inset-0 px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 whitespace-pre-wrap break-words overflow-hidden pointer-events-none"
                         >
                           {flyingMessage.text}
                         </motion.div>
                       )}
+                      {/* Placeholder, left of the textarea - matches where
+                          ChatGPT/Claude put their own "+" (adding context/
+                          attachments). No attachment feature exists in this
+                          chat yet, so no behavior is wired to it. */}
+                      <button
+                        type="button"
+                        aria-label="Add"
+                        className="h-10 w-10 shrink-0 rounded-full bg-slate-100/60 dark:bg-zinc-800/40 text-slate-500 dark:text-zinc-400 flex items-center justify-center hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
                       <textarea
                         ref={inputRef}
                         name="chatAssistantMessage"
