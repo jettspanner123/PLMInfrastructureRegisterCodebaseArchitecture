@@ -752,6 +752,24 @@ export default function ResourcesScreenController(): React.JSX.Element {
         </div>
       </div>
 
+      {/* Explains the table's own existing header-color convention (not new
+          colors introduced here) - StartStop_* custom-tag column headers
+          already render with a red background (!bg-[#C41E3A], see the
+          header-render branch below) while every other column header uses
+          this app's iconic blue (TableHeaderCellSharedComponent's own
+          bg-[#0C2086]) - a plain reader has no other way to know what the
+          two header colors mean. */}
+      <div className="flex items-center gap-4 pt-3 text-xs text-slate-500 dark:text-zinc-400">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-[#0C2086] shrink-0" />
+          <span>Azure-sourced data</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-[#C41E3A] shrink-0" />
+          <span>Custom tags</span>
+        </div>
+      </div>
+
       {resources.length > 0 && (
         <DataTableContainerSharedComponent ref={tableSelection.containerRef}>
           <table className="w-full border-collapse text-xs">
