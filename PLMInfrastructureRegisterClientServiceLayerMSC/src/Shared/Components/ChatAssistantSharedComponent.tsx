@@ -6,6 +6,7 @@ import TanstackQueryClientService from '../../Services/TanstackQueryClientServic
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
 import dancingAIAgentAnimation from '../../Assets/DancingAIAgentAnimation.webm?url';
+import dancingAIAgentMascotAnimation from '../../Assets/DancingAIAgentMascotAnimation.webm?url';
 import dancingAIAgentMascotImage from '../../Assets/Images/DancingAIAgentMascotImage.png';
 
 interface ChatMessage {
@@ -427,6 +428,29 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         className="absolute inset-y-0 left-0 w-80 z-[5] bg-slate-50 dark:bg-zinc-950/60 border-r border-slate-200 dark:border-zinc-800 flex flex-col"
                       >
                         <div className="p-3 border-b border-slate-200 dark:border-zinc-800 shrink-0 space-y-2">
+                          {/* Branding row - the mascot animation (a separate,
+                              smaller asset than the one the empty-state
+                              placeholder uses) beside the assistant's name
+                              and a short tagline. */}
+                          <div className="flex items-center gap-2.5 pb-1">
+                            <video
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              className="w-9 h-9 object-contain pointer-events-none select-none shrink-0"
+                            >
+                              <source src={dancingAIAgentMascotAnimation} type="video/webm" />
+                            </video>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-sm font-semibold text-slate-800 dark:text-zinc-100 truncate">
+                                Genie
+                              </span>
+                              <span className="text-[11px] text-slate-400 dark:text-zinc-500 truncate">
+                                Infrastructure Assistant
+                              </span>
+                            </div>
+                          </div>
                           {/* UI-only - not wired to filter the conversation
                               list or anything else yet, per the user's own
                               explicit scope for this round. */}
@@ -737,7 +761,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         same width it already had in normal mode instead of
                         stretching to the panel's own full width once that
                         goes edge-to-edge in Fullscreen. */}
-                    <div className="max-w-4xl mx-auto relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-lg pointer-events-auto">
+                    <div className="max-w-4xl mx-auto relative flex items-end gap-2 px-3 py-2 rounded-3xl bg-white dark:bg-[#1b1b1b] hairline-border-strong shadow-lg pointer-events-auto">
                       {/* The morph's starting frame - an invisible (same
                           color as the input's own text) clone of what was
                           just typed, filling this exact pill's current
