@@ -512,7 +512,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                           loop
                           muted
                           playsInline
-                          className="w-[140px] h-[140px] object-contain pointer-events-none select-none"
+                          className="w-[170px] h-[170px] object-contain pointer-events-none select-none"
                         >
                           <source src={dancingAIAgentAnimation} type="video/webm" />
                         </video>
