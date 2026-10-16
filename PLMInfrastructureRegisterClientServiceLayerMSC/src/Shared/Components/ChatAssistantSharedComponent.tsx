@@ -360,7 +360,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
             <img
               src={dancingAIAgentMascotImage}
               alt=""
-              className="w-6 h-6 object-cover rounded-md pointer-events-none select-none"
+              className="w-5 h-5 object-cover rounded-md pointer-events-none select-none"
             />
           </motion.button>
         )}
