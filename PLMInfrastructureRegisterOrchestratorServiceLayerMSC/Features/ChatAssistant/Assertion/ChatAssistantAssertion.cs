@@ -20,6 +20,19 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             {
                 throw new ValidationException("A question must be provided.");
             }
+
+            if (string.IsNullOrWhiteSpace(request.ClientId))
+            {
+                throw new ValidationException("A ClientId must be provided.");
+            }
+        }
+
+        public void AssertGetConversationsRequest(string? clientId)
+        {
+            if (string.IsNullOrWhiteSpace(clientId))
+            {
+                throw new ValidationException("A clientId must be provided.");
+            }
         }
     }
 }

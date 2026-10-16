@@ -22,6 +22,60 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models.ChatConversationNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AnonymousClientId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnonymousClientId");
+
+                    b.ToTable("IG_ChatConversationTBL", (string)null);
+                });
+
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models.ChatMessageNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.ToTable("IG_ChatMessageTBL", (string)null);
+                });
+
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewCellFormatNexus", b =>
                 {
                     b.Property<Guid>("Id")

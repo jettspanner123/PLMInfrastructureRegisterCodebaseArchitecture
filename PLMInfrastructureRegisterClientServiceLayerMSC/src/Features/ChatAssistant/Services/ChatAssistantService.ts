@@ -2,6 +2,8 @@ import ApplicationNetworkAPIConfiguration from '../../../Constants/ApplicationNe
 import type APIResponseInterfaceModel from '../../../Models/APIResponseInterfaceModel';
 import type AskQuestionRequestInterfaceModel from '../../../Models/AskQuestionRequestInterfaceModel';
 import type AskQuestionResponseInterfaceModel from '../../../Models/AskQuestionResponseInterfaceModel';
+import type ChatConversationSummaryInterfaceModel from '../../../Models/ChatConversationSummaryInterfaceModel';
+import type ChatMessageInterfaceModel from '../../../Models/ChatMessageInterfaceModel';
 
 export default class ChatAssistantService {
   public static current: ChatAssistantService = new ChatAssistantService();
@@ -30,6 +32,34 @@ export default class ChatAssistantService {
           ? payload.errors.join(', ')
           : `Failed to get response from assistant (HTTP ${response.status}).`);
       throw new Error(errorMessage);
+    }
+
+    return payload.data;
+  }
+
+  public async getConversations(clientId: string): Promise<ChatConversationSummaryInterfaceModel[]> {
+    const response = await fetch(
+      `${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/ChatAssistant/Conversations?clientId=${encodeURIComponent(clientId)}`
+    );
+
+    const payload: APIResponseInterfaceModel<ChatConversationSummaryInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch conversations.');
+    }
+
+    return payload.data;
+  }
+
+  public async getConversationMessages(conversationId: string): Promise<ChatMessageInterfaceModel[]> {
+    const response = await fetch(
+      `${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/ChatAssistant/Conversations/${conversationId}/Messages`
+    );
+
+    const payload: APIResponseInterfaceModel<ChatMessageInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch the conversation.');
     }
 
     return payload.data;

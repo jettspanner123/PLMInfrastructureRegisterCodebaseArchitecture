@@ -23,6 +23,7 @@ import type EnvironmentOverviewCellFormatInterfaceModel from '../Models/Environm
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
 import type AskQuestionRequestInterfaceModel from '../Models/AskQuestionRequestInterfaceModel';
 import type AskQuestionResponseInterfaceModel from '../Models/AskQuestionResponseInterfaceModel';
+import type ChatMessageInterfaceModel from '../Models/ChatMessageInterfaceModel';
 import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssistantService';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
 
@@ -470,12 +471,49 @@ export default class TanstackQueryClientService {
       onSuccess?: (data: AskQuestionResponseInterfaceModel) => void;
       onError?: (error: Error) => void;
     }) => {
+      const queryClient = useQueryClient();
       return useMutation({
         mutationFn: (request: AskQuestionRequestInterfaceModel) =>
           ChatAssistantService.current.askQuestion(request),
-        onSuccess: (data) => options?.onSuccess?.(data),
+        onSuccess: async (data) => {
+          // Invalidates every client's cached conversation list rather than
+          // just this one's - cheap (it's a short list) and avoids needing
+          // this mutation to know which clientId's query key to target.
+          await queryClient.invalidateQueries({ queryKey: ['chat-conversations'] });
+          options?.onSuccess?.(data);
+        },
         onError: (error: Error) => {
           toast.error('Failed to get answer from assistant', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useConversationsQuery: (clientId: string, enabled: boolean = true) => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.CHAT_CONVERSATIONS(clientId),
+        queryFn: () => ChatAssistantService.current.getConversations(clientId),
+        staleTime: 1000 * 30, // 30 seconds - the sidebar's own list, short-lived since it changes every message
+        enabled,
+      });
+    },
+
+    // A mutation, not a reactive query bound to the currently-open
+    // conversation id - switching conversations from the sidebar is a one-
+    // off, click-triggered fetch, not data that should auto-refetch every
+    // time conversationId changes for unrelated reasons (e.g. a brand new
+    // conversation just got its id back from useAskQuestionMutation).
+    useLoadConversationMessagesMutation: (options?: {
+      onSuccess?: (data: ChatMessageInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      return useMutation({
+        mutationFn: (conversationId: string) => ChatAssistantService.current.getConversationMessages(conversationId),
+        onSuccess: (data) => options?.onSuccess?.(data),
+        onError: (error: Error) => {
+          toast.error('Failed to load that conversation', {
             description: error.message || 'Please check your connection and try again.',
           });
           options?.onError?.(error);

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Models;
@@ -28,6 +29,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
 
         public DbSet<EnvironmentOverviewCellFormatNexus> EnvironmentOverviewCellFormats =>
             Set<EnvironmentOverviewCellFormatNexus>();
+
+        public DbSet<ChatConversationNexus> ChatConversations => Set<ChatConversationNexus>();
+
+        public DbSet<ChatMessageNexus> ChatMessages => Set<ChatMessageNexus>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -168,6 +173,22 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 entity.ToTable("IG_EnvironmentOverviewStatusHistoryTBL");
                 entity.HasKey(history => history.Id);
                 entity.HasIndex(history => history.EnvironmentOverviewId);
+            });
+
+            modelBuilder.Entity<ChatConversationNexus>(entity =>
+            {
+                entity.ToTable("IG_ChatConversationTBL");
+                entity.HasKey(conversation => conversation.Id);
+                // Powers the sidebar's own "list this client's conversations,
+                // newest first" query.
+                entity.HasIndex(conversation => conversation.AnonymousClientId);
+            });
+
+            modelBuilder.Entity<ChatMessageNexus>(entity =>
+            {
+                entity.ToTable("IG_ChatMessageTBL");
+                entity.HasKey(message => message.Id);
+                entity.HasIndex(message => message.ConversationId);
             });
         }
     }

@@ -13,4 +13,13 @@ export default class TanstackQueryKeysCON {
   public static CONFIGURATION_CONSTANT_OPTIONS(fieldName: string): readonly string[] {
     return ['configuration-constant-options', fieldName];
   }
+
+  // Scoped per anonymous client id, same reasoning as CONFIGURATION_CONSTANT_OPTIONS
+  // above - one client's conversation list is cached independently of another's.
+  // A single conversation's own messages have no equivalent key - loading one
+  // from the sidebar is a one-off mutation, not a cached/reactive query (see
+  // TanstackQueryClientService.chatAssistant.useLoadConversationMessagesMutation).
+  public static CHAT_CONVERSATIONS(clientId: string): readonly string[] {
+    return ['chat-conversations', clientId];
+  }
 }

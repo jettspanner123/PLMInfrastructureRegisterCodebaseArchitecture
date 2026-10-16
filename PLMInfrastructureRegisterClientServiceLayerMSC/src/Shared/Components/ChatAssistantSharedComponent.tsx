@@ -1,8 +1,9 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
-import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2 } from 'lucide-react';
+import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2, Plus } from 'lucide-react';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
+import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 
 interface ChatMessage {
   id: string;
@@ -47,6 +48,17 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [draftMessage, setDraftMessage] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // Null until either the first message in a fresh chat gets one back from
+  // the backend, or a past conversation is resumed from the sidebar -
+  // deliberately NOT reset on close, same reasoning as isFullscreen/messages
+  // themselves (see their own comments): closing and reopening the panel
+  // picks back up exactly where it left off within the same page load.
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  // Stable per browser tab, same per-browser placeholder identity Status
+  // change attribution already uses elsewhere in this app (no real auth
+  // system exists yet) - computed once via useState's lazy initializer, not
+  // on every render.
+  const [clientId] = useState<string>(() => AnonymousClientIdentityUtility.current.getOrCreateClientId());
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerRectRef = useRef<SimpleRect | null>(null);
@@ -95,6 +107,17 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
   }, [isOpen]);
 
   const askQuestionMutation = TanstackQueryClientService.current.chatAssistant.useAskQuestionMutation();
+
+  // Only fetched while the sidebar could actually be showing it - no point
+  // asking the backend for this list every time the assistant is just open
+  // in its normal (non-Fullscreen) size.
+  const conversationsQuery = TanstackQueryClientService.current.chatAssistant.useConversationsQuery(
+    clientId,
+    isFullscreen
+  );
+
+  const loadConversationMessagesMutation =
+    TanstackQueryClientService.current.chatAssistant.useLoadConversationMessagesMutation();
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth'): void => {
     messagesEndRef.current?.scrollIntoView({ behavior });
@@ -242,9 +265,14 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     });
 
     askQuestionMutation.mutate(
-      { question: trimmed },
+      { question: trimmed, conversationId: conversationId ?? undefined, clientId },
       {
         onSuccess: (data) => {
+          // Always set, whether this was the conversation we were already
+          // in (no-op - same id back) or a brand new one the backend just
+          // created because conversationId was omitted on a fresh chat's
+          // first message.
+          setConversationId(data.conversationId);
           setMessages((previous) => [
             ...previous,
             {
@@ -279,8 +307,31 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     sendMessage(question);
   };
 
+  // "Clear chat history" now also forgets which conversation was open -
+  // the conversation itself isn't deleted (no delete endpoint exists, by
+  // design - see the chat memory design doc), it just stops being the
+  // active one locally, identical to starting a brand new conversation.
   const handleClearChat = (): void => {
     setMessages([]);
+    setConversationId(null);
+  };
+
+  const handleSelectConversation = (id: string): void => {
+    if (id === conversationId || loadConversationMessagesMutation.isPending) return;
+
+    loadConversationMessagesMutation.mutate(id, {
+      onSuccess: (loadedMessages) => {
+        setConversationId(id);
+        setMessages(
+          loadedMessages.map((message) => ({
+            id: message.id,
+            sender: message.role,
+            text: message.text,
+            timestamp: new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          }))
+        );
+      },
+    });
   };
 
   return (
@@ -339,6 +390,61 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     isFullscreen ? 'max-w-[100vw] h-full rounded-none' : 'max-w-4xl h-[min(800px,90dvh)] rounded-2xl'
                   }`}
                 >
+                  {/* Conversation history sidebar - shows automatically
+                      whenever Fullscreen is active, no separate toggle
+                      (mirrors isFullscreen directly). Spans the panel's
+                      full height; the floating input bar below is given a
+                      higher z-index specifically so it keeps rendering on
+                      top of this in the bottom-left corner where they'd
+                      otherwise overlap, rather than this stopping short to
+                      make room for it. */}
+                  <AnimatePresence>
+                    {isFullscreen && (
+                      <motion.div
+                        key="chat-assistant-sidebar"
+                        initial={{ x: '-100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '-100%' }}
+                        transition={SPRING_TRANSITION}
+                        className="absolute inset-y-0 left-0 w-80 z-[5] bg-slate-50 dark:bg-zinc-950/60 border-r border-slate-200 dark:border-zinc-800 flex flex-col"
+                      >
+                        <div className="p-3 border-b border-slate-200 dark:border-zinc-800 shrink-0">
+                          <button
+                            type="button"
+                            onClick={handleClearChat}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#0C2086] text-white text-xs font-semibold hover:bg-[#081765] transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            New Conversation
+                          </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+                          {conversationsQuery.data && conversationsQuery.data.length === 0 ? (
+                            <p className="text-xs text-slate-400 dark:text-zinc-500 text-center py-6 px-3">
+                              No past conversations yet.
+                            </p>
+                          ) : (
+                            conversationsQuery.data?.map((conversation) => (
+                              <button
+                                key={conversation.id}
+                                type="button"
+                                onClick={() => handleSelectConversation(conversation.id)}
+                                disabled={loadConversationMessagesMutation.isPending}
+                                className={`w-full text-left px-3 py-2.5 rounded-xl text-xs truncate transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                                  conversation.id === conversationId
+                                    ? 'bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-900'
+                                }`}
+                              >
+                                {conversation.title}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Header actions: Clear chat + Fullscreen toggle + Close
                       button - Close stays last/rightmost either way, the
                       most predictable spot for it regardless of what sits
@@ -377,7 +483,9 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   {/* Messages */}
                   <div
                     style={{ paddingBottom: inputBarHeight + 16 }}
-                    className="flex-1 overflow-y-auto px-6 pt-14"
+                    className={`flex-1 overflow-y-auto pr-6 pt-14 transition-[padding] duration-300 ease-in-out ${
+                      isFullscreen ? 'pl-80' : 'pl-6'
+                    }`}
                   >
                     {/* Capped and centered so lines don't stretch edge-to-
                         edge once the panel itself goes full-width in
@@ -524,7 +632,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                       in so it's still fully interactive. */}
                   <div
                     ref={inputBarRef}
-                    className="absolute inset-x-0 bottom-0 px-6 pb-6 pt-2 pointer-events-none"
+                    className="absolute inset-x-0 bottom-0 px-6 pb-6 pt-2 pointer-events-none z-[6]"
                   >
                     {/* Same max-w-4xl cap as the messages above - stays the
                         same width it already had in normal mode instead of

@@ -57,6 +57,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string ControllerURL = "/Api/V1/ChatAssistant";
 
             public const string AskQuestion = "AskQuestion";
+
+            public const string GetConversations = "Conversations";
+
+            public const string GetConversationMessages = "Conversations/{id}/Messages";
         }
 
         public static class EnvironmentOverviewRoutes
