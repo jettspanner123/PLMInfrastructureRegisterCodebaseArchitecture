@@ -499,7 +499,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         edge once the panel itself goes full-width in
                         Fullscreen mode - a no-op in normal mode, since the
                         panel there is already narrower than this cap. */}
-                    <div className="max-w-4xl mx-auto w-full space-y-4">
+                    <div className="max-w-4xl mx-auto w-full h-full space-y-4">
                     {messages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center gap-3 text-slate-400 dark:text-zinc-500">
                         {/* No background box around this, unlike the old Bot
