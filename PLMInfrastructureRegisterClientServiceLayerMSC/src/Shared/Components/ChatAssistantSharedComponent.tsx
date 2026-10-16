@@ -6,6 +6,7 @@ import TanstackQueryClientService from '../../Services/TanstackQueryClientServic
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
 import { containsMarkdownTable } from '../../Utilities/MarkdownTableDetectionUtility';
+import dancingAIAgentAnimation from '../../Assets/DancingAIAgentAnimation.webm?url';
 
 interface ChatMessage {
   id: string;
@@ -496,9 +497,20 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     <div className="max-w-4xl mx-auto w-full space-y-4">
                     {messages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center gap-3 text-slate-400 dark:text-zinc-500">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800/80 flex items-center justify-center text-[#0C2086] dark:text-blue-400 hairline-border">
-                          <Bot className="w-6 h-6" />
-                        </div>
+                        {/* No background box around this, unlike the old Bot
+                            icon placeholder - matches how this app's other
+                            webm mascot (the splash screen's) already renders
+                            with no surrounding chrome, just the animation
+                            itself. */}
+                        <video
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-20 h-20 object-contain pointer-events-none select-none"
+                        >
+                          <source src={dancingAIAgentAnimation} type="video/webm" />
+                        </video>
                         <div className="space-y-1">
                           <p className="text-sm font-medium text-slate-700 dark:text-zinc-300">
                             How can I help you today?
