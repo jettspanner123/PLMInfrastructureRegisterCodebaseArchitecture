@@ -642,10 +642,22 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                       a solid footer strip. pointer-events-none on the
                       wrapper lets clicks in that transparent gutter reach
                       the messages underneath; the pill itself opts back
-                      in so it's still fully interactive. */}
+                      in so it's still fully interactive.
+
+                      In Fullscreen, the wrapper's left edge shifts past the
+                      sidebar's own width (left-80, matching the sidebar's
+                      w-80 exactly) rather than spanning the whole panel -
+                      otherwise the max-w-4xl centering below would center
+                      across the sidebar+chat combined instead of just the
+                      chat column, which is also why this now lines up with
+                      the pl-80 the messages list gets in Fullscreen just
+                      above. The transition keeps this in sync with that
+                      same padding animation rather than snapping. */}
                   <div
                     ref={inputBarRef}
-                    className="absolute inset-x-0 bottom-0 px-6 pb-6 pt-2 pointer-events-none z-[6]"
+                    className={`absolute bottom-0 right-0 px-6 pb-6 pt-2 pointer-events-none z-[6] transition-[left] duration-300 ease-in-out ${
+                      isFullscreen ? 'left-80' : 'left-0'
+                    }`}
                   >
                     {/* Same max-w-4xl cap as the messages above - stays the
                         same width it already had in normal mode instead of
