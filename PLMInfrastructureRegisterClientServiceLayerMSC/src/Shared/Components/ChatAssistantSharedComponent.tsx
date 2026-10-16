@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
-import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2, Plus } from 'lucide-react';
+import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2, Plus, Search, BookOpen, Settings } from 'lucide-react';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
@@ -63,6 +63,11 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
   // system exists yet) - computed once via useState's lazy initializer, not
   // on every render.
   const [clientId] = useState<string>(() => AnonymousClientIdentityUtility.current.getOrCreateClientId());
+  // UI-only for now - a real conversation/Knowledge Base search and the
+  // Knowledge Base/Settings buttons below aren't wired to any behavior yet,
+  // deliberately: no Knowledge Base feature (data or otherwise) exists
+  // anywhere in this app yet to search or open.
+  const [sidebarSearchQuery, setSidebarSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerRectRef = useRef<SimpleRect | null>(null);
@@ -416,7 +421,29 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         transition={SPRING_TRANSITION}
                         className="absolute inset-y-0 left-0 w-80 z-[5] bg-slate-50 dark:bg-zinc-950/60 border-r border-slate-200 dark:border-zinc-800 flex flex-col"
                       >
-                        <div className="p-3 border-b border-slate-200 dark:border-zinc-800 shrink-0">
+                        <div className="p-3 border-b border-slate-200 dark:border-zinc-800 shrink-0 space-y-2">
+                          {/* UI-only - not wired to filter the conversation
+                              list or anything else yet, per the user's own
+                              explicit scope for this round. */}
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={sidebarSearchQuery}
+                              onChange={(event) => setSidebarSearchQuery(event.target.value)}
+                              placeholder="Search"
+                              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-zinc-900 hairline-border text-xs text-slate-700 dark:text-zinc-300 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#0C2086] dark:focus:ring-blue-400"
+                            />
+                          </div>
+                          {/* Placeholder - no Knowledge Base feature exists
+                              in this app yet (no data, no panel) to open. */}
+                          <button
+                            type="button"
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100/60 dark:bg-zinc-800/40 text-slate-500 dark:text-zinc-500 text-xs font-semibold hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
+                          >
+                            <BookOpen className="w-3.5 h-3.5" />
+                            Knowledge Base
+                          </button>
                           <button
                             type="button"
                             onClick={handleClearChat}
@@ -448,6 +475,18 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                               </button>
                             ))
                           )}
+                        </div>
+                        {/* Fixed at the bottom, same treatment as the header
+                            above - placeholder, no settings panel exists for
+                            this to open yet (chat-specific or otherwise). */}
+                        <div className="p-3 border-t border-slate-200 dark:border-zinc-800 shrink-0">
+                          <button
+                            type="button"
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100/60 dark:bg-zinc-800/40 text-slate-500 dark:text-zinc-500 text-xs font-semibold hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
+                          >
+                            <Settings className="w-3.5 h-3.5" />
+                            Settings
+                          </button>
                         </div>
                       </motion.div>
                     )}
