@@ -97,6 +97,10 @@ export default function AddLegendModalController({
     colorNameInUse.set(resolveToHex(legend.format, legend.color), legend.name);
   }
 
+  // Already-assigned colors (to some OTHER legend) are left out of the grid
+  // entirely rather than shown disabled - the entry currently being edited
+  // keeps its own color available, since colorNameInUse above already
+  // excludes it.
   const palette: PaletteSwatch[] = [
     ...CellFormatCON.COLORS.map((color) => ({
       key: `fixed-${color.key}`,
@@ -109,7 +113,7 @@ export default function AddLegendModalController({
       label: option.colorName,
       hex: resolveToHex(option.format, option.color),
     })),
-  ];
+  ].filter((swatch) => !colorNameInUse.has(swatch.hex));
 
   const trimmedName = nameInput.trim();
   const isNameTaken = (legendsQuery.data ?? []).some(
@@ -152,7 +156,7 @@ export default function AddLegendModalController({
       subtitle={
         isEditMode
           ? 'Renames and/or recolors this legend entry.'
-          : 'Adds a new entry to the Infrastructure Register legend row. This is a reference label only - it does not change any table column colors.'
+          : 'Adds a new entry to the Infrastructure Register legend row.'
       }
       maxWidth="sm"
       footer={
@@ -184,31 +188,32 @@ export default function AddLegendModalController({
 
         <div>
           <label className="block text-xs font-medium text-slate-500 dark:text-zinc-400 mb-2">Color</label>
-          <div className="grid grid-cols-6 gap-2 justify-items-center">
-            {palette.map((swatch) => {
-              const usedByName = colorNameInUse.get(swatch.hex);
-              const isDisabled = !!usedByName;
-              const isSelected = selectedHex === swatch.hex;
+          {palette.length > 0 ? (
+            <div className="grid grid-cols-6 gap-1 justify-items-center">
+              {palette.map((swatch) => {
+                const isSelected = selectedHex === swatch.hex;
 
-              return (
-                <button
-                  key={swatch.key}
-                  type="button"
-                  disabled={isDisabled}
-                  onClick={() => setSelectedHex(swatch.hex)}
-                  title={isDisabled ? `Already used by '${usedByName}'` : swatch.label}
-                  style={swatch.swatchClassName ? undefined : { backgroundColor: swatch.hex }}
-                  className={`w-6 h-6 rounded-full transition-transform ${swatch.swatchClassName ?? ''} ${
-                    isDisabled
-                      ? 'opacity-30 cursor-not-allowed'
-                      : isSelected
+                return (
+                  <button
+                    key={swatch.key}
+                    type="button"
+                    onClick={() => setSelectedHex(swatch.hex)}
+                    title={swatch.label}
+                    style={swatch.swatchClassName ? undefined : { backgroundColor: swatch.hex }}
+                    className={`w-8 h-8 rounded-full cursor-pointer transition-transform ${swatch.swatchClassName ?? ''} ${
+                      isSelected
                         ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
                         : 'hover:scale-110 opacity-80 hover:opacity-100'
-                  }`}
-                />
-              );
-            })}
-          </div>
+                    }`}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 dark:text-zinc-500">
+              No colors available - every option is already assigned to another legend.
+            </p>
+          )}
         </div>
 
         {errorMessage && <p className="text-xs text-rose-500">{errorMessage}</p>}

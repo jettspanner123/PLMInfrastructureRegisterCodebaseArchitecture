@@ -809,10 +809,10 @@ export default function ResourcesScreenController(): React.JSX.Element {
               setEditingLegend(undefined);
               setIsAddLegendModalOpen(true);
             }}
-            className="flex items-center justify-center w-4 h-4 rounded-full border border-slate-300 dark:border-zinc-600 text-slate-400 hover:text-slate-600 hover:border-slate-400 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+            className="flex items-center justify-center w-6 h-6 rounded-full border border-slate-300 dark:border-zinc-600 text-slate-400 hover:text-slate-600 hover:bg-slate-100 hover:border-slate-400 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
             title="Add legend"
           >
-            <Plus className="w-2.5 h-2.5" />
+            <Plus className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
