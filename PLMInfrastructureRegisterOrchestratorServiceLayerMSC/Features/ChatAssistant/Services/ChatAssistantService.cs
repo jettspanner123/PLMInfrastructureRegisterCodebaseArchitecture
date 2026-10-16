@@ -67,6 +67,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
         private const int FullDetailRowThreshold = 5;
         private const int CompactRowCap = 30;
 
+        // The one tool whose call can never resolve synchronously within
+        // this loop - every other tool is a data lookup the backend can
+        // answer immediately; this one needs a real human. See this class's
+        // own top comment and RunGroqConversationLoopAsynchronous for how
+        // that pause/resume actually works.
+        private const string AskClarifyingQuestionToolName = "ask_clarifying_question";
+
         private readonly HttpClient _httpClient;
         private readonly ApplicationDatabaseContext _applicationDatabaseContext;
         private readonly ResourcesService _resourcesService;
@@ -84,7 +91,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             _environmentOverviewService = environmentOverviewService;
         }
 
-        public async Task<(string Answer, Guid ConversationId)> AskQuestionAsynchronous(
+        public async Task<AskQuestionResponseDTO> AskQuestionAsynchronous(
             string clientId, Guid? conversationId, string question)
         {
             ChatConversationNexus conversation = await ResolveOrCreateConversationAsynchronous(clientId, conversationId, question);
@@ -103,10 +110,139 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 .ToList();
             inputItems.Add(new GroqInputMessageDTO { Role = "user", Content = question });
 
-            string groqApiKey = ENValidatorHelper.Current.GetEnvKeyValue("GROQ_API_KEY");
+            GroqConversationLoopResultDTO loopResult = await RunGroqConversationLoopAsynchronous(inputItems);
 
-            string answer = "I wasn't able to come up with an answer to that.";
-            bool answered = false;
+            DateTime now = DateTime.UtcNow;
+
+            if (loopResult.PendingToolCallId is not null)
+            {
+                // Paused mid-turn - the normal end-of-method save below never
+                // runs for a paused turn, so the originally-incoming
+                // question (never saved yet) has to be persisted here too,
+                // alongside the new pending-question row.
+                Guid pendingMessageId = Guid.NewGuid();
+                ClarifyingQuestionDTO pendingQuestion = PersistPendingQuestionAndBuildDTO(
+                    conversation.Id, pendingMessageId, loopResult, now);
+
+                _applicationDatabaseContext.ChatMessages.Add(
+                    new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, MessageKind = "Text", CreatedAt = now });
+                conversation.UpdatedAt = now;
+                await _applicationDatabaseContext.SaveChangesAsync();
+
+                return new AskQuestionResponseDTO { ConversationId = conversation.Id, Answer = null, PendingQuestion = pendingQuestion };
+            }
+
+            string answer = loopResult.Answer ?? "I wasn't able to come up with an answer to that.";
+
+            _applicationDatabaseContext.ChatMessages.AddRange(
+                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, MessageKind = "Text", CreatedAt = now },
+                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "assistant", Text = answer, MessageKind = "Text", CreatedAt = now }
+            );
+            conversation.UpdatedAt = now;
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new AskQuestionResponseDTO { ConversationId = conversation.Id, Answer = answer, PendingQuestion = null };
+        }
+
+        // Resolves a pending ask_clarifying_question tool call once the user
+        // has actually answered (or skipped) it - the one place a
+        // previously-paused Groq turn gets resumed. See ChatMessageNexus's
+        // own comments on MessageKind/ToolCallId/ToolCallArguments/
+        // ToolCallOutput/PendingInputStateJson for what each column here is
+        // for.
+        public async Task<AskQuestionResponseDTO> AnswerQuestionAsynchronous(AnswerQuestionRequestDTO request)
+        {
+            ChatMessageNexus? pendingMessage = await _applicationDatabaseContext.ChatMessages
+                .FirstOrDefaultAsync(message => message.Id == request.MessageId && message.ConversationId == request.ConversationId);
+
+            if (pendingMessage is null)
+            {
+                throw new NotFoundException("That question could not be found.");
+            }
+
+            if (pendingMessage.MessageKind != "ClarifyingQuestion" || pendingMessage.ToolCallOutput is not null)
+            {
+                throw new ValidationException("That question is not awaiting an answer.");
+            }
+
+            ChatConversationNexus? conversation = await _applicationDatabaseContext.ChatConversations
+                .FirstOrDefaultAsync(existing => existing.Id == request.ConversationId);
+
+            if (conversation is null)
+            {
+                throw new NotFoundException("That conversation could not be found.");
+            }
+
+            string outputJson = JsonSerializer.Serialize(new
+            {
+                selectedOptions = request.SelectedOptions,
+                freeTextAnswer = request.FreeTextAnswer,
+                skipped = request.IsSkipped,
+            });
+
+            pendingMessage.ToolCallOutput = outputJson;
+            pendingMessage.IsSkipped = request.IsSkipped;
+
+            // Rehydrated as JsonElement rather than back into the original
+            // DTO types - System.Text.Json serializes a boxed JsonElement
+            // exactly as it deserialized it, so appending the two freshly-
+            // built DTOs below onto this list serializes correctly with no
+            // manual re-typing needed.
+            List<JsonElement> rehydratedItems = JsonSerializer.Deserialize<List<JsonElement>>(
+                pendingMessage.PendingInputStateJson ?? "[]") ?? new List<JsonElement>();
+            List<object> inputItems = rehydratedItems.Cast<object>().ToList();
+
+            inputItems.Add(new GroqFunctionCallItemDTO
+            {
+                CallId = pendingMessage.ToolCallId ?? string.Empty,
+                Name = AskClarifyingQuestionToolName,
+                Arguments = pendingMessage.ToolCallArguments ?? "{}",
+            });
+            inputItems.Add(new GroqFunctionCallOutputItemDTO
+            {
+                CallId = pendingMessage.ToolCallId ?? string.Empty,
+                Output = outputJson,
+            });
+
+            GroqConversationLoopResultDTO loopResult = await RunGroqConversationLoopAsynchronous(inputItems);
+
+            DateTime now = DateTime.UtcNow;
+
+            if (loopResult.PendingToolCallId is not null)
+            {
+                Guid newPendingMessageId = Guid.NewGuid();
+                ClarifyingQuestionDTO pendingQuestion = PersistPendingQuestionAndBuildDTO(
+                    conversation.Id, newPendingMessageId, loopResult, now);
+
+                conversation.UpdatedAt = now;
+                await _applicationDatabaseContext.SaveChangesAsync();
+
+                return new AskQuestionResponseDTO { ConversationId = conversation.Id, Answer = null, PendingQuestion = pendingQuestion };
+            }
+
+            string answer = loopResult.Answer ?? "I wasn't able to come up with an answer to that.";
+
+            _applicationDatabaseContext.ChatMessages.Add(
+                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "assistant", Text = answer, MessageKind = "Text", CreatedAt = now });
+            conversation.UpdatedAt = now;
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new AskQuestionResponseDTO { ConversationId = conversation.Id, Answer = answer, PendingQuestion = null };
+        }
+
+        // Shared by AskQuestionAsynchronous (fresh inputItems built from
+        // history) and AnswerQuestionAsynchronous (rehydrated inputItems
+        // from a resumed pause) - the exact same round-trip loop either way,
+        // ending in either a final text answer or a NEW pause (resuming a
+        // paused turn can itself immediately hit another clarifying
+        // question). Does not persist anything itself - callers decide what
+        // to save since the "also save the original question" step only
+        // applies to a fresh AskQuestionAsynchronous call.
+        private async Task<GroqConversationLoopResultDTO> RunGroqConversationLoopAsynchronous(List<object> inputItems)
+        {
+            string groqApiKey = ENValidatorHelper.Current.GetEnvKeyValue("GROQ_API_KEY");
 
             for (int roundTrip = 0; roundTrip < MaxToolCallRoundTrips; roundTrip++)
             {
@@ -128,8 +264,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
 
                 if (!httpResponseMessage.IsSuccessStatusCode)
                 {
+                    string errorBody = await httpResponseMessage.Content.ReadAsStringAsync();
                     throw new InvalidOperationException(
-                        $"The assistant service responded with an unexpected status code ({(int)httpResponseMessage.StatusCode}).");
+                        $"The assistant service responded with an unexpected status code ({(int)httpResponseMessage.StatusCode}): {errorBody}");
                 }
 
                 GroqResponseDTO? groqResponse = await httpResponseMessage.Content.ReadFromJsonAsync<GroqResponseDTO>();
@@ -141,15 +278,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
 
                 if (functionCalls.Count == 0)
                 {
-                    answer = outputItems
+                    string? answer = outputItems
                         .Where(outputItem => outputItem.Type == "message")
                         .SelectMany(outputItem => outputItem.Content ?? new List<GroqResponseContentItemDTO>())
                         .Where(contentItem => contentItem.Type == "output_text")
                         .Select(contentItem => contentItem.Text)
-                        .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text))
-                        ?? answer;
-                    answered = true;
-                    break;
+                        .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text));
+
+                    return new GroqConversationLoopResultDTO { Answer = answer };
                 }
 
                 foreach (GroqResponseOutputItemDTO functionCall in functionCalls)
@@ -157,6 +293,24 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                     string callId = functionCall.CallId ?? string.Empty;
                     string toolName = functionCall.Name ?? string.Empty;
                     string argumentsJson = functionCall.Arguments ?? "{}";
+
+                    if (toolName == AskClarifyingQuestionToolName)
+                    {
+                        // Snapshotted BEFORE this call's own pair is added -
+                        // this is exactly the state AnswerQuestionAsynchronous
+                        // needs to rehydrate and resume from later. Any OTHER
+                        // tool calls already resolved earlier in this SAME
+                        // batch/round-trip are already reflected in
+                        // inputItems by this point, so they're preserved
+                        // (only this one pauses, siblings still resolve
+                        // normally).
+                        return new GroqConversationLoopResultDTO
+                        {
+                            PendingToolCallId = callId,
+                            PendingToolCallArguments = argumentsJson,
+                            InputItemsBeforePendingCall = new List<object>(inputItems),
+                        };
+                    }
 
                     inputItems.Add(new GroqFunctionCallItemDTO
                     {
@@ -175,21 +329,56 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 }
             }
 
-            if (!answered)
+            return new GroqConversationLoopResultDTO { Answer = "I wasn't able to find an answer within the allowed number of lookups." };
+        }
+
+        // Shared by the two "we just paused" branches above (a fresh
+        // question pausing immediately, and a resumed question pausing
+        // again) - builds the new ChatMessageNexus row (added to the
+        // context, not yet saved) and the matching DTO the controller
+        // returns to the frontend.
+        private ClarifyingQuestionDTO PersistPendingQuestionAndBuildDTO(
+            Guid conversationId, Guid pendingMessageId, GroqConversationLoopResultDTO loopResult, DateTime now)
+        {
+            AskClarifyingQuestionArgsDTO args = JsonSerializer.Deserialize<AskClarifyingQuestionArgsDTO>(
+                loopResult.PendingToolCallArguments!, ArgsParsingOptions) ?? new AskClarifyingQuestionArgsDTO();
+
+            _applicationDatabaseContext.ChatMessages.Add(new ChatMessageNexus
             {
-                answer = "I wasn't able to find an answer within the allowed number of lookups.";
-            }
+                Id = pendingMessageId,
+                ConversationId = conversationId,
+                Role = "assistant",
+                Text = args.QuestionText,
+                MessageKind = "ClarifyingQuestion",
+                ToolCallId = loopResult.PendingToolCallId,
+                ToolCallArguments = loopResult.PendingToolCallArguments,
+                ToolCallOutput = null,
+                IsSkipped = false,
+                PendingInputStateJson = JsonSerializer.Serialize(loopResult.InputItemsBeforePendingCall),
+                CreatedAt = now,
+            });
 
-            DateTime now = DateTime.UtcNow;
-            _applicationDatabaseContext.ChatMessages.AddRange(
-                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, CreatedAt = now },
-                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "assistant", Text = answer, CreatedAt = now }
-            );
-            conversation.UpdatedAt = now;
+            return new ClarifyingQuestionDTO
+            {
+                MessageId = pendingMessageId,
+                QuestionText = args.QuestionText,
+                Options = args.Options,
+                AllowMultiple = args.AllowMultiple,
+            };
+        }
 
-            await _applicationDatabaseContext.SaveChangesAsync();
+        // RunGroqConversationLoopAsynchronous's own return shape - exactly
+        // one of (Answer) or (PendingToolCallId + PendingToolCallArguments +
+        // InputItemsBeforePendingCall) is populated.
+        private sealed class GroqConversationLoopResultDTO
+        {
+            public string? Answer { get; set; }
 
-            return (answer, conversation.Id);
+            public string? PendingToolCallId { get; set; }
+
+            public string? PendingToolCallArguments { get; set; }
+
+            public List<object>? InputItemsBeforePendingCall { get; set; }
         }
 
         public async Task<List<ChatConversationSummaryDTO>> GetConversationsAsynchronous(string clientId)
@@ -227,6 +416,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                     Role = message.Role,
                     Text = message.Text,
                     CreatedAt = message.CreatedAt,
+                    MessageKind = message.MessageKind,
+                    ToolCallArguments = message.ToolCallArguments,
+                    ToolCallOutput = message.ToolCallOutput,
+                    IsSkipped = message.IsSkipped,
                 })
                 .ToListAsync();
         }
@@ -279,7 +472,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             "answer clearer: Markdown tables for any list of resources/rows, headings (##/###) to break up " +
             "a longer answer into sections, bold for key values the user is likely scanning for, and " +
             "bullet/numbered lists for steps or multiple distinct points. Don't force these onto a short, " +
-            "single-fact answer that reads better as one plain sentence.";
+            "single-fact answer that reads better as one plain sentence. " +
+            "If a request is genuinely ambiguous or needs a judgment call only the user can make - not " +
+            "something answerable via the data tools - call ask_clarifying_question instead of asking " +
+            "inline in your own prose; it renders as a real interactive widget, so don't also restate the " +
+            "question in text. When you do offer options, keep the list short and generalized (roughly " +
+            "5-6 at most, never a raw enumeration of every literal possibility) - omit options entirely for " +
+            "a question that only makes sense as free text. Ask at most one question per turn.";
 
         private static readonly List<GroqToolDefinitionDTO> ToolDefinitions = new()
         {
@@ -297,12 +496,19 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                     {
                         environmentTag = new
                         {
-                            type = "string",
+                            // Confirmed live: the model sometimes passes a
+                            // literal null for an optional argument it isn't
+                            // using (rather than omitting it entirely), which
+                            // Groq's own schema validator rejects against a
+                            // single-typed "string" - allowing null here is
+                            // what the actual argument space really is, not
+                            // a looser contract than intended.
+                            type = new[] { "string", "null" },
                             description = "Partial, case-insensitive match against the resource's environment tag, e.g. \"Production\".",
                         },
                         hostname = new
                         {
-                            type = "string",
+                            type = new[] { "string", "null" },
                             description = "Partial, case-insensitive match against the resource's hostname.",
                         },
                     },
@@ -324,7 +530,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                     {
                         environment = new
                         {
-                            type = "string",
+                            // Same nullable-optional-argument fix as
+                            // query_resources above.
+                            type = new[] { "string", "null" },
                             description = "Partial, case-insensitive match against the environment's name, e.g. \"Production\".",
                         },
                     },
@@ -351,6 +559,42 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                         },
                     },
                     required = new[] { "environment" },
+                },
+            },
+            new GroqToolDefinitionDTO
+            {
+                Name = AskClarifyingQuestionToolName,
+                Description =
+                    "Ask the user a single clarifying question when their request is genuinely ambiguous or " +
+                    "needs a judgment call only they can make - not for anything answerable via the other " +
+                    "tools. Renders as a real interactive widget, not plain text - do not also restate the " +
+                    "question in your own prose answer.",
+                Parameters = new
+                {
+                    type = "object",
+                    properties = new
+                    {
+                        questionText = new
+                        {
+                            type = "string",
+                            description = "The question to show the user.",
+                        },
+                        options = new
+                        {
+                            type = "array",
+                            items = new { type = "string" },
+                            description =
+                                "Optional. A short, focused list of concrete choices - roughly 5-6 at most, " +
+                                "generalized rather than an exhaustive enumeration. Omit entirely for a " +
+                                "question that only makes sense as free text.",
+                        },
+                        allowMultiple = new
+                        {
+                            type = "boolean",
+                            description = "Whether the user may select more than one option. Ignored if 'options' is omitted.",
+                        },
+                    },
+                    required = new[] { "questionText" },
                 },
             },
         };

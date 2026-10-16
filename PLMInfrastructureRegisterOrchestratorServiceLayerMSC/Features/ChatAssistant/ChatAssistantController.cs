@@ -29,12 +29,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             {
                 ChatAssistantAssertion.Current.AssertAskQuestionRequest(request);
 
-                (string answer, Guid conversationId) = await _chatAssistantService.AskQuestionAsynchronous(
+                AskQuestionResponseDTO response = await _chatAssistantService.AskQuestionAsynchronous(
                     request!.ClientId!, request.ConversationId, request.Question!);
 
                 return Ok(
                     APIResponse<AskQuestionResponseDTO>.Succeeded(
-                        new AskQuestionResponseDTO { Answer = answer, ConversationId = conversationId },
+                        response,
                         "Answer retrieved successfully.",
                         200));
             }
@@ -48,6 +48,49 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error while asking the assistant a question.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<AskQuestionResponseDTO>.Failed(
+                        "An unexpected error occurred while contacting the assistant.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPost(ApplicationRouteFactory.ChatAssistantRoutes.AnswerQuestion)]
+        public async Task<ActionResult<APIResponse<AskQuestionResponseDTO>>> AnswerQuestionAsynchronous(
+            [FromBody] AnswerQuestionRequestDTO? request)
+        {
+            try
+            {
+                ChatAssistantAssertion.Current.AssertAnswerQuestionRequest(request);
+
+                AskQuestionResponseDTO response = await _chatAssistantService.AnswerQuestionAsynchronous(request!);
+
+                return Ok(
+                    APIResponse<AskQuestionResponseDTO>.Succeeded(
+                        response,
+                        "Answer retrieved successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Answer question validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<AskQuestionResponseDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Answer question not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<AskQuestionResponseDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while answering the assistant's question.");
 
                 return StatusCode(
                     500,

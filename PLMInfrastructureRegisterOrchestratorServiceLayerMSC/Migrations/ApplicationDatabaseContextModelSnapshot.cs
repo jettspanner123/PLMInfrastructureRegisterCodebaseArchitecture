@@ -61,12 +61,31 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsSkipped")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MessageKind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PendingInputStateJson")
+                        .HasColumnType("text");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Text")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ToolCallArguments")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ToolCallId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ToolCallOutput")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

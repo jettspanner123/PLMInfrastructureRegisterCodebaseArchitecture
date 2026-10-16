@@ -34,5 +34,21 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 throw new ValidationException("A clientId must be provided.");
             }
         }
+
+        public void AssertAnswerQuestionRequest(AnswerQuestionRequestDTO? request)
+        {
+            if (request is null || request.ConversationId == Guid.Empty || request.MessageId == Guid.Empty)
+            {
+                throw new ValidationException("ConversationId and MessageId must be provided.");
+            }
+
+            bool hasSelectedOptions = request.SelectedOptions is not null && request.SelectedOptions.Count > 0;
+            bool hasFreeText = !string.IsNullOrWhiteSpace(request.FreeTextAnswer);
+
+            if (!request.IsSkipped && !hasSelectedOptions && !hasFreeText)
+            {
+                throw new ValidationException("An answer (selected options or free text) must be provided, or the question must be skipped.");
+            }
+        }
     }
 }

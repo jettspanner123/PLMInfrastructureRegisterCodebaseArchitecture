@@ -2,6 +2,7 @@ import ApplicationNetworkAPIConfiguration from '../../../Constants/ApplicationNe
 import type APIResponseInterfaceModel from '../../../Models/APIResponseInterfaceModel';
 import type AskQuestionRequestInterfaceModel from '../../../Models/AskQuestionRequestInterfaceModel';
 import type AskQuestionResponseInterfaceModel from '../../../Models/AskQuestionResponseInterfaceModel';
+import type AnswerQuestionRequestInterfaceModel from '../../../Models/AnswerQuestionRequestInterfaceModel';
 import type ChatConversationSummaryInterfaceModel from '../../../Models/ChatConversationSummaryInterfaceModel';
 import type ChatMessageInterfaceModel from '../../../Models/ChatMessageInterfaceModel';
 
@@ -31,6 +32,39 @@ export default class ChatAssistantService {
         (payload.errors && payload.errors.length > 0
           ? payload.errors.join(', ')
           : `Failed to get response from assistant (HTTP ${response.status}).`);
+      throw new Error(errorMessage);
+    }
+
+    return payload.data;
+  }
+
+  // Resolves a pending clarifying question (or a Skip) - a separate endpoint
+  // from askQuestion, not an overload of it, since the two requests are
+  // semantically different (asking something new vs. resolving a specific
+  // paused tool call).
+  public async answerQuestion(
+    request: AnswerQuestionRequestInterfaceModel
+  ): Promise<AskQuestionResponseInterfaceModel> {
+    const response = await fetch(
+      `${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/ChatAssistant/AnswerQuestion`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      }
+    );
+
+    const payload: APIResponseInterfaceModel<AskQuestionResponseInterfaceModel> =
+      await response.json();
+
+    if (!response.ok || !payload.status) {
+      const errorMessage =
+        payload.message ||
+        (payload.errors && payload.errors.length > 0
+          ? payload.errors.join(', ')
+          : `Failed to submit the answer (HTTP ${response.status}).`);
       throw new Error(errorMessage);
     }
 

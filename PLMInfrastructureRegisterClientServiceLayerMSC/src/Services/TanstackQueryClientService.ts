@@ -26,6 +26,7 @@ import type EnvironmentOverviewCellFormatInterfaceModel from '../Models/Environm
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
 import type AskQuestionRequestInterfaceModel from '../Models/AskQuestionRequestInterfaceModel';
 import type AskQuestionResponseInterfaceModel from '../Models/AskQuestionResponseInterfaceModel';
+import type AnswerQuestionRequestInterfaceModel from '../Models/AnswerQuestionRequestInterfaceModel';
 import type ChatMessageInterfaceModel from '../Models/ChatMessageInterfaceModel';
 import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssistantService';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
@@ -551,6 +552,30 @@ export default class TanstackQueryClientService {
         },
         onError: (error: Error) => {
           toast.error('Failed to get answer from assistant', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    // Resolves a pending clarifying question (or a Skip) - same cache
+    // invalidation as useAskQuestionMutation, since this can also create new
+    // messages/update the conversation's own UpdatedAt.
+    useAnswerQuestionMutation: (options?: {
+      onSuccess?: (data: AskQuestionResponseInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: AnswerQuestionRequestInterfaceModel) =>
+          ChatAssistantService.current.answerQuestion(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: ['chat-conversations'] });
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to submit your answer', {
             description: error.message || 'Please check your connection and try again.',
           });
           options?.onError?.(error);

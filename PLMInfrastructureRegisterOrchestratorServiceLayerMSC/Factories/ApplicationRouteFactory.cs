@@ -71,6 +71,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string AskQuestion = "AskQuestion";
 
+            // Resolves a pending ask_clarifying_question tool call once the
+            // user actually answers (or skips) it - see
+            // ChatAssistantService.AnswerQuestionAsynchronous. Deliberately a
+            // separate route from AskQuestion rather than overloading it,
+            // since the two requests are semantically different (asking
+            // something new vs. resolving a specific paused tool call).
+            public const string AnswerQuestion = "AnswerQuestion";
+
             public const string GetConversations = "Conversations";
 
             public const string GetConversationMessages = "Conversations/{id}/Messages";

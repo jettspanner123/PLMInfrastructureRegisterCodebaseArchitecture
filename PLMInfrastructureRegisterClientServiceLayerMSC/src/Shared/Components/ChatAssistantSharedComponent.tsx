@@ -5,6 +5,10 @@ import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2, Plus, S
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
+import ClarifyingQuestionCardSharedComponent, {
+  type ClarifyingQuestionAnswerPayload,
+} from '../../Features/ChatAssistant/Components/ClarifyingQuestionCardSharedComponent';
+import type ClarifyingQuestionInterfaceModel from '../../Models/ClarifyingQuestionInterfaceModel';
 import dancingAIAgentAnimation from '../../Assets/DancingAIAgentAnimation.webm?url';
 import dancingAIAgentMascotAnimation from '../../Assets/DancingAIAgentMascotAnimation.webm?url';
 import dancingAIAgentMascotImage from '../../Assets/Images/DancingAIAgentMascotImage.png';
@@ -15,6 +19,14 @@ interface ChatMessage {
   text: string;
   timestamp?: string;
   originalQuestion?: string;
+  // 'question' (a paused ask_clarifying_question tool call) is rendered via
+  // ClarifyingQuestionCardSharedComponent instead of the normal bubble/
+  // Markdown paths below - undefined/'text' means every other message.
+  kind?: 'text' | 'question';
+  pendingQuestion?: ClarifyingQuestionInterfaceModel;
+  // Present once this question has been answered/skipped (live, or
+  // reconstructed from a reloaded conversation) - freezes the card.
+  answeredState?: ClarifyingQuestionAnswerPayload;
 }
 
 interface SimpleRect {
@@ -122,6 +134,13 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
   }, [isOpen]);
 
   const askQuestionMutation = TanstackQueryClientService.current.chatAssistant.useAskQuestionMutation();
+  const answerQuestionMutation = TanstackQueryClientService.current.chatAssistant.useAnswerQuestionMutation();
+
+  // Derived, not its own state - "is there an unresolved question" is
+  // always just "the last message is a question with no answeredState yet",
+  // same convention the backend uses (no separate status column either).
+  const lastMessage = messages[messages.length - 1];
+  const isQuestionPending = lastMessage?.kind === 'question' && !lastMessage.answeredState;
 
   // Only fetched while the sidebar could actually be showing it - no point
   // asking the backend for this list every time the assistant is just open
@@ -288,12 +307,28 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
           // created because conversationId was omitted on a fresh chat's
           // first message.
           setConversationId(data.conversationId);
+
+          if (data.pendingQuestion) {
+            setMessages((previous) => [
+              ...previous,
+              {
+                id: crypto.randomUUID(),
+                sender: 'assistant',
+                text: data.pendingQuestion!.questionText,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                kind: 'question',
+                pendingQuestion: data.pendingQuestion ?? undefined,
+              },
+            ]);
+            return;
+          }
+
           setMessages((previous) => [
             ...previous,
             {
               id: crypto.randomUUID(),
               sender: 'assistant',
-              text: data.answer,
+              text: data.answer ?? '',
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
@@ -322,6 +357,66 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     sendMessage(question);
   };
 
+  const handleAnswerQuestion = (
+    messageId: string,
+    question: ClarifyingQuestionInterfaceModel,
+    answer: ClarifyingQuestionAnswerPayload
+  ): void => {
+    if (!conversationId || answerQuestionMutation.isPending) return;
+
+    // Freezes the card right away (optimistic) - no reason to wait on the
+    // round-trip just to stop showing it as interactive; rolled back in
+    // onError below if the submission actually fails.
+    setMessages((previous) =>
+      previous.map((message) => (message.id === messageId ? { ...message, answeredState: answer } : message))
+    );
+
+    answerQuestionMutation.mutate(
+      {
+        conversationId,
+        messageId: question.messageId,
+        selectedOptions: answer.selectedOptions,
+        freeTextAnswer: answer.freeTextAnswer,
+        isSkipped: answer.isSkipped,
+      },
+      {
+        onSuccess: (data) => {
+          setConversationId(data.conversationId);
+
+          if (data.pendingQuestion) {
+            setMessages((previous) => [
+              ...previous,
+              {
+                id: crypto.randomUUID(),
+                sender: 'assistant',
+                text: data.pendingQuestion!.questionText,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                kind: 'question',
+                pendingQuestion: data.pendingQuestion ?? undefined,
+              },
+            ]);
+            return;
+          }
+
+          setMessages((previous) => [
+            ...previous,
+            {
+              id: crypto.randomUUID(),
+              sender: 'assistant',
+              text: data.answer ?? '',
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        },
+        onError: () => {
+          setMessages((previous) =>
+            previous.map((message) => (message.id === messageId ? { ...message, answeredState: undefined } : message))
+          );
+        },
+      }
+    );
+  };
+
   // "Clear chat history" now also forgets which conversation was open -
   // the conversation itself isn't deleted (no delete endpoint exists, by
   // design - see the chat memory design doc), it just stops being the
@@ -338,12 +433,47 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
       onSuccess: (loadedMessages) => {
         setConversationId(id);
         setMessages(
-          loadedMessages.map((message) => ({
-            id: message.id,
-            sender: message.role,
-            text: message.text,
-            timestamp: new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          }))
+          loadedMessages.map((message) => {
+            const timestamp = new Date(message.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+
+            if (message.messageKind === 'ClarifyingQuestion') {
+              // toolCallArguments/toolCallOutput are each a raw JSON string
+              // - see ChatMessageNexus's own comments on what each holds.
+              const args = message.toolCallArguments ? JSON.parse(message.toolCallArguments) : {};
+              const output = message.toolCallOutput ? JSON.parse(message.toolCallOutput) : null;
+
+              return {
+                id: message.id,
+                sender: 'assistant',
+                text: message.text,
+                timestamp,
+                kind: 'question',
+                pendingQuestion: {
+                  messageId: message.id,
+                  questionText: args.questionText ?? message.text,
+                  options: args.options ?? null,
+                  allowMultiple: args.allowMultiple ?? false,
+                },
+                answeredState: output
+                  ? {
+                      selectedOptions: output.selectedOptions ?? null,
+                      freeTextAnswer: output.freeTextAnswer ?? null,
+                      isSkipped: output.skipped ?? message.isSkipped,
+                    }
+                  : undefined,
+              };
+            }
+
+            return {
+              id: message.id,
+              sender: message.role,
+              text: message.text,
+              timestamp,
+            };
+          })
         );
       },
     });
@@ -692,6 +822,24 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                           );
                         }
 
+                        if (message.sender === 'assistant' && message.kind === 'question' && message.pendingQuestion) {
+                          return (
+                            <div key={message.id} className="w-full flex flex-col items-start gap-1">
+                              <ClarifyingQuestionCardSharedComponent
+                                question={message.pendingQuestion}
+                                answeredState={message.answeredState}
+                                onAnswer={(answer) => handleAnswerQuestion(message.id, message.pendingQuestion!, answer)}
+                                isSubmitting={answerQuestionMutation.isPending}
+                              />
+                              {message.timestamp && (
+                                <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
+                                  {message.timestamp}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        }
+
                         // Assistant message - no bubble, no avatar, full
                         // width (ChatGPT/Claude-style: only the user's own
                         // messages get the bubble treatment; the assistant's
@@ -795,7 +943,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         name="chatAssistantMessage"
                         rows={1}
                         value={draftMessage}
-                        disabled={askQuestionMutation.isPending}
+                        disabled={askQuestionMutation.isPending || isQuestionPending}
                         onChange={(event) => handleDraftChange(event.target.value)}
                         onKeyDown={(event) => {
                           if (event.key === 'Enter' && !event.shiftKey) {
@@ -804,9 +952,11 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                           }
                         }}
                         placeholder={
-                          askQuestionMutation.isPending
-                            ? 'Assistant is thinking…'
-                            : 'Message the assistant…'
+                          isQuestionPending
+                            ? 'Answer the question above to continue…'
+                            : askQuestionMutation.isPending
+                              ? 'Assistant is thinking…'
+                              : 'Message the assistant…'
                         }
                         style={{ maxHeight: MAX_TEXTAREA_HEIGHT_PX }}
                         className="flex-1 min-h-10 py-2 px-3.5 rounded-3xl bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 disabled:opacity-60 resize-none overflow-y-auto"
@@ -814,7 +964,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                       <button
                         type="button"
                         onClick={handleSend}
-                        disabled={!draftMessage.trim() || askQuestionMutation.isPending}
+                        disabled={!draftMessage.trim() || askQuestionMutation.isPending || isQuestionPending}
                         aria-label="Send message"
                         className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors"
                       >
