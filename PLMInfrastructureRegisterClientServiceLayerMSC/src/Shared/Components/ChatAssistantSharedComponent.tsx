@@ -439,7 +439,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                               in this app yet (no data, no panel) to open. */}
                           <button
                             type="button"
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100/60 dark:bg-zinc-800/40 text-slate-500 dark:text-zinc-500 text-xs font-semibold hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100/60 dark:bg-zinc-800/40 text-slate-600 dark:text-zinc-400 text-xs font-semibold hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
                           >
                             <BookOpen className="w-3.5 h-3.5" />
                             Knowledge Base
@@ -482,7 +482,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         <div className="p-3 border-t border-slate-200 dark:border-zinc-800 shrink-0">
                           <button
                             type="button"
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100/60 dark:bg-zinc-800/40 text-slate-500 dark:text-zinc-500 text-xs font-semibold hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100/60 dark:bg-zinc-800/40 text-slate-600 dark:text-zinc-400 text-xs font-semibold hover:bg-slate-200/60 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer"
                           >
                             <Settings className="w-3.5 h-3.5" />
                             Settings
