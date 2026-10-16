@@ -6,6 +6,9 @@ import type UpdateResourceCellFormatRequestInterfaceModel from '../../../Models/
 import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
 import type AddCustomColorOptionRequestInterfaceModel from '../../../Models/AddCustomColorOptionRequestInterfaceModel';
 import type UpdateCustomColorOptionRequestInterfaceModel from '../../../Models/UpdateCustomColorOptionRequestInterfaceModel';
+import type LegendEntryInterfaceModel from '../../../Models/LegendEntryInterfaceModel';
+import type AddLegendEntryRequestInterfaceModel from '../../../Models/AddLegendEntryRequestInterfaceModel';
+import type UpdateLegendEntryRequestInterfaceModel from '../../../Models/UpdateLegendEntryRequestInterfaceModel';
 
 export default class ResourcesService {
   public static current: ResourcesService = new ResourcesService();
@@ -114,6 +117,67 @@ export default class ResourcesService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to delete the custom color.');
+    }
+
+    return payload.data;
+  }
+
+  public async getLegends(): Promise<LegendEntryInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/Legends`);
+
+    const payload: APIResponseInterfaceModel<LegendEntryInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch legends.');
+    }
+
+    return payload.data;
+  }
+
+  public async addLegend(request: AddLegendEntryRequestInterfaceModel): Promise<LegendEntryInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/Legends`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<LegendEntryInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to add the legend.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateLegend(
+    id: string,
+    request: UpdateLegendEntryRequestInterfaceModel
+  ): Promise<LegendEntryInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/Legends/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<LegendEntryInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the legend.');
+    }
+
+    return payload.data;
+  }
+
+  public async deleteLegend(id: string): Promise<LegendEntryInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/Resources/Legends/${id}`, {
+      method: 'DELETE',
+    });
+
+    const payload: APIResponseInterfaceModel<LegendEntryInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to delete the legend.');
     }
 
     return payload.data;

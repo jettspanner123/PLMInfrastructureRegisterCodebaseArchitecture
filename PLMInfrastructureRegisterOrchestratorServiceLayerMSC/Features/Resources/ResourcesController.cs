@@ -14,15 +14,18 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
     {
         private readonly ResourcesService _resourcesService;
         private readonly ResourceCellFormatColorService _resourceCellFormatColorService;
+        private readonly ResourceTableLegendService _resourceTableLegendService;
         private readonly ILogger<ResourcesController> _logger;
 
         public ResourcesController(
             ResourcesService resourcesService,
             ResourceCellFormatColorService resourceCellFormatColorService,
+            ResourceTableLegendService resourceTableLegendService,
             ILogger<ResourcesController> logger)
         {
             _resourcesService = resourcesService;
             _resourceCellFormatColorService = resourceCellFormatColorService;
+            _resourceTableLegendService = resourceTableLegendService;
             _logger = logger;
         }
 
@@ -262,6 +265,166 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                     500,
                     APIResponse<List<CustomColorOptionDTO>>.Failed(
                         "An unexpected error occurred while deleting the custom color.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpGet(ApplicationRouteFactory.ResourcesRoutes.GetLegends)]
+        public async Task<ActionResult<APIResponse<List<LegendEntryDTO>>>> GetLegendsAsynchronous()
+        {
+            try
+            {
+                List<LegendEntryDTO> legends = await _resourceTableLegendService.GetLegendsAsynchronous();
+
+                return Ok(
+                    APIResponse<List<LegendEntryDTO>>.Succeeded(
+                        legends,
+                        "Legends retrieved successfully.",
+                        200));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while retrieving legends.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<LegendEntryDTO>>.Failed(
+                        "An unexpected error occurred while retrieving the legends.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPost(ApplicationRouteFactory.ResourcesRoutes.AddLegend)]
+        public async Task<ActionResult<APIResponse<List<LegendEntryDTO>>>> AddLegendAsynchronous(
+            [FromBody] AddLegendEntryRequestDTO? request)
+        {
+            try
+            {
+                ResourcesAssertion.Current.AssertAddLegendRequest(request);
+
+                List<LegendEntryDTO> legends = await _resourceTableLegendService.AddLegendAsynchronous(request!);
+
+                return Ok(
+                    APIResponse<List<LegendEntryDTO>>.Succeeded(
+                        legends,
+                        "Legend added successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Add legend validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<LegendEntryDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (ConflictException conflictEx)
+            {
+                _logger.LogWarning("Add legend conflict: {Message}", conflictEx.Message);
+
+                return Conflict(
+                    APIResponse<List<LegendEntryDTO>>.Failed(conflictEx.Message, new List<string>(), 409));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while adding a legend.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<LegendEntryDTO>>.Failed(
+                        "An unexpected error occurred while adding the legend.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPut(ApplicationRouteFactory.ResourcesRoutes.UpdateLegend)]
+        public async Task<ActionResult<APIResponse<List<LegendEntryDTO>>>> UpdateLegendAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateLegendEntryRequestDTO? request)
+        {
+            try
+            {
+                ResourcesAssertion.Current.AssertUpdateLegendRequest(request);
+
+                List<LegendEntryDTO> legends = await _resourceTableLegendService.UpdateLegendAsynchronous(id, request!);
+
+                return Ok(
+                    APIResponse<List<LegendEntryDTO>>.Succeeded(
+                        legends,
+                        "Legend updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update legend validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<LegendEntryDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (ConflictException conflictEx)
+            {
+                _logger.LogWarning("Update legend conflict: {Message}", conflictEx.Message);
+
+                return Conflict(
+                    APIResponse<List<LegendEntryDTO>>.Failed(conflictEx.Message, new List<string>(), 409));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update legend not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<List<LegendEntryDTO>>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating a legend.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<LegendEntryDTO>>.Failed(
+                        "An unexpected error occurred while updating the legend.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpDelete(ApplicationRouteFactory.ResourcesRoutes.DeleteLegend)]
+        public async Task<ActionResult<APIResponse<List<LegendEntryDTO>>>> DeleteLegendAsynchronous([FromRoute] Guid id)
+        {
+            try
+            {
+                List<LegendEntryDTO> legends = await _resourceTableLegendService.DeleteLegendAsynchronous(id);
+
+                return Ok(
+                    APIResponse<List<LegendEntryDTO>>.Succeeded(
+                        legends,
+                        "Legend deleted successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Delete legend validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<List<LegendEntryDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Delete legend not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<List<LegendEntryDTO>>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting a legend.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<LegendEntryDTO>>.Failed(
+                        "An unexpected error occurred while deleting the legend.",
                         new List<string>(),
                         500));
             }

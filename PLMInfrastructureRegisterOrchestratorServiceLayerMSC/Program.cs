@@ -36,6 +36,7 @@ builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
 
 builder.Services.AddScoped<ResourcesService>();
 builder.Services.AddScoped<ResourceCellFormatColorService>();
+builder.Services.AddScoped<ResourceTableLegendService>();
 builder.Services.AddScoped<SyncService>();
 builder.Services.AddScoped<SubscriptionsService>();
 builder.Services.AddScoped<EnvironmentOverviewService>();

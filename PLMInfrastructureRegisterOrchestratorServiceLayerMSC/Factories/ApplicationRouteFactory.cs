@@ -28,6 +28,19 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string UpdateCustomColor = "CellFormats/Colors/{id}";
 
             public const string DeleteCustomColor = "CellFormats/Colors/{id}";
+
+            // The Infrastructure Register page's own user-manageable legend
+            // row - purely a labeled reference list (name + color), not tied
+            // to any actual table-column coloring. Same {name + color
+            // structured value} reasoning as CellFormats/Colors above, so it
+            // gets its own nested routes rather than overloading those.
+            public const string GetLegends = "Legends";
+
+            public const string AddLegend = "Legends";
+
+            public const string UpdateLegend = "Legends/{id}";
+
+            public const string DeleteLegend = "Legends/{id}";
         }
 
         public static class SyncRoutes

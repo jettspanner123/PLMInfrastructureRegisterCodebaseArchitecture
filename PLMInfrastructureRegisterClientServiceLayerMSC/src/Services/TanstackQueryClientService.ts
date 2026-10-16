@@ -19,6 +19,9 @@ import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatI
 import type CustomColorOptionInterfaceModel from '../Models/CustomColorOptionInterfaceModel';
 import type AddCustomColorOptionRequestInterfaceModel from '../Models/AddCustomColorOptionRequestInterfaceModel';
 import type UpdateCustomColorOptionRequestInterfaceModel from '../Models/UpdateCustomColorOptionRequestInterfaceModel';
+import type LegendEntryInterfaceModel from '../Models/LegendEntryInterfaceModel';
+import type AddLegendEntryRequestInterfaceModel from '../Models/AddLegendEntryRequestInterfaceModel';
+import type UpdateLegendEntryRequestInterfaceModel from '../Models/UpdateLegendEntryRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
 import type AskQuestionRequestInterfaceModel from '../Models/AskQuestionRequestInterfaceModel';
@@ -171,6 +174,70 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to delete the custom color.'));
+        },
+      });
+    },
+
+    // The Infrastructure Register page's own user-manageable legend row -
+    // purely a labeled reference list (name + color), not tied to any actual
+    // table-column coloring. Same dedicated-pair-over-the-generic-mechanism
+    // reasoning as useCustomColorsQuery above.
+    useLegendsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.RESOURCE_TABLE_LEGENDS,
+        queryFn: () => ResourcesService.current.getLegends(),
+        staleTime: 1000 * 60 * 2, // 2 minutes
+      });
+    },
+
+    useAddLegendMutation: (options?: {
+      onSuccess?: (data: LegendEntryInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: AddLegendEntryRequestInterfaceModel) => ResourcesService.current.addLegend(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_TABLE_LEGENDS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to add the legend.'));
+        },
+      });
+    },
+
+    useUpdateLegendMutation: (options?: {
+      onSuccess?: (data: LegendEntryInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateLegendEntryRequestInterfaceModel }) =>
+          ResourcesService.current.updateLegend(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_TABLE_LEGENDS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the legend.'));
+        },
+      });
+    },
+
+    useDeleteLegendMutation: (options?: {
+      onSuccess?: (data: LegendEntryInterfaceModel[]) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => ResourcesService.current.deleteLegend(id),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.RESOURCE_TABLE_LEGENDS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to delete the legend.'));
         },
       });
     },

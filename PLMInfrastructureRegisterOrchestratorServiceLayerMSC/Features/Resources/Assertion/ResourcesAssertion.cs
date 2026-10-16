@@ -148,5 +148,48 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
                 throw new ValidationException($"'{request.Color}' is not a valid {request.Format} color.");
             }
         }
+
+        public void AssertAddLegendRequest(AddLegendEntryRequestDTO? request)
+        {
+            if (request is null
+                || string.IsNullOrWhiteSpace(request.Name)
+                || string.IsNullOrWhiteSpace(request.Format)
+                || string.IsNullOrWhiteSpace(request.Color)
+                || string.IsNullOrWhiteSpace(request.CreatedByClientId))
+            {
+                throw new ValidationException("Name, Format, Color, and CreatedByClientId are all required.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidFormat(request.Format))
+            {
+                throw new ValidationException($"'{request.Format}' is not a valid color format.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidColorForFormat(request.Color, request.Format))
+            {
+                throw new ValidationException($"'{request.Color}' is not a valid {request.Format} color.");
+            }
+        }
+
+        public void AssertUpdateLegendRequest(UpdateLegendEntryRequestDTO? request)
+        {
+            if (request is null
+                || string.IsNullOrWhiteSpace(request.Name)
+                || string.IsNullOrWhiteSpace(request.Format)
+                || string.IsNullOrWhiteSpace(request.Color))
+            {
+                throw new ValidationException("Name, Format, and Color are all required.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidFormat(request.Format))
+            {
+                throw new ValidationException($"'{request.Format}' is not a valid color format.");
+            }
+
+            if (!ResourceCellFormatColorUtility.Current.IsValidColorForFormat(request.Color, request.Format))
+            {
+                throw new ValidationException($"'{request.Color}' is not a valid {request.Format} color.");
+            }
+        }
     }
 }

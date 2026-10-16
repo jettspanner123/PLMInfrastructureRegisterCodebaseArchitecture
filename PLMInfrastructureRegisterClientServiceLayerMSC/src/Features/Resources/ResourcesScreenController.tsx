@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ChevronDown, Columns3, ServerOff, FilterX, Bold, Italic, Underline, Ban, Plus } from 'lucide-react';
+import { ChevronDown, Columns3, ServerOff, FilterX, Bold, Italic, Underline, Ban, Plus, Pencil, Trash2 } from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -25,6 +25,8 @@ import ResourceTableUtility from './Utilities/ResourceTableUtility';
 import TableColumnVisibilityUtility from '../../Utilities/TableColumnVisibilityUtility';
 import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
 import AddCustomColorModalController from './Components/AddCustomColorModalController';
+import AddLegendModalController from './Components/AddLegendModalController';
+import type LegendEntryInterfaceModel from '../../Models/LegendEntryInterfaceModel';
 
 export default function ResourcesScreenController(): React.JSX.Element {
   const { data: resources = [], isLoading } = TanstackQueryClientService.current.resources.useResourcesQuery();
@@ -279,6 +281,16 @@ export default function ResourcesScreenController(): React.JSX.Element {
   // attached and Status/Sponsor never will (see ResourceCellFormatColorService).
   const { data: customColors = [] } = TanstackQueryClientService.current.resources.useCustomColorsQuery();
   const [isAddColorModalOpen, setIsAddColorModalOpen] = useState<boolean>(false);
+
+  // The legend row just below the toolbar - a user-manageable reference list
+  // (name + color), gated behind Edit Mode same as every other editable
+  // thing on this page. Purely informational: creating/editing a legend
+  // never touches any actual table column's color (see
+  // AddLegendModalController's own doc comment).
+  const { data: legends = [] } = TanstackQueryClientService.current.resources.useLegendsQuery();
+  const [isAddLegendModalOpen, setIsAddLegendModalOpen] = useState<boolean>(false);
+  const [editingLegend, setEditingLegend] = useState<LegendEntryInterfaceModel | undefined>(undefined);
+  const deleteLegendMutation = TanstackQueryClientService.current.resources.useDeleteLegendMutation();
 
   // Every (resourceId, columnKey) pair the current selection rectangle
   // covers - computed fresh each time rather than captured once when the
@@ -752,22 +764,57 @@ export default function ResourcesScreenController(): React.JSX.Element {
         </div>
       </div>
 
-      {/* Explains the table's own existing header-color convention (not new
-          colors introduced here) - StartStop_* custom-tag column headers
-          already render with a red background (!bg-[#C41E3A], see the
-          header-render branch below) while every other column header uses
-          this app's iconic blue (TableHeaderCellSharedComponent's own
-          bg-[#0C2086]) - a plain reader has no other way to know what the
-          two header colors mean. */}
+      {/* Explains the table's own existing header-color convention (the two
+          seeded system entries - StartStop_* custom-tag column headers
+          already render with a red background, !bg-[#C41E3A], while every
+          other column header uses this app's iconic blue, bg-[#0C2086]) plus
+          any additional entries a user has created via the "+" button below.
+          Purely a reference list - creating/editing a legend never changes
+          any actual table column's color. */}
       <div className="flex items-center gap-4 pt-3 text-xs text-slate-500 dark:text-zinc-400">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-sm bg-[#0C2086] shrink-0" />
-          <span>Azure-sourced data</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-sm bg-[#C41E3A] shrink-0" />
-          <span>Custom tags</span>
-        </div>
+        {legends.map((legend) => (
+          <div key={legend.id} className="flex items-center gap-1.5 group">
+            <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: legend.color }} />
+            <span>{legend.name}</span>
+            {isEditMode && !legend.isSystemLegend && (
+              <span className="hidden group-hover:flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingLegend(legend);
+                    setIsAddLegendModalOpen(true);
+                  }}
+                  className="p-0.5 rounded text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                  title="Edit legend"
+                >
+                  <Pencil className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deleteLegendMutation.mutate(legend.id)}
+                  className="p-0.5 rounded text-slate-400 hover:text-rose-500 dark:text-zinc-500 dark:hover:text-rose-400"
+                  title="Delete legend"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+          </div>
+        ))}
+
+        {isEditMode && (
+          <button
+            type="button"
+            onClick={() => {
+              setEditingLegend(undefined);
+              setIsAddLegendModalOpen(true);
+            }}
+            className="flex items-center justify-center w-4 h-4 rounded-full border border-slate-300 dark:border-zinc-600 text-slate-400 hover:text-slate-600 hover:border-slate-400 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+            title="Add legend"
+          >
+            <Plus className="w-2.5 h-2.5" />
+          </button>
+        )}
       </div>
 
       {resources.length > 0 && (
@@ -882,6 +929,16 @@ export default function ResourcesScreenController(): React.JSX.Element {
         isOpen={isAddColorModalOpen}
         onClose={() => setIsAddColorModalOpen(false)}
         onCreated={() => {}}
+      />
+
+      <AddLegendModalController
+        isOpen={isAddLegendModalOpen}
+        onClose={() => {
+          setIsAddLegendModalOpen(false);
+          setEditingLegend(undefined);
+        }}
+        onCreated={() => {}}
+        editingLegend={editingLegend}
       />
     </div>
   );
