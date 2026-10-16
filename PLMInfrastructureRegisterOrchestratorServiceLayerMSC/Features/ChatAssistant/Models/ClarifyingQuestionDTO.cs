@@ -12,7 +12,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
         // identify which pending question is being resolved.
         public Guid MessageId { get; set; }
 
-        public string QuestionText { get; set; } = string.Empty;
+        public string Heading { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
 
         public List<string>? Options { get; set; }
 

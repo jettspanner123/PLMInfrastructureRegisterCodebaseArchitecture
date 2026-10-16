@@ -348,7 +348,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 Id = pendingMessageId,
                 ConversationId = conversationId,
                 Role = "assistant",
-                Text = args.QuestionText,
+                // Plain-text fallback - also what a LATER, unrelated
+                // /AskQuestion call in this same conversation replays back
+                // to Groq as this row's own history turn (see
+                // AskQuestionAsynchronous's history-mapping), so this needs
+                // to stay meaningful on its own, not just a UI nicety.
+                Text = $"{args.Heading}: {args.Description}",
                 MessageKind = "ClarifyingQuestion",
                 ToolCallId = loopResult.PendingToolCallId,
                 ToolCallArguments = loopResult.PendingToolCallArguments,
@@ -361,7 +366,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             return new ClarifyingQuestionDTO
             {
                 MessageId = pendingMessageId,
-                QuestionText = args.QuestionText,
+                Heading = args.Heading,
+                Description = args.Description,
                 Options = args.Options,
                 AllowMultiple = args.AllowMultiple,
             };
@@ -476,9 +482,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             "If a request is genuinely ambiguous or needs a judgment call only the user can make - not " +
             "something answerable via the data tools - call ask_clarifying_question instead of asking " +
             "inline in your own prose; it renders as a real interactive widget, so don't also restate the " +
-            "question in text. When you do offer options, keep the list short and generalized (roughly " +
-            "5-6 at most, never a raw enumeration of every literal possibility) - omit options entirely for " +
-            "a question that only makes sense as free text. Ask at most one question per turn.";
+            "question in text. Give it a short heading (a few words, not a full sentence) plus a separate " +
+            "plain-language description explaining what you're asking and why, so the heading alone doesn't " +
+            "have to carry all the context. When you do offer options, keep the list short and generalized " +
+            "(roughly 5-6 at most, never a raw enumeration of every literal possibility) - omit options " +
+            "entirely for a question that only makes sense as free text. Ask at most one question per turn.";
 
         private static readonly List<GroqToolDefinitionDTO> ToolDefinitions = new()
         {
@@ -574,10 +582,18 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                     type = "object",
                     properties = new
                     {
-                        questionText = new
+                        heading = new
                         {
                             type = "string",
-                            description = "The question to show the user.",
+                            description = "A short title for the question card, e.g. \"Which environment?\" - a few words, not a full sentence.",
+                        },
+                        description = new
+                        {
+                            type = "string",
+                            description =
+                                "A plain-language explanation of what you're asking and why, shown muted " +
+                                "beneath the heading - give the user enough context to answer confidently " +
+                                "without the heading alone having to carry it.",
                         },
                         options = new
                         {
@@ -594,7 +610,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                             description = "Whether the user may select more than one option. Ignored if 'options' is omitted.",
                         },
                     },
-                    required = new[] { "questionText" },
+                    required = new[] { "heading", "description" },
                 },
             },
         };

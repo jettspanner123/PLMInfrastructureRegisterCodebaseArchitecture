@@ -5,7 +5,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
     // other tool's own ArgsDTO - see ChatAssistantService.ArgsParsingOptions).
     public sealed class AskClarifyingQuestionArgsDTO
     {
-        public string QuestionText { get; set; } = string.Empty;
+        // A short title for the question card, e.g. "Which environment?".
+        public string Heading { get; set; } = string.Empty;
+
+        // A longer, plain-language explanation of what's being asked and
+        // why - rendered muted beneath Heading so the user has enough
+        // context to answer without the heading alone having to carry it.
+        public string Description { get; set; } = string.Empty;
 
         // Optional - a question can be free-text-only (omit this entirely).
         // No hard cap enforced here; AssistantInstructions guides the model

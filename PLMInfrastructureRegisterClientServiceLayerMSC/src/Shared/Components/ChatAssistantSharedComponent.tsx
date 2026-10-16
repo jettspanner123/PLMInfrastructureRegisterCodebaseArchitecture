@@ -314,7 +314,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
               {
                 id: crypto.randomUUID(),
                 sender: 'assistant',
-                text: data.pendingQuestion!.questionText,
+                text: data.pendingQuestion!.heading,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 kind: 'question',
                 pendingQuestion: data.pendingQuestion ?? undefined,
@@ -389,7 +389,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
               {
                 id: crypto.randomUUID(),
                 sender: 'assistant',
-                text: data.pendingQuestion!.questionText,
+                text: data.pendingQuestion!.heading,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 kind: 'question',
                 pendingQuestion: data.pendingQuestion ?? undefined,
@@ -453,7 +453,8 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                 kind: 'question',
                 pendingQuestion: {
                   messageId: message.id,
-                  questionText: args.questionText ?? message.text,
+                  heading: args.heading ?? message.text,
+                  description: args.description ?? '',
                   options: args.options ?? null,
                   allowMultiple: args.allowMultiple ?? false,
                 },
