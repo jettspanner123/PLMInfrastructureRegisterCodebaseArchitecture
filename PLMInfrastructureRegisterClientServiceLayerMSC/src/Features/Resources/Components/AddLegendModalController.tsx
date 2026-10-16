@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 import ModalSharedComponent from '../../../Shared/Components/ModalSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
+import AddCustomColorModalController from './AddCustomColorModalController';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
 import AnonymousClientIdentityUtility from '../../../Utilities/AnonymousClientIdentityUtility';
 import CellFormatHelper from '../../../Utilities/CellFormatHelper';
 import CellFormatCON from '../../../Constants/CellFormatCON';
 import type LegendEntryInterfaceModel from '../../../Models/LegendEntryInterfaceModel';
+import type CustomColorOptionInterfaceModel from '../../../Models/CustomColorOptionInterfaceModel';
 
 export interface AddLegendModalControllerProps {
   isOpen: boolean;
@@ -54,6 +57,7 @@ export default function AddLegendModalController({
   const [nameInput, setNameInput] = useState<string>('');
   const [selectedHex, setSelectedHex] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isAddColorModalOpen, setIsAddColorModalOpen] = useState<boolean>(false);
 
   const legendsQuery = TanstackQueryClientService.current.resources.useLegendsQuery();
   const customColorsQuery = TanstackQueryClientService.current.resources.useCustomColorsQuery();
@@ -125,6 +129,17 @@ export default function AddLegendModalController({
   const canSubmit = isNameValid && isColorAvailable;
   const isSubmitting = addLegendMutation.isPending || updateLegendMutation.isPending;
 
+  // The newly created color becomes the selected swatch immediately - the
+  // whole reason this modal was opened was to get a color for this legend,
+  // so making the user click it again afterward would be redundant. The
+  // palette itself updates on its own: useAddCustomColorMutation already
+  // invalidates RESOURCE_CUSTOM_COLORS on success, and customColorsQuery
+  // above is subscribed to that same key.
+  const handleColorCreated = (option: CustomColorOptionInterfaceModel): void => {
+    setSelectedHex(resolveToHex(option.format, option.color));
+    setIsAddColorModalOpen(false);
+  };
+
   const handleSubmit = async (): Promise<void> => {
     if (!canSubmit || !selectedHex) return;
 
@@ -149,47 +164,47 @@ export default function AddLegendModalController({
   };
 
   return (
-    <ModalSharedComponent
-      isOpen={isOpen}
-      onClose={onClose}
-      title={isEditMode ? 'Edit Legend' : 'Add Legend'}
-      subtitle={
-        isEditMode
-          ? 'Renames and/or recolors this legend entry.'
-          : 'Adds a new entry to the Infrastructure Register legend row.'
-      }
-      maxWidth="sm"
-      footer={
-        <div className="flex items-center justify-end gap-3">
-          <ButtonSharedComponent variant="outline" onClick={onClose} disabled={isSubmitting}>
-            Cancel
-          </ButtonSharedComponent>
-          <PrimaryActionButtonSharedComponent
-            label={isEditMode ? 'Save Changes' : 'Add Legend'}
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            isLoading={isSubmitting}
+    <>
+      <ModalSharedComponent
+        isOpen={isOpen}
+        onClose={onClose}
+        title={isEditMode ? 'Edit Legend' : 'Add Legend'}
+        subtitle={
+          isEditMode
+            ? 'Renames and/or recolors this legend entry.'
+            : 'Adds a new entry to the Infrastructure Register legend row.'
+        }
+        maxWidth="sm"
+        footer={
+          <div className="flex items-center justify-end gap-3">
+            <ButtonSharedComponent variant="outline" onClick={onClose} disabled={isSubmitting}>
+              Cancel
+            </ButtonSharedComponent>
+            <PrimaryActionButtonSharedComponent
+              label={isEditMode ? 'Save Changes' : 'Add Legend'}
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              isLoading={isSubmitting}
+            />
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <InputSharedComponent
+            label="Name"
+            name="legend-name"
+            value={nameInput}
+            onChange={(event) => setNameInput(event.target.value)}
+            placeholder="e.g. Pending migration"
+            required
           />
-        </div>
-      }
-    >
-      <div className="space-y-4">
-        <InputSharedComponent
-          label="Name"
-          name="legend-name"
-          value={nameInput}
-          onChange={(event) => setNameInput(event.target.value)}
-          placeholder="e.g. Pending migration"
-          required
-        />
-        {isNameTaken && trimmedName.length > 0 && (
-          <p className="text-xs text-rose-500">A legend named &quot;{trimmedName}&quot; already exists.</p>
-        )}
+          {isNameTaken && trimmedName.length > 0 && (
+            <p className="text-xs text-rose-500">A legend named &quot;{trimmedName}&quot; already exists.</p>
+          )}
 
-        <div>
-          <label className="block text-xs font-medium text-slate-500 dark:text-zinc-400 mb-2">Color</label>
-          {palette.length > 0 ? (
-            <div className="grid grid-cols-6 gap-1 justify-items-center">
+          <div>
+            <label className="block text-xs font-medium text-slate-500 dark:text-zinc-400 mb-2">Color</label>
+            <div className="flex flex-wrap gap-1.5">
               {palette.map((swatch) => {
                 const isSelected = selectedHex === swatch.hex;
 
@@ -200,7 +215,7 @@ export default function AddLegendModalController({
                     onClick={() => setSelectedHex(swatch.hex)}
                     title={swatch.label}
                     style={swatch.swatchClassName ? undefined : { backgroundColor: swatch.hex }}
-                    className={`w-8 h-8 rounded-full cursor-pointer transition-transform ${swatch.swatchClassName ?? ''} ${
+                    className={`w-8 h-8 rounded-full shrink-0 cursor-pointer transition-transform ${swatch.swatchClassName ?? ''} ${
                       isSelected
                         ? 'ring-2 ring-offset-1 ring-blue-500 dark:ring-blue-400 scale-110 z-10'
                         : 'hover:scale-110 opacity-80 hover:opacity-100'
@@ -208,16 +223,33 @@ export default function AddLegendModalController({
                   />
                 );
               })}
-            </div>
-          ) : (
-            <p className="text-xs text-slate-400 dark:text-zinc-500">
-              No colors available - every option is already assigned to another legend.
-            </p>
-          )}
-        </div>
 
-        {errorMessage && <p className="text-xs text-rose-500">{errorMessage}</p>}
-      </div>
-    </ModalSharedComponent>
+              <button
+                type="button"
+                onClick={() => setIsAddColorModalOpen(true)}
+                title="Add a new color"
+                className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center border border-dashed border-slate-300 dark:border-zinc-600 text-slate-400 hover:text-slate-600 hover:bg-slate-100 hover:border-slate-400 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+
+            {palette.length === 0 && (
+              <p className="text-xs text-slate-400 dark:text-zinc-500 mt-2">
+                Every existing color is already assigned to another legend - add a new one above.
+              </p>
+            )}
+          </div>
+
+          {errorMessage && <p className="text-xs text-rose-500">{errorMessage}</p>}
+        </div>
+      </ModalSharedComponent>
+
+      <AddCustomColorModalController
+        isOpen={isAddColorModalOpen}
+        onClose={() => setIsAddColorModalOpen(false)}
+        onCreated={handleColorCreated}
+      />
+    </>
   );
 }
