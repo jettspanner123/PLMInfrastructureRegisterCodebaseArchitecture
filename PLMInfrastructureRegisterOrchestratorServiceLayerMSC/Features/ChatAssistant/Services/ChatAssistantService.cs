@@ -273,7 +273,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
             "Overview data - call them whenever a question needs real data; never guess or make up values. " +
             "Dates are ISO 8601. A missing/null field means that value isn't recorded for that row. If a " +
             "tool result says it was truncated, tell the user and suggest narrowing the question (e.g. by " +
-            "environment or hostname) instead of presenting it as complete.";
+            "environment or hostname) instead of presenting it as complete. " +
+            "Answer in rich Markdown, not plain prose - the UI renders it with real styling (headings, " +
+            "tables, bold, lists, etc.), so lean into using these visual components wherever they make an " +
+            "answer clearer: Markdown tables for any list of resources/rows, headings (##/###) to break up " +
+            "a longer answer into sections, bold for key values the user is likely scanning for, and " +
+            "bullet/numbered lists for steps or multiple distinct points. Don't force these onto a short, " +
+            "single-fact answer that reads better as one plain sentence.";
 
         private static readonly List<GroqToolDefinitionDTO> ToolDefinitions = new()
         {

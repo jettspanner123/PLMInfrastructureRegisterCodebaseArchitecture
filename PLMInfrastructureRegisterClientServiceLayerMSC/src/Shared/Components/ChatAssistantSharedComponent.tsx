@@ -5,7 +5,6 @@ import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2, Plus, S
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
 import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
-import { containsMarkdownTable } from '../../Utilities/MarkdownTableDetectionUtility';
 import dancingAIAgentAnimation from '../../Assets/DancingAIAgentAnimation.webm?url';
 import dancingAIAgentMascotImage from '../../Assets/Images/DancingAIAgentMascotImage.png';
 
@@ -669,33 +668,24 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                           );
                         }
 
-                        // Assistant message - Markdown-rendered (the
-                        // assistant is instructed to answer in Markdown, and
-                        // previously this just dumped the raw "**bold**"/
-                        // "| table |" syntax as plain text). A message
-                        // containing a table widens past the usual 85% cap
-                        // so the table isn't forced to scroll for a normal
-                        // column count - plain-text answers keep the
-                        // original narrower width.
-                        const isWideMessage = containsMarkdownTable(message.text);
+                        // Assistant message - no bubble, no avatar, full
+                        // width (ChatGPT/Claude-style: only the user's own
+                        // messages get the bubble treatment; the assistant's
+                        // just reads as plain formatted text in the column).
+                        // Markdown-rendered since the assistant answers in
+                        // Markdown (tables, headings, lists, etc.) and this
+                        // previously dumped that raw "**bold**"/"| table |"
+                        // syntax as plain text instead of parsing it.
                         return (
-                          <div
-                            key={message.id}
-                            className={`flex items-start gap-2.5 ${isWideMessage ? 'w-full max-w-full' : 'max-w-[85%]'}`}
-                          >
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 hairline-border flex items-center justify-center text-[#0C2086] dark:text-blue-400 shrink-0 mt-0.5">
-                              <Bot className="w-3.5 h-3.5" />
+                          <div key={message.id} className="w-full flex flex-col items-start gap-1">
+                            <div className="w-full text-sm text-slate-800 dark:text-zinc-200 break-words leading-relaxed">
+                              <MarkdownMessageSharedComponent text={message.text} />
                             </div>
-                            <div className={`flex flex-col items-start gap-1 ${isWideMessage ? 'min-w-0 flex-1' : ''}`}>
-                              <div className="rounded-2xl rounded-tl-sm bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed">
-                                <MarkdownMessageSharedComponent text={message.text} />
-                              </div>
-                              {message.timestamp && (
-                                <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
-                                  {message.timestamp}
-                                </span>
-                              )}
-                            </div>
+                            {message.timestamp && (
+                              <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
+                                {message.timestamp}
+                              </span>
+                            )}
                           </div>
                         );
                       })
