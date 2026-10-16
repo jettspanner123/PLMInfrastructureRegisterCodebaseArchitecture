@@ -4,6 +4,8 @@ import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { Bot, Send, X, Trash2, RotateCcw, Loader2, Maximize2, Minimize2, Plus } from 'lucide-react';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdentityUtility';
+import MarkdownMessageSharedComponent from './MarkdownMessageSharedComponent';
+import { containsMarkdownTable } from '../../Utilities/MarkdownTableDetectionUtility';
 
 interface ChatMessage {
   id: string;
@@ -583,15 +585,26 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                           );
                         }
 
-                        // Assistant message
+                        // Assistant message - Markdown-rendered (the
+                        // assistant is instructed to answer in Markdown, and
+                        // previously this just dumped the raw "**bold**"/
+                        // "| table |" syntax as plain text). A message
+                        // containing a table widens past the usual 85% cap
+                        // so the table isn't forced to scroll for a normal
+                        // column count - plain-text answers keep the
+                        // original narrower width.
+                        const isWideMessage = containsMarkdownTable(message.text);
                         return (
-                          <div key={message.id} className="flex items-start gap-2.5 max-w-[85%]">
+                          <div
+                            key={message.id}
+                            className={`flex items-start gap-2.5 ${isWideMessage ? 'w-full max-w-full' : 'max-w-[85%]'}`}
+                          >
                             <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 hairline-border flex items-center justify-center text-[#0C2086] dark:text-blue-400 shrink-0 mt-0.5">
                               <Bot className="w-3.5 h-3.5" />
                             </div>
-                            <div className="flex flex-col items-start gap-1">
-                              <div className="rounded-2xl rounded-tl-sm bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap">
-                                {message.text}
+                            <div className={`flex flex-col items-start gap-1 ${isWideMessage ? 'min-w-0 flex-1' : ''}`}>
+                              <div className="rounded-2xl rounded-tl-sm bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed">
+                                <MarkdownMessageSharedComponent text={message.text} />
                               </div>
                               {message.timestamp && (
                                 <span className="text-[10px] text-slate-400 dark:text-zinc-500 px-1">
