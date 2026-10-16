@@ -107,9 +107,15 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
     if (!isOpen) return;
     const el = inputBarRef.current;
     if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) setInputBarHeight(entry.contentRect.height);
+    // Reading el.offsetHeight directly rather than trusting the callback's
+    // own entry.contentRect.height - contentRect is spec'd to the CONTENT
+    // box, excluding this wrapper's own padding (pt-2 + pb-6 = 32px here),
+    // so it was silently undercounting by exactly that much and leaving the
+    // last message's bottom ~32px behind the input bar instead of clear of
+    // it (confirmed live: measured a 73.8px paddingBottom against an actual
+    // 89.8px-tall input bar wrapper).
+    const observer = new ResizeObserver(() => {
+      setInputBarHeight(el.offsetHeight);
     });
     observer.observe(el);
     return () => observer.disconnect();
@@ -531,7 +537,12 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                   <div
                     style={{ paddingBottom: inputBarHeight + 16 }}
                     className={`flex-1 overflow-y-auto pr-6 pt-14 transition-[padding] duration-300 ease-in-out ${
-                      isFullscreen ? 'pl-80' : 'pl-6'
+                      // pl-[344px] = the sidebar's own w-80 (320px) plus the
+                      // same 24px breathing room pr-6 already gives the
+                      // right side - without the extra 24px, content sat
+                      // flush against the sidebar's border while the right
+                      // side kept its usual gap from the panel edge.
+                      isFullscreen ? 'pl-[344px]' : 'pl-6'
                     }`}
                   >
                     {/* Capped and centered in normal mode so lines don't
@@ -540,8 +551,21 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                         floating input bar below keeps its own max-w-4xl
                         unchanged - confirmed this split, not kept in sync,
                         when asked). */}
+                    {/* h-full only while empty (needed so the placeholder's
+                        own justify-center has real space to center within -
+                        see its own comment below). With real messages
+                        present, this must NOT also carry h-full: forcing a
+                        fixed height here that's shorter than the actual
+                        (often much taller) message content silently threw
+                        off the scroll container's own scrollHeight
+                        accounting, even though the content visibly overflows
+                        past it - confirmed live, the last message still sat
+                        ~40-60px behind the floating input bar at genuine
+                        max-scroll despite the padding-bottom fix above being
+                        individually correct. A plain auto-height block lets
+                        scrollHeight reflect the real content extent. */}
                     <div
-                      className={`w-full h-full space-y-4 ${isFullscreen ? '' : 'max-w-4xl mx-auto'}`}
+                      className={`w-full space-y-4 ${messages.length === 0 ? 'h-full' : ''} ${isFullscreen ? '' : 'max-w-4xl mx-auto'}`}
                     >
                     {messages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center gap-3 text-slate-400 dark:text-zinc-500">
