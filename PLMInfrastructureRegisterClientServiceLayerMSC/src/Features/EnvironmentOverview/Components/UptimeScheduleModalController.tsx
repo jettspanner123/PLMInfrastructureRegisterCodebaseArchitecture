@@ -24,6 +24,8 @@ export interface UptimeScheduleModalControllerProps {
   onStartTimeChange: (value: string) => void;
   onEndTimeChange: (value: string) => void;
   previewValue: string;
+  notes: string;
+  onNotesChange: (value: string) => void;
   canSave: boolean;
   isSaving: boolean;
   onSave: () => void;
@@ -58,6 +60,8 @@ export default function UptimeScheduleModalController({
   onStartTimeChange,
   onEndTimeChange,
   previewValue,
+  notes,
+  onNotesChange,
   canSave,
   isSaving,
   onSave,
@@ -128,6 +132,19 @@ export default function UptimeScheduleModalController({
             />
           </div>
         )}
+
+        <div>
+          <span className="block px-1 pb-1.5 text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500">
+            Notes
+          </span>
+          <textarea
+            value={notes}
+            onChange={(event) => onNotesChange(event.target.value)}
+            placeholder="Optional - shown alongside the schedule above"
+            rows={3}
+            className="w-full px-2.5 py-2 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 resize-none"
+          />
+        </div>
 
         <div>
           <span className="block px-1 pb-1.5 text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500">

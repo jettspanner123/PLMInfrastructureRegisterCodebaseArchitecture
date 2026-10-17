@@ -104,6 +104,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string UpdateField = "{id}/Field";
 
+            // Separate from UpdateField (not folded into its own generic
+            // fieldName/value switch) since saving the Current Uptime
+            // Schedule bundles two values together (the already-composed
+            // schedule string, plus the optional raw note) and can trigger
+            // an AI summarization call for a long note - neither of which
+            // the generic single-field endpoint supports.
+            public const string UpdateUptimeSchedule = "{id}/UptimeSchedule";
+
             // Soft delete (sets IsDeleted/DeletedAt) - see
             // EnvironmentOverviewNexus.IsDeleted for why this isn't a hard
             // DELETE.

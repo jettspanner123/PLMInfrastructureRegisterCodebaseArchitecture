@@ -1,17 +1,43 @@
 using System.Globalization;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Helpers;
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services
 {
     public sealed class EnvironmentOverviewService
     {
+        private readonly HttpClient _httpClient;
         private readonly ApplicationDatabaseContext _applicationDatabaseContext;
 
-        public EnvironmentOverviewService(ApplicationDatabaseContext applicationDatabaseContext)
+        // Groq config duplicated from ChatAssistantService rather than
+        // shared, deliberately - this service's own Uptime Schedule note
+        // summarization is a single, fully self-contained call (see
+        // SummarizeUptimeScheduleNoteAsynchronous) with no other Groq
+        // surface here, and ChatAssistantService already depends on THIS
+        // service (for its query_environment_overview tool) - depending on
+        // ChatAssistantService back would be circular.
+        private const string GroqResponsesEndpointURL = "https://api.groq.com/openai/v1/responses";
+        private const string GroqModel = "openai/gpt-oss-20b";
+
+        // Below this length, a note is already short enough to show as its
+        // own "summary" verbatim - no Groq call made at all.
+        private const int NoteSummaryThresholdLength = 120;
+
+        // If summarization fails (rate limit, network), falls back to a
+        // plain truncation at this length (+ "…") instead - same "never let
+        // a best-effort AI step block or break the actual save" philosophy
+        // as ChatAssistantService's own title generation.
+        private const int NoteSummaryFallbackTruncateLength = 117;
+
+        public EnvironmentOverviewService(HttpClient httpClient, ApplicationDatabaseContext applicationDatabaseContext)
         {
+            _httpClient = httpClient;
             _applicationDatabaseContext = applicationDatabaseContext;
         }
 
@@ -35,6 +61,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     Priority2 = environment.Priority2,
                     Priority3 = environment.Priority3,
                     ActionItemsUpdates = environment.ActionItemsUpdates,
+                    UptimeScheduleNote = environment.UptimeScheduleNote,
+                    UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
                     ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                     DNSURL = environment.DNSURL,
                     Status = environment.Status,
@@ -80,6 +108,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Priority2 = newEnvironment.Priority2,
                 Priority3 = newEnvironment.Priority3,
                 ActionItemsUpdates = newEnvironment.ActionItemsUpdates,
+                UptimeScheduleNote = newEnvironment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = newEnvironment.UptimeScheduleNoteSummary,
                 ConfigurationCustomisationVersion = newEnvironment.ConfigurationCustomisationVersion,
                 DNSURL = newEnvironment.DNSURL,
                 Status = newEnvironment.Status,
@@ -127,6 +157,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Priority2 = environment.Priority2,
                 Priority3 = environment.Priority3,
                 ActionItemsUpdates = environment.ActionItemsUpdates,
+                UptimeScheduleNote = environment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
                 ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                 DNSURL = environment.DNSURL,
                 Status = environment.Status,
@@ -169,6 +201,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Priority2 = environment.Priority2,
                 Priority3 = environment.Priority3,
                 ActionItemsUpdates = environment.ActionItemsUpdates,
+                UptimeScheduleNote = environment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
                 ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                 DNSURL = environment.DNSURL,
                 Status = environment.Status,
@@ -216,6 +250,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Priority2 = environment.Priority2,
                 Priority3 = environment.Priority3,
                 ActionItemsUpdates = environment.ActionItemsUpdates,
+                UptimeScheduleNote = environment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
                 ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                 DNSURL = environment.DNSURL,
                 Status = environment.Status,
@@ -267,6 +303,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Priority2 = environment.Priority2,
                 Priority3 = environment.Priority3,
                 ActionItemsUpdates = environment.ActionItemsUpdates,
+                UptimeScheduleNote = environment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
                 ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                 DNSURL = environment.DNSURL,
                 Status = environment.Status,
@@ -338,10 +376,128 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Priority2 = environment.Priority2,
                 Priority3 = environment.Priority3,
                 ActionItemsUpdates = environment.ActionItemsUpdates,
+                UptimeScheduleNote = environment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
                 ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
                 DNSURL = environment.DNSURL,
                 Status = environment.Status,
             };
+        }
+
+        // Separate from UpdateFieldAsynchronous (not a case added to its own
+        // switch) since this needs to persist TWO values together
+        // (CurrentUptimeSchedule's own composed string, plus the raw note)
+        // and - only when a long note needs summarizing - make a Groq call,
+        // neither of which the generic single-field endpoint supports.
+        public async Task<EnvironmentOverviewDTO> UpdateUptimeScheduleAsynchronous(
+            Guid id, string? currentUptimeSchedule, string? uptimeScheduleNote)
+        {
+            EnvironmentOverviewNexus? environment = await _applicationDatabaseContext.EnvironmentOverviews
+                .FirstOrDefaultAsync(existingEnvironment => existingEnvironment.Id == id);
+
+            if (environment is null)
+            {
+                throw new NotFoundException("That environment could not be found.");
+            }
+
+            environment.CurrentUptimeSchedule = string.IsNullOrWhiteSpace(currentUptimeSchedule)
+                ? null
+                : currentUptimeSchedule.Trim();
+
+            string? trimmedNote = string.IsNullOrWhiteSpace(uptimeScheduleNote) ? null : uptimeScheduleNote.Trim();
+            environment.UptimeScheduleNote = trimmedNote;
+
+            if (trimmedNote is null)
+            {
+                environment.UptimeScheduleNoteSummary = null;
+            }
+            else if (trimmedNote.Length <= NoteSummaryThresholdLength)
+            {
+                environment.UptimeScheduleNoteSummary = trimmedNote;
+            }
+            else
+            {
+                environment.UptimeScheduleNoteSummary =
+                    await SummarizeUptimeScheduleNoteAsynchronous(trimmedNote)
+                    ?? trimmedNote[..NoteSummaryFallbackTruncateLength].TrimEnd() + "…";
+            }
+
+            await _applicationDatabaseContext.SaveChangesAsync();
+
+            return new EnvironmentOverviewDTO
+            {
+                Id = environment.Id,
+                Environment = environment.Environment,
+                Purpose = environment.Purpose,
+                Sponsor = environment.Sponsor,
+                CurrentUptimeSchedule = environment.CurrentUptimeSchedule,
+                Priority1 = environment.Priority1,
+                Priority2 = environment.Priority2,
+                Priority3 = environment.Priority3,
+                ActionItemsUpdates = environment.ActionItemsUpdates,
+                UptimeScheduleNote = environment.UptimeScheduleNote,
+                UptimeScheduleNoteSummary = environment.UptimeScheduleNoteSummary,
+                ConfigurationCustomisationVersion = environment.ConfigurationCustomisationVersion,
+                DNSURL = environment.DNSURL,
+                Status = environment.Status,
+            };
+        }
+
+        // Fully self-contained and isolated - own HttpClient, own try/catch,
+        // never throws. Any failure (rate limit, network, malformed
+        // response) just returns null, and the caller falls back to plain
+        // truncation - a summarization hiccup must never block saving the
+        // rest of the Uptime Schedule form. Mirrors
+        // ChatAssistantService.GenerateConversationTitleAsynchronous's own
+        // isolation reasoning and request/response shape exactly (reusing
+        // its GroqRequestDTO/GroqResponseDTO/GroqInputMessageDTO models -
+        // those are plain data shapes with no dependency on
+        // ChatAssistantService itself).
+        private async Task<string?> SummarizeUptimeScheduleNoteAsynchronous(string note)
+        {
+            try
+            {
+                string groqApiKey = ENValidatorHelper.Current.GetEnvKeyValue("GROQ_API_KEY");
+
+                var groqRequest = new GroqRequestDTO
+                {
+                    Model = GroqModel,
+                    Instructions =
+                        "Rewrite the user's note below as ONE short sentence, around 15 words (well under 150 " +
+                        "characters) - it needs to fit on a single line of a table cell, so brevity matters " +
+                        "more than mirroring the original's exact phrasing. Paraphrase aggressively: merge " +
+                        "related points, drop filler words, use abbreviations where natural. The only hard " +
+                        "rule is not to drop any distinct FACT or DECISION from the original (a date, a name, " +
+                        "a reason, a next step) - everything else about HOW it's worded is fair game to " +
+                        "compress. Reply with ONLY the rewritten sentence - no preamble, no quotes.",
+                    Input = new List<object> { new GroqInputMessageDTO { Role = "user", Content = note } },
+                };
+
+                using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, GroqResponsesEndpointURL)
+                {
+                    Content = JsonContent.Create(groqRequest),
+                };
+                httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", groqApiKey);
+
+                using HttpResponseMessage httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage);
+                if (!httpResponseMessage.IsSuccessStatusCode) return null;
+
+                GroqResponseDTO? groqResponse = await httpResponseMessage.Content.ReadFromJsonAsync<GroqResponseDTO>();
+                List<GroqResponseOutputItemDTO> outputItems = groqResponse?.Output ?? new List<GroqResponseOutputItemDTO>();
+
+                string? condensed = outputItems
+                    .Where(outputItem => outputItem.Type == "message")
+                    .SelectMany(outputItem => outputItem.Content ?? new List<GroqResponseContentItemDTO>())
+                    .Where(contentItem => contentItem.Type == "output_text")
+                    .Select(contentItem => contentItem.Text)
+                    .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text));
+
+                return string.IsNullOrWhiteSpace(condensed) ? null : condensed.Trim().Trim('"', '\'', '“', '”', '‘', '’');
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         // Soft delete - sets IsDeleted/DeletedAt rather than removing the

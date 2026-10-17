@@ -6,6 +6,7 @@ import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../../../
 import type AddActionItemRequestInterfaceModel from '../../../Models/AddActionItemRequestInterfaceModel';
 import type UpdateActionItemRequestInterfaceModel from '../../../Models/UpdateActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
+import type UpdateUptimeScheduleRequestInterfaceModel from '../../../Models/UpdateUptimeScheduleRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../../../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
 
@@ -96,6 +97,30 @@ export default class EnvironmentOverviewService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to update the field.');
+    }
+
+    return payload.data;
+  }
+
+  // Separate from updateField (not the generic fieldName/value pair) since
+  // this bundles two values together (the already-composed schedule string
+  // plus the optional raw note) and can trigger server-side AI
+  // summarization for a long note - neither of which the generic endpoint
+  // supports.
+  public async updateUptimeSchedule(
+    id: string,
+    request: UpdateUptimeScheduleRequestInterfaceModel
+  ): Promise<EnvironmentOverviewInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/${id}/UptimeSchedule`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the uptime schedule.');
     }
 
     return payload.data;

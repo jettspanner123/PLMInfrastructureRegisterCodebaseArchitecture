@@ -39,7 +39,7 @@ builder.Services.AddScoped<ResourceCellFormatColorService>();
 builder.Services.AddScoped<ResourceTableLegendService>();
 builder.Services.AddScoped<SyncService>();
 builder.Services.AddScoped<SubscriptionsService>();
-builder.Services.AddScoped<EnvironmentOverviewService>();
+builder.Services.AddHttpClient<EnvironmentOverviewService>();
 builder.Services.AddScoped<ConfigurationConstantsService>();
 builder.Services.AddHttpClient<ChatAssistantService>();
 

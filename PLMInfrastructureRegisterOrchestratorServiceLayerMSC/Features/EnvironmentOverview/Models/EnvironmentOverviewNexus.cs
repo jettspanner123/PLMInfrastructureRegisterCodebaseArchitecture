@@ -32,6 +32,21 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string? ActionItemsUpdates { get; set; }
 
+        // The raw, full text the user typed into the Current Uptime
+        // Schedule modal's own optional Notes field - unbounded, never
+        // altered. UptimeScheduleNoteSummary below is what the table cell
+        // actually displays; this is what repopulates the modal's textarea
+        // for re-editing, so nothing the user wrote is ever lost to
+        // summarization.
+        public string? UptimeScheduleNote { get; set; }
+
+        // Display-ready version of UptimeScheduleNote - a verbatim copy
+        // when the note is short enough already, or an AI-condensed
+        // (lossless, just more concise) version when it's long, computed
+        // once at save time by EnvironmentOverviewService - never
+        // recomputed on every read.
+        public string? UptimeScheduleNoteSummary { get; set; }
+
         public string? ConfigurationCustomisationVersion { get; set; }
 
         public string? DNSURL { get; set; }

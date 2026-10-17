@@ -310,6 +310,51 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             }
         }
 
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateUptimeSchedule)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> UpdateUptimeScheduleAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateUptimeScheduleRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertUpdateUptimeScheduleRequest(request);
+
+                EnvironmentOverviewDTO updatedEnvironment = await _environmentOverviewService.UpdateUptimeScheduleAsynchronous(
+                    id, request!.CurrentUptimeSchedule, request.UptimeScheduleNote);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Uptime schedule updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update uptime schedule validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update uptime schedule not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating the uptime schedule.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while updating the uptime schedule.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
         [HttpDelete(ApplicationRouteFactory.EnvironmentOverviewRoutes.DeleteEnvironmentOverview)]
         public async Task<ActionResult<APIResponse<bool>>> DeleteEnvironmentOverviewAsynchronous([FromRoute] Guid id)
         {

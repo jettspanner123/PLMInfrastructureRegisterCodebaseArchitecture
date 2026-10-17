@@ -161,5 +161,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 throw new ValidationException("An Environment name must be provided.");
             }
         }
+
+        // Both CurrentUptimeSchedule and UptimeScheduleNote are independently
+        // optional - an empty schedule with no note is a legitimate "cleared"
+        // state - so this only requires the request itself to be present.
+        public void AssertUpdateUptimeScheduleRequest(UpdateUptimeScheduleRequestDTO? request)
+        {
+            if (request is null)
+            {
+                throw new ValidationException("A request body must be provided.");
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ import type AddConfigurationConstantOptionRequestInterfaceModel from '../Models/
 import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
 import type UpdateActionItemRequestInterfaceModel from '../Models/UpdateActionItemRequestInterfaceModel';
 import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel';
+import type UpdateUptimeScheduleRequestInterfaceModel from '../Models/UpdateUptimeScheduleRequestInterfaceModel';
 import type UpdateResourceCellFormatRequestInterfaceModel from '../Models/UpdateResourceCellFormatRequestInterfaceModel';
 import type ResourceCellFormatInterfaceModel from '../Models/ResourceCellFormatInterfaceModel';
 import type CustomColorOptionInterfaceModel from '../Models/CustomColorOptionInterfaceModel';
@@ -409,6 +410,24 @@ export default class TanstackQueryClientService {
         },
         onError: (error) => {
           options?.onError?.(error instanceof Error ? error : new Error('Failed to update the field.'));
+        },
+      });
+    },
+
+    useUpdateUptimeScheduleMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateUptimeScheduleRequestInterfaceModel }) =>
+          EnvironmentOverviewService.current.updateUptimeSchedule(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the uptime schedule.'));
         },
       });
     },

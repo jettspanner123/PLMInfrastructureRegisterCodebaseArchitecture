@@ -293,8 +293,13 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   const [uptimeScheduleDraftOnDemandStatus, setUptimeScheduleDraftOnDemandStatus] = useState<string | null>(null);
   const [uptimeScheduleDraftStartTime, setUptimeScheduleDraftStartTime] = useState<string>('');
   const [uptimeScheduleDraftEndTime, setUptimeScheduleDraftEndTime] = useState<string>('');
+  // The modal's own optional Notes field - seeded from the RAW
+  // uptimeScheduleNote (never the display-only uptimeScheduleNoteSummary),
+  // so re-opening the editor always shows the user's own original text
+  // verbatim, even if it was long enough to get AI-condensed for the cell.
+  const [uptimeScheduleDraftNote, setUptimeScheduleDraftNote] = useState<string>('');
 
-  const handleOpenUptimeScheduleEditor = (rowId: string, currentValue: string | null): void => {
+  const handleOpenUptimeScheduleEditor = (rowId: string, currentValue: string | null, currentNote: string | null): void => {
     const parsed = UptimeScheduleTextUtility.current.parse(currentValue, uptimeScheduleTypeOptions);
     setEditingUptimeScheduleRowId(rowId);
     setUptimeScheduleDraftDays(new Set(parsed.days));
@@ -302,6 +307,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     setUptimeScheduleDraftOnDemandStatus(parsed.onDemandStatus);
     setUptimeScheduleDraftStartTime(parsed.startTime);
     setUptimeScheduleDraftEndTime(parsed.endTime);
+    setUptimeScheduleDraftNote(currentNote ?? '');
   };
 
   const handleCloseUptimeScheduleEditor = (): void => {
@@ -317,7 +323,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     if (activeDoubleClickedCell?.columnKey !== 'currentUptimeSchedule') return;
     const environment = environments.find((candidate) => candidate.id === activeDoubleClickedCell.rowId);
     if (environment && environment.status !== 'Decommissioned') {
-      handleOpenUptimeScheduleEditor(activeDoubleClickedCell.rowId, environment.currentUptimeSchedule);
+      handleOpenUptimeScheduleEditor(activeDoubleClickedCell.rowId, environment.currentUptimeSchedule, environment.uptimeScheduleNote);
     }
     setActiveDoubleClickedCell(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -363,16 +369,56 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         ? true
         : uptimeScheduleDraftDays.size > 0 && Boolean(uptimeScheduleDraftStartTime) && Boolean(uptimeScheduleDraftEndTime);
 
+  // Goes through its own dedicated mutation, not handleFieldSave/
+  // updateFieldMutation - this needs to persist the raw note alongside the
+  // composed schedule string in one request (and may trigger server-side AI
+  // summarization for a long note), neither of which the generic Field
+  // endpoint supports. Same pendingFieldEditKeys/fieldEditErrorByKey
+  // pending/error UX convention as every other field on this screen,
+  // keyed identically ("${rowId}:currentUptimeSchedule") so the cell's own
+  // isPending/cellError reads below pick this up for free.
   const handleSaveUptimeSchedule = (): void => {
     if (!editingUptimeScheduleRowId || !canSaveUptimeSchedule) return;
-    const environment = environments.find((candidate) => candidate.id === editingUptimeScheduleRowId);
-    handleFieldSave(
-      editingUptimeScheduleRowId,
-      'currentUptimeSchedule',
-      'CurrentUptimeSchedule',
-      uptimeSchedulePreviewValue,
-      environment?.currentUptimeSchedule ?? null
+
+    const rowId = editingUptimeScheduleRowId;
+    const cellKey = `${rowId}:currentUptimeSchedule`;
+    setPendingFieldEditKeys((previous) => new Set(previous).add(cellKey));
+    setFieldEditErrorByKey((current) => (current?.key === cellKey ? null : current));
+
+    updateUptimeScheduleMutation.mutate(
+      {
+        id: rowId,
+        request: {
+          currentUptimeSchedule: uptimeSchedulePreviewValue || null,
+          uptimeScheduleNote: uptimeScheduleDraftNote.trim() || null,
+        },
+      },
+      {
+        onSuccess: () => {
+          setPendingFieldEditKeys((previous) => {
+            const next = new Set(previous);
+            next.delete(cellKey);
+            return next;
+          });
+        },
+        onError: (error) => {
+          setPendingFieldEditKeys((previous) => {
+            const next = new Set(previous);
+            next.delete(cellKey);
+            return next;
+          });
+          if (fieldEditErrorTimerRef.current !== null) clearTimeout(fieldEditErrorTimerRef.current);
+          setFieldEditErrorByKey({
+            key: cellKey,
+            message: error instanceof Error ? error.message : 'Failed to update the uptime schedule.',
+          });
+          fieldEditErrorTimerRef.current = setTimeout(() => {
+            setFieldEditErrorByKey((current) => (current?.key === cellKey ? null : current));
+          }, 4000);
+        },
+      }
     );
+
     setEditingUptimeScheduleRowId(null);
   };
 
@@ -900,6 +946,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
   };
 
   const updateFieldMutation = TanstackQueryClientService.current.environmentOverview.useUpdateFieldMutation();
+  const updateUptimeScheduleMutation = TanstackQueryClientService.current.environmentOverview.useUpdateUptimeScheduleMutation();
 
   // Shared by every field that persists through the generic Field endpoint -
   // Purpose/Priority/DNS URL's textareas call this on blur (the user's own
@@ -1497,6 +1544,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     }
 
     const stringValue = displayValue.toString();
+    // View Mode's own generic cell rendering - only this one column also
+    // shows the note summary (the "value"/aria-label/copy behavior below
+    // stays schedule-only on purpose, so Copy never pulls in the note).
+    const uptimeScheduleNoteSummary =
+      column.key === 'currentUptimeSchedule' ? environment.uptimeScheduleNoteSummary : null;
 
     return (
       <CopyableTableCellSharedComponent
@@ -1514,6 +1566,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         width={columnWidth}
       >
         {stringValue}
+        {uptimeScheduleNoteSummary && (
+          <span className="block mt-0.5 text-slate-400 dark:text-zinc-500 font-sans">
+            {uptimeScheduleNoteSummary}
+          </span>
+        )}
       </CopyableTableCellSharedComponent>
     );
   };
@@ -1973,11 +2030,16 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       >
         <button
           type="button"
-          onClick={() => handleOpenUptimeScheduleEditor(environment.id, environment.currentUptimeSchedule)}
+          onClick={() => handleOpenUptimeScheduleEditor(environment.id, environment.currentUptimeSchedule, environment.uptimeScheduleNote)}
           className="w-full text-left font-mono text-xs text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60 rounded-lg px-1 py-1 -mx-1 -my-1 transition-colors cursor-pointer whitespace-pre-wrap break-words"
         >
           {environment.currentUptimeSchedule ?? (
             <span className="text-slate-400 dark:text-zinc-500">Set schedule…</span>
+          )}
+          {environment.uptimeScheduleNoteSummary && (
+            <span className="block mt-0.5 text-slate-400 dark:text-zinc-500 font-sans">
+              {environment.uptimeScheduleNoteSummary}
+            </span>
           )}
         </button>
         {cellError && <p className="mt-1 text-[10px] text-rose-500">{cellError}</p>}
@@ -1994,6 +2056,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
           onSelectSpecialMode={handleSelectUptimeScheduleSpecialMode}
           onDemandStatus={isOpen ? uptimeScheduleDraftOnDemandStatus : null}
           onSelectOnDemandStatus={setUptimeScheduleDraftOnDemandStatus}
+          notes={isOpen ? uptimeScheduleDraftNote : ''}
+          onNotesChange={setUptimeScheduleDraftNote}
           startTime={isOpen ? uptimeScheduleDraftStartTime : ''}
           endTime={isOpen ? uptimeScheduleDraftEndTime : ''}
           onStartTimeChange={setUptimeScheduleDraftStartTime}

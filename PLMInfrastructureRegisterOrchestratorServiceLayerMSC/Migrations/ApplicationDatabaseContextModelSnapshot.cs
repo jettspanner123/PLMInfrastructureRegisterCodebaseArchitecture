@@ -187,6 +187,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UptimeScheduleNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UptimeScheduleNoteSummary")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("IG_EnvironmentOverviewTBL", (string)null);

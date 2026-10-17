@@ -20,6 +20,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string? ActionItemsUpdates { get; set; }
 
+        public string? UptimeScheduleNote { get; set; }
+
+        public string? UptimeScheduleNoteSummary { get; set; }
+
         public string? ConfigurationCustomisationVersion { get; set; }
 
         public string? DNSURL { get; set; }
