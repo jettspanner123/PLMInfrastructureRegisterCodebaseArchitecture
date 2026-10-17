@@ -1,8 +1,9 @@
 import React from 'react';
-import { Check, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import ModalSharedComponent from '../../../Shared/Components/ModalSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
+import CustomSelectSharedComponent from '../../../Shared/Components/CustomSelectSharedComponent';
 
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -92,34 +93,19 @@ export default function UptimeScheduleModalController({
           <span className="block px-1 pb-1.5 text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500">
             Mode
           </span>
-          <div className="space-y-0.5">
-            {specialModeOptions.map((mode) => {
-              const isSelected = specialMode === mode;
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => onSelectSpecialMode(mode)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors cursor-pointer text-left text-xs ${
-                    isSelected
-                      ? 'bg-slate-100 dark:bg-zinc-800/90 text-slate-900 dark:text-white font-bold'
-                      : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60'
-                  }`}
-                >
-                  <span className="truncate">{mode}</span>
-                  {isSelected && <Check className="w-4 h-4 text-[#0C2086] dark:text-blue-400 shrink-0" />}
-                </button>
-              );
-            })}
-            <button
-              type="button"
-              onClick={onRequestAddSpecialMode}
-              className="w-full flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[#0C2086] dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer text-left"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Add New Type
-            </button>
-          </div>
+          <CustomSelectSharedComponent
+            value={specialMode ?? ''}
+            onChange={onSelectSpecialMode}
+            options={specialModeOptions.map((mode) => ({ value: mode, label: mode }))}
+            searchable
+            size="sm"
+            placeholder="Select a mode"
+            footerAction={{
+              label: 'Add New Type',
+              icon: <Plus className="w-3.5 h-3.5" />,
+              onClick: onRequestAddSpecialMode,
+            }}
+          />
         </div>
 
         {needsOnDemandStatus && (
@@ -127,34 +113,19 @@ export default function UptimeScheduleModalController({
             <span className="block px-1 pb-1.5 text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500">
               Status
             </span>
-            <div className="space-y-0.5">
-              {onDemandStatusOptions.map((statusOption) => {
-                const isSelected = onDemandStatus === statusOption;
-                return (
-                  <button
-                    key={statusOption}
-                    type="button"
-                    onClick={() => onSelectOnDemandStatus(statusOption)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors cursor-pointer text-left text-xs ${
-                      isSelected
-                        ? 'bg-slate-100 dark:bg-zinc-800/90 text-slate-900 dark:text-white font-bold'
-                        : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60'
-                    }`}
-                  >
-                    <span className="truncate">{statusOption}</span>
-                    {isSelected && <Check className="w-4 h-4 text-[#0C2086] dark:text-blue-400 shrink-0" />}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onClick={onRequestAddOnDemandStatus}
-                className="w-full flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[#0C2086] dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer text-left"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Add New Status
-              </button>
-            </div>
+            <CustomSelectSharedComponent
+              value={onDemandStatus ?? ''}
+              onChange={onSelectOnDemandStatus}
+              options={onDemandStatusOptions.map((statusOption) => ({ value: statusOption, label: statusOption }))}
+              searchable
+              size="sm"
+              placeholder="Select a status"
+              footerAction={{
+                label: 'Add New Status',
+                icon: <Plus className="w-3.5 h-3.5" />,
+                onClick: onRequestAddOnDemandStatus,
+              }}
+            />
           </div>
         )}
 
