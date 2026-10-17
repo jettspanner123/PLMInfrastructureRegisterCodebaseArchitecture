@@ -96,6 +96,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
         {
             ChatConversationNexus conversation = await ResolveOrCreateConversationAsynchronous(clientId, conversationId, question);
 
+            // True exactly when ResolveOrCreateConversationAsynchronous just
+            // created this conversation (added to the change tracker, not
+            // loaded from the DB) - an existing-but-now-invalid conversationId
+            // falls into the same "create fresh" path there, so this also
+            // correctly counts as new here. Checked via tracker state rather
+            // than widening that method's own return shape.
+            bool isNewConversation = _applicationDatabaseContext.Entry(conversation).State == EntityState.Added;
+
             List<ChatMessageNexus> history = await _applicationDatabaseContext.ChatMessages
                 .Where(message => message.ConversationId == conversation.Id)
                 .OrderBy(message => message.CreatedAt)
@@ -110,7 +118,26 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 .ToList();
             inputItems.Add(new GroqInputMessageDTO { Role = "user", Content = question });
 
-            GroqConversationLoopResultDTO loopResult = await RunGroqConversationLoopAsynchronous(inputItems);
+            // Title generation runs as a fully separate, isolated Groq call
+            // (no Tools, tiny prompt) IN PARALLEL with the main answer -
+            // total latency is whichever of the two takes longer, not both
+            // added together, and any failure here (rate limit, network)
+            // just leaves the plain-truncated fallback title
+            // ResolveOrCreateConversationAsynchronous already set, with zero
+            // effect on the user's actual answer.
+            Task<GroqConversationLoopResultDTO> loopTask = RunGroqConversationLoopAsynchronous(inputItems);
+            Task<string?> titleTask = isNewConversation
+                ? GenerateConversationTitleAsynchronous(question)
+                : Task.FromResult<string?>(null);
+
+            await Task.WhenAll(loopTask, titleTask);
+
+            GroqConversationLoopResultDTO loopResult = loopTask.Result;
+
+            if (isNewConversation && titleTask.Result is not null)
+            {
+                conversation.Title = titleTask.Result;
+            }
 
             DateTime now = DateTime.UtcNow;
 
@@ -231,6 +258,67 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
 
             return new AskQuestionResponseDTO { ConversationId = conversation.Id, Answer = answer, PendingQuestion = null };
         }
+
+        // A short, auto-generated conversation title (ChatGPT/Claude-style),
+        // based only on the user's first message - a brand new conversation
+        // starts with ResolveOrCreateConversationAsynchronous's own plain-
+        // truncated fallback title, which this overwrites once generation
+        // succeeds. Deliberately a fully separate Groq call (no Tools) run
+        // in parallel with the main answer, not a tool bolted onto the main
+        // loop - that loop already carries real complexity from the
+        // clarifying-question pause/resume mechanism, and a title-generation
+        // hiccup (rate limit, network) must never affect the user's actual
+        // answer. Never throws - any failure just means "no generated title
+        // this time", handled entirely by the caller falling back to the
+        // truncated one.
+        private async Task<string?> GenerateConversationTitleAsynchronous(string firstMessage)
+        {
+            try
+            {
+                string groqApiKey = ENValidatorHelper.Current.GetEnvKeyValue("GROQ_API_KEY");
+
+                var groqRequest = new GroqRequestDTO
+                {
+                    Model = GroqModel,
+                    Instructions = TitleGenerationInstructions,
+                    Input = new List<object> { new GroqInputMessageDTO { Role = "user", Content = firstMessage } },
+                };
+
+                using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, GroqResponsesEndpointURL)
+                {
+                    Content = JsonContent.Create(groqRequest),
+                };
+                httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", groqApiKey);
+
+                using HttpResponseMessage httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage);
+                if (!httpResponseMessage.IsSuccessStatusCode) return null;
+
+                GroqResponseDTO? groqResponse = await httpResponseMessage.Content.ReadFromJsonAsync<GroqResponseDTO>();
+                List<GroqResponseOutputItemDTO> outputItems = groqResponse?.Output ?? new List<GroqResponseOutputItemDTO>();
+
+                string? rawTitle = outputItems
+                    .Where(outputItem => outputItem.Type == "message")
+                    .SelectMany(outputItem => outputItem.Content ?? new List<GroqResponseContentItemDTO>())
+                    .Where(contentItem => contentItem.Type == "output_text")
+                    .Select(contentItem => contentItem.Text)
+                    .FirstOrDefault(text => !string.IsNullOrWhiteSpace(text));
+
+                if (string.IsNullOrWhiteSpace(rawTitle)) return null;
+
+                string cleaned = rawTitle.Trim().Trim('"', '\'', '“', '”', '‘', '’');
+                const int maxGeneratedTitleLength = 80;
+                return cleaned.Length > maxGeneratedTitleLength ? cleaned[..maxGeneratedTitleLength].TrimEnd() : cleaned;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private const string TitleGenerationInstructions =
+            "Generate a short, concise chat title (3-6 words, Title Case, no trailing punctuation, no " +
+            "surrounding quotes) summarizing what the user's message below is about. Reply with ONLY the " +
+            "title itself - no preamble, no explanation, no quotation marks.";
 
         // Shared by AskQuestionAsynchronous (fresh inputItems built from
         // history) and AnswerQuestionAsynchronous (rehydrated inputItems
