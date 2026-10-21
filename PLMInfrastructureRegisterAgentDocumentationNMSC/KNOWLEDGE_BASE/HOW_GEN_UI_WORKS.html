@@ -1,0 +1,664 @@
+<title>The Clarifying Question</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  /* ---------- tokens (lifted from InfraGrid's own src/index.css) ---------- */
+  :root{
+    --canvas:#ffffff;
+    --surface:#f8fafc;
+    --surface-2:#f1f5f9;
+    --ink:#09090b;
+    --body:#334155;
+    --mute:#64748b;
+    --hairline:rgba(0,0,0,.09);
+    --hairline-strong:rgba(0,0,0,.18);
+    --accent:#0C2086;
+    --accent-ink:#ffffff;
+    --accent-soft:#e9ebfb;
+    --frontend:#0b7b86;
+    --frontend-soft:#e3f4f4;
+    --groq:#9a6207;
+    --groq-soft:#fbf0db;
+    --good:#16763f;
+    --good-soft:#e5f6ea;
+    --pending:#9a6207;
+    --code-bg:#0b0e1a;
+    --code-ink:#dbe3ff;
+    --code-mute:#8891b8;
+    --shadow:0 1px 2px rgba(15,18,30,.04),0 10px 30px -14px rgba(15,18,30,.16);
+    --font-serif:'Playfair Display',serif;
+    --font-sans:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --canvas:#000000;
+      --surface:#0a0a0c;
+      --surface-2:#131317;
+      --ink:#fcfdff;
+      --body:rgba(252,253,255,.86);
+      --mute:#a1a4a5;
+      --hairline:rgba(255,255,255,.08);
+      --hairline-strong:rgba(255,255,255,.17);
+      --accent:#7a93ff;
+      --accent-ink:#06081a;
+      --accent-soft:rgba(122,147,255,.14);
+      --frontend:#39d6ce;
+      --frontend-soft:rgba(57,214,206,.12);
+      --groq:#f0b63d;
+      --groq-soft:rgba(240,182,61,.12);
+      --good:#3ddc84;
+      --good-soft:rgba(61,220,132,.12);
+      --pending:#f0b63d;
+      --shadow:0 1px 2px rgba(0,0,0,.5),0 20px 40px -20px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --canvas:#000000;
+    --surface:#0a0a0c;
+    --surface-2:#131317;
+    --ink:#fcfdff;
+    --body:rgba(252,253,255,.86);
+    --mute:#a1a4a5;
+    --hairline:rgba(255,255,255,.08);
+    --hairline-strong:rgba(255,255,255,.17);
+    --accent:#7a93ff;
+    --accent-ink:#06081a;
+    --accent-soft:rgba(122,147,255,.14);
+    --frontend:#39d6ce;
+    --frontend-soft:rgba(57,214,206,.12);
+    --groq:#f0b63d;
+    --groq-soft:rgba(240,182,61,.12);
+    --good:#3ddc84;
+    --good-soft:rgba(61,220,132,.12);
+    --pending:#f0b63d;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 20px 40px -20px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--canvas);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent-soft);}
+  .wrap{max-width:900px;margin:0 auto;padding:3.5rem 1.5rem 5rem;}
+  h1,h2,h3{font-family:var(--font-serif);text-wrap:balance;margin:0;}
+  p{margin:0;color:var(--body);max-width:65ch;}
+  a{color:var(--accent);}
+  code{font-family:var(--font-mono);}
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:flex;align-items:center;gap:.55rem;
+    margin-bottom:1rem;
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+
+  header.hero h1{font-size:clamp(2.3rem,5.4vw,3.5rem);font-weight:700;line-height:1.08;}
+  header.hero h1 em{font-style:italic;font-weight:500;color:var(--accent);}
+  header.hero .dek{margin-top:1.1rem;font-size:1.08rem;color:var(--body);}
+  header.hero .dek b{color:var(--ink);font-weight:600;}
+
+  section{margin-top:3.6rem;}
+  section > h2{font-size:1.55rem;font-weight:600;margin-bottom:.4rem;}
+  section > .section-sub{color:var(--mute);font-size:.94rem;margin-bottom:1.6rem;max-width:62ch;}
+
+  /* ---------- icons ---------- */
+  .ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-0.15em;flex-shrink:0;}
+
+  /* ---------- 4-tool strip ---------- */
+  .tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:.9rem;}
+  .tool-card{
+    border:1px solid var(--hairline);
+    border-radius:14px;
+    padding:1.1rem 1.1rem 1.2rem;
+    background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+  .tool-card .tool-icon{
+    width:34px;height:34px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface-2);color:var(--mute);font-size:1.15rem;margin-bottom:.8rem;
+  }
+  .tool-card.special{border-color:var(--groq);background:var(--groq-soft);}
+  .tool-card.special .tool-icon{background:rgba(0,0,0,.06);color:var(--groq);}
+  .tool-card code{font-size:.82rem;font-weight:600;display:block;margin-bottom:.35rem;color:var(--ink);}
+  .tool-card p{font-size:.84rem;color:var(--mute);}
+  .tool-card .pill{
+    display:inline-flex;align-items:center;gap:.3rem;margin-top:.7rem;
+    font-family:var(--font-mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:.2rem .5rem;border-radius:99px;
+  }
+  .pill.resolves{background:var(--good-soft);color:var(--good);}
+  .pill.pauses{background:var(--groq-soft);color:var(--groq);}
+
+  /* ---------- mermaid wrapper ---------- */
+  .diagram-frame{
+    border:1px solid var(--hairline);border-radius:16px;
+    background:var(--surface);padding:1.4rem 1.2rem .6rem;
+    box-shadow:var(--shadow);overflow-x:auto;
+  }
+  .diagram-frame .cap{
+    font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--mute);padding:0 .3rem 1rem;
+  }
+
+  /* ---------- explainer box ---------- */
+  .explainer{
+    display:grid;grid-template-columns:auto 1fr;gap:1rem;
+    border:1px solid var(--hairline);border-radius:14px;
+    background:var(--surface);padding:1.2rem 1.3rem;box-shadow:var(--shadow);
+  }
+  .explainer .ic-big{width:26px;height:26px;color:var(--accent);margin-top:.15rem;}
+  .explainer h3{font-family:var(--font-sans);font-size:1rem;font-weight:600;margin-bottom:.3rem;}
+  .explainer p{font-size:.93rem;}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;margin-top:1rem;padding-left:64px;}
+  .timeline::before{
+    content:"";position:absolute;left:27px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(var(--hairline-strong),var(--hairline-strong));
+  }
+  .stage{position:relative;padding-bottom:2.3rem;}
+  .stage:last-child{padding-bottom:0;}
+  .stage .num{
+    position:absolute;left:-64px;top:0;width:54px;height:54px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;background:var(--canvas);border:2px solid var(--hairline-strong);
+    font-family:var(--font-mono);font-weight:600;font-size:.95rem;color:var(--mute);
+  }
+  .stage.zone-frontend .num{border-color:var(--frontend);color:var(--frontend);}
+  .stage.zone-backend .num{border-color:var(--accent);color:var(--accent);}
+  .stage.zone-groq .num{border-color:var(--groq);color:var(--groq);}
+  .stage.zone-pause .num{border-color:var(--pending);color:var(--pending);background:var(--groq-soft);}
+
+  .stage-card{
+    border:1px solid var(--hairline);border-radius:14px;background:var(--surface);
+    padding:1.2rem 1.3rem 1.3rem;box-shadow:var(--shadow);
+  }
+  .stage.zone-pause .stage-card{border-style:dashed;border-color:var(--pending);}
+
+  .zone-tag{
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+    padding:.22rem .55rem;border-radius:99px;margin-bottom:.65rem;
+  }
+  .zone-frontend .zone-tag{background:var(--frontend-soft);color:var(--frontend);}
+  .zone-backend .zone-tag{background:var(--accent-soft);color:var(--accent);}
+  .zone-groq .zone-tag{background:var(--groq-soft);color:var(--groq);}
+  .zone-pause .zone-tag{background:var(--groq-soft);color:var(--pending);}
+
+  .stage-card h3{font-family:var(--font-mono);font-weight:600;font-size:1.02rem;color:var(--ink);margin-bottom:.55rem;}
+  .stage-card p{font-size:.93rem;}
+  .stage-card p + p{margin-top:.6rem;}
+
+  .call-chip{
+    display:inline-flex;align-items:center;gap:.5rem;margin-top:.85rem;
+    font-family:var(--font-mono);font-size:.78rem;
+    border:1px solid var(--hairline-strong);border-radius:9px;
+    padding:.4rem .7rem;background:var(--surface-2);max-width:100%;overflow-x:auto;
+  }
+  .call-chip .method{
+    font-weight:700;border-radius:5px;padding:.08rem .4rem;font-size:.7rem;letter-spacing:.02em;
+  }
+  .method.POST{background:var(--accent);color:var(--accent-ink);}
+  .method.GET{background:var(--frontend);color:var(--canvas);}
+
+  details{margin-top:.9rem;}
+  details > summary{
+    cursor:pointer;list-style:none;font-family:var(--font-mono);font-size:.78rem;
+    color:var(--mute);display:flex;align-items:center;gap:.4rem;user-select:none;
+  }
+  details > summary::-webkit-details-marker{display:none;}
+  details > summary::before{content:"▸";display:inline-block;transition:transform .15s ease;color:var(--mute);}
+  details[open] > summary::before{transform:rotate(90deg);}
+  details > summary:hover{color:var(--ink);}
+  pre.code-block{
+    margin:.6rem 0 0;padding:.9rem 1rem;border-radius:10px;
+    background:var(--code-bg);color:var(--code-ink);
+    font-family:var(--font-mono);font-size:.78rem;line-height:1.55;
+    overflow-x:auto;border:1px solid rgba(255,255,255,.06);
+  }
+  pre.code-block .c{color:var(--code-mute);}
+
+  .insight{
+    margin-top:.9rem;display:grid;grid-template-columns:auto 1fr;gap:.8rem;
+    border:1px dashed var(--accent);border-radius:12px;background:var(--accent-soft);
+    padding:1rem 1.1rem;
+  }
+  .insight .ic{width:20px;height:20px;color:var(--accent);margin-top:.1rem;}
+  .insight p{font-size:.88rem;color:var(--ink);}
+  .insight b{color:var(--accent);}
+
+  /* ---------- reference tables ---------- */
+  .table-frame{border:1px solid var(--hairline);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:600px;}
+  thead th{
+    text-align:left;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--mute);background:var(--surface-2);padding:.7rem .9rem;border-bottom:1px solid var(--hairline);
+  }
+  tbody td{padding:.7rem .9rem;border-bottom:1px solid var(--hairline);color:var(--body);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td code{font-size:.8rem;color:var(--ink);background:var(--surface-2);padding:.1rem .35rem;border-radius:5px;}
+  .method-tag{font-family:var(--font-mono);font-weight:700;font-size:.72rem;padding:.1rem .4rem;border-radius:5px;}
+
+  footer{margin-top:4rem;padding-top:1.6rem;border-top:1px solid var(--hairline);
+    font-family:var(--font-mono);font-size:.74rem;color:var(--mute);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+
+  @media (max-width:560px){
+    .timeline{padding-left:52px;}
+    .stage .num{left:-52px;width:42px;height:42px;font-size:.8rem;}
+    .timeline::before{left:21px;}
+    .explainer,.insight{grid-template-columns:1fr;}
+  }
+</style>
+
+<!-- ============== icon sprite ============== -->
+<svg style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="7" rx="1.6"/><rect x="3" y="13.5" width="18" height="7" rx="1.6"/><circle cx="7" cy="7" r="1"/><circle cx="7" cy="17" r="1"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2.1 6.4L20.5 10l-6.4 2.1L12 18.5l-2.1-6.4L3.5 10l6.4-1.6L12 2z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L3 10.5l7.4 2.6L13 20.5 21 3z"/><path d="M10.4 13.1L21 3"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11A8 8 0 1 0 18.5 16"/><path d="M20 4v7h-7"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.4"/><path d="M7 9h10M7 13h6"/><circle cx="7.6" cy="17" r="1"/><circle cx="12" cy="17" r="1"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.44.9 1.02.9 1.6v.5h5.2v-.5c0-.58.3-1.16.9-1.6A6 6 0 0 0 12 3z"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5M3 8l9 5 9-5"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">InfraGrid · Chat Assistant Internals</div>
+    <h1>The <em>Clarifying</em> Question</h1>
+    <p class="dek">
+      InfraGrid's chat assistant can hand the LLM a button it isn't normally given: the power to
+      <b>stop mid-turn and ask the user something first</b>. This is the one real "generative UI" surface
+      in the whole assistant — everywhere else, the model just writes Markdown. This page traces exactly
+      what happens, byte for byte, from the moment a user types an ambiguous request to the moment the
+      conversation picks back up.
+    </p>
+  </header>
+
+  <section>
+    <h2>Four tools, one that doesn't behave</h2>
+    <p class="section-sub">
+      Every turn, the backend hands Groq a menu of four callable tools. Three of them run instantly and
+      hand their result straight back to the model. The fourth can't — it needs a human.
+    </p>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-icon"><svg class="ic" style="width:1.2em;height:1.2em"><use href="#i-server"/></svg></div>
+        <code>query_resources</code>
+        <p>Looks up Azure VM rows by hostname / environment tag.</p>
+        <span class="pill resolves">resolves instantly</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon"><svg class="ic" style="width:1.2em;height:1.2em"><use href="#i-layers"/></svg></div>
+        <code>query_environment_overview</code>
+        <p>Returns logical environment metadata — purpose, sponsor, priorities, status.</p>
+        <span class="pill resolves">resolves instantly</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon"><svg class="ic" style="width:1.2em;height:1.2em"><use href="#i-db"/></svg></div>
+        <code>get_environment_action_items</code>
+        <p>Pulls the free-text action-items log for one named environment.</p>
+        <span class="pill resolves">resolves instantly</span>
+      </div>
+      <div class="tool-card special">
+        <div class="tool-icon"><svg class="ic" style="width:1.2em;height:1.2em"><use href="#i-pause"/></svg></div>
+        <code>ask_clarifying_question</code>
+        <p>Renders a real interactive card and <em>waits</em> for the user to answer it.</p>
+        <span class="pill pauses">pauses the loop</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The 30-second version</h2>
+    <p class="section-sub">One round of "ask → pause → answer → resume," top to bottom.</p>
+    <div class="diagram-frame">
+      <div class="cap">one clarifying-question round trip</div>
+      <pre class="mermaid">
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend (React)
+    participant BE as Backend (.NET)
+    participant G as Groq · openai/gpt-oss-20b
+
+    U->>FE: Types an ambiguous request
+    FE->>BE: POST /AskQuestion
+    BE->>G: POST /responses  (tools: 4 defined)
+    G-->>BE: function_call → ask_clarifying_question
+    Note over BE: Intercepted before dispatch.<br/>Loop returns early — "paused".
+    BE->>BE: Persist ChatMessageNexus<br/>(MessageKind = ClarifyingQuestion)
+    BE-->>FE: 200 · { pendingQuestion }
+    FE-->>U: Renders the question card
+    U->>FE: Picks option(s), taps Send
+    FE->>BE: POST /AnswerQuestion
+    BE->>BE: Rehydrate PendingInputStateJson
+    BE->>G: POST /responses  (resumed, answer folded in)
+    G-->>BE: Final text — or another ask_clarifying_question
+    BE-->>FE: 200 · { answer }
+    FE-->>U: Renders the reply as Markdown
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>First, what's a "tool call"?</h2>
+    <div class="explainer">
+      <svg class="ic ic-big"><use href="#i-bulb"/></svg>
+      <div>
+        <h3>The model doesn't run code — it asks to.</h3>
+        <p>
+          Groq's Responses API lets the backend attach a list of named functions ("tools"), each with a
+          JSON-Schema description of its parameters. Instead of replying in plain text, the model can emit
+          a <code>function_call</code> item naming one tool and filling in its arguments. The backend then
+          runs real logic, feeds the result back as a <code>function_call_output</code>, and the model keeps
+          going. Three of InfraGrid's four tools are ordinary data lookups. The fourth is where it gets
+          interesting: there's no logic to run — only the user can supply what's missing — so the backend
+          has to stop and come back later.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Stop by stop</h2>
+    <p class="section-sub">
+      The same request, now at full resolution — nine real stops, each tagged to the side of the system
+      it happens on. Expand any <code>▸ code</code> row for the exact shape on the wire.
+    </p>
+
+    <div class="timeline">
+
+      <div class="stage zone-frontend">
+        <div class="num">01</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-monitor"/></svg> Frontend</span>
+          <h3>sendMessage()</h3>
+          <p>User types something genuinely ambiguous — e.g. <em>"I need you to restart one of the environments"</em> — out of 16 possible environments — and hits send.</p>
+          <div class="call-chip"><span class="method POST">POST</span> /Api/V1/ChatAssistant/AskQuestion</div>
+          <details>
+            <summary>code · AskQuestionRequestDTO</summary>
+            <pre class="code-block">{
+  <span class="c">// the raw text the user typed</span>
+  "question": "I need you to restart one of the environments",
+  <span class="c">// omitted on the very first message of a chat</span>
+  "conversationId": "guid | null",
+  <span class="c">// stable per-browser id, used before login/accounts exist</span>
+  "clientId": "string"
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-backend">
+        <div class="num">02</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-server"/></svg> Backend</span>
+          <h3>RunGroqConversationLoopAsynchronous</h3>
+          <p>Loads up to 20 prior messages for context, assembles the full conversation array, and calls
+          Groq with all four tool definitions attached. There is no streaming anywhere in this pipeline —
+          it's one plain HTTP request, one plain HTTP response.</p>
+          <div class="call-chip"><span class="method POST">POST</span> https://api.groq.com/openai/v1/responses</div>
+          <details>
+            <summary>code · GroqRequestDTO</summary>
+            <pre class="code-block">{
+  "model": "openai/gpt-oss-20b",
+  "instructions": "&lt;system prompt: tone, formatting, when to ask&gt;",
+  "input": [ <span class="c">/* prior user / assistant turns */</span> ],
+  "tools": [ <span class="c">/* all 4 tool definitions, every call */</span> ]
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-groq">
+        <div class="num">03</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-spark"/></svg> Groq</span>
+          <h3>ask_clarifying_question</h3>
+          <p>The model decides the request can't be answered safely as-is, and instead of guessing — or
+          asking inline in its own prose — it calls the fourth tool, filling in a short heading, a plain-
+          language description, and (optionally) a handful of concrete options for the user to pick from.</p>
+          <details>
+            <summary>code · the tool's own JSON Schema</summary>
+            <pre class="code-block">{
+  "type": "function",
+  "name": "ask_clarifying_question",
+  "description": "Ask the user a single clarifying question when their request is genuinely ambiguous.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "heading":       { "type": "string",  "description": "Short title for the question card" },
+      "description":   { "type": "string",  "description": "Plain-language explanation of what's unclear" },
+      "options":       { "type": "array", "items": { "type": "string" },
+                          "description": "Optional — ~5-6 concrete choices" },
+      "allowMultiple": { "type": "boolean", "description": "May the user select more than one option?" }
+    },
+    "required": ["heading", "description"]
+  }
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-pause">
+        <div class="num"><svg class="ic" style="width:1.1em;height:1.1em"><use href="#i-pause"/></svg></div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-pause"/></svg> Backend · the catch</span>
+          <h3>the one tool never in the dispatch switch</h3>
+          <p>Every other tool call gets handed to <code>ExecuteToolCallAsynchronous</code>, a plain switch
+          on tool name. <code>ask_clarifying_question</code> is deliberately left out of it. The loop checks
+          the tool's name <em>before</em> that switch — and if it matches, returns immediately. There's
+          nothing to execute; only the user can supply the missing piece.</p>
+          <details>
+            <summary>code · the loop's own result shape</summary>
+            <pre class="code-block">GroqConversationLoopResultDTO {
+  <span class="c">// exactly ONE of these two branches is ever populated</span>
+  Answer?:                   string,
+  PendingToolCallId?:        string,
+  PendingToolCallArguments?: string,   <span class="c">// raw JSON from Groq</span>
+  InputItemsBeforePendingCall?: object[]
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-backend">
+        <div class="num">04</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-db"/></svg> Backend</span>
+          <h3>PersistPendingQuestionAndBuildDTO</h3>
+          <p>Before replying, the backend writes one row that remembers everything needed to pick this
+          exact moment back up — including a full snapshot of the conversation sent to Groq so far.</p>
+          <details>
+            <summary>code · the frozen ChatMessageNexus row</summary>
+            <pre class="code-block">ChatMessageNexus {
+  Role:  "assistant",
+  MessageKind: "ClarifyingQuestion",
+  ToolCallId:         "call_xyz",
+  ToolCallArguments:  "{ heading, description, options, allowMultiple }",
+  ToolCallOutput:     null,           <span class="c">// null == still pending</span>
+  PendingInputStateJson: "[ ...entire Groq input[] array... ]"
+}</pre>
+          </details>
+          <div class="insight">
+            <svg class="ic"><use href="#i-bulb"/></svg>
+            <p><b>Why snapshot the whole conversation?</b> Groq's Responses API has no
+            <code>previous_response_id</code> / server-side memory — every single call must resend the
+            entire conversation from scratch. "Resuming later" doesn't mean telling Groq to continue; it
+            means the backend rebuilding the exact array it had right before the pause, then replaying it.</p>
+          </div>
+          <div class="call-chip" style="margin-top:1rem"><span class="method POST" style="background:var(--good);color:var(--canvas)">200</span> { pendingQuestion, answer: null }</div>
+        </div>
+      </div>
+
+      <div class="stage zone-frontend">
+        <div class="num">05</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-card"/></svg> Frontend</span>
+          <h3>ClarifyingQuestionCardSharedComponent</h3>
+          <p><code>pendingQuestion</code> being non-null <em>is</em> the signal — the frontend mirrors it
+          into local state (<code>kind: 'question'</code>) and renders the card in place of a normal reply
+          bubble. Clicking an option only <em>stages</em> it; nothing is sent until the user hits Send or Skip.</p>
+          <details>
+            <summary>code · card props</summary>
+            <pre class="code-block">ClarifyingQuestionCardSharedComponentProps {
+  question: { messageId, heading, description, options?, allowMultiple },
+  answeredState?: { selectedOptions, freeTextAnswer, isSkipped },  <span class="c">// set once frozen</span>
+  onAnswer: (answer) =&gt; void,   <span class="c">// the ONE submit path — Send and Skip both call this</span>
+  isSubmitting: boolean
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-frontend">
+        <div class="num">06</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-send"/></svg> Frontend → Backend</span>
+          <h3>handleAnswerQuestion</h3>
+          <p>The card freezes optimistically the instant Send/Skip is pressed, then fires the answer back —
+          as its own dedicated call, never as a regular chat message.</p>
+          <div class="call-chip"><span class="method POST">POST</span> /Api/V1/ChatAssistant/AnswerQuestion</div>
+          <details>
+            <summary>code · AnswerQuestionRequestDTO</summary>
+            <pre class="code-block">{
+  "conversationId": "guid",
+  "messageId":       "guid",      <span class="c">// which frozen row this resolves</span>
+  "selectedOptions": ["Training"] ,
+  "freeTextAnswer":  null,
+  "isSkipped":       false
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-backend">
+        <div class="num">07</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-refresh"/></svg> Backend</span>
+          <h3>AnswerQuestionAsynchronous</h3>
+          <p>Loads the frozen row by <code>messageId</code>, writes the user's answer into
+          <code>ToolCallOutput</code>, then rehydrates <code>PendingInputStateJson</code> back into a real
+          array — reconstructing the exact moment Groq was interrupted — and appends the tool's call plus
+          its freshly-arrived output.</p>
+          <div class="call-chip"><span class="method POST">POST</span> https://api.groq.com/openai/v1/responses <span style="color:var(--mute)">(resumed)</span></div>
+          <details>
+            <summary>code · the answer, folded back into the array</summary>
+            <pre class="code-block">GroqFunctionCallOutputItemDTO {
+  type:    "function_call_output",
+  call_id: "call_xyz",            <span class="c">// same id Groq originally issued</span>
+  output:  "{ selectedOptions: [\"Training\"], freeTextAnswer: null, skipped: false }"
+}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="stage zone-groq">
+        <div class="num">08</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-spark"/></svg> Groq</span>
+          <h3>the loop continues</h3>
+          <p>With the answer folded in, the model can now call a real data tool
+          (<code>query_resources</code>, <code>query_environment_overview</code>,
+          <code>get_environment_action_items</code>) to actually act on it, answer directly — or, in rarer
+          cases, call <code>ask_clarifying_question</code> again (a nested pause, same mechanism, right from
+          stop <strong>03</strong>). A hard cap of <strong>5 round trips</strong> per turn keeps this from looping forever.</p>
+        </div>
+      </div>
+
+      <div class="stage zone-frontend">
+        <div class="num">09</div>
+        <div class="stage-card">
+          <span class="zone-tag"><svg class="ic"><use href="#i-monitor"/></svg> Frontend</span>
+          <h3>back to a normal reply</h3>
+          <p>A final answer is persisted as an ordinary row (<code>MessageKind: "Text"</code>) and comes
+          back as <code>{ answer, pendingQuestion: null }</code> — rendered client-side as Markdown, same as
+          every other reply in the assistant. The conversation carries on as if nothing paused at all.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Quick reference</h2>
+    <p class="section-sub">Every network call this feature makes, and who makes it.</p>
+    <div class="table-frame">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Call</th><th>Fired by</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="method-tag" style="background:var(--accent-soft);color:var(--accent)">POST</span> <code>/Api/V1/ChatAssistant/AskQuestion</code></td>
+              <td><code>sendMessage()</code></td>
+              <td>Start — or continue — a conversation turn.</td>
+            </tr>
+            <tr>
+              <td><span class="method-tag" style="background:var(--accent-soft);color:var(--accent)">POST</span> <code>/Api/V1/ChatAssistant/AnswerQuestion</code></td>
+              <td><code>handleAnswerQuestion()</code></td>
+              <td>Resume a paused <code>ask_clarifying_question</code> call.</td>
+            </tr>
+            <tr>
+              <td><span class="method-tag" style="background:var(--frontend-soft);color:var(--frontend)">GET</span> <code>/Api/V1/ChatAssistant/Conversations</code></td>
+              <td><code>useConversationsQuery</code></td>
+              <td>List a client's conversations for the sidebar.</td>
+            </tr>
+            <tr>
+              <td><span class="method-tag" style="background:var(--frontend-soft);color:var(--frontend)">GET</span> <code>/Api/V1/ChatAssistant/Conversations/{id}/Messages</code></td>
+              <td><code>useLoadConversationMessagesMutation</code></td>
+              <td>Reopen a past conversation — frozen question cards included.</td>
+            </tr>
+            <tr>
+              <td><span class="method-tag" style="background:var(--groq-soft);color:var(--groq)">POST</span> <code>api.groq.com/openai/v1/responses</code></td>
+              <td>Backend only — never called from the browser</td>
+              <td>The actual LLM call. Up to 5 round trips per user turn.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where it all lives</h2>
+    <div class="table-frame">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Side</th><th>File</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Backend</td><td><code>Features/ChatAssistant/Services/ChatAssistantService.cs</code></td><td>Tool definitions, the Groq loop, pause + resume logic.</td></tr>
+            <tr><td>Backend</td><td><code>Features/ChatAssistant/ChatAssistantController.cs</code></td><td>Route handlers — AskQuestion / AnswerQuestion / Conversations.</td></tr>
+            <tr><td>Backend</td><td><code>Features/ChatAssistant/Models/*.cs</code></td><td>Every DTO shown above — 12 files, one per wire shape.</td></tr>
+            <tr><td>Frontend</td><td><code>Shared/Components/ChatAssistantSharedComponent.tsx</code></td><td>The chat window — message list, discriminates text vs. question.</td></tr>
+            <tr><td>Frontend</td><td><code>Features/ChatAssistant/Components/ClarifyingQuestionCardSharedComponent.tsx</code></td><td>The card itself — options, free text, unified Send/Skip.</td></tr>
+            <tr><td>Frontend</td><td><code>Services/TanstackQueryClientService.ts</code></td><td><code>useAskQuestionMutation</code> / <code>useAnswerQuestionMutation</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>InfraGrid · Azure Infrastructure Register</span>
+    <span>ask_clarifying_question · openai/gpt-oss-20b via Groq</span>
+  </footer>
+
+</div>

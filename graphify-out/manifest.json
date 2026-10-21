@@ -1,0 +1,2042 @@
+{
+  ".vs/PLMInfrastructureRegisterCodebaseArchitecture.slnx/v18/DocumentLayout.backup.json": {
+    "mtime": 1791780878.9937098,
+    "seen": 1792386856.47852,
+    "ast_hash": "1a53bf7e0bfca3bac89de08ec09cb952",
+    "semantic_hash": "1a53bf7e0bfca3bac89de08ec09cb952"
+  },
+  ".vs/PLMInfrastructureRegisterCodebaseArchitecture.slnx/v18/DocumentLayout.json": {
+    "mtime": 1792058740.0999713,
+    "seen": 1792386856.4785244,
+    "ast_hash": "1a53bf7e0bfca3bac89de08ec09cb952",
+    "semantic_hash": "1a53bf7e0bfca3bac89de08ec09cb952"
+  },
+  ".vs/ProjectSettings.json": {
+    "mtime": 1791997612.7595766,
+    "seen": 1792386856.478526,
+    "ast_hash": "e88a33ccaa92ae56561422612f557911",
+    "semantic_hash": "e88a33ccaa92ae56561422612f557911"
+  },
+  ".vs/VSWorkspaceState.json": {
+    "mtime": 1792058740.407674,
+    "seen": 1792386856.478527,
+    "ast_hash": "b7c63319a8cafdd80af9c844c418df76",
+    "semantic_hash": "b7c63319a8cafdd80af9c844c418df76"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/.oxlintrc.json": {
+    "mtime": 1790830769.039571,
+    "seen": 1792386856.478528,
+    "ast_hash": "029f4905006c1fffd96bc863e2d98d3e",
+    "semantic_hash": "029f4905006c1fffd96bc863e2d98d3e"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/package.json": {
+    "mtime": 1792123633.1212645,
+    "seen": 1792386856.4785287,
+    "ast_hash": "0a4e0491f93f521af9b58cce1013177b",
+    "semantic_hash": "0a4e0491f93f521af9b58cce1013177b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationLayoutWidthCON.ts": {
+    "mtime": 1790854890.2798743,
+    "seen": 1792386856.4785297,
+    "ast_hash": "9f211b587f00808d336fd2fe261fdb12",
+    "semantic_hash": "9f211b587f00808d336fd2fe261fdb12"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationNetworkAPIConfiguration.ts": {
+    "mtime": 1791785588.3984725,
+    "seen": 1792386856.4785304,
+    "ast_hash": "1e5fa739bc7fe4204af19b23d41a2a16",
+    "semantic_hash": "1e5fa739bc7fe4204af19b23d41a2a16"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationRouteCON.ts": {
+    "mtime": 1791540657.7143192,
+    "seen": 1792386856.4785311,
+    "ast_hash": "0cda3834bee4285aef581fa9fc5b06d3",
+    "semantic_hash": "0cda3834bee4285aef581fa9fc5b06d3"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationSearchBarCON.ts": {
+    "mtime": 1791264406.449185,
+    "seen": 1792386856.4785316,
+    "ast_hash": "bba9c5b12c54e925a260bfa888564579",
+    "semantic_hash": "bba9c5b12c54e925a260bfa888564579"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationStickyHeaderCON.ts": {
+    "mtime": 1791955598.5683217,
+    "seen": 1792386856.4785326,
+    "ast_hash": "4e85fdd4799182f5e812ab17a75b5e5f",
+    "semantic_hash": "4e85fdd4799182f5e812ab17a75b5e5f"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationTableDensityCON.ts": {
+    "mtime": 1791272358.0894678,
+    "seen": 1792386856.4785333,
+    "ast_hash": "f9ee15ab4aa3c43f9505228424566bab",
+    "semantic_hash": "f9ee15ab4aa3c43f9505228424566bab"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationTableHeightCON.ts": {
+    "mtime": 1790970095.5376117,
+    "seen": 1792386856.4785342,
+    "ast_hash": "2554bf9ab68a0bdc0b9cab58ba856453",
+    "semantic_hash": "2554bf9ab68a0bdc0b9cab58ba856453"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationThemeCON.ts": {
+    "mtime": 1790848433.946108,
+    "seen": 1792386856.478535,
+    "ast_hash": "ad82ad0e27ac20d9e445f6e2656edf1a",
+    "semantic_hash": "ad82ad0e27ac20d9e445f6e2656edf1a"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ApplicationUserPreferenceKeyCON.ts": {
+    "mtime": 1792058154.8615623,
+    "seen": 1792386856.4785354,
+    "ast_hash": "0eea753baf08f9d03a3a1e860cef0666",
+    "semantic_hash": "0eea753baf08f9d03a3a1e860cef0666"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/CellFormatCON.ts": {
+    "mtime": 1791882895.065132,
+    "seen": 1792386856.4785361,
+    "ast_hash": "72d650f5330f4026168896d8c438f000",
+    "semantic_hash": "72d650f5330f4026168896d8c438f000"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/TanstackQueryKeysCON.ts": {
+    "mtime": 1792151509.4914925,
+    "seen": 1792386856.4785368,
+    "ast_hash": "758b1eb2d546247eb424e09ee2096972",
+    "semantic_hash": "758b1eb2d546247eb424e09ee2096972"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Constants/ViewEditModeCON.ts": {
+    "mtime": 1791401248.4967875,
+    "seen": 1792386856.4785378,
+    "ast_hash": "181940f84ffdad5360fa2119e5a304d7",
+    "semantic_hash": "181940f84ffdad5360fa2119e5a304d7"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/ChatAssistant/Components/ClarifyingQuestionCardSharedComponent.tsx": {
+    "mtime": 1792169868.9665222,
+    "seen": 1792386856.4785385,
+    "ast_hash": "2db2db1f079eba70611bd44d5762e8ff",
+    "semantic_hash": "2db2db1f079eba70611bd44d5762e8ff"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/ChatAssistant/Services/ChatAssistantService.ts": {
+    "mtime": 1792167753.980752,
+    "seen": 1792386856.478539,
+    "ast_hash": "b879989c8e44c20a4816ecfd7cf69d08",
+    "semantic_hash": "b879989c8e44c20a4816ecfd7cf69d08"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Components/CreateOptionModalController.tsx": {
+    "mtime": 1791524752.8870692,
+    "seen": 1792386856.4785395,
+    "ast_hash": "1415d0f823b9e7ba938f6e4a57fedbd1",
+    "semantic_hash": "1415d0f823b9e7ba938f6e4a57fedbd1"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Components/UptimeScheduleModalController.tsx": {
+    "mtime": 1792256032.665498,
+    "seen": 1792386856.4785402,
+    "ast_hash": "6edec00229b3b68341d73881c0b22d99",
+    "semantic_hash": "6edec00229b3b68341d73881c0b22d99"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Constants/EnvironmentOverviewCON.ts": {
+    "mtime": 1792051308.9646266,
+    "seen": 1792386856.4785414,
+    "ast_hash": "27a67b850898eb8f9b591611aa5fbd76",
+    "semantic_hash": "27a67b850898eb8f9b591611aa5fbd76"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/EnvironmentOverviewScreenController.tsx": {
+    "mtime": 1792256196.0741954,
+    "seen": 1792386856.4785419,
+    "ast_hash": "210ad8073f08233f59213d987f59c3dd",
+    "semantic_hash": "210ad8073f08233f59213d987f59c3dd"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Services/EnvironmentOverviewColumnWidthService.ts": {
+    "mtime": 1791356382.0053513,
+    "seen": 1792386856.4785423,
+    "ast_hash": "131659c7cd45b2b6e9b8f989fff207d2",
+    "semantic_hash": "131659c7cd45b2b6e9b8f989fff207d2"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Services/EnvironmentOverviewRowHeightService.ts": {
+    "mtime": 1791949365.7007322,
+    "seen": 1792386856.478543,
+    "ast_hash": "2a2abbd8a4b8bbdd604361b5772175b0",
+    "semantic_hash": "2a2abbd8a4b8bbdd604361b5772175b0"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Services/EnvironmentOverviewService.ts": {
+    "mtime": 1792255966.1001909,
+    "seen": 1792386856.4785438,
+    "ast_hash": "e9f7a46aecb028dad95590592213e24a",
+    "semantic_hash": "e9f7a46aecb028dad95590592213e24a"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Utilities/EnvironmentOverviewTableUtility.ts": {
+    "mtime": 1792007123.6051464,
+    "seen": 1792386856.4785447,
+    "ast_hash": "263b39f62b382ca1090e7c4b0b82e0ae",
+    "semantic_hash": "263b39f62b382ca1090e7c4b0b82e0ae"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/EnvironmentOverview/Utilities/UptimeScheduleTextUtility.ts": {
+    "mtime": 1792061792.387047,
+    "seen": 1792386856.4785454,
+    "ast_hash": "d3fa5815b04b48f4914d7fddc6ef292a",
+    "semantic_hash": "d3fa5815b04b48f4914d7fddc6ef292a"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Navigation/Components/static/TableHeightControlStaticComponent.tsx": {
+    "mtime": 1790971404.65252,
+    "seen": 1792386856.4785461,
+    "ast_hash": "e9d844d366c89412ed315a5a4b889153",
+    "semantic_hash": "e9d844d366c89412ed315a5a4b889153"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Navigation/Constants/NavigationCON.ts": {
+    "mtime": 1791313393.1619565,
+    "seen": 1792386856.4785466,
+    "ast_hash": "e8a29104f74e07b042ce706c39b9a75e",
+    "semantic_hash": "e8a29104f74e07b042ce706c39b9a75e"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Navigation/NavigationController.tsx": {
+    "mtime": 1791542196.5117848,
+    "seen": 1792386856.4785476,
+    "ast_hash": "15fc45a449649bb5b822ce2e15dc2fc0",
+    "semantic_hash": "15fc45a449649bb5b822ce2e15dc2fc0"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Resources/Components/AddCustomColorModalController.tsx": {
+    "mtime": 1792152788.0356205,
+    "seen": 1792386856.478548,
+    "ast_hash": "f0da5884c63928666f8b4a3f9512b6f0",
+    "semantic_hash": "f0da5884c63928666f8b4a3f9512b6f0"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Resources/Components/AddLegendModalController.tsx": {
+    "mtime": 1792152870.1696863,
+    "seen": 1792386856.4785488,
+    "ast_hash": "1075587823743cd5c1615df9fddc0613",
+    "semantic_hash": "1075587823743cd5c1615df9fddc0613"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Resources/Constants/ResourceColumnCON.ts": {
+    "mtime": 1792055194.8760624,
+    "seen": 1792386856.4785495,
+    "ast_hash": "81d958639ff6c7a925fc0a0e61430399",
+    "semantic_hash": "81d958639ff6c7a925fc0a0e61430399"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Resources/ResourcesScreenController.tsx": {
+    "mtime": 1792152414.8386114,
+    "seen": 1792386856.47855,
+    "ast_hash": "435f6b9af159ce062ad00bfdbc0ca946",
+    "semantic_hash": "435f6b9af159ce062ad00bfdbc0ca946"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Resources/Services/ResourcesService.ts": {
+    "mtime": 1792151506.1939833,
+    "seen": 1792386856.4785504,
+    "ast_hash": "02b51547723302371c216249236777a8",
+    "semantic_hash": "02b51547723302371c216249236777a8"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Resources/Utilities/ResourceTableUtility.ts": {
+    "mtime": 1792055229.8838272,
+    "seen": 1792386856.4785511,
+    "ast_hash": "afa6b16a3f90f25692606ff666d2081b",
+    "semantic_hash": "afa6b16a3f90f25692606ff666d2081b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Settings/Components/SettingsSidebarStaticComponent.tsx": {
+    "mtime": 1791542203.644172,
+    "seen": 1792386856.4785519,
+    "ast_hash": "05e48cefc77de2443ebd7f6dfa72a323",
+    "semantic_hash": "05e48cefc77de2443ebd7f6dfa72a323"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Settings/Constants/SettingsCON.ts": {
+    "mtime": 1791540666.0068467,
+    "seen": 1792386856.4785526,
+    "ast_hash": "69731cb6e78c82b9927cbd9a0393d238",
+    "semantic_hash": "69731cb6e78c82b9927cbd9a0393d238"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Settings/SettingsColorEditingScreenController.tsx": {
+    "mtime": 1791998647.6022513,
+    "seen": 1792386856.4785533,
+    "ast_hash": "b7173e8a626ba7b2c023ae2043f9d632",
+    "semantic_hash": "b7173e8a626ba7b2c023ae2043f9d632"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Settings/SettingsScreenController.tsx": {
+    "mtime": 1791957458.1440873,
+    "seen": 1792386856.478554,
+    "ast_hash": "7d253eb2402385d9895de5be59ce8a4a",
+    "semantic_hash": "7d253eb2402385d9895de5be59ce8a4a"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/SplashScreen/Components/static/SplashScreenLogoStaticComponent.tsx": {
+    "mtime": 1790881865.374784,
+    "seen": 1792386856.478555,
+    "ast_hash": "339aaa0cdebc110d04a5d0fed9546015",
+    "semantic_hash": "339aaa0cdebc110d04a5d0fed9546015"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/SplashScreen/Constants/SplashScreenCON.ts": {
+    "mtime": 1790881857.1257794,
+    "seen": 1792386856.478556,
+    "ast_hash": "44a6c051e338419d45a8be765121bbb1",
+    "semantic_hash": "44a6c051e338419d45a8be765121bbb1"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/SplashScreen/SplashScreenController.tsx": {
+    "mtime": 1792153136.214099,
+    "seen": 1792386856.4785564,
+    "ast_hash": "9d1443291f90b7b122aaf2e080f1ad3b",
+    "semantic_hash": "9d1443291f90b7b122aaf2e080f1ad3b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Subscriptions/Components/AddSubscriptionModalController.tsx": {
+    "mtime": 1790961835.2376907,
+    "seen": 1792386856.478557,
+    "ast_hash": "6f21f49f31ce1efdaf08a4370b5e49ea",
+    "semantic_hash": "6f21f49f31ce1efdaf08a4370b5e49ea"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Subscriptions/Components/EditSubscriptionDisplayNameModalController.tsx": {
+    "mtime": 1790961846.51687,
+    "seen": 1792386856.4785576,
+    "ast_hash": "fbc64c71c02ade74b8b7f43e84ca716b",
+    "semantic_hash": "fbc64c71c02ade74b8b7f43e84ca716b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Subscriptions/Services/SubscriptionsService.ts": {
+    "mtime": 1790961805.228876,
+    "seen": 1792386856.4785583,
+    "ast_hash": "fdb81684861cadf468cc7c0b7b6b472f",
+    "semantic_hash": "fdb81684861cadf468cc7c0b7b6b472f"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Features/Subscriptions/SubscriptionsScreenController.tsx": {
+    "mtime": 1791308321.3097682,
+    "seen": 1792386856.4785588,
+    "ast_hash": "af4c28631f213e006772b2ee932c8401",
+    "semantic_hash": "af4c28631f213e006772b2ee932c8401"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/APIResponseInterfaceModel.ts": {
+    "mtime": 1790895362.1311574,
+    "seen": 1792386856.4785595,
+    "ast_hash": "5ad230db4bc9e0dae2fa79cb53b8ca92",
+    "semantic_hash": "5ad230db4bc9e0dae2fa79cb53b8ca92"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AddActionItemRequestInterfaceModel.ts": {
+    "mtime": 1791439298.6876707,
+    "seen": 1792386856.47856,
+    "ast_hash": "bcc58d9ed9cd112f6d7601c103a692c6",
+    "semantic_hash": "bcc58d9ed9cd112f6d7601c103a692c6"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AddConfigurationConstantOptionRequestInterfaceModel.ts": {
+    "mtime": 1791524690.0864613,
+    "seen": 1792386856.4785607,
+    "ast_hash": "cac3f1ba51bea16631590bcd79a3cfb6",
+    "semantic_hash": "cac3f1ba51bea16631590bcd79a3cfb6"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AddCustomColorOptionRequestInterfaceModel.ts": {
+    "mtime": 1791533474.4000926,
+    "seen": 1792386856.4785612,
+    "ast_hash": "853f9bdf57ab075998ccb5ae3477f627",
+    "semantic_hash": "853f9bdf57ab075998ccb5ae3477f627"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AddLegendEntryRequestInterfaceModel.ts": {
+    "mtime": 1792151487.8372438,
+    "seen": 1792386856.4785619,
+    "ast_hash": "47a6efecb179db3c4c53a9ff062525c7",
+    "semantic_hash": "47a6efecb179db3c4c53a9ff062525c7"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AnswerQuestionRequestInterfaceModel.ts": {
+    "mtime": 1792167727.6262817,
+    "seen": 1792386856.4785626,
+    "ast_hash": "ffd60c3bb7e6fd84d64f1ba0e0a391e2",
+    "semantic_hash": "ffd60c3bb7e6fd84d64f1ba0e0a391e2"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AskQuestionRequestInterfaceModel.ts": {
+    "mtime": 1792087817.4719481,
+    "seen": 1792386856.4785633,
+    "ast_hash": "d58dee56b0436645ced7e59ffcf13b59",
+    "semantic_hash": "d58dee56b0436645ced7e59ffcf13b59"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AskQuestionResponseInterfaceModel.ts": {
+    "mtime": 1792167732.589103,
+    "seen": 1792386856.4785638,
+    "ast_hash": "7ee90113452660f618db8b4c3e0ebcd9",
+    "semantic_hash": "7ee90113452660f618db8b4c3e0ebcd9"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/AvailableAzureSubscriptionInterfaceModel.ts": {
+    "mtime": 1790961777.578899,
+    "seen": 1792386856.4785645,
+    "ast_hash": "024ac2f781c10d698b6fd2ad69742f0b",
+    "semantic_hash": "024ac2f781c10d698b6fd2ad69742f0b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ChatConversationSummaryInterfaceModel.ts": {
+    "mtime": 1792087829.4334583,
+    "seen": 1792386856.4785652,
+    "ast_hash": "8f5d58d4d14729c9522e4f4c3be3a740",
+    "semantic_hash": "8f5d58d4d14729c9522e4f4c3be3a740"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ChatMessageInterfaceModel.ts": {
+    "mtime": 1792167738.7079642,
+    "seen": 1792386856.4785657,
+    "ast_hash": "1e168da2edf9d829b92ef35ab63b5dee",
+    "semantic_hash": "1e168da2edf9d829b92ef35ab63b5dee"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ClarifyingQuestionInterfaceModel.ts": {
+    "mtime": 1792169796.706742,
+    "seen": 1792386856.4785664,
+    "ast_hash": "22d462631d27deaefc9648acdcd49d20",
+    "semantic_hash": "22d462631d27deaefc9648acdcd49d20"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ConfiguredSubscriptionInterfaceModel.ts": {
+    "mtime": 1790961772.8246553,
+    "seen": 1792386856.4785671,
+    "ast_hash": "847f60b95fd2bea24a41c957b1cbda77",
+    "semantic_hash": "847f60b95fd2bea24a41c957b1cbda77"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/CreateEnvironmentOverviewRequestInterfaceModel.ts": {
+    "mtime": 1791399155.134927,
+    "seen": 1792386856.4785676,
+    "ast_hash": "bfd49d802bdd0ba7ef948a23b118cfa8",
+    "semantic_hash": "bfd49d802bdd0ba7ef948a23b118cfa8"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/CustomColorOptionInterfaceModel.ts": {
+    "mtime": 1791540590.171612,
+    "seen": 1792386856.4785686,
+    "ast_hash": "db31c8321b4abcbc4c4e7995c92e63f8",
+    "semantic_hash": "db31c8321b4abcbc4c4e7995c92e63f8"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/DraftEnvironmentOverviewRowInterfaceModel.ts": {
+    "mtime": 1791399484.0790033,
+    "seen": 1792386856.478569,
+    "ast_hash": "5d4d4fa1950af2a47d2541398b853e8d",
+    "semantic_hash": "5d4d4fa1950af2a47d2541398b853e8d"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/EnvironmentOverviewCellFormatInterfaceModel.ts": {
+    "mtime": 1791972545.6021698,
+    "seen": 1792386856.4785695,
+    "ast_hash": "b0ea8cce98a355ae1eb91fb23bec9aa1",
+    "semantic_hash": "b0ea8cce98a355ae1eb91fb23bec9aa1"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/EnvironmentOverviewCellFormatTargetInterfaceModel.ts": {
+    "mtime": 1791863655.1786273,
+    "seen": 1792386856.4785702,
+    "ast_hash": "ba8043f2f69095b33b35e37fc09c9650",
+    "semantic_hash": "ba8043f2f69095b33b35e37fc09c9650"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/EnvironmentOverviewInterfaceModel.ts": {
+    "mtime": 1792255943.0322087,
+    "seen": 1792386856.4785707,
+    "ast_hash": "995b6856f502aa3f5a4d145f757e5e4b",
+    "semantic_hash": "995b6856f502aa3f5a4d145f757e5e4b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/LegendEntryInterfaceModel.ts": {
+    "mtime": 1792151486.0849974,
+    "seen": 1792386856.4785712,
+    "ast_hash": "5348a54479e1d5812c3d2e4bc77bc9d5",
+    "semantic_hash": "5348a54479e1d5812c3d2e4bc77bc9d5"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ResourceCellFormatInterfaceModel.ts": {
+    "mtime": 1791972382.5280125,
+    "seen": 1792386856.478572,
+    "ast_hash": "be0ef9420b83c32b8e977039260cbb4b",
+    "semantic_hash": "be0ef9420b83c32b8e977039260cbb4b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ResourceCellFormatTargetInterfaceModel.ts": {
+    "mtime": 1791480379.1790457,
+    "seen": 1792386856.4785726,
+    "ast_hash": "67cef8164c1b33cd8db613a31cd4a406",
+    "semantic_hash": "67cef8164c1b33cd8db613a31cd4a406"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/ResourceInterfaceModel.ts": {
+    "mtime": 1792055223.4878955,
+    "seen": 1792386856.4785733,
+    "ast_hash": "5868b4853bb4e23daf462b4ec89ce292",
+    "semantic_hash": "5868b4853bb4e23daf462b4ec89ce292"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/SubscriptionDeletionResultInterfaceModel.ts": {
+    "mtime": 1790961781.5695803,
+    "seen": 1792386856.478574,
+    "ast_hash": "118ab3005eaae4a9c1213b94be640008",
+    "semantic_hash": "118ab3005eaae4a9c1213b94be640008"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateActionItemRequestInterfaceModel.ts": {
+    "mtime": 1792051597.944925,
+    "seen": 1792386856.4785745,
+    "ast_hash": "d4861688ce5b73467751b85bce352a25",
+    "semantic_hash": "d4861688ce5b73467751b85bce352a25"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateCustomColorOptionRequestInterfaceModel.ts": {
+    "mtime": 1791540596.997398,
+    "seen": 1792386856.4785755,
+    "ast_hash": "0b957c74bd70c82df36e17910b50f923",
+    "semantic_hash": "0b957c74bd70c82df36e17910b50f923"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel.ts": {
+    "mtime": 1791972550.9902394,
+    "seen": 1792386856.4785762,
+    "ast_hash": "ebb66e5b421abb78d4f4cbd5b3525d16",
+    "semantic_hash": "ebb66e5b421abb78d4f4cbd5b3525d16"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateEnvironmentOverviewFieldRequestInterfaceModel.ts": {
+    "mtime": 1791445978.9440603,
+    "seen": 1792386856.4785767,
+    "ast_hash": "1ad97df733cc424a16f10486edb4cb3f",
+    "semantic_hash": "1ad97df733cc424a16f10486edb4cb3f"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel.ts": {
+    "mtime": 1791432846.0471137,
+    "seen": 1792386856.4785771,
+    "ast_hash": "eda70e348d873adaeee697e395feb6b1",
+    "semantic_hash": "eda70e348d873adaeee697e395feb6b1"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateLegendEntryRequestInterfaceModel.ts": {
+    "mtime": 1792151490.3166108,
+    "seen": 1792386856.4785779,
+    "ast_hash": "87464a42a60728fb88e74de295e412b3",
+    "semantic_hash": "87464a42a60728fb88e74de295e412b3"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateResourceCellFormatRequestInterfaceModel.ts": {
+    "mtime": 1791972555.6043243,
+    "seen": 1792386856.4785788,
+    "ast_hash": "a90205d133453ee608b3d60de97edec5",
+    "semantic_hash": "a90205d133453ee608b3d60de97edec5"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Models/UpdateUptimeScheduleRequestInterfaceModel.ts": {
+    "mtime": 1792255949.7352684,
+    "seen": 1792386856.4785793,
+    "ast_hash": "6a7f1269f8f0c667f516f785c1e02fc1",
+    "semantic_hash": "6a7f1269f8f0c667f516f785c1e02fc1"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Router/ApplicationRouter.tsx": {
+    "mtime": 1792003070.3637218,
+    "seen": 1792386856.4785798,
+    "ast_hash": "a8f73e9118dc8a0d14d9fe8d6dcc6023",
+    "semantic_hash": "a8f73e9118dc8a0d14d9fe8d6dcc6023"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Routes/EnvironmentOverviewScreenRoute.tsx": {
+    "mtime": 1791313369.1186981,
+    "seen": 1792386856.4785805,
+    "ast_hash": "9f1ebec7b2c502ab1bb8dfa5a2a8e735",
+    "semantic_hash": "9f1ebec7b2c502ab1bb8dfa5a2a8e735"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Routes/InfrastructureRegisterScreenRoute.tsx": {
+    "mtime": 1790851327.0529013,
+    "seen": 1792386856.478581,
+    "ast_hash": "7fbcddfae72c72ff41cc801fac92d6ef",
+    "semantic_hash": "7fbcddfae72c72ff41cc801fac92d6ef"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Routes/SettingsScreenRoute.tsx": {
+    "mtime": 1791540719.4194224,
+    "seen": 1792386856.4785817,
+    "ast_hash": "4dc366a395bdd99fd687423b487e742b",
+    "semantic_hash": "4dc366a395bdd99fd687423b487e742b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Services/ConfigurationConstantsService.ts": {
+    "mtime": 1791524698.2766395,
+    "seen": 1792386856.4785824,
+    "ast_hash": "0ddd1b3e709b5b623b9e21d7493fc60e",
+    "semantic_hash": "0ddd1b3e709b5b623b9e21d7493fc60e"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Services/GlobalSearchNavigationService.ts": {
+    "mtime": 1792007179.5881135,
+    "seen": 1792386856.4785836,
+    "ast_hash": "e25dc89f19b5fe4afdb15d3947bb8825",
+    "semantic_hash": "e25dc89f19b5fe4afdb15d3947bb8825"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Services/TableSelectionService.ts": {
+    "mtime": 1791521237.6733682,
+    "seen": 1792386856.4785843,
+    "ast_hash": "345a42f70944ffe5189e191d54b469a3",
+    "semantic_hash": "345a42f70944ffe5189e191d54b469a3"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Services/TanstackQueryClientService.ts": {
+    "mtime": 1792256001.7979238,
+    "seen": 1792386856.478585,
+    "ast_hash": "ee3e4202d481a636746d0fb7e8597d1d",
+    "semantic_hash": "ee3e4202d481a636746d0fb7e8597d1d"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/AnimatedThemeToggleSharedComponent.tsx": {
+    "mtime": 1790848458.0708945,
+    "seen": 1792386856.4785855,
+    "ast_hash": "f486a10d17c1c8ea351be9dec3bfe5a1",
+    "semantic_hash": "f486a10d17c1c8ea351be9dec3bfe5a1"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ApplicationToasterSharedComponent.tsx": {
+    "mtime": 1791744397.5441527,
+    "seen": 1792386856.4785862,
+    "ast_hash": "2cc5556a7392b65e5a3d45900c6a1b93",
+    "semantic_hash": "2cc5556a7392b65e5a3d45900c6a1b93"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/BadgeSharedComponent.tsx": {
+    "mtime": 1790848457.7733839,
+    "seen": 1792386856.4785867,
+    "ast_hash": "bf7d44b7a73facd72ccc8c06732a8b7e",
+    "semantic_hash": "bf7d44b7a73facd72ccc8c06732a8b7e"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ButtonSharedComponent.tsx": {
+    "mtime": 1790848457.9830427,
+    "seen": 1792386856.4785874,
+    "ast_hash": "0a4fa44ea6fba9728a66a486a8f34cfd",
+    "semantic_hash": "0a4fa44ea6fba9728a66a486a8f34cfd"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/CardSharedComponent.tsx": {
+    "mtime": 1790854958.3073275,
+    "seen": 1792386856.478588,
+    "ast_hash": "85817d6614ea7d9efbe404ac23536eaf",
+    "semantic_hash": "85817d6614ea7d9efbe404ac23536eaf"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ChatAssistantSharedComponent.tsx": {
+    "mtime": 1792169819.896857,
+    "seen": 1792386856.4785886,
+    "ast_hash": "5677589bec6686f232c2be12d096086b",
+    "semantic_hash": "5677589bec6686f232c2be12d096086b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ColumnVisibilityDropdownSharedComponent.tsx": {
+    "mtime": 1791536304.9998567,
+    "seen": 1792386856.4785893,
+    "ast_hash": "0efd549708159a4875b0ec84fedf4496",
+    "semantic_hash": "0efd549708159a4875b0ec84fedf4496"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ConfirmationModalSharedComponent.tsx": {
+    "mtime": 1790848457.9401093,
+    "seen": 1792386856.47859,
+    "ast_hash": "128149ec099130c01bafc55dca3a3962",
+    "semantic_hash": "128149ec099130c01bafc55dca3a3962"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ContextMenuSharedComponent.tsx": {
+    "mtime": 1791880248.7986531,
+    "seen": 1792386856.4785905,
+    "ast_hash": "acc1a6726a5f5cd03437bdfc19f114f0",
+    "semantic_hash": "acc1a6726a5f5cd03437bdfc19f114f0"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ControllBlockSharedComponent.tsx": {
+    "mtime": 1790971389.0183816,
+    "seen": 1792386856.478591,
+    "ast_hash": "321e0be7dfc058e5ced55ba707f2d6b2",
+    "semantic_hash": "321e0be7dfc058e5ced55ba707f2d6b2"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/CopyableTableCellSharedComponent.tsx": {
+    "mtime": 1791966937.0994067,
+    "seen": 1792386856.4785914,
+    "ast_hash": "949a93877e9e55ae64b93b46b8849084",
+    "semantic_hash": "949a93877e9e55ae64b93b46b8849084"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/CreatableCustomSelectSharedComponent.tsx": {
+    "mtime": 1790848458.122106,
+    "seen": 1792386856.4785922,
+    "ast_hash": "566329c558031119f1936c5d44c1ddcd",
+    "semantic_hash": "566329c558031119f1936c5d44c1ddcd"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/CustomSelectSharedComponent.tsx": {
+    "mtime": 1792048184.4066143,
+    "seen": 1792386856.4785929,
+    "ast_hash": "136c2cbd2135bdb80067155da83c2651",
+    "semantic_hash": "136c2cbd2135bdb80067155da83c2651"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/DataTableContainerSharedComponent.tsx": {
+    "mtime": 1791964118.55058,
+    "seen": 1792386856.4785936,
+    "ast_hash": "8e71d47208d155d211110d756eb226ec",
+    "semantic_hash": "8e71d47208d155d211110d756eb226ec"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/EmptyStateSharedComponent.tsx": {
+    "mtime": 1790848457.8035772,
+    "seen": 1792386856.4785943,
+    "ast_hash": "0de33bb1480997622c582f34180b4148",
+    "semantic_hash": "0de33bb1480997622c582f34180b4148"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ExpandableSearchSharedComponent.tsx": {
+    "mtime": 1792003025.9682665,
+    "seen": 1792386856.4785948,
+    "ast_hash": "b6279fcb5535474ca731d7bad5d68940",
+    "semantic_hash": "b6279fcb5535474ca731d7bad5d68940"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/GlobalSearchModalSharedComponent.tsx": {
+    "mtime": 1792007417.964847,
+    "seen": 1792386856.4785955,
+    "ast_hash": "cf9bd75bda1d4c962b39cd6659cb7870",
+    "semantic_hash": "cf9bd75bda1d4c962b39cd6659cb7870"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/InputSharedComponent.tsx": {
+    "mtime": 1790848458.0945635,
+    "seen": 1792386856.4785962,
+    "ast_hash": "845c36bdbdb0e341aca1d42a22a23ea0",
+    "semantic_hash": "845c36bdbdb0e341aca1d42a22a23ea0"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/MarkdownMessageSharedComponent.tsx": {
+    "mtime": 1792143227.8413947,
+    "seen": 1792386856.478597,
+    "ast_hash": "2ea14bfb4b580715f598577b07b8e866",
+    "semantic_hash": "2ea14bfb4b580715f598577b07b8e866"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ModalSharedComponent.tsx": {
+    "mtime": 1790848457.9059265,
+    "seen": 1792386856.4785974,
+    "ast_hash": "f52c132214e8c93f782812a68b5b71ae",
+    "semantic_hash": "f52c132214e8c93f782812a68b5b71ae"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/PrimaryActionButtonSharedComponent.tsx": {
+    "mtime": 1790848457.8651502,
+    "seen": 1792386856.478598,
+    "ast_hash": "c202eac314094be01ba4bc076c284c10",
+    "semantic_hash": "c202eac314094be01ba4bc076c284c10"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ProfileSettingsSharedComponent.tsx": {
+    "mtime": 1791955795.515476,
+    "seen": 1792386856.4785986,
+    "ast_hash": "50301bef8659501d0a07092c34b4e33c",
+    "semantic_hash": "50301bef8659501d0a07092c34b4e33c"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/SegmentedControlSharedComponent.tsx": {
+    "mtime": 1790851254.0538049,
+    "seen": 1792386856.4785993,
+    "ast_hash": "23800a2dffc0cfb73b74bcd9e5f8a138",
+    "semantic_hash": "23800a2dffc0cfb73b74bcd9e5f8a138"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/TableHeaderCellSharedComponent.tsx": {
+    "mtime": 1791392331.328486,
+    "seen": 1792386856.4786,
+    "ast_hash": "d2665d265f360efa300c4bec097fc57b",
+    "semantic_hash": "d2665d265f360efa300c4bec097fc57b"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/TableHorizontalScrollPillSharedComponent.tsx": {
+    "mtime": 1791999129.7495472,
+    "seen": 1792386856.4786005,
+    "ast_hash": "6877e8301d5a2993cf5450753af893ff",
+    "semantic_hash": "6877e8301d5a2993cf5450753af893ff"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ThemeToggleSharedComponent.tsx": {
+    "mtime": 1790848458.0509293,
+    "seen": 1792386856.4786012,
+    "ast_hash": "90583240fd0c30d8b0d69ee88ea42140",
+    "semantic_hash": "90583240fd0c30d8b0d69ee88ea42140"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Shared/Components/ViewEditModeToggleSharedComponent.tsx": {
+    "mtime": 1791432913.3315775,
+    "seen": 1792386856.478602,
+    "ast_hash": "866cbb305be1441d169acb291d1c0cc8",
+    "semantic_hash": "866cbb305be1441d169acb291d1c0cc8"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ActionItemsLineParserUtility.ts": {
+    "mtime": 1792051592.4599714,
+    "seen": 1792386856.4786026,
+    "ast_hash": "5925879dc8f65a5965eb9665059b6188",
+    "semantic_hash": "5925879dc8f65a5965eb9665059b6188"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/AnonymousClientIdentityUtility.ts": {
+    "mtime": 1791432840.7397752,
+    "seen": 1792386856.4786034,
+    "ast_hash": "b573983d88534b636a6f1e98b92d7108",
+    "semantic_hash": "b573983d88534b636a6f1e98b92d7108"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationHapticsUtility.ts": {
+    "mtime": 1790848503.5669558,
+    "seen": 1792386856.4786038,
+    "ast_hash": "254cf5b786851dead0b61c8afb804003",
+    "semantic_hash": "254cf5b786851dead0b61c8afb804003"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationHorizontalScrollPillUtility.ts": {
+    "mtime": 1791888419.0003707,
+    "seen": 1792386856.4786046,
+    "ast_hash": "a5a50ff5a276ca7dfbc7ac6f9a8a3d20",
+    "semantic_hash": "a5a50ff5a276ca7dfbc7ac6f9a8a3d20"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationLayoutWidthUtility.ts": {
+    "mtime": 1790892346.7763197,
+    "seen": 1792386856.4786053,
+    "ast_hash": "608090870389762f8f49b960edff52b2",
+    "semantic_hash": "608090870389762f8f49b960edff52b2"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationStickyHeaderUtility.ts": {
+    "mtime": 1791955619.4857776,
+    "seen": 1792386856.4786057,
+    "ast_hash": "20a195a6f3f6b229690759571d9d128d",
+    "semantic_hash": "20a195a6f3f6b229690759571d9d128d"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationTableDensityUtility.ts": {
+    "mtime": 1791272374.7933416,
+    "seen": 1792386856.4786062,
+    "ast_hash": "2e7387249d6368c347f7556d1ef0f0f7",
+    "semantic_hash": "2e7387249d6368c347f7556d1ef0f0f7"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationTableHeightUtility.ts": {
+    "mtime": 1790970111.5292387,
+    "seen": 1792386856.4786072,
+    "ast_hash": "f3ed593412a04251b52464b2027d2ce8",
+    "semantic_hash": "f3ed593412a04251b52464b2027d2ce8"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationThemeUtility.ts": {
+    "mtime": 1790892335.156673,
+    "seen": 1792386856.4786077,
+    "ast_hash": "ae0114c3ef924f68d95403929c09bc54",
+    "semantic_hash": "ae0114c3ef924f68d95403929c09bc54"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/ApplicationUserPreferenceUtility.ts": {
+    "mtime": 1790892318.5934253,
+    "seen": 1792386856.4786084,
+    "ast_hash": "93ebc8600a95c70ade55090795029a0f",
+    "semantic_hash": "93ebc8600a95c70ade55090795029a0f"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/CellFormatHelper.ts": {
+    "mtime": 1791972577.5690227,
+    "seen": 1792386856.4786088,
+    "ast_hash": "6568a5c0ed56ce55ee1b45ed99c6cf68",
+    "semantic_hash": "6568a5c0ed56ce55ee1b45ed99c6cf68"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Utilities/TableColumnVisibilityUtility.ts": {
+    "mtime": 1791536308.5501795,
+    "seen": 1792386856.4786093,
+    "ast_hash": "d67c807db6044272620f9544bbfdf640",
+    "semantic_hash": "d67c807db6044272620f9544bbfdf640"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/main.tsx": {
+    "mtime": 1790851343.7112541,
+    "seen": 1792386856.4786103,
+    "ast_hash": "99257a4de56d5d70e83cf79dd2e0f745",
+    "semantic_hash": "99257a4de56d5d70e83cf79dd2e0f745"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/tsconfig.app.json": {
+    "mtime": 1790830769.039571,
+    "seen": 1792386856.4786108,
+    "ast_hash": "5f2dafd737dea8a4ddcbb10f5113ac5a",
+    "semantic_hash": "5f2dafd737dea8a4ddcbb10f5113ac5a"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/tsconfig.json": {
+    "mtime": 1790830769.039571,
+    "seen": 1792386856.4786115,
+    "ast_hash": "a3d39fa780ebff65444de257f291ce6c",
+    "semantic_hash": "a3d39fa780ebff65444de257f291ce6c"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/tsconfig.node.json": {
+    "mtime": 1790830769.039571,
+    "seen": 1792386856.4786122,
+    "ast_hash": "f9cb81ddcea69ffdab672fc8c48dca66",
+    "semantic_hash": "f9cb81ddcea69ffdab672fc8c48dca66"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/vite.config.ts": {
+    "mtime": 1791785590.7129464,
+    "seen": 1792386856.4786124,
+    "ast_hash": "988403141d2c10470c4435e33c00f491",
+    "semantic_hash": "988403141d2c10470c4435e33c00f491"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Data/ApplicationDatabaseContext.cs": {
+    "mtime": 1792087582.477222,
+    "seen": 1792386856.4786131,
+    "ast_hash": "f1cd7d9b5a9d9e7abbceb78de2c5b99c",
+    "semantic_hash": "f1cd7d9b5a9d9e7abbceb78de2c5b99c"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Data/ApplicationDatabaseContextFactory.cs": {
+    "mtime": 1790842428.3010676,
+    "seen": 1792386856.478614,
+    "ast_hash": "0d53fa9eb21f3aba1bce1a5dcde33838",
+    "semantic_hash": "0d53fa9eb21f3aba1bce1a5dcde33838"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Exceptions/ConflictException.cs": {
+    "mtime": 1790961435.1757052,
+    "seen": 1792386856.4786146,
+    "ast_hash": "c70240a8b83ae034e5d2f87948ea1b0b",
+    "semantic_hash": "c70240a8b83ae034e5d2f87948ea1b0b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Exceptions/ENKeyNotFoundException.cs": {
+    "mtime": 1790842372.4045205,
+    "seen": 1792386856.4786153,
+    "ast_hash": "66e6f3dd37f37f0b1c6cbc5b1222c708",
+    "semantic_hash": "66e6f3dd37f37f0b1c6cbc5b1222c708"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Exceptions/NotFoundException.cs": {
+    "mtime": 1790961432.058088,
+    "seen": 1792386856.4786158,
+    "ast_hash": "d3003c047c6004dbfdb28ae28bdc06a4",
+    "semantic_hash": "d3003c047c6004dbfdb28ae28bdc06a4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Exceptions/ValidationException.cs": {
+    "mtime": 1790961428.262631,
+    "seen": 1792386856.4786162,
+    "ast_hash": "eebf24614fc6fb10dca3d1968ace098e",
+    "semantic_hash": "eebf24614fc6fb10dca3d1968ace098e"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Factories/ApplicationRouteFactory.cs": {
+    "mtime": 1792255760.6756632,
+    "seen": 1792386856.4786167,
+    "ast_hash": "42e1f581d74b353c1d1f1c2cc720e5bf",
+    "semantic_hash": "42e1f581d74b353c1d1f1c2cc720e5bf"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Assertion/ChatAssistantAssertion.cs": {
+    "mtime": 1792167545.1086175,
+    "seen": 1792386856.4786177,
+    "ast_hash": "786fec66da74a1af46e8c98910c284a1",
+    "semantic_hash": "786fec66da74a1af46e8c98910c284a1"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/ChatAssistantController.cs": {
+    "mtime": 1792167533.1817448,
+    "seen": 1792386856.4786181,
+    "ast_hash": "bbe8ccee18fff3647a0d46e0baa15bb2",
+    "semantic_hash": "bbe8ccee18fff3647a0d46e0baa15bb2"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/AnswerQuestionRequestDTO.cs": {
+    "mtime": 1792167408.9431756,
+    "seen": 1792386856.4786208,
+    "ast_hash": "67b1b4a7b474f435171d85b1e29c71e4",
+    "semantic_hash": "67b1b4a7b474f435171d85b1e29c71e4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/AskClarifyingQuestionArgsDTO.cs": {
+    "mtime": 1792169717.6479208,
+    "seen": 1792386856.4786215,
+    "ast_hash": "3183a70d65bd3f2573ea6488de2eb6ba",
+    "semantic_hash": "3183a70d65bd3f2573ea6488de2eb6ba"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/AskQuestionRequestDTO.cs": {
+    "mtime": 1792087625.7314723,
+    "seen": 1792386856.4786222,
+    "ast_hash": "ad28215c00495b73ce2a3bcbbfbdbaaf",
+    "semantic_hash": "ad28215c00495b73ce2a3bcbbfbdbaaf"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/AskQuestionResponseDTO.cs": {
+    "mtime": 1792167413.0478396,
+    "seen": 1792386856.4786227,
+    "ast_hash": "a309902e0a33d19641d66976dd598df3",
+    "semantic_hash": "a309902e0a33d19641d66976dd598df3"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/ChatConversationNexus.cs": {
+    "mtime": 1792087543.5958989,
+    "seen": 1792386856.4786232,
+    "ast_hash": "6cc759aa04c5a3d9ca3364a2886de5ae",
+    "semantic_hash": "6cc759aa04c5a3d9ca3364a2886de5ae"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/ChatConversationSummaryDTO.cs": {
+    "mtime": 1792087632.3468282,
+    "seen": 1792386856.478624,
+    "ast_hash": "54b0776fcdd415dc80f8e0c4605970a8",
+    "semantic_hash": "54b0776fcdd415dc80f8e0c4605970a8"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/ChatMessageDTO.cs": {
+    "mtime": 1792167433.899575,
+    "seen": 1792386856.4786246,
+    "ast_hash": "1799a8e1a9bbd4aab40b987e3d096025",
+    "semantic_hash": "1799a8e1a9bbd4aab40b987e3d096025"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/ChatMessageNexus.cs": {
+    "mtime": 1792167427.1741438,
+    "seen": 1792386856.478625,
+    "ast_hash": "83fc84e4f6b7ae0e2ca84c4d1f7dffac",
+    "semantic_hash": "83fc84e4f6b7ae0e2ca84c4d1f7dffac"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/ClarifyingQuestionDTO.cs": {
+    "mtime": 1792169723.1239812,
+    "seen": 1792386856.4786258,
+    "ast_hash": "6c2da9a5f188f91ba45b599901eeca16",
+    "semantic_hash": "6c2da9a5f188f91ba45b599901eeca16"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqFunctionCallItemDTO.cs": {
+    "mtime": 1792093939.0203068,
+    "seen": 1792386856.4786263,
+    "ast_hash": "06afd32f47d68c507bb0727460a0f7e5",
+    "semantic_hash": "06afd32f47d68c507bb0727460a0f7e5"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqFunctionCallOutputItemDTO.cs": {
+    "mtime": 1792093944.574072,
+    "seen": 1792386856.4786274,
+    "ast_hash": "efb5f8a8bb3b25c5364b32d82a16e4f8",
+    "semantic_hash": "efb5f8a8bb3b25c5364b32d82a16e4f8"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqInputMessageDTO.cs": {
+    "mtime": 1792087590.7412703,
+    "seen": 1792386856.4786282,
+    "ast_hash": "76dbe12157fc1345d42d8c1d6eb25cc4",
+    "semantic_hash": "76dbe12157fc1345d42d8c1d6eb25cc4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqRequestDTO.cs": {
+    "mtime": 1792093923.5752413,
+    "seen": 1792386856.4786286,
+    "ast_hash": "e5971707f87f6c3d1d108f5655fec496",
+    "semantic_hash": "e5971707f87f6c3d1d108f5655fec496"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqResponseContentItemDTO.cs": {
+    "mtime": 1791276247.523528,
+    "seen": 1792386856.478629,
+    "ast_hash": "4dbfefef1547163f7ab6da6d478cf2c6",
+    "semantic_hash": "4dbfefef1547163f7ab6da6d478cf2c6"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqResponseDTO.cs": {
+    "mtime": 1791276254.1667395,
+    "seen": 1792386856.4786298,
+    "ast_hash": "0800a06649c3840e718fe0918df7e116",
+    "semantic_hash": "0800a06649c3840e718fe0918df7e116"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqResponseOutputItemDTO.cs": {
+    "mtime": 1792093952.2530713,
+    "seen": 1792386856.4786303,
+    "ast_hash": "aa13df4c5080cfdaca14f135f71820e2",
+    "semantic_hash": "aa13df4c5080cfdaca14f135f71820e2"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Models/GroqToolDefinitionDTO.cs": {
+    "mtime": 1792093932.6115725,
+    "seen": 1792386856.4786313,
+    "ast_hash": "429fc1df29f92a72fe1efc7abb90e85e",
+    "semantic_hash": "429fc1df29f92a72fe1efc7abb90e85e"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ChatAssistant/Services/ChatAssistantService.cs": {
+    "mtime": 1792212825.6807604,
+    "seen": 1792386856.4786317,
+    "ast_hash": "25c8c8376a953a5561d2d1acd086164f",
+    "semantic_hash": "25c8c8376a953a5561d2d1acd086164f"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ConfigurationConstants/Assertion/ConfigurationConstantsAssertion.cs": {
+    "mtime": 1792061496.8862288,
+    "seen": 1792386856.4786322,
+    "ast_hash": "b6952441ec8c99dc3b06f041df1b9d27",
+    "semantic_hash": "b6952441ec8c99dc3b06f041df1b9d27"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ConfigurationConstants/ConfigurationConstantsController.cs": {
+    "mtime": 1791524427.871113,
+    "seen": 1792386856.478633,
+    "ast_hash": "5576b988adedd4f7e1ed1ddf0b960743",
+    "semantic_hash": "5576b988adedd4f7e1ed1ddf0b960743"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ConfigurationConstants/Models/AddConfigurationConstantOptionRequestDTO.cs": {
+    "mtime": 1791524378.3585336,
+    "seen": 1792386856.4786334,
+    "ast_hash": "617df2a076f8e442ecae4428dc3e9838",
+    "semantic_hash": "617df2a076f8e442ecae4428dc3e9838"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/ConfigurationConstants/Services/ConfigurationConstantsService.cs": {
+    "mtime": 1791540250.8114302,
+    "seen": 1792386856.4786339,
+    "ast_hash": "78a5fb3d8c9145b474758b33ad1e08b4",
+    "semantic_hash": "78a5fb3d8c9145b474758b33ad1e08b4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Assertion/EnvironmentOverviewAssertion.cs": {
+    "mtime": 1792255833.6981888,
+    "seen": 1792386856.4786348,
+    "ast_hash": "a232160c2726cddcee7008ed55ed692c",
+    "semantic_hash": "a232160c2726cddcee7008ed55ed692c"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/EnvironmentOverviewController.cs": {
+    "mtime": 1792255808.6994567,
+    "seen": 1792386856.4786355,
+    "ast_hash": "bbdee03538600db06c5edac253ade5c4",
+    "semantic_hash": "bbdee03538600db06c5edac253ade5c4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/AddActionItemRequestDTO.cs": {
+    "mtime": 1791439195.377195,
+    "seen": 1792386856.478636,
+    "ast_hash": "53ef3d2779f03429cebe8d4c3f8d6031",
+    "semantic_hash": "53ef3d2779f03429cebe8d4c3f8d6031"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/CreateEnvironmentOverviewRequestDTO.cs": {
+    "mtime": 1791404375.4450426,
+    "seen": 1792386856.4786367,
+    "ast_hash": "f3dfea5bd29f9a2c7b01c25f37a83e19",
+    "semantic_hash": "f3dfea5bd29f9a2c7b01c25f37a83e19"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/EnvironmentOverviewCellFormatDTO.cs": {
+    "mtime": 1791972318.889302,
+    "seen": 1792386856.4786372,
+    "ast_hash": "d2acc51695680d6c5f9d5cb1afec12ba",
+    "semantic_hash": "d2acc51695680d6c5f9d5cb1afec12ba"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/EnvironmentOverviewCellFormatNexus.cs": {
+    "mtime": 1791972308.7793047,
+    "seen": 1792386856.4786382,
+    "ast_hash": "5e331d0cf7dafa1293ba5484057bdbca",
+    "semantic_hash": "5e331d0cf7dafa1293ba5484057bdbca"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/EnvironmentOverviewDTO.cs": {
+    "mtime": 1792255642.6341028,
+    "seen": 1792386856.4786386,
+    "ast_hash": "e090f0d44d077b9d7d6133cb3d1e09a3",
+    "semantic_hash": "e090f0d44d077b9d7d6133cb3d1e09a3"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/EnvironmentOverviewNexus.cs": {
+    "mtime": 1792255635.9252913,
+    "seen": 1792386856.4786422,
+    "ast_hash": "346eb70520099c158f480eca3bf25ec0",
+    "semantic_hash": "346eb70520099c158f480eca3bf25ec0"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/EnvironmentOverviewStatusHistoryNexus.cs": {
+    "mtime": 1791432717.440291,
+    "seen": 1792386856.478643,
+    "ast_hash": "044a1c49a2e9c8bcf2c98d3f12f40534",
+    "semantic_hash": "044a1c49a2e9c8bcf2c98d3f12f40534"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/UpdateActionItemRequestDTO.cs": {
+    "mtime": 1792051445.4389477,
+    "seen": 1792386856.4786437,
+    "ast_hash": "863b906fdedbf4e2a3eb3c71ff2034ad",
+    "semantic_hash": "863b906fdedbf4e2a3eb3c71ff2034ad"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/UpdateEnvironmentOverviewCellFormatRequestDTO.cs": {
+    "mtime": 1791972329.2207534,
+    "seen": 1792386856.4786444,
+    "ast_hash": "e9f98245cbb3f5bebff5c69133a9f800",
+    "semantic_hash": "e9f98245cbb3f5bebff5c69133a9f800"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/UpdateEnvironmentOverviewFieldRequestDTO.cs": {
+    "mtime": 1792051282.1604297,
+    "seen": 1792386856.478645,
+    "ast_hash": "828ec030831a695f899a6a06cd7d455f",
+    "semantic_hash": "828ec030831a695f899a6a06cd7d455f"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/UpdateEnvironmentOverviewStatusRequestDTO.cs": {
+    "mtime": 1791432722.2220092,
+    "seen": 1792386856.4786456,
+    "ast_hash": "c6959c35c8518e15dbbc837ff75c8ac2",
+    "semantic_hash": "c6959c35c8518e15dbbc837ff75c8ac2"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Models/UpdateUptimeScheduleRequestDTO.cs": {
+    "mtime": 1792255773.7446394,
+    "seen": 1792386856.4786463,
+    "ast_hash": "400e7b21483bfb0ae074a0db1a74398f",
+    "semantic_hash": "400e7b21483bfb0ae074a0db1a74398f"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/EnvironmentOverview/Services/EnvironmentOverviewService.cs": {
+    "mtime": 1792256320.3712773,
+    "seen": 1792386856.4786468,
+    "ast_hash": "a7a31121d9796bcaaabca3b246c34d4b",
+    "semantic_hash": "a7a31121d9796bcaaabca3b246c34d4b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Assertion/ResourcesAssertion.cs": {
+    "mtime": 1792150913.6344,
+    "seen": 1792386856.4786475,
+    "ast_hash": "87d7d057eca0c969cb28d77cea8d1e5c",
+    "semantic_hash": "87d7d057eca0c969cb28d77cea8d1e5c"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/AddCustomColorOptionRequestDTO.cs": {
+    "mtime": 1791533269.4999456,
+    "seen": 1792386856.478648,
+    "ast_hash": "ffc27541ae78fb7459fb71b61afa31aa",
+    "semantic_hash": "ffc27541ae78fb7459fb71b61afa31aa"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/AddLegendEntryRequestDTO.cs": {
+    "mtime": 1792150863.9790938,
+    "seen": 1792386856.4786487,
+    "ast_hash": "aa614c191df2821bf2ef10b3238ffa3f",
+    "semantic_hash": "aa614c191df2821bf2ef10b3238ffa3f"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/CustomColorOptionDTO.cs": {
+    "mtime": 1791540238.107853,
+    "seen": 1792386856.4786494,
+    "ast_hash": "6958ae8f18ab49c99f12f12a8d33ba69",
+    "semantic_hash": "6958ae8f18ab49c99f12f12a8d33ba69"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/LegendEntryDTO.cs": {
+    "mtime": 1792150857.9503815,
+    "seen": 1792386856.4786499,
+    "ast_hash": "eff0a2e19f36c777fcb4896a886c3c8b",
+    "semantic_hash": "eff0a2e19f36c777fcb4896a886c3c8b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/ResourceCellFormatDTO.cs": {
+    "mtime": 1791972264.11999,
+    "seen": 1792386856.4786506,
+    "ast_hash": "1db641da8fdc406adf75d45a0933f174",
+    "semantic_hash": "1db641da8fdc406adf75d45a0933f174"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/ResourceCellFormatNexus.cs": {
+    "mtime": 1791972254.2544496,
+    "seen": 1792386856.4786513,
+    "ast_hash": "472fb1e22d76c3e8357545de04c9bad0",
+    "semantic_hash": "472fb1e22d76c3e8357545de04c9bad0"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/ResourceNexus.cs": {
+    "mtime": 1792055281.888268,
+    "seen": 1792386856.4786522,
+    "ast_hash": "98bdb2b123a4724fc499edfb8a425343",
+    "semantic_hash": "98bdb2b123a4724fc499edfb8a425343"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/ResourceStatus.cs": {
+    "mtime": 1790847934.2877953,
+    "seen": 1792386856.4786527,
+    "ast_hash": "b586d7c437106a54fe3c46d6f595083f",
+    "semantic_hash": "b586d7c437106a54fe3c46d6f595083f"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/UpdateCustomColorOptionRequestDTO.cs": {
+    "mtime": 1791540240.2267506,
+    "seen": 1792386856.4786532,
+    "ast_hash": "24935277ed7ba5f040403a1b1ed957dd",
+    "semantic_hash": "24935277ed7ba5f040403a1b1ed957dd"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/UpdateLegendEntryRequestDTO.cs": {
+    "mtime": 1792150869.9448988,
+    "seen": 1792386856.478654,
+    "ast_hash": "7c30323fe39e90970ddacdbaaf51759e",
+    "semantic_hash": "7c30323fe39e90970ddacdbaaf51759e"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Models/UpdateResourceCellFormatRequestDTO.cs": {
+    "mtime": 1791972274.3521514,
+    "seen": 1792386856.4786546,
+    "ast_hash": "4454175471b2ecaaafd4112fb0c74da1",
+    "semantic_hash": "4454175471b2ecaaafd4112fb0c74da1"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/ResourcesController.cs": {
+    "mtime": 1792150944.3794484,
+    "seen": 1792386856.4786553,
+    "ast_hash": "f390d6d36b217ddca35cd2a84e8b24a9",
+    "semantic_hash": "f390d6d36b217ddca35cd2a84e8b24a9"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Services/ResourceCellFormatColorService.cs": {
+    "mtime": 1791540266.1177573,
+    "seen": 1792386856.478656,
+    "ast_hash": "4d6cf589ff851f8941fbd6a600f8ca06",
+    "semantic_hash": "4d6cf589ff851f8941fbd6a600f8ca06"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Services/ResourceTableLegendService.cs": {
+    "mtime": 1792150893.0984745,
+    "seen": 1792386856.4786565,
+    "ast_hash": "d001fb7e950ca179202440361d532e6b",
+    "semantic_hash": "d001fb7e950ca179202440361d532e6b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Services/ResourcesService.cs": {
+    "mtime": 1791972299.532953,
+    "seen": 1792386856.478657,
+    "ast_hash": "70da64bfdcf724411274d6418db8a30d",
+    "semantic_hash": "70da64bfdcf724411274d6418db8a30d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Resources/Utilities/ResourceCellFormatColorUtility.cs": {
+    "mtime": 1791533277.4123237,
+    "seen": 1792386856.4786577,
+    "ast_hash": "13b6eb557a593d2e1b2a92d71c222987",
+    "semantic_hash": "13b6eb557a593d2e1b2a92d71c222987"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Assertion/SubscriptionsAssertion.cs": {
+    "mtime": 1790961462.3564994,
+    "seen": 1792386856.4786582,
+    "ast_hash": "31f6a8895c72f94dbc1c664a26f5ba13",
+    "semantic_hash": "31f6a8895c72f94dbc1c664a26f5ba13"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Models/AddSubscriptionRequestDTO.cs": {
+    "mtime": 1790961448.9044645,
+    "seen": 1792386856.478659,
+    "ast_hash": "241822ea813b5afecf23bf2765815c3d",
+    "semantic_hash": "241822ea813b5afecf23bf2765815c3d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Models/AvailableAzureSubscriptionDTO.cs": {
+    "mtime": 1790961444.3665674,
+    "seen": 1792386856.4786596,
+    "ast_hash": "1a36628032f000b4fc0c23e32c1979a7",
+    "semantic_hash": "1a36628032f000b4fc0c23e32c1979a7"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Models/ConfiguredSubscription.cs": {
+    "mtime": 1790893925.5180526,
+    "seen": 1792386856.47866,
+    "ast_hash": "c6662dd32f141adea63638b197c4724d",
+    "semantic_hash": "c6662dd32f141adea63638b197c4724d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Models/ConfiguredSubscriptionDTO.cs": {
+    "mtime": 1790961439.9748437,
+    "seen": 1792386856.4786606,
+    "ast_hash": "3fb0bb0bf9c9738a60b21adc747962fb",
+    "semantic_hash": "3fb0bb0bf9c9738a60b21adc747962fb"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Models/SubscriptionDeletionResultDTO.cs": {
+    "mtime": 1790961456.1897502,
+    "seen": 1792386856.4786613,
+    "ast_hash": "6b56595fccd186ed8089dfa00e175ada",
+    "semantic_hash": "6b56595fccd186ed8089dfa00e175ada"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Models/UpdateSubscriptionDisplayNameRequestDTO.cs": {
+    "mtime": 1790961452.5805247,
+    "seen": 1792386856.4786618,
+    "ast_hash": "ad53925cfa17b73a5ad2d2ac648fe8b4",
+    "semantic_hash": "ad53925cfa17b73a5ad2d2ac648fe8b4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/Services/SubscriptionsService.cs": {
+    "mtime": 1790961654.3486204,
+    "seen": 1792386856.4786625,
+    "ast_hash": "daa4846e097b0dcf1305cf0ca22f68fb",
+    "semantic_hash": "daa4846e097b0dcf1305cf0ca22f68fb"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Subscriptions/SubscriptionsController.cs": {
+    "mtime": 1790961684.412748,
+    "seen": 1792386856.478663,
+    "ast_hash": "40c1956de59681076702c4947dd4c57d",
+    "semantic_hash": "40c1956de59681076702c4947dd4c57d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Sync/Models/SyncResult.cs": {
+    "mtime": 1790894016.180901,
+    "seen": 1792386856.4786637,
+    "ast_hash": "cdfcd1be8ac0f9d5abffdace98862c98",
+    "semantic_hash": "cdfcd1be8ac0f9d5abffdace98862c98"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Sync/Services/SyncService.cs": {
+    "mtime": 1792055299.4343176,
+    "seen": 1792386856.4786644,
+    "ast_hash": "1a7272bbbeb2cd07019e2a76c84c849a",
+    "semantic_hash": "1a7272bbbeb2cd07019e2a76c84c849a"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Features/Sync/SyncController.cs": {
+    "mtime": 1790894093.263055,
+    "seen": 1792386856.4786649,
+    "ast_hash": "ff5c8a5da6ad6398e01523b54670e70f",
+    "semantic_hash": "ff5c8a5da6ad6398e01523b54670e70f"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Helpers/ENValidatorHelper.cs": {
+    "mtime": 1791543058.115498,
+    "seen": 1792386856.4786658,
+    "ast_hash": "ffddd4b82be73e77b2ac5d70e21ac902",
+    "semantic_hash": "ffddd4b82be73e77b2ac5d70e21ac902"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001081434_InitialCreate.Designer.cs": {
+    "mtime": 1790842474.052608,
+    "seen": 1792386856.4786663,
+    "ast_hash": "5e1e07136324ab4ed9e6c7a1f3f2de90",
+    "semantic_hash": "5e1e07136324ab4ed9e6c7a1f3f2de90"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001081434_InitialCreate.cs": {
+    "mtime": 1790842474.0505948,
+    "seen": 1792386856.4786668,
+    "ast_hash": "a03e13591f310db8630c67c59936dc75",
+    "semantic_hash": "a03e13591f310db8630c67c59936dc75"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001094727_AddResources.Designer.cs": {
+    "mtime": 1790848047.2575088,
+    "seen": 1792386856.4786673,
+    "ast_hash": "a526e14833c5bc005e229d9158803712",
+    "semantic_hash": "a526e14833c5bc005e229d9158803712"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001094727_AddResources.cs": {
+    "mtime": 1790848047.2575088,
+    "seen": 1792386856.478668,
+    "ast_hash": "6b6039610efb9e84a17372d25cf680bc",
+    "semantic_hash": "6b6039610efb9e84a17372d25cf680bc"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001114114_AddSpinnerField.Designer.cs": {
+    "mtime": 1790854874.5311112,
+    "seen": 1792386856.4786687,
+    "ast_hash": "709c6c49fe7f2bb2bc60fdd01ea27c26",
+    "semantic_hash": "709c6c49fe7f2bb2bc60fdd01ea27c26"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001114114_AddSpinnerField.cs": {
+    "mtime": 1790854874.5224817,
+    "seen": 1792386856.4786694,
+    "ast_hash": "8bbaf9a29236bdd2e45a76fc81f7095a",
+    "semantic_hash": "8bbaf9a29236bdd2e45a76fc81f7095a"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001223546_AddConfiguredSubscriptions.Designer.cs": {
+    "mtime": 1790894146.506335,
+    "seen": 1792386856.4786701,
+    "ast_hash": "b35eddf387efdd00acb3b89d859df954",
+    "semantic_hash": "b35eddf387efdd00acb3b89d859df954"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261001223546_AddConfiguredSubscriptions.cs": {
+    "mtime": 1790894146.506335,
+    "seen": 1792386856.4786706,
+    "ast_hash": "9474d35c8439bcab90d9ef9c0f3670f7",
+    "semantic_hash": "9474d35c8439bcab90d9ef9c0f3670f7"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261002171643_RenameTablesToIGConvention.Designer.cs": {
+    "mtime": 1790961403.091569,
+    "seen": 1792386856.478671,
+    "ast_hash": "de189049eec3fe079fb0e41fde6a1c3b",
+    "semantic_hash": "de189049eec3fe079fb0e41fde6a1c3b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261002171643_RenameTablesToIGConvention.cs": {
+    "mtime": 1790961403.091569,
+    "seen": 1792386856.4786716,
+    "ast_hash": "76cfcb7346bf668f6b35556eed181a14",
+    "semantic_hash": "76cfcb7346bf668f6b35556eed181a14"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261005122139_AddConfigurationConstants.Designer.cs": {
+    "mtime": 1791202899.8340452,
+    "seen": 1792386856.4786723,
+    "ast_hash": "2ab2f21203fcc2ceaf91ccff4ce4615d",
+    "semantic_hash": "2ab2f21203fcc2ceaf91ccff4ce4615d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261005122139_AddConfigurationConstants.cs": {
+    "mtime": 1791203023.7338262,
+    "seen": 1792386856.4786732,
+    "ast_hash": "6ae5597ac32037005e4c08e5f21ed8ed",
+    "semantic_hash": "6ae5597ac32037005e4c08e5f21ed8ed"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261005122704_FixMissingEnvironmentTagBackfill.Designer.cs": {
+    "mtime": 1791203224.298559,
+    "seen": 1792386856.4786737,
+    "ast_hash": "27ded75853556f67dc324d407acb3b98",
+    "semantic_hash": "27ded75853556f67dc324d407acb3b98"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261005122704_FixMissingEnvironmentTagBackfill.cs": {
+    "mtime": 1791203245.9255586,
+    "seen": 1792386856.4786742,
+    "ast_hash": "7f3fac1902c88f931f4a83c7dab6f7d0",
+    "semantic_hash": "7f3fac1902c88f931f4a83c7dab6f7d0"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261006181157_BackfillFunctionColumn.Designer.cs": {
+    "mtime": 1791310317.0417497,
+    "seen": 1792386856.4786747,
+    "ast_hash": "b736285f32d87b38a0816578ca7d657a",
+    "semantic_hash": "b736285f32d87b38a0816578ca7d657a"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261006181157_BackfillFunctionColumn.cs": {
+    "mtime": 1791310410.676077,
+    "seen": 1792386856.4786754,
+    "ast_hash": "62019df01c0b68c30e63a79dcf0f3201",
+    "semantic_hash": "62019df01c0b68c30e63a79dcf0f3201"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261006185715_AddEnvironmentOverview.Designer.cs": {
+    "mtime": 1791313035.4486635,
+    "seen": 1792386856.4786763,
+    "ast_hash": "41cf17a439f825ad59314f8eeae38c52",
+    "semantic_hash": "41cf17a439f825ad59314f8eeae38c52"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261006185715_AddEnvironmentOverview.cs": {
+    "mtime": 1791313074.8704052,
+    "seen": 1792386856.4786768,
+    "ast_hash": "17636f987044c2f892af672b05cb5c34",
+    "semantic_hash": "17636f987044c2f892af672b05cb5c34"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008034950_FixEnvironmentOverviewStatusColumn.Designer.cs": {
+    "mtime": 1791431390.9860334,
+    "seen": 1792386856.4786773,
+    "ast_hash": "b9bade73ad4aa8e11c403cf6454be714",
+    "semantic_hash": "b9bade73ad4aa8e11c403cf6454be714"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008034950_FixEnvironmentOverviewStatusColumn.cs": {
+    "mtime": 1791431428.6205952,
+    "seen": 1792386856.478678,
+    "ast_hash": "aadc1c484504a5a270bafccf7390dc32",
+    "semantic_hash": "aadc1c484504a5a270bafccf7390dc32"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008041316_AddEnvironmentOverviewStatusHistory.Designer.cs": {
+    "mtime": 1791432796.5957673,
+    "seen": 1792386856.4786785,
+    "ast_hash": "2455e087a17913efbc159411cd504720",
+    "semantic_hash": "2455e087a17913efbc159411cd504720"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008041316_AddEnvironmentOverviewStatusHistory.cs": {
+    "mtime": 1791432796.5957673,
+    "seen": 1792386856.478679,
+    "ast_hash": "e75b5a9f3e91e767f6b358e35de0ed93",
+    "semantic_hash": "e75b5a9f3e91e767f6b358e35de0ed93"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008120000_AddEnvironmentOverviewSponsorOptions.Designer.cs": {
+    "mtime": 1791450363.2068594,
+    "seen": 1792386856.47868,
+    "ast_hash": "f5f7f80d698d486a3920c5269996af07",
+    "semantic_hash": "f5f7f80d698d486a3920c5269996af07"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008120000_AddEnvironmentOverviewSponsorOptions.cs": {
+    "mtime": 1791450322.7975745,
+    "seen": 1792386856.4786804,
+    "ast_hash": "ac2d4b704989f49e76671ba9fdfa7d57",
+    "semantic_hash": "ac2d4b704989f49e76671ba9fdfa7d57"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008130000_AddEnvironmentOverviewSoftDelete.Designer.cs": {
+    "mtime": 1791451484.1986368,
+    "seen": 1792386856.478681,
+    "ast_hash": "a57f4755a4214ca5f10e59896abfe108",
+    "semantic_hash": "a57f4755a4214ca5f10e59896abfe108"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008130000_AddEnvironmentOverviewSoftDelete.cs": {
+    "mtime": 1791451432.1327984,
+    "seen": 1792386856.4786816,
+    "ast_hash": "02233a63a88c9178b4375c741079fcac",
+    "semantic_hash": "02233a63a88c9178b4375c741079fcac"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008140000_AddResourceCellFormat.Designer.cs": {
+    "mtime": 1791480301.0608594,
+    "seen": 1792386856.4786823,
+    "ast_hash": "d1972ccfe041f9bac728c8df6d5be431",
+    "semantic_hash": "d1972ccfe041f9bac728c8df6d5be431"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261008140000_AddResourceCellFormat.cs": {
+    "mtime": 1791480264.5558836,
+    "seen": 1792386856.478683,
+    "ast_hash": "67078fcd792c3a51f7fc95307f38ba7e",
+    "semantic_hash": "67078fcd792c3a51f7fc95307f38ba7e"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261009100000_AddResourceCellFormatCustomColors.Designer.cs": {
+    "mtime": 1791524622.3690217,
+    "seen": 1792386856.4786835,
+    "ast_hash": "3140384859b7d282616aa9459546acf0",
+    "semantic_hash": "3140384859b7d282616aa9459546acf0"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261009100000_AddResourceCellFormatCustomColors.cs": {
+    "mtime": 1791524602.7362907,
+    "seen": 1792386856.4786842,
+    "ast_hash": "4251d5d467af3d36460bee98275bf055",
+    "semantic_hash": "4251d5d467af3d36460bee98275bf055"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261009110000_ResetResourceCellFormatCustomColorsForNamedSchema.Designer.cs": {
+    "mtime": 1791533423.4741564,
+    "seen": 1792386856.4786847,
+    "ast_hash": "57942be78a2f0b8c5c57c16444ccf2cd",
+    "semantic_hash": "57942be78a2f0b8c5c57c16444ccf2cd"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261009110000_ResetResourceCellFormatCustomColorsForNamedSchema.cs": {
+    "mtime": 1791533430.9454594,
+    "seen": 1792386856.4786854,
+    "ast_hash": "a3b5ec9402d8287f50931989a4628cbd",
+    "semantic_hash": "a3b5ec9402d8287f50931989a4628cbd"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261010100000_BackfillCustomColorIds.Designer.cs": {
+    "mtime": 1791540335.6711087,
+    "seen": 1792386856.4786859,
+    "ast_hash": "da73f4a675018f4851ea81e815f4c632",
+    "semantic_hash": "da73f4a675018f4851ea81e815f4c632"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261010100000_BackfillCustomColorIds.cs": {
+    "mtime": 1791541078.0942736,
+    "seen": 1792386856.4786868,
+    "ast_hash": "e1f1f58b2b361ef4ca7d084afcc081d0",
+    "semantic_hash": "e1f1f58b2b361ef4ca7d084afcc081d0"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261010110000_RepairCorruptedCustomColorBackfill.Designer.cs": {
+    "mtime": 1791541109.7684634,
+    "seen": 1792386856.4786873,
+    "ast_hash": "56d672520df938a181502fef632616fd",
+    "semantic_hash": "56d672520df938a181502fef632616fd"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261010110000_RepairCorruptedCustomColorBackfill.cs": {
+    "mtime": 1791541122.2290637,
+    "seen": 1792386856.478688,
+    "ast_hash": "43fadf102aa4e154c9371a2702eea62b",
+    "semantic_hash": "43fadf102aa4e154c9371a2702eea62b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261012070446_AddEnvironmentOverviewCellFormat.Designer.cs": {
+    "mtime": 1791788686.895443,
+    "seen": 1792386856.4786885,
+    "ast_hash": "c14c45c638fd29d2b4b522cf69380a2e",
+    "semantic_hash": "c14c45c638fd29d2b4b522cf69380a2e"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261012070446_AddEnvironmentOverviewCellFormat.cs": {
+    "mtime": 1791788686.895443,
+    "seen": 1792386856.4786892,
+    "ast_hash": "70116df44574f540c702486ca0f99aed",
+    "semantic_hash": "70116df44574f540c702486ca0f99aed"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261013082719_AddCellFormatBackgroundOpacity.Designer.cs": {
+    "mtime": 1791880039.116015,
+    "seen": 1792386856.4786901,
+    "ast_hash": "bef8b78c47d9d58105a673e621b4cbec",
+    "semantic_hash": "bef8b78c47d9d58105a673e621b4cbec"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261013082719_AddCellFormatBackgroundOpacity.cs": {
+    "mtime": 1791880039.116015,
+    "seen": 1792386856.4786906,
+    "ast_hash": "8646c146e2dd1363dbc9e417f585f8a1",
+    "semantic_hash": "8646c146e2dd1363dbc9e417f585f8a1"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261013091234_AddCellFormatTextColor.Designer.cs": {
+    "mtime": 1791882754.3113904,
+    "seen": 1792386856.4786913,
+    "ast_hash": "74b85a558e6c533c04ff3ff25dbd64b9",
+    "semantic_hash": "74b85a558e6c533c04ff3ff25dbd64b9"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261013091234_AddCellFormatTextColor.cs": {
+    "mtime": 1791882754.3113904,
+    "seen": 1792386856.4786918,
+    "ast_hash": "afec416cb31739ca637c3740a132e213",
+    "semantic_hash": "afec416cb31739ca637c3740a132e213"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261014100725_AddCellFormatIsUnderline.Designer.cs": {
+    "mtime": 1791972445.6364064,
+    "seen": 1792386856.4786925,
+    "ast_hash": "8ea18f0f9f7ad5d0c3ac48ce2faa0ac4",
+    "semantic_hash": "8ea18f0f9f7ad5d0c3ac48ce2faa0ac4"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261014100725_AddCellFormatIsUnderline.cs": {
+    "mtime": 1791972445.6364064,
+    "seen": 1792386856.478693,
+    "ast_hash": "f40b0f923ace86da2128d1738b75843b",
+    "semantic_hash": "f40b0f923ace86da2128d1738b75843b"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261015091145_RemoveAutoShutdownAddStartStopTags.Designer.cs": {
+    "mtime": 1792055505.4362926,
+    "seen": 1792386856.4786937,
+    "ast_hash": "797bd927e395ea5e872608b90b3c3267",
+    "semantic_hash": "797bd927e395ea5e872608b90b3c3267"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261015091145_RemoveAutoShutdownAddStartStopTags.cs": {
+    "mtime": 1792055505.4344082,
+    "seen": 1792386856.4786944,
+    "ast_hash": "41ebf7aaf28bacb58bd67202ff40bae2",
+    "semantic_hash": "41ebf7aaf28bacb58bd67202ff40bae2"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261015105240_AddUptimeScheduleOptionConstants.Designer.cs": {
+    "mtime": 1792061560.8151157,
+    "seen": 1792386856.478695,
+    "ast_hash": "fbb273070d7eb89df443ebde9e2eda6d",
+    "semantic_hash": "fbb273070d7eb89df443ebde9e2eda6d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261015105240_AddUptimeScheduleOptionConstants.cs": {
+    "mtime": 1792061560.8151157,
+    "seen": 1792386856.4786956,
+    "ast_hash": "44ef491ab0cced40f9115560f0ad6e85",
+    "semantic_hash": "44ef491ab0cced40f9115560f0ad6e85"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261015180920_AddChatConversationHistory.Designer.cs": {
+    "mtime": 1792087760.8250363,
+    "seen": 1792386856.478696,
+    "ast_hash": "c5fa11091db8b8987ba9e1b7d9891b92",
+    "semantic_hash": "c5fa11091db8b8987ba9e1b7d9891b92"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261015180920_AddChatConversationHistory.cs": {
+    "mtime": 1792087760.82228,
+    "seen": 1792386856.4786968,
+    "ast_hash": "59bca2aa656ee57e5a2989a576771ada",
+    "semantic_hash": "59bca2aa656ee57e5a2989a576771ada"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261016114331_AddResourceTableLegendEntries.Designer.cs": {
+    "mtime": 1792151011.9663415,
+    "seen": 1792386856.4786975,
+    "ast_hash": "f8a4f4c46c7d755a48da61785c297d24",
+    "semantic_hash": "f8a4f4c46c7d755a48da61785c297d24"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261016114331_AddResourceTableLegendEntries.cs": {
+    "mtime": 1792151091.1904564,
+    "seen": 1792386856.478698,
+    "ast_hash": "c6705bb2c6e704e2c1eede82d40490ca",
+    "semantic_hash": "c6705bb2c6e704e2c1eede82d40490ca"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261016161932_AddChatMessageClarifyingQuestionColumns.Designer.cs": {
+    "mtime": 1792167572.6914587,
+    "seen": 1792386856.4786987,
+    "ast_hash": "3b8d36b7aa95c6d73c12d12d3c02f413",
+    "semantic_hash": "3b8d36b7aa95c6d73c12d12d3c02f413"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261016161932_AddChatMessageClarifyingQuestionColumns.cs": {
+    "mtime": 1792167585.4808393,
+    "seen": 1792386856.4786994,
+    "ast_hash": "25e8d1ac153b226859681ab6d669c426",
+    "semantic_hash": "25e8d1ac153b226859681ab6d669c426"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261017165127_AddEnvironmentOverviewUptimeScheduleNote.Designer.cs": {
+    "mtime": 1792255887.3542426,
+    "seen": 1792386856.4787,
+    "ast_hash": "e55f71c21f8580cd3f5002a87fd507b9",
+    "semantic_hash": "e55f71c21f8580cd3f5002a87fd507b9"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/20261017165127_AddEnvironmentOverviewUptimeScheduleNote.cs": {
+    "mtime": 1792255887.3542426,
+    "seen": 1792386856.4787006,
+    "ast_hash": "d509b31142ba2b5be755dbaba1ebe59d",
+    "semantic_hash": "d509b31142ba2b5be755dbaba1ebe59d"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Migrations/ApplicationDatabaseContextModelSnapshot.cs": {
+    "mtime": 1792255887.3560183,
+    "seen": 1792386856.4787014,
+    "ast_hash": "780add123de756c45411ef9b9c5c4541",
+    "semantic_hash": "780add123de756c45411ef9b9c5c4541"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Models/APIResponse.cs": {
+    "mtime": 1790847925.5018203,
+    "seen": 1792386856.4787018,
+    "ast_hash": "78c2d68984fc86a057f83c03bdf73dc1",
+    "semantic_hash": "78c2d68984fc86a057f83c03bdf73dc1"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Models/Classes/ConfigurationConstantClass.cs": {
+    "mtime": 1791201196.554193,
+    "seen": 1792386856.4787025,
+    "ast_hash": "80bb6f6b7a749ff4f884260315ce7d01",
+    "semantic_hash": "80bb6f6b7a749ff4f884260315ce7d01"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/PLMInfrastructureRegisterOrchestratorServiceLayerMSC.csproj": {
+    "mtime": 1790893919.4230468,
+    "seen": 1792386856.478703,
+    "ast_hash": "e0a5bedd254a7c9186fdc9e791bee6a8",
+    "semantic_hash": "e0a5bedd254a7c9186fdc9e791bee6a8"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Program.cs": {
+    "mtime": 1792255840.582729,
+    "seen": 1792386856.478704,
+    "ast_hash": "ddf9f252cb549b8ef50737eb095d5fd6",
+    "semantic_hash": "ddf9f252cb549b8ef50737eb095d5fd6"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Properties/launchSettings.json": {
+    "mtime": 1791785593.0849774,
+    "seen": 1792386856.4787045,
+    "ast_hash": "3709be46899ca362d3d10cd2580f064e",
+    "semantic_hash": "3709be46899ca362d3d10cd2580f064e"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/Utilities/DatabaseConnectionStringUtility.cs": {
+    "mtime": 1790842411.806128,
+    "seen": 1792386856.478705,
+    "ast_hash": "81c710fd808fe74e96d645695998bcf5",
+    "semantic_hash": "81c710fd808fe74e96d645695998bcf5"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/appsettings.Development.json": {
+    "mtime": 1790830531.4186203,
+    "seen": 1792386856.4787056,
+    "ast_hash": "804b473502a4c415cf75db61c56c32aa",
+    "semantic_hash": "804b473502a4c415cf75db61c56c32aa"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/appsettings.json": {
+    "mtime": 1790830531.4330513,
+    "seen": 1792386856.4787061,
+    "ast_hash": "f7e65dde4e5533740a0d57ac9355c0e8",
+    "semantic_hash": "f7e65dde4e5533740a0d57ac9355c0e8"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/package.json": {
+    "mtime": 1790849164.4126084,
+    "seen": 1792386856.4787066,
+    "ast_hash": "c52102ec1b38deba13c09cfa69129b30",
+    "semantic_hash": "c52102ec1b38deba13c09cfa69129b30"
+  },
+  "output.json": {
+    "mtime": 1790833765.4887528,
+    "seen": 1792386856.4787076,
+    "ast_hash": "92e3670e7d77eb4a973915dce84d617f",
+    "semantic_hash": "92e3670e7d77eb4a973915dce84d617f"
+  },
+  "package.json": {
+    "mtime": 1790849155.1829784,
+    "seen": 1792386856.4787083,
+    "ast_hash": "ade2b3120b906b62d085aa0500151f56",
+    "semantic_hash": "ade2b3120b906b62d085aa0500151f56"
+  },
+  "skills-lock.json": {
+    "mtime": 1790836274.5735967,
+    "seen": 1792386856.4787087,
+    "ast_hash": "54ecd86a2bf12fd375b6f935cab3651d",
+    "semantic_hash": "54ecd86a2bf12fd375b6f935cab3651d"
+  },
+  "turbo.json": {
+    "mtime": 1790849159.1611507,
+    "seen": 1792386856.4787092,
+    "ast_hash": "d97f8945691daefb3435540822684cef",
+    "semantic_hash": "d97f8945691daefb3435540822684cef"
+  },
+  ".claude/skills/gitnexus-cli/SKILL.md": {
+    "mtime": 1791263812.1633635,
+    "seen": 1792386856.47871,
+    "ast_hash": "1ccb6754be9854d071222b82a8e93073",
+    "semantic_hash": "1ccb6754be9854d071222b82a8e93073"
+  },
+  ".claude/skills/gitnexus-debugging/SKILL.md": {
+    "mtime": 1791263812.1573803,
+    "seen": 1792386856.4787104,
+    "ast_hash": "5a6e25eee809c31a0cc7071018b62aa8",
+    "semantic_hash": "5a6e25eee809c31a0cc7071018b62aa8"
+  },
+  ".claude/skills/gitnexus-exploring/SKILL.md": {
+    "mtime": 1791263812.1573803,
+    "seen": 1792386856.4787111,
+    "ast_hash": "d84b30f0d425f42c7278957bfe8c2498",
+    "semantic_hash": "d84b30f0d425f42c7278957bfe8c2498"
+  },
+  ".claude/skills/gitnexus-guide/SKILL.md": {
+    "mtime": 1791263812.1633635,
+    "seen": 1792386856.4787118,
+    "ast_hash": "51eee64e023b05990b57ea22eac4957d",
+    "semantic_hash": "51eee64e023b05990b57ea22eac4957d"
+  },
+  ".claude/skills/gitnexus-impact-analysis/SKILL.md": {
+    "mtime": 1791263812.1573803,
+    "seen": 1792386856.4787123,
+    "ast_hash": "6bfe180855650916db5f0493990a3e4f",
+    "semantic_hash": "6bfe180855650916db5f0493990a3e4f"
+  },
+  ".claude/skills/gitnexus-refactoring/SKILL.md": {
+    "mtime": 1791263812.1573803,
+    "seen": 1792386856.478713,
+    "ast_hash": "7bd98a42fc96205ae57283575451a142",
+    "semantic_hash": "7bd98a42fc96205ae57283575451a142"
+  },
+  ".claude/skills/neon-ai-gateway/SKILL.md": {
+    "mtime": 1790836273.3751726,
+    "seen": 1792386856.4787135,
+    "ast_hash": "46216e616bb8305808e035acea3564b5",
+    "semantic_hash": "46216e616bb8305808e035acea3564b5"
+  },
+  ".claude/skills/neon-auth/SKILL.md": {
+    "mtime": 1790836273.3751726,
+    "seen": 1792386856.4787145,
+    "ast_hash": "274304418cba725d687cabca3c42cb3b",
+    "semantic_hash": "274304418cba725d687cabca3c42cb3b"
+  },
+  ".claude/skills/neon-auth/references/managed-auth.md": {
+    "mtime": 1790836273.3782213,
+    "seen": 1792386856.4787152,
+    "ast_hash": "3eb67cc2f73534419f34cbb60b96fa19",
+    "semantic_hash": "3eb67cc2f73534419f34cbb60b96fa19"
+  },
+  ".claude/skills/neon-auth/references/self-managed.md": {
+    "mtime": 1790836273.3782213,
+    "seen": 1792386856.4787157,
+    "ast_hash": "416c6b7cb68584aa4db818d29c856566",
+    "semantic_hash": "416c6b7cb68584aa4db818d29c856566"
+  },
+  ".claude/skills/neon-functions/SKILL.md": {
+    "mtime": 1790836273.3782213,
+    "seen": 1792386856.4787164,
+    "ast_hash": "86f2bd9ef532233d65aff3b01dd5e47b",
+    "semantic_hash": "86f2bd9ef532233d65aff3b01dd5e47b"
+  },
+  ".claude/skills/neon-functions/references/ai-sdk.md": {
+    "mtime": 1790836273.3828526,
+    "seen": 1792386856.4787169,
+    "ast_hash": "46ea91133ad0de0c6073ad59b7f2856d",
+    "semantic_hash": "46ea91133ad0de0c6073ad59b7f2856d"
+  },
+  ".claude/skills/neon-functions/references/function-triggers.md": {
+    "mtime": 1790836273.3828526,
+    "seen": 1792386856.4787178,
+    "ast_hash": "4c2ea4b1e813c94a3ff046cd8c58c136",
+    "semantic_hash": "4c2ea4b1e813c94a3ff046cd8c58c136"
+  },
+  ".claude/skills/neon-functions/references/mastra-studio.md": {
+    "mtime": 1790836273.3828526,
+    "seen": 1792386856.4787185,
+    "ast_hash": "916e8c7f62e2fb5b05b35210cb77a9f2",
+    "semantic_hash": "916e8c7f62e2fb5b05b35210cb77a9f2"
+  },
+  ".claude/skills/neon-functions/references/mcp.md": {
+    "mtime": 1790836273.3828526,
+    "seen": 1792386856.478719,
+    "ast_hash": "8288833262f21ac0855d31096682fbf3",
+    "semantic_hash": "8288833262f21ac0855d31096682fbf3"
+  },
+  ".claude/skills/neon-functions/references/native-binaries.md": {
+    "mtime": 1790836273.3828526,
+    "seen": 1792386856.4787197,
+    "ast_hash": "6826b7998a010c42a4da47ff7aa3fa77",
+    "semantic_hash": "6826b7998a010c42a4da47ff7aa3fa77"
+  },
+  ".claude/skills/neon-functions/references/production-hardening.md": {
+    "mtime": 1790836273.3828526,
+    "seen": 1792386856.4787202,
+    "ast_hash": "d43d4974cc60da89b26dc0d576fc3191",
+    "semantic_hash": "d43d4974cc60da89b26dc0d576fc3191"
+  },
+  ".claude/skills/neon-functions/references/sentry.md": {
+    "mtime": 1790836273.3867304,
+    "seen": 1792386856.4787211,
+    "ast_hash": "b5d66134df482520b4156370ea301550",
+    "semantic_hash": "b5d66134df482520b4156370ea301550"
+  },
+  ".claude/skills/neon-functions/references/sse.md": {
+    "mtime": 1790836273.3867304,
+    "seen": 1792386856.4787219,
+    "ast_hash": "bc7110c6d9f383efa09fc453bcb70f43",
+    "semantic_hash": "bc7110c6d9f383efa09fc453bcb70f43"
+  },
+  ".claude/skills/neon-object-storage/SKILL.md": {
+    "mtime": 1790836273.3867304,
+    "seen": 1792386856.4787223,
+    "ast_hash": "fa8d8bcbac7c1dea555bc7089ef485f5",
+    "semantic_hash": "fa8d8bcbac7c1dea555bc7089ef485f5"
+  },
+  ".claude/skills/neon-postgres-branches/SKILL.md": {
+    "mtime": 1790836273.3867304,
+    "seen": 1792386856.478723,
+    "ast_hash": "0e854b0b0d75e70be594d91b70e9a1be",
+    "semantic_hash": "0e854b0b0d75e70be594d91b70e9a1be"
+  },
+  ".claude/skills/neon-postgres-egress-optimizer/SKILL.md": {
+    "mtime": 1790836273.3867304,
+    "seen": 1792386856.4787235,
+    "ast_hash": "241b9f0e67045c36b744811ad87fe87c",
+    "semantic_hash": "241b9f0e67045c36b744811ad87fe87c"
+  },
+  ".claude/skills/neon-postgres/SKILL.md": {
+    "mtime": 1790836273.3867304,
+    "seen": 1792386856.478724,
+    "ast_hash": "b8ce6f709e353947728ebec6327d02dd",
+    "semantic_hash": "b8ce6f709e353947728ebec6327d02dd"
+  },
+  ".claude/skills/neon-postgres/references/full-text-search.md": {
+    "mtime": 1790836273.393262,
+    "seen": 1792386856.478725,
+    "ast_hash": "a588b8d49cdd372ada345963d475d461",
+    "semantic_hash": "a588b8d49cdd372ada345963d475d461"
+  },
+  ".claude/skills/neon-postgres/references/hybrid-search.md": {
+    "mtime": 1790836273.3937762,
+    "seen": 1792386856.4787254,
+    "ast_hash": "ae5b165cd29c24a14ae68bbe257fe40c",
+    "semantic_hash": "ae5b165cd29c24a14ae68bbe257fe40c"
+  },
+  ".claude/skills/neon-postgres/references/lakebase-search-drizzle.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.478726,
+    "ast_hash": "9fc774b7f17c12de2e7571c7c40b781a",
+    "semantic_hash": "9fc774b7f17c12de2e7571c7c40b781a"
+  },
+  ".claude/skills/neon-postgres/references/vector-search.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.4787264,
+    "ast_hash": "1b16c8b0ec9fca17b71d7f5562cd81be",
+    "semantic_hash": "1b16c8b0ec9fca17b71d7f5562cd81be"
+  },
+  ".claude/skills/neon/SKILL.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.478727,
+    "ast_hash": "4267e1ff1f91cd86145a7b7c55ea5dad",
+    "semantic_hash": "4267e1ff1f91cd86145a7b7c55ea5dad"
+  },
+  ".claude/skills/neon/references/auth.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.4787276,
+    "ast_hash": "c1159564e19b2cfd9e3fb63753c5924c",
+    "semantic_hash": "c1159564e19b2cfd9e3fb63753c5924c"
+  },
+  ".claude/skills/neon/references/claimable-neon.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.4787285,
+    "ast_hash": "b4e1ed33932c4f5c12af98cc6d8a4ecb",
+    "semantic_hash": "b4e1ed33932c4f5c12af98cc6d8a4ecb"
+  },
+  ".claude/skills/neon/references/function-triggers.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.4787292,
+    "ast_hash": "494a0ec253a2f969bfb62161356d7c08",
+    "semantic_hash": "494a0ec253a2f969bfb62161356d7c08"
+  },
+  ".claude/skills/neon/references/logs-loki.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.4787297,
+    "ast_hash": "a8a4643d998e88bccfc9175adf4b7f00",
+    "semantic_hash": "a8a4643d998e88bccfc9175adf4b7f00"
+  },
+  ".claude/skills/neon/references/parse-env.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.4787304,
+    "ast_hash": "f351041839dd3a17a155a4bda177ecee",
+    "semantic_hash": "f351041839dd3a17a155a4bda177ecee"
+  },
+  ".claude/skills/neon/references/sdk.md": {
+    "mtime": 1790836273.3948195,
+    "seen": 1792386856.478731,
+    "ast_hash": "ccc86d23d49e0f7f27c1fca42feab973",
+    "semantic_hash": "ccc86d23d49e0f7f27c1fca42feab973"
+  },
+  "AGENTS.md": {
+    "mtime": 1791263812.1476512,
+    "seen": 1792386856.4787319,
+    "ast_hash": "5a26e77865f7ae1c86531be8b3dd6478",
+    "semantic_hash": "5a26e77865f7ae1c86531be8b3dd6478"
+  },
+  "CLAUDE.md": {
+    "mtime": 1791263812.1476512,
+    "seen": 1792386856.4787326,
+    "ast_hash": "96aa3a434b3751f5cce0b64e475a7120",
+    "semantic_hash": "96aa3a434b3751f5cce0b64e475a7120"
+  },
+  "CODING-RULES.md": {
+    "mtime": 1791526589.7737808,
+    "seen": 1792386856.4787333,
+    "ast_hash": "e07cc2846986804bf85cb179e4f16705",
+    "semantic_hash": "e07cc2846986804bf85cb179e4f16705"
+  },
+  "CONTEXT.md": {
+    "mtime": 1790846228.5240242,
+    "seen": 1792386856.4787338,
+    "ast_hash": "c851fe788b9413df8ef3ef5446899f14",
+    "semantic_hash": "c851fe788b9413df8ef3ef5446899f14"
+  },
+  "CURRENT_CLAUDE_SESSION.md": {
+    "mtime": 1790896345.9969985,
+    "seen": 1792386856.4787345,
+    "ast_hash": "19806e4dae7e30884442f4ee0213ea53",
+    "semantic_hash": "19806e4dae7e30884442f4ee0213ea53"
+  },
+  "HANDOUT.md": {
+    "mtime": 1791403364.3314655,
+    "seen": 1792386856.4787352,
+    "ast_hash": "0a5b2412eddf548a2e0a5c1f4474f0c2",
+    "semantic_hash": "0a5b2412eddf548a2e0a5c1f4474f0c2"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/KNOWLEDGE_BASE/HOW_GEN_UI_WORKS.html": {
+    "mtime": 1792338896.593974,
+    "seen": 1792386856.478736,
+    "ast_hash": "12b3419c1a1e482515b18ebaa13d5974",
+    "semantic_hash": "12b3419c1a1e482515b18ebaa13d5974"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/LOCAL_DEVELOPMENT_PORTS_GUIDE.md": {
+    "mtime": 1791785606.137083,
+    "seen": 1792386856.4787364,
+    "ast_hash": "abbe12b87b1ab51368e32a44e49b29a6",
+    "semantic_hash": "abbe12b87b1ab51368e32a44e49b29a6"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/PRD/PRD_EXAMPLE.md": {
+    "mtime": 1791534878.1028244,
+    "seen": 1792386856.478737,
+    "ast_hash": "62135e34eb0a6ce65afb2c542232ff80",
+    "semantic_hash": "62135e34eb0a6ce65afb2c542232ff80"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/PRD/PRD_ONE_9_10_26.md": {
+    "mtime": 1791539483.5072207,
+    "seen": 1792386856.4787376,
+    "ast_hash": "123b546907874f175a904a7d24a41fb0",
+    "semantic_hash": "123b546907874f175a904a7d24a41fb0"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/SHARED_ELEMENT_MORPH_ANIMATION_GUIDE.md": {
+    "mtime": 1791275298.8517118,
+    "seen": 1792386856.4787385,
+    "ast_hash": "f2dfe37cee48f8ceb522b9148086d52a",
+    "semantic_hash": "f2dfe37cee48f8ceb522b9148086d52a"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/TODO/ADD_OR_REMOVE_SUBSCRIPTION_FEATURE_TODO.md": {
+    "mtime": 1790961971.6645625,
+    "seen": 1792386856.478739,
+    "ast_hash": "5b8348402c4950c1b0618ae2a2d2f1d3",
+    "semantic_hash": "5b8348402c4950c1b0618ae2a2d2f1d3"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/TODO/ADMIN_GATED_ROW_DELETION_AND_EDIT_MODE_TODO.md": {
+    "mtime": 1791480717.0022926,
+    "seen": 1792386856.4787397,
+    "ast_hash": "6940c2a64bd52f1ac63b35595f738f3b",
+    "semantic_hash": "6940c2a64bd52f1ac63b35595f738f3b"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/TODO/MANUAL_PHYSICAL_MACHINE_ENTRY_TODO.md": {
+    "mtime": 1790846238.040347,
+    "seen": 1792386856.4787405,
+    "ast_hash": "9e0dbee113ac1933bf99ff9e6cfcb32f",
+    "semantic_hash": "9e0dbee113ac1933bf99ff9e6cfcb32f"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/TODO/RESOURCE_IDENTITY_MATCHING_KEY_TODO.md": {
+    "mtime": 1790893374.5384164,
+    "seen": 1792386856.478741,
+    "ast_hash": "3e28453d8dbc7dd4242a17897710fb1b",
+    "semantic_hash": "3e28453d8dbc7dd4242a17897710fb1b"
+  },
+  "PLMInfrastructureRegisterAgentDocumentationNMSC/TODO/STORAGE_ACCOUNT_SYNC_SUPPORT_TODO.md": {
+    "mtime": 1790893541.6748273,
+    "seen": 1792386856.4787416,
+    "ast_hash": "7e65b4f5d7583048d4db39e1cf025eb8",
+    "semantic_hash": "7e65b4f5d7583048d4db39e1cf025eb8"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/CODING-RULES.md": {
+    "mtime": 1791526589.7737808,
+    "seen": 1792386856.4787424,
+    "ast_hash": "e07cc2846986804bf85cb179e4f16705",
+    "semantic_hash": "e07cc2846986804bf85cb179e4f16705"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/DESIGN.md": {
+    "mtime": 1790846904.194713,
+    "seen": 1792386856.4787428,
+    "ast_hash": "6bdd8e9e2349e0b55fba92e99a3ec375",
+    "semantic_hash": "6bdd8e9e2349e0b55fba92e99a3ec375"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/README.md": {
+    "mtime": 1790830782.3193867,
+    "seen": 1792386856.4787436,
+    "ast_hash": "45b067c80169a1436502fcc6537403c6",
+    "semantic_hash": "45b067c80169a1436502fcc6537403c6"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/index.html": {
+    "mtime": 1791545832.5441992,
+    "seen": 1792386856.478744,
+    "ast_hash": "1fcc419d77cfc1225d225c849758175c",
+    "semantic_hash": "1fcc419d77cfc1225d225c849758175c"
+  },
+  "PLMInfrastructureRegisterOrchestratorServiceLayerMSC/CODING-RULES.md": {
+    "mtime": 1790929923.5057092,
+    "seen": 1792386856.4787445,
+    "ast_hash": "00a5c32f76348e82646230e3446f4308",
+    "semantic_hash": "00a5c32f76348e82646230e3446f4308"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/public/og-image.png": {
+    "mtime": 1791545817.350754,
+    "seen": 1792386856.4787455,
+    "ast_hash": "a164de4bc51cd252c16031f5fb47ff37",
+    "semantic_hash": "a164de4bc51cd252c16031f5fb47ff37"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Assets/Images/DancingAIAgentMascotImage.png": {
+    "mtime": 1792127845.6814456,
+    "seen": 1792386856.478746,
+    "ast_hash": "aa70aa70c4d6e318d96e1e3a267f35fa",
+    "semantic_hash": "aa70aa70c4d6e318d96e1e3a267f35fa"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Assets/weplm.jpeg": {
+    "mtime": 1790851658.6405032,
+    "seen": 1792386856.4787467,
+    "ast_hash": "65cd66da103f8391f13d5cfbe745cbb0",
+    "semantic_hash": "65cd66da103f8391f13d5cfbe745cbb0"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Assets/DancingAIAgentAnimation.webm": {
+    "mtime": 1791999250.6820345,
+    "seen": 1792386856.4787471,
+    "ast_hash": "6edd25fda6de031d75783bb7ed06bc93",
+    "semantic_hash": "6edd25fda6de031d75783bb7ed06bc93"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Assets/DancingAIAgentMascotAnimation.webm": {
+    "mtime": 1792147950.272964,
+    "seen": 1792386856.4787478,
+    "ast_hash": "33bd3b32c5fbcedcbdf13e4e8b8ec27f",
+    "semantic_hash": "33bd3b32c5fbcedcbdf13e4e8b8ec27f"
+  },
+  "PLMInfrastructureRegisterClientServiceLayerMSC/src/Assets/SplashScreenAnimation.webm": {
+    "mtime": 1790892117.6030018,
+    "seen": 1792386856.4787483,
+    "ast_hash": "fa88f1b8ce838d67ae0a38cad1610f4c",
+    "semantic_hash": "fa88f1b8ce838d67ae0a38cad1610f4c"
+  }
+}

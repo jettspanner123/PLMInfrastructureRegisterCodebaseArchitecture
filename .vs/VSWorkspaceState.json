@@ -4,9 +4,13 @@
     "\\PLMInfrastructureRegisterAgentDocumentationNMSC",
     "\\PLMInfrastructureRegisterAgentDocumentationNMSC\\PRD",
     "\\PLMInfrastructureRegisterClientServiceLayerMSC\\src",
+    "\\PLMInfrastructureRegisterClientServiceLayerMSC\\src\\Assets",
     "\\PLMInfrastructureRegisterClientServiceLayerMSC\\src\\Features",
-    "\\PLMInfrastructureRegisterClientServiceLayerMSC\\src\\Features\\Resources"
+    "\\PLMInfrastructureRegisterClientServiceLayerMSC\\src\\Features\\Resources",
+    "\\PLMInfrastructureRegisterOrchestratorServiceLayerMSC\\Features",
+    "\\PLMInfrastructureRegisterOrchestratorServiceLayerMSC\\Features\\ChatAssistant",
+    "\\PLMInfrastructureRegisterOrchestratorServiceLayerMSC\\Features\\ChatAssistant\\Services"
   ],
-  "SelectedNode": "\\PLMInfrastructureRegisterAgentDocumentationNMSC\\PRD\\PRD_ONE_9_10_26.md",
+  "SelectedNode": "\\PLMInfrastructureRegisterAgentDocumentationNMSC\\PRD",
   "PreviewInSolutionExplorer": false
 }
