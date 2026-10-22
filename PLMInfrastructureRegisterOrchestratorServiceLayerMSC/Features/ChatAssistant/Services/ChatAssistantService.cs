@@ -139,7 +139,17 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 conversation.Title = titleTask.Result;
             }
 
-            DateTime now = DateTime.UtcNow;
+            // Each row below gets its OWN DateTime.UtcNow() call rather than
+            // one shared value reused across sibling rows - CreatedAt is the
+            // only sort key used everywhere a turn's rows are ordered (the
+            // reload API, and the conversation history replayed back to
+            // Groq on the NEXT turn), so two rows sharing one timestamp
+            // makes their relative order undefined on any later query,
+            // even though it looked correct live (the frontend only ever
+            // appends, never resorts). Confirmed live in production data -
+            // every previously-tied pair was exactly one user row + one
+            // assistant row sharing an identical CreatedAt.
+            DateTime userMessageCreatedAt = DateTime.UtcNow;
 
             if (loopResult.PendingToolCallId is not null)
             {
@@ -148,24 +158,26 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssi
                 // question (never saved yet) has to be persisted here too,
                 // alongside the new pending-question row.
                 Guid pendingMessageId = Guid.NewGuid();
+                DateTime assistantMessageCreatedAt = DateTime.UtcNow;
                 ClarifyingQuestionDTO pendingQuestion = PersistPendingQuestionAndBuildDTO(
-                    conversation.Id, pendingMessageId, loopResult, now);
+                    conversation.Id, pendingMessageId, loopResult, assistantMessageCreatedAt);
 
                 _applicationDatabaseContext.ChatMessages.Add(
-                    new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, MessageKind = "Text", CreatedAt = now });
-                conversation.UpdatedAt = now;
+                    new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, MessageKind = "Text", CreatedAt = userMessageCreatedAt });
+                conversation.UpdatedAt = assistantMessageCreatedAt;
                 await _applicationDatabaseContext.SaveChangesAsync();
 
                 return new AskQuestionResponseDTO { ConversationId = conversation.Id, Answer = null, PendingQuestion = pendingQuestion };
             }
 
             string answer = loopResult.Answer ?? "I wasn't able to come up with an answer to that.";
+            DateTime assistantAnswerCreatedAt = DateTime.UtcNow;
 
             _applicationDatabaseContext.ChatMessages.AddRange(
-                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, MessageKind = "Text", CreatedAt = now },
-                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "assistant", Text = answer, MessageKind = "Text", CreatedAt = now }
+                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "user", Text = question, MessageKind = "Text", CreatedAt = userMessageCreatedAt },
+                new ChatMessageNexus { Id = Guid.NewGuid(), ConversationId = conversation.Id, Role = "assistant", Text = answer, MessageKind = "Text", CreatedAt = assistantAnswerCreatedAt }
             );
-            conversation.UpdatedAt = now;
+            conversation.UpdatedAt = assistantAnswerCreatedAt;
 
             await _applicationDatabaseContext.SaveChangesAsync();
 
