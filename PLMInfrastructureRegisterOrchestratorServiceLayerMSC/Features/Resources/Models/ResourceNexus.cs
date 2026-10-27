@@ -50,6 +50,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
 
         public int? RamGB { get; set; }
 
+        // Disk1 through Disk6 hold that disk slot's size (e.g. "128 GB") -
+        // Disk1 is always the VM's OS disk; Disk2-6 are its data disks in
+        // ascending LUN order. Cleared to null on any sync where that slot
+        // has no disk (see SyncService.MapDisksIntoResource) - a VM with
+        // more than 5 data disks has nowhere to put the overflow past
+        // Disk6, dropped by design (confirmed acceptable: this fleet's VMs
+        // top out at 6 disks in practice).
         public string? Disk1OSPerformance { get; set; }
 
         public string? Disk2DataPerformance { get; set; }
@@ -57,6 +64,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         public string? Disk3DataType { get; set; }
 
         public string? Disk4DataType { get; set; }
+
+        public string? Disk5DataType { get; set; }
+
+        public string? Disk6DataType { get; set; }
 
         // --- Manual fields: entered and edited directly by a user; Sync never overwrites them. ---
 
@@ -77,10 +88,6 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resource
         public string? PublicIPAddress { get; set; }
 
         public string? ProximityGroup { get; set; }
-
-        public string? Disk5DataType { get; set; }
-
-        public string? Disk6DataType { get; set; }
 
         public string? Disks { get; set; }
 

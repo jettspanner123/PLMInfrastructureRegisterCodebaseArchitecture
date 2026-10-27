@@ -145,7 +145,65 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Sync.Ser
             resource.RamGB = ramGB;
 
             resource.StartStopTagsJson = BuildStartStopTagsJson(data.Tags);
+
+            await MapDisksIntoResourceAsynchronous(data.StorageProfile, resource);
         }
+
+        // Disk1 is always the OS disk; Disk2-6 are data disks in ascending
+        // LUN order. Every slot is set (including to null) on every sync -
+        // a disk detached since the last run must disappear from its slot,
+        // not leave a stale value behind, same as every other Sync-owned
+        // field. A VM with more than 5 data disks has nowhere to put the
+        // overflow past Disk6 - dropped by design (see ResourceNexus's own
+        // comment on these fields).
+        private async Task MapDisksIntoResourceAsynchronous(VirtualMachineStorageProfile? storageProfile, ResourceNexus resource)
+        {
+            resource.Disk1OSPerformance = await ResolveDiskSizeAsynchronous(
+                storageProfile?.OSDisk?.DiskSizeGB, storageProfile?.OSDisk?.ManagedDisk?.Id);
+
+            List<VirtualMachineDataDisk> dataDisksByLun = storageProfile?.DataDisks?
+                .OrderBy(dataDisk => dataDisk.Lun)
+                .ToList() ?? new List<VirtualMachineDataDisk>();
+
+            resource.Disk2DataPerformance = dataDisksByLun.Count > 0
+                ? await ResolveDiskSizeAsynchronous(dataDisksByLun[0].DiskSizeGB, dataDisksByLun[0].ManagedDisk?.Id) : null;
+            resource.Disk3DataType = dataDisksByLun.Count > 1
+                ? await ResolveDiskSizeAsynchronous(dataDisksByLun[1].DiskSizeGB, dataDisksByLun[1].ManagedDisk?.Id) : null;
+            resource.Disk4DataType = dataDisksByLun.Count > 2
+                ? await ResolveDiskSizeAsynchronous(dataDisksByLun[2].DiskSizeGB, dataDisksByLun[2].ManagedDisk?.Id) : null;
+            resource.Disk5DataType = dataDisksByLun.Count > 3
+                ? await ResolveDiskSizeAsynchronous(dataDisksByLun[3].DiskSizeGB, dataDisksByLun[3].ManagedDisk?.Id) : null;
+            resource.Disk6DataType = dataDisksByLun.Count > 4
+                ? await ResolveDiskSizeAsynchronous(dataDisksByLun[4].DiskSizeGB, dataDisksByLun[4].ManagedDisk?.Id) : null;
+        }
+
+        // A disk's size on the VM's own inline storage profile is only
+        // populated when it was explicitly overridden at creation - most
+        // disks in this fleet were provisioned at their image/default size,
+        // so that value comes back null for them (confirmed live via `az vm
+        // show` against a real VM). The managed disk resource itself always
+        // knows its own real size, so a null inline value falls back to
+        // fetching that resource directly by ID.
+        private async Task<string?> ResolveDiskSizeAsynchronous(int? inlineSizeGB, ResourceIdentifier? managedDiskId)
+        {
+            if (inlineSizeGB.HasValue) return FormatDiskSize(inlineSizeGB);
+            if (managedDiskId is null) return null;
+
+            try
+            {
+                ManagedDiskResource managedDisk = await _armClient.GetManagedDiskResource(managedDiskId).GetAsync();
+                return FormatDiskSize(managedDisk.Data.DiskSizeGB);
+            }
+            catch
+            {
+                // A disk lookup failing (transient Azure error, permissions)
+                // shouldn't fail the whole VM's sync - every other field
+                // still gets saved.
+                return null;
+            }
+        }
+
+        private static string? FormatDiskSize(int? sizeGB) => sizeGB.HasValue ? $"{sizeGB.Value} GB" : null;
 
         // Mirrors every "StartStop_" prefixed tag verbatim (key included) from
         // Azure onto the resource - auto-discovers new tag keys automatically
