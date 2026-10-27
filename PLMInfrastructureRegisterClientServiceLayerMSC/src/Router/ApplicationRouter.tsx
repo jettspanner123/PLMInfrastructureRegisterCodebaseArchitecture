@@ -18,6 +18,9 @@ import NavigationController from '../Features/Navigation/NavigationController';
 import InfrastructureRegisterScreenRoute from '../Routes/InfrastructureRegisterScreenRoute';
 import SettingsScreenRoute from '../Routes/SettingsScreenRoute';
 import EnvironmentOverviewScreenRoute from '../Routes/EnvironmentOverviewScreenRoute';
+import FeatureRequestsScreenRoute from '../Routes/FeatureRequestsScreenRoute';
+import EnvironmentUptimeRequestsScreenRoute from '../Routes/EnvironmentUptimeRequestsScreenRoute';
+import EnvironmentUptimeRequestDetailScreenRoute from '../Routes/EnvironmentUptimeRequestDetailScreenRoute';
 import SplashScreenController from '../Features/SplashScreen/SplashScreenController';
 import SubscriptionsScreenController from '../Features/Subscriptions/SubscriptionsScreenController';
 import SettingsColorEditingScreenController from '../Features/Settings/SettingsColorEditingScreenController';
@@ -187,12 +190,45 @@ const environmentOverviewRoute = createRoute({
 });
 
 // ==========================================
-// 5. Router Tree
+// 5. Feature Requests Route
 // ==========================================
+const featureRequestsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ApplicationRouteCON.FEATURE_REQUESTS,
+  component: FeatureRequestsScreenRoute,
+});
+
+// ==========================================
+// 6. Environment Uptime Requests Routes
+// ==========================================
+const environmentUptimeRequestsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUESTS,
+  component: EnvironmentUptimeRequestsScreenRoute,
+});
+
+const environmentUptimeRequestDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUEST_DETAIL_PATTERN,
+  component: EnvironmentUptimeRequestDetailScreenRoute,
+});
+
+// ==========================================
+// 7. Router Tree
+// ==========================================
+const settingsRouteWithChildren = settingsRoute.addChildren([
+  settingsIndexRoute,
+  settingsSubscriptionsRoute,
+  settingsEditingRoute,
+]);
+
 const routeTree = rootRoute.addChildren([
   infrastructureRegisterRoute,
-  settingsRoute.addChildren([settingsIndexRoute, settingsSubscriptionsRoute, settingsEditingRoute]),
+  settingsRouteWithChildren,
   environmentOverviewRoute,
+  featureRequestsRoute,
+  environmentUptimeRequestsRoute,
+  environmentUptimeRequestDetailRoute,
 ]);
 
 export const applicationRouter = createRouter({ routeTree });

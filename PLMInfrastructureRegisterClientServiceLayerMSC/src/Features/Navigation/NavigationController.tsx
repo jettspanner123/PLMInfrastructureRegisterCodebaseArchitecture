@@ -43,7 +43,11 @@ export default function NavigationController({
       ? 'infrastructure-register'
       : location.pathname === ApplicationRouteCON.ENVIRONMENT_OVERVIEW
         ? 'environment-overview'
-        : '';
+        : location.pathname === ApplicationRouteCON.FEATURE_REQUESTS
+          ? 'feature-requests'
+          : location.pathname.startsWith(ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUESTS)
+            ? 'uptime-request'
+            : '';
 
   return (
     <div className="min-h-screen bg-(--color-canvas) text-(--color-ink) flex flex-col">
@@ -74,6 +78,10 @@ export default function NavigationController({
                   onNavigateHome();
                 } else if (next === 'environment-overview') {
                   navigate({ to: ApplicationRouteCON.ENVIRONMENT_OVERVIEW });
+                } else if (next === 'feature-requests') {
+                  navigate({ to: ApplicationRouteCON.FEATURE_REQUESTS });
+                } else if (next === 'uptime-request') {
+                  navigate({ to: ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUESTS });
                 }
               }}
               layoutId="activeTopNavPill"

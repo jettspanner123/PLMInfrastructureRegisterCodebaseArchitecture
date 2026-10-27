@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models.Classes;
@@ -33,6 +35,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<ChatConversationNexus> ChatConversations => Set<ChatConversationNexus>();
 
         public DbSet<ChatMessageNexus> ChatMessages => Set<ChatMessageNexus>();
+
+        public DbSet<FeatureRequestNexus> FeatureRequests => Set<FeatureRequestNexus>();
+
+        public DbSet<EnvironmentUptimeRequestNexus> EnvironmentUptimeRequests => Set<EnvironmentUptimeRequestNexus>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -189,6 +195,41 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 entity.ToTable("IG_ChatMessageTBL");
                 entity.HasKey(message => message.Id);
                 entity.HasIndex(message => message.ConversationId);
+            });
+
+            modelBuilder.Entity<FeatureRequestNexus>(entity =>
+            {
+                entity.ToTable("IG_FeatureRequestsTBL");
+                entity.HasKey(request => request.Id);
+                entity.Property(request => request.Category).HasConversion<string>();
+                entity.Property(request => request.Priority).HasConversion<string>();
+                entity.Property(request => request.Status).HasConversion<string>();
+                entity.HasQueryFilter(request => !request.IsDeleted);
+            });
+
+            modelBuilder.Entity<EnvironmentUptimeRequestNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentUptimeRequestTBL", table =>
+                {
+                    table.HasCheckConstraint("CK_EnvironmentUptimeRequestTBL_TicketNumber_Max", "\"TicketNumber\" <= 99999");
+                });
+
+                entity.HasKey(request => request.Id);
+
+                entity.Property(request => request.TicketNumber)
+                    .ValueGeneratedOnAdd()
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(request => request.TicketId)
+                    .HasComputedColumnSql("'UPTM-' || lpad(\"TicketNumber\"::text, 5, '0')", stored: true);
+
+                entity.Property(request => request.Status).HasConversion<string>();
+
+                // Same convention as EnvironmentOverviewNexus - excludes
+                // soft-deleted rows from every normal query automatically,
+                // so services never need to repeat `!request.IsDeleted` by
+                // hand.
+                entity.HasQueryFilter(request => !request.IsDeleted);
             });
         }
     }

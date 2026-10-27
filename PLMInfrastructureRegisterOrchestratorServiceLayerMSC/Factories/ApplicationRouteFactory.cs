@@ -143,5 +143,32 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string AddOption = "{fieldName}";
         }
+
+        public static class FeatureRequestsRoutes
+        {
+            public const string ControllerURL = "/Api/V1/FeatureRequests";
+
+            public const string GetAllFeatureRequests = "";
+
+            public const string CreateFeatureRequest = "";
+
+            public const string UpdateStatus = "{id}/Status";
+
+            public const string DeleteFeatureRequest = "{id}";
+        }
+
+        public static class EnvironmentUptimeRequestsRoutes
+        {
+            public const string ControllerURL = "/Api/V1/EnvironmentUptimeRequests";
+
+            public const string GetAllEnvironmentUptimeRequests = "";
+
+            public const string CreateEnvironmentUptimeRequest = "";
+
+            // Soft delete (sets IsDeleted/DeletedAt) - same reasoning as
+            // EnvironmentOverviewRoutes.DeleteEnvironmentOverview and
+            // FeatureRequestsRoutes.DeleteFeatureRequest.
+            public const string DeleteEnvironmentUptimeRequest = "{id}";
+        }
     }
 }

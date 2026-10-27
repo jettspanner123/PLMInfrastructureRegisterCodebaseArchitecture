@@ -229,6 +229,105 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.ToTable("IG_EnvironmentOverviewStatusHistoryTBL", (string)null);
                 });
 
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models.EnvironmentUptimeRequestNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Environment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FromAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TicketId")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasComputedColumnSql("'UPTM-' || lpad(\"TicketNumber\"::text, 5, '0')", true);
+
+                    b.Property<int>("TicketNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("TicketNumber"));
+
+                    b.Property<DateTime>("ToAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IG_EnvironmentUptimeRequestTBL", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_EnvironmentUptimeRequestTBL_TicketNumber_Max", "\"TicketNumber\" <= 99999");
+                        });
+                });
+
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Models.FeatureRequestNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequesterName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IG_FeatureRequestsTBL", (string)null);
+                });
+
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models.ResourceCellFormatNexus", b =>
                 {
                     b.Property<Guid>("Id")

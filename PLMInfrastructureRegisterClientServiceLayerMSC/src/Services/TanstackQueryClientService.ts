@@ -29,7 +29,14 @@ import type AskQuestionRequestInterfaceModel from '../Models/AskQuestionRequestI
 import type AskQuestionResponseInterfaceModel from '../Models/AskQuestionResponseInterfaceModel';
 import type AnswerQuestionRequestInterfaceModel from '../Models/AnswerQuestionRequestInterfaceModel';
 import type ChatMessageInterfaceModel from '../Models/ChatMessageInterfaceModel';
+import type FeatureRequestInterfaceModel from '../Models/FeatureRequestInterfaceModel';
+import type CreateFeatureRequestInputInterfaceModel from '../Models/CreateFeatureRequestInputInterfaceModel';
+import type UpdateFeatureRequestStatusInputInterfaceModel from '../Models/UpdateFeatureRequestStatusInputInterfaceModel';
+import type EnvironmentUptimeRequestInterfaceModel from '../Models/EnvironmentUptimeRequestInterfaceModel';
+import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
 import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssistantService';
+import FeatureRequestsService from '../Features/FeatureRequests/Services/FeatureRequestsService';
+import EnvironmentUptimeRequestsService from '../Features/EnvironmentUptimeRequests/Services/EnvironmentUptimeRequestsService';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
 
 export default class TanstackQueryClientService {
@@ -625,6 +632,144 @@ export default class TanstackQueryClientService {
         onSuccess: (data) => options?.onSuccess?.(data),
         onError: (error: Error) => {
           toast.error('Failed to load that conversation', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+  };
+
+  public readonly featureRequests = {
+    useFeatureRequestsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.FEATURE_REQUESTS,
+        queryFn: () => FeatureRequestsService.current.getFeatureRequests(),
+        staleTime: 1000 * 60,
+      });
+    },
+
+    useCreateFeatureRequestMutation: (options?: {
+      onSuccess?: (data: FeatureRequestInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: CreateFeatureRequestInputInterfaceModel) =>
+          FeatureRequestsService.current.createFeatureRequest(request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.FEATURE_REQUESTS });
+          toast.success('Feature request submitted', {
+            description: `"${data.title}" has been recorded successfully.`,
+          });
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to submit feature request', {
+            description: error.message || 'Please check your inputs and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useUpdateFeatureRequestStatusMutation: (options?: {
+      onSuccess?: (data: FeatureRequestInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateFeatureRequestStatusInputInterfaceModel }) =>
+          FeatureRequestsService.current.updateStatus(id, request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.FEATURE_REQUESTS });
+          toast.success('Status updated', {
+            description: `Request status changed to ${data.status}.`,
+          });
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to update status', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useDeleteFeatureRequestMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => FeatureRequestsService.current.deleteFeatureRequest(id),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.FEATURE_REQUESTS });
+          toast.success('Feature request deleted', {
+            description: 'The request has been removed.',
+          });
+          options?.onSuccess?.();
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to delete feature request', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+  };
+
+  public readonly environmentUptimeRequests = {
+    useEnvironmentUptimeRequestsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_UPTIME_REQUESTS,
+        queryFn: () => EnvironmentUptimeRequestsService.current.getEnvironmentUptimeRequests(),
+        staleTime: 1000 * 60,
+      });
+    },
+
+    useCreateEnvironmentUptimeRequestMutation: (options?: {
+      onSuccess?: (data: EnvironmentUptimeRequestInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: CreateEnvironmentUptimeRequestInputInterfaceModel) =>
+          EnvironmentUptimeRequestsService.current.createEnvironmentUptimeRequest(request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_UPTIME_REQUESTS });
+          toast.success('Uptime request submitted', {
+            description: `${data.ticketId} has been recorded successfully.`,
+          });
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to submit uptime request', {
+            description: error.message || 'Please check your inputs and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useDeleteEnvironmentUptimeRequestMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => EnvironmentUptimeRequestsService.current.deleteEnvironmentUptimeRequest(id),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_UPTIME_REQUESTS });
+          toast.success('Uptime request deleted', {
+            description: 'The request has been removed.',
+          });
+          options?.onSuccess?.();
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to delete uptime request', {
             description: error.message || 'Please check your connection and try again.',
           });
           options?.onError?.(error);

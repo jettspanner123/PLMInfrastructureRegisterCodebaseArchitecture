@@ -4,6 +4,8 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ConfigurationConstants.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Sync.Services;
@@ -42,6 +44,8 @@ builder.Services.AddScoped<SubscriptionsService>();
 builder.Services.AddHttpClient<EnvironmentOverviewService>();
 builder.Services.AddScoped<ConfigurationConstantsService>();
 builder.Services.AddHttpClient<ChatAssistantService>();
+builder.Services.AddScoped<FeatureRequestsService>();
+builder.Services.AddScoped<EnvironmentUptimeRequestsService>();
 
 const string FrontendOriginPolicy = "FrontendOriginPolicy";
 
