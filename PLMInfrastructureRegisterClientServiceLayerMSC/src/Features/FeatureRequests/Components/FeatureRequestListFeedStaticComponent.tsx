@@ -106,13 +106,13 @@ export default function FeatureRequestListFeedStaticComponent({
       </div>
 
       {/* Cards List or Empty State */}
-      <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3.5 min-h-[300px]">
+      <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-3.5">
         {isLoading ? (
           <div className="flex items-center justify-center p-12 text-sm text-slate-400">
             Loading feature requests...
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="my-auto py-8">
+          <div className="my-auto">
             <EmptyStateSharedComponent
               title={requests.length === 0 ? 'No Feature Requests Yet' : 'No Matching Requests'}
               description={
