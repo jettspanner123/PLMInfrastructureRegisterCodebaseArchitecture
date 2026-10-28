@@ -4,6 +4,7 @@ import CardSharedComponent from '../../../Shared/Components/CardSharedComponent'
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
+import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
 import EnvironmentNameListUtility from '../../../Utilities/EnvironmentNameListUtility';
 import EnvironmentUptimeRequestsCON from '../Constants/EnvironmentUptimeRequestsCON';
@@ -196,16 +197,14 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
           {EnvironmentUptimeRequestsCON.BUTTON_RESET_LABEL}
         </ButtonSharedComponent>
 
-        <ButtonSharedComponent
+        <PrimaryActionButtonSharedComponent
           type="button"
           onClick={() => handleSubmit()}
-          variant="primary"
           size="md"
           icon={<Send className="w-3.5 h-3.5" />}
           isLoading={isSubmitting}
-        >
-          {EnvironmentUptimeRequestsCON.BUTTON_SUBMIT_LABEL}
-        </ButtonSharedComponent>
+          label={EnvironmentUptimeRequestsCON.BUTTON_SUBMIT_LABEL}
+        />
       </div>
     </CardSharedComponent>
   );

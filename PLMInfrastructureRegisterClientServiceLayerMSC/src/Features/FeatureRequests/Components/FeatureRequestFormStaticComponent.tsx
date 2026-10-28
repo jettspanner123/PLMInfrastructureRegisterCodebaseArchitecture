@@ -4,6 +4,7 @@ import CardSharedComponent from '../../../Shared/Components/CardSharedComponent'
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import CustomSelectSharedComponent from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
+import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
 import FeatureRequestsCON from '../Constants/FeatureRequestsCON';
 import { FeatureRequestCategoryEnumModel } from '../../../Models/FeatureRequestCategoryEnumModel';
 import { FeatureRequestPriorityEnumModel } from '../../../Models/FeatureRequestPriorityEnumModel';
@@ -187,16 +188,14 @@ export default function FeatureRequestFormStaticComponent({
           {FeatureRequestsCON.BUTTON_RESET_LABEL}
         </ButtonSharedComponent>
 
-        <ButtonSharedComponent
+        <PrimaryActionButtonSharedComponent
           type="button"
           onClick={() => handleSubmit()}
-          variant="primary"
           size="md"
           icon={<Send className="w-3.5 h-3.5" />}
           isLoading={isSubmitting}
-        >
-          {FeatureRequestsCON.BUTTON_SUBMIT_LABEL}
-        </ButtonSharedComponent>
+          label={FeatureRequestsCON.BUTTON_SUBMIT_LABEL}
+        />
       </div>
     </CardSharedComponent>
   );
