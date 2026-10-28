@@ -19,8 +19,8 @@ export default class NavigationCON {
   public static readonly PRIMARY_NAV_ITEMS: NavItemDef[] = [
     { id: 'infrastructure-register', label: 'Infrastructure Register', icon: Server },
     { id: 'environment-overview', label: 'Environment Overview', icon: Globe },
-    { id: 'feature-requests', label: 'Feature Request', icon: Lightbulb },
     { id: 'uptime-request', label: 'Uptime Request', icon: CalendarClock },
+    { id: 'feature-requests', label: 'Feature Request', icon: Lightbulb },
   ];
 
   // This register has no authentication system yet, so the profile dropdown's

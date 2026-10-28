@@ -45,19 +45,22 @@ export default function FeatureRequestsScreenController(): React.JSX.Element {
   };
 
   return (
-    <div className="w-full flex-1 flex flex-col px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto">
-      {/* Screen Header */}
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-serif-headline">
-          {FeatureRequestsCON.SCREEN_TITLE}
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1">
-          {FeatureRequestsCON.SCREEN_SUBTITLE}
-        </p>
+    <div className="flex flex-col gap-6">
+      {/* Screen Header - byte-for-byte copy of Infrastructure Register's /
+          Environment Overview's own header markup & classes. */}
+      <div className="flex items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-zinc-800">
+        <div>
+          <h1 className="font-serif-headline text-2xl font-bold text-slate-900 dark:text-white">
+            {FeatureRequestsCON.SCREEN_TITLE}
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+            {FeatureRequestsCON.SCREEN_SUBTITLE}
+          </p>
+        </div>
       </div>
 
       {/* 50:50 Side-by-Side Layout Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start flex-1">
         {/* Left 50% Pane: Submission Form */}
         <div className="w-full">
           <FeatureRequestFormStaticComponent

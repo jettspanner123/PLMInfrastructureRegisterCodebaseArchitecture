@@ -65,7 +65,7 @@ export default function EnvironmentUptimeRequestsScreenController(): React.JSX.E
       </div>
 
       {/* 50:50 Side-by-Side Layout Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start flex-1">
         {/* Left 50% Pane: Submission Form */}
         <div className="w-full">
           <EnvironmentUptimeRequestFormStaticComponent

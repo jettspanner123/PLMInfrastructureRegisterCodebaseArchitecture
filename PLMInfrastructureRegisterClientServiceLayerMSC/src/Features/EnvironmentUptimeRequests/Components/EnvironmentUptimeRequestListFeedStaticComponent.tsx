@@ -51,7 +51,7 @@ export default function EnvironmentUptimeRequestListFeedStaticComponent({
   }, [requests, searchQuery, selectedStatus]);
 
   return (
-    <div className="h-full flex flex-col gap-4">
+    <div className="h-full flex flex-col gap-3">
       {/* Top Filter & Search Bar */}
       <div className="bg-white dark:bg-[#0d0d10] p-4 rounded-xl border border-slate-300/70 dark:border-zinc-800/80 shadow-xs flex flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
