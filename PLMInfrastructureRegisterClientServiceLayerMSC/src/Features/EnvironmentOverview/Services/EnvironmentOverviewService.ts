@@ -9,6 +9,12 @@ import type UpdateEnvironmentOverviewFieldRequestInterfaceModel from '../../../M
 import type UpdateUptimeScheduleRequestInterfaceModel from '../../../Models/UpdateUptimeScheduleRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../../../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../../../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
+import type InsertRowRequestInterfaceModel from '../../../Models/InsertRowRequestInterfaceModel';
+import type EnvironmentOverviewCustomColumnInterfaceModel from '../../../Models/EnvironmentOverviewCustomColumnInterfaceModel';
+import type CreateCustomColumnRequestInterfaceModel from '../../../Models/CreateCustomColumnRequestInterfaceModel';
+import type UpdateCustomColumnHeaderRequestInterfaceModel from '../../../Models/UpdateCustomColumnHeaderRequestInterfaceModel';
+import type AddCustomColumnOptionRequestInterfaceModel from '../../../Models/AddCustomColumnOptionRequestInterfaceModel';
+import type UpsertCustomCellValueRequestInterfaceModel from '../../../Models/UpsertCustomCellValueRequestInterfaceModel';
 
 export default class EnvironmentOverviewService {
   public static current: EnvironmentOverviewService = new EnvironmentOverviewService();
@@ -204,6 +210,131 @@ export default class EnvironmentOverviewService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to update the cell format.');
+    }
+
+    return payload.data;
+  }
+
+  // Backs both the right-click "Add Row Above/Below" actions and the
+  // unified "Add Environment" toolbar button.
+  public async insertRow(request: InsertRowRequestInterfaceModel): Promise<EnvironmentOverviewInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/InsertRow`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to insert the row.');
+    }
+
+    return payload.data;
+  }
+
+  public async getCustomColumns(): Promise<EnvironmentOverviewCustomColumnInterfaceModel[]> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CustomColumns`);
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewCustomColumnInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch custom columns.');
+    }
+
+    return payload.data;
+  }
+
+  public async createCustomColumn(
+    request: CreateCustomColumnRequestInterfaceModel
+  ): Promise<EnvironmentOverviewCustomColumnInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CustomColumns`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewCustomColumnInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to create the column.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateCustomColumnHeader(
+    id: string,
+    request: UpdateCustomColumnHeaderRequestInterfaceModel
+  ): Promise<EnvironmentOverviewCustomColumnInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CustomColumns/${id}/Header`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewCustomColumnInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to rename the column.');
+    }
+
+    return payload.data;
+  }
+
+  // Soft delete server-side - the frontend never sees that distinction,
+  // same reasoning as deleteEnvironmentOverview above.
+  public async deleteCustomColumn(id: string): Promise<boolean> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CustomColumns/${id}`, {
+      method: 'DELETE',
+    });
+
+    const payload: APIResponseInterfaceModel<boolean> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to delete the column.');
+    }
+
+    return payload.data;
+  }
+
+  public async addCustomColumnOption(
+    id: string,
+    request: AddCustomColumnOptionRequestInterfaceModel
+  ): Promise<EnvironmentOverviewCustomColumnInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/CustomColumns/${id}/Options`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewCustomColumnInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to add the option.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateCustomCellValue(
+    id: string,
+    customColumnId: string,
+    request: UpsertCustomCellValueRequestInterfaceModel
+  ): Promise<EnvironmentOverviewInterfaceModel> {
+    const response = await fetch(
+      `${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentOverview/${id}/CustomCells/${customColumnId}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+      }
+    );
+
+    const payload: APIResponseInterfaceModel<EnvironmentOverviewInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the cell.');
     }
 
     return payload.data;

@@ -29,5 +29,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         public string? DNSURL { get; set; }
 
         public string Status { get; set; } = string.Empty;
+
+        // Keyed by CustomColumnId (as a string, matching how the cell-format
+        // system already keys everything by a plain string ColumnKey) -
+        // only the columns that actually have a non-null value for this row
+        // are present; a missing key means "blank" client-side.
+        public Dictionary<string, string?> CustomCellValues { get; set; } = new();
     }
 }

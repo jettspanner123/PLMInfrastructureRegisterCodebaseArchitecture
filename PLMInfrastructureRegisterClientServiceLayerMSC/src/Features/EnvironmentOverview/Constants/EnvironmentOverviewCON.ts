@@ -1,5 +1,5 @@
 import type EnvironmentOverviewInterfaceModel from '../../../Models/EnvironmentOverviewInterfaceModel';
-import type DraftEnvironmentOverviewRowInterfaceModel from '../../../Models/DraftEnvironmentOverviewRowInterfaceModel';
+import type EnvironmentOverviewCustomColumnInterfaceModel from '../../../Models/EnvironmentOverviewCustomColumnInterfaceModel';
 
 // Column order and labels mirror the CSV's own column headers verbatim (per
 // the naming rule: UI-facing text is exempt from the project's code-
@@ -11,13 +11,30 @@ export interface EnvironmentOverviewColumnDef {
   locked?: boolean;
 }
 
+// The table's actual render-time column list is this merged type, not
+// EnvironmentOverviewColumnDef alone - one fixed column (key stays a real
+// EnvironmentOverviewInterfaceModel property name) or one custom column
+// (key is that column's own Guid id) sitting side by side in one single,
+// Position-sorted order. See
+// EnvironmentOverviewScreenController's own mergedColumns useMemo for how
+// FIXED_COLUMN_ANCHORS and each custom column's live Position combine into
+// this one list.
+export interface MergedEnvironmentOverviewColumnDef {
+  key: string;
+  label: string;
+  locked?: boolean;
+  isCustom: boolean;
+  customColumn?: EnvironmentOverviewCustomColumnInterfaceModel;
+  position: number;
+}
+
 export default class EnvironmentOverviewCON {
   // One entry per real text column, in table order - the one thing NOT in
   // this list is the derived "Status" column (Live/Decommissioned),
   // appended separately since it isn't itself a stored string field. Kept
   // separate from COLUMNS below (rather than COLUMNS.filter(...)) since
-  // several other members here (EMPTY_DRAFT_ROW, EDITABLE_TEXT_FIELD_NAMES)
-  // only ever apply to this subset, never to Action Items/Status.
+  // EDITABLE_TEXT_FIELD_NAMES below only ever applies to this subset, never
+  // to Action Items/Status.
   public static readonly TEXT_COLUMNS: EnvironmentOverviewColumnDef[] = [
     { key: 'environment', label: 'ENVIRONMENT', locked: true },
     { key: 'purpose', label: 'PURPOSE' },
@@ -43,6 +60,26 @@ export default class EnvironmentOverviewCON {
   ];
 
   public static readonly ALL_COLUMN_KEYS: string[] = EnvironmentOverviewCON.COLUMNS.map((column) => column.key);
+
+  // Mirrors the backend's own FixedColumnAnchors exactly (both sides are
+  // hand-kept in sync, same pattern as EDITABLE_TEXT_FIELD_NAMES already
+  // being duplicated frontend/backend) - lets a custom column's own
+  // Position value be merged into one single, correctly-ordered column list
+  // alongside these fixed ones. Widely spaced so a custom column can always
+  // slot in via a midpoint without ever colliding.
+  public static readonly FIXED_COLUMN_ANCHORS: Record<string, number> = {
+    environment: 1000,
+    purpose: 2000,
+    sponsor: 3000,
+    currentUptimeSchedule: 4000,
+    priority1: 5000,
+    priority2: 6000,
+    priority3: 7000,
+    configurationCustomisationVersion: 8000,
+    dnsurl: 9000,
+    actionItemsUpdates: 10000,
+    status: 11000,
+  };
 
   public static readonly LOCKED_COLUMN_KEYS: Set<string> = new Set(
     EnvironmentOverviewCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
@@ -93,22 +130,10 @@ export default class EnvironmentOverviewCON {
     status: 110,
   };
 
-  // Styling for the "Add Environment" draft row's inline inputs/textarea -
-  // dashed underline while unfocused, solid brand-blue while focused,
-  // matching the rest of the table's spare, borderless aesthetic.
+  // Shared styling for every inline-editable input on this table - the
+  // dashed-until-focused underline treatment, used by editable fixed-column
+  // cells, custom-column cells, and a freshly inserted row/column's own
+  // rename input.
   public static readonly DRAFT_INPUT_CLASS_NAME: string =
     'w-full bg-transparent border-b border-dashed border-[#0C2086]/30 dark:border-blue-400/40 focus:border-solid focus:border-[#0C2086] dark:focus:border-blue-400 focus:outline-none font-mono text-xs text-slate-700 dark:text-zinc-300 py-0.5 placeholder:text-slate-300 dark:placeholder:text-zinc-700';
-
-  public static readonly EMPTY_DRAFT_ROW: DraftEnvironmentOverviewRowInterfaceModel = {
-    environment: '',
-    purpose: '',
-    sponsor: '',
-    currentUptimeSchedule: '',
-    priority1: '',
-    priority2: '',
-    priority3: '',
-    configurationCustomisationVersion: '',
-    dnsurl: '',
-    actionItemsUpdates: '',
-  };
 }

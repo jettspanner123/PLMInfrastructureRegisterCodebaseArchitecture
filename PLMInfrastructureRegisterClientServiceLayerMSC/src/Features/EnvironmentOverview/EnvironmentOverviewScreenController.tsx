@@ -1,5 +1,23 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ServerOff, FilterX, Plus, Trash2, Pencil, Columns3, ChevronDown, Bold, Italic, Underline, Ban } from 'lucide-react';
+import {
+  ServerOff,
+  FilterX,
+  Plus,
+  Trash2,
+  Pencil,
+  Columns3,
+  ChevronDown,
+  Bold,
+  Italic,
+  Underline,
+  Ban,
+  ArrowUpToLine,
+  ArrowDownToLine,
+  Type as TypeIcon,
+  Hash,
+  Calendar,
+  List,
+} from 'lucide-react';
 import DataTableContainerSharedComponent from '../../Shared/Components/DataTableContainerSharedComponent';
 import TableHeaderCellSharedComponent from '../../Shared/Components/TableHeaderCellSharedComponent';
 import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedComponent';
@@ -7,7 +25,6 @@ import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableS
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
-import ButtonSharedComponent from '../../Shared/Components/ButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
 import UptimeScheduleModalController from './Components/UptimeScheduleModalController';
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
@@ -20,7 +37,10 @@ import TanstackQueryClientService from '../../Services/TanstackQueryClientServic
 import { useGlobalSearchRowJump } from '../../Services/GlobalSearchNavigationService';
 import EnvironmentOverviewColumnWidthService from './Services/EnvironmentOverviewColumnWidthService';
 import EnvironmentOverviewRowHeightService from './Services/EnvironmentOverviewRowHeightService';
-import EnvironmentOverviewCON, { type EnvironmentOverviewColumnDef } from './Constants/EnvironmentOverviewCON';
+import EnvironmentOverviewCON, {
+  type EnvironmentOverviewColumnDef,
+  type MergedEnvironmentOverviewColumnDef,
+} from './Constants/EnvironmentOverviewCON';
 import EnvironmentOverviewTableUtility from './Utilities/EnvironmentOverviewTableUtility';
 import CellFormatCON from '../../Constants/CellFormatCON';
 import CellFormatHelper from '../../Utilities/CellFormatHelper';
@@ -32,10 +52,10 @@ import AnonymousClientIdentityUtility from '../../Utilities/AnonymousClientIdent
 import ActionItemsLineParserUtility from '../../Utilities/ActionItemsLineParserUtility';
 import UptimeScheduleTextUtility from './Utilities/UptimeScheduleTextUtility';
 import type EnvironmentOverviewInterfaceModel from '../../Models/EnvironmentOverviewInterfaceModel';
-import type DraftEnvironmentOverviewRowInterfaceModel from '../../Models/DraftEnvironmentOverviewRowInterfaceModel';
-import type CreateEnvironmentOverviewRequestInterfaceModel from '../../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type EnvironmentOverviewCellFormatTargetInterfaceModel from '../../Models/EnvironmentOverviewCellFormatTargetInterfaceModel';
+import type EnvironmentOverviewCustomColumnInterfaceModel from '../../Models/EnvironmentOverviewCustomColumnInterfaceModel';
+import CustomColumnTypeEnumModel, { type CustomColumnTypeEnumModel as CustomColumnTypeEnumModelType } from '../../Models/CustomColumnTypeEnumModel';
 
 // One entry per growable-dropdown fieldName this screen's shared
 // CreateOptionModalController can be opened for - keeps that one JSX usage
@@ -76,9 +96,11 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     TanstackQueryClientService.current.environmentOverview.useEnvironmentOverviewsQuery();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [draftRow, setDraftRow] = useState<DraftEnvironmentOverviewRowInterfaceModel | null>(null);
-  const [isDraftInvalid, setIsDraftInvalid] = useState<boolean>(false);
-  const environmentInputRef = useRef<HTMLInputElement | null>(null);
+  // Row/column id the most recently created row/column should scroll into
+  // view and receive focus for - set right after InsertRow/CreateCustomColumn
+  // succeeds, cleared once the corresponding effect below has acted on it.
+  const [pendingFocusRowId, setPendingFocusRowId] = useState<string | null>(null);
+  const [pendingFocusColumnId, setPendingFocusColumnId] = useState<string | null>(null);
 
   // Which rows' Action Items / Updates column is showing every entry rather
   // than just the first few dated ones - per-row since each row's history is
@@ -443,6 +465,19 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     return TableColumnVisibilityUtility.current.withLockedColumnsIncluded(saved, EnvironmentOverviewCON.LOCKED_COLUMN_KEYS);
   });
 
+  const { data: customColumns = [] } = TanstackQueryClientService.current.environmentOverview.useCustomColumnsQuery();
+
+  // A saved visibility preference predates any custom column created after
+  // it was last written, so a brand-new column would otherwise come back
+  // hidden by default - this keeps every custom column visible unless the
+  // user has explicitly hidden it themselves.
+  useEffect(() => {
+    const unknownCustomKeys = customColumns.map((column) => column.id).filter((id) => !visibleColumnKeys.has(id));
+    if (unknownCustomKeys.length === 0) return;
+    setVisibleColumnKeys((previous) => new Set([...previous, ...unknownCustomKeys]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customColumns]);
+
   const handleToggleColumn = (key: string): void => {
     if (EnvironmentOverviewCON.LOCKED_COLUMN_KEYS.has(key)) return;
 
@@ -467,7 +502,29 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     setVisibleColumnKeys(new Set(EnvironmentOverviewCON.LOCKED_COLUMN_KEYS));
   };
 
-  const visibleColumns = EnvironmentOverviewCON.COLUMNS.filter((column) => visibleColumnKeys.has(column.key));
+  // The table's one true column order - fixed columns (positioned by their
+  // hand-kept-in-sync FIXED_COLUMN_ANCHORS constants) merged with every live
+  // custom column (positioned by its own stored, fractional Position),
+  // sorted together into a single list. See MergedEnvironmentOverviewColumnDef.
+  const mergedColumns: MergedEnvironmentOverviewColumnDef[] = useMemo(() => {
+    const fixed: MergedEnvironmentOverviewColumnDef[] = EnvironmentOverviewCON.COLUMNS.map((column) => ({
+      key: column.key,
+      label: column.label,
+      locked: column.locked,
+      isCustom: false,
+      position: EnvironmentOverviewCON.FIXED_COLUMN_ANCHORS[column.key],
+    }));
+    const custom: MergedEnvironmentOverviewColumnDef[] = customColumns.map((customColumn) => ({
+      key: customColumn.id,
+      label: customColumn.headerName,
+      isCustom: true,
+      customColumn,
+      position: customColumn.position,
+    }));
+    return [...fixed, ...custom].sort((a, b) => a.position - b.position);
+  }, [customColumns]);
+
+  const visibleColumns = mergedColumns.filter((column) => visibleColumnKeys.has(column.key));
 
   const filteredEnvironments = useMemo(() => {
     const lowerCaseQuery = searchQuery.trim().toLowerCase();
@@ -502,7 +559,8 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
       const environment = filteredEnvironments[rowIndex];
       const column = visibleColumns[colIndex];
       if (!environment || !column) return '';
-      return environment[column.key]?.toString() ?? '';
+      if (column.isCustom) return environment.customCellValues[column.key] ?? '';
+      return environment[column.key as keyof EnvironmentOverviewInterfaceModel]?.toString() ?? '';
     },
   });
 
@@ -531,6 +589,88 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     });
     return map;
   }, [cellFormats]);
+
+  const createCustomColumnMutation = TanstackQueryClientService.current.environmentOverview.useCreateCustomColumnMutation({
+    onSuccess: (data) => setPendingFocusColumnId(data.id),
+  });
+  const updateCustomColumnHeaderMutation =
+    TanstackQueryClientService.current.environmentOverview.useUpdateCustomColumnHeaderMutation();
+  const addCustomColumnOptionMutation =
+    TanstackQueryClientService.current.environmentOverview.useAddCustomColumnOptionMutation();
+  const updateCustomCellValueMutation =
+    TanstackQueryClientService.current.environmentOverview.useUpdateCustomCellValueMutation();
+
+  // The one custom column currently pending delete confirmation, if any -
+  // same "confirm via the standard modal" convention as deleting a whole
+  // row.
+  const [deletingCustomColumn, setDeletingCustomColumn] = useState<EnvironmentOverviewCustomColumnInterfaceModel | null>(
+    null
+  );
+  const deleteCustomColumnMutation = TanstackQueryClientService.current.environmentOverview.useDeleteCustomColumnMutation({
+    onSuccess: () => setDeletingCustomColumn(null),
+  });
+
+  // Which custom column's header is currently in inline rename mode, if any
+  // - entered either via the header context menu's "Rename Column Header" or
+  // a double-click directly on the header text (both routes land here).
+  const [renamingColumnId, setRenamingColumnId] = useState<string | null>(null);
+  const renameColumnInputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
+
+  const handleStartRenameCustomColumn = (customColumn: EnvironmentOverviewCustomColumnInterfaceModel): void => {
+    setRenamingColumnId(customColumn.id);
+  };
+
+  const handleCommitRenameCustomColumn = (customColumn: EnvironmentOverviewCustomColumnInterfaceModel, value: string): void => {
+    setRenamingColumnId(null);
+    const trimmed = value.trim();
+    if (trimmed === customColumn.headerName) return;
+    updateCustomColumnHeaderMutation.mutate({ id: customColumn.id, request: { headerName: trimmed } });
+  };
+
+  // The second, separate right-click menu - fired only from a custom
+  // column's own header, never a fixed one (see handleCustomColumnHeaderContextMenu).
+  const [customColumnHeaderMenu, setCustomColumnHeaderMenu] = useState<{
+    isOpen: boolean;
+    x: number;
+    y: number;
+    customColumn: EnvironmentOverviewCustomColumnInterfaceModel | null;
+  }>({ isOpen: false, x: 0, y: 0, customColumn: null });
+
+  const handleCustomColumnHeaderContextMenu = (
+    event: React.MouseEvent,
+    customColumn: EnvironmentOverviewCustomColumnInterfaceModel
+  ): void => {
+    if (!isEditMode) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setCustomColumnHeaderMenu({ isOpen: true, x: event.clientX, y: event.clientY, customColumn });
+  };
+
+  const handleCloseCustomColumnHeaderMenu = (): void => {
+    setCustomColumnHeaderMenu((previous) => ({ ...previous, isOpen: false }));
+  };
+
+  // Scrolls the newly-created column into view and enters rename mode -
+  // split into two effects (not one) since the rename <input> doesn't exist
+  // in the DOM until the renamingColumnId state update below actually
+  // commits a re-render; focusing it has to wait for that render, not fire
+  // in the same tick as the state update that creates it.
+  useEffect(() => {
+    if (!pendingFocusColumnId) return;
+    setRenamingColumnId(pendingFocusColumnId);
+    const headerCell = tableWrapperRef.current?.querySelector(`[data-column-key="${pendingFocusColumnId}"]`);
+    headerCell?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    setPendingFocusColumnId(null);
+  }, [pendingFocusColumnId]);
+
+  useEffect(() => {
+    if (!renamingColumnId) return;
+    const input = renameColumnInputRefs.current.get(renamingColumnId);
+    if (input) {
+      input.focus({ preventScroll: true });
+      input.select();
+    }
+  }, [renamingColumnId]);
 
   const [contextMenu, setContextMenu] = useState<{ isOpen: boolean; x: number; y: number }>({
     isOpen: false,
@@ -666,6 +806,128 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     }
     handleCloseContextMenu();
   };
+
+  // Backs the spreadsheet-style "apply to the whole selection" behavior for
+  // Add Row/Add Column: a multi-row or multi-column range selected when the
+  // menu opens inserts one new row/column per row/column in that range, not
+  // just one relative to the exact cell that was right-clicked.
+  const getSelectedRowIds = (): string[] => {
+    const selection = tableSelection.selection;
+    if (!selection) return [];
+    const ids: string[] = [];
+    for (let row = selection.startRow; row <= selection.endRow; row++) {
+      const environment = filteredEnvironments[row];
+      if (environment) ids.push(environment.id);
+    }
+    return ids;
+  };
+
+  const getSelectedColumnKeys = (): string[] => {
+    const selection = tableSelection.selection;
+    if (!selection) return [];
+    const keys: string[] = [];
+    for (let col = selection.startCol; col <= selection.endCol; col++) {
+      const column = visibleColumns[col];
+      if (column) keys.push(column.key);
+    }
+    return keys;
+  };
+
+  // Repeatedly inserting relative to the SAME target row/column (rather than
+  // the previous iteration's freshly-created one) is what makes N sequential
+  // single-row/column inserts already land in the correct final order on
+  // their own - see ComputeInsertRowDisplayOrderAsynchronous's own comment
+  // on the backend for why. Awaited one at a time (mutateAsync, not mutate)
+  // so each insert's midpoint is computed against the previous insert's
+  // already-committed result, not a stale pre-insert snapshot.
+  const handleAddRow = async (direction: 'Above' | 'Below'): Promise<void> => {
+    const rowIds = getSelectedRowIds();
+    if (rowIds.length === 0) return;
+    const targetRowId = direction === 'Above' ? rowIds[0] : rowIds[rowIds.length - 1];
+    handleCloseContextMenu();
+    for (let i = 0; i < rowIds.length; i++) {
+      await insertRowMutation.mutateAsync({ relativeToId: targetRowId, direction });
+    }
+  };
+
+  // A multi-column selection creates every new column with the SAME type
+  // (whichever icon was clicked) rather than prompting once per column -
+  // a deliberate simplification of the single-column flow's per-pick type,
+  // since asking N separate times for one multi-select action would be a
+  // much bigger interaction to design than this request called for.
+  const handleAddColumn = async (direction: 'Left' | 'Right', columnType: CustomColumnTypeEnumModelType): Promise<void> => {
+    const columnKeys = getSelectedColumnKeys();
+    if (columnKeys.length === 0) return;
+    const targetColumnKey = direction === 'Left' ? columnKeys[0] : columnKeys[columnKeys.length - 1];
+    handleCloseContextMenu();
+    handleCloseCustomColumnHeaderMenu();
+    for (let i = 0; i < columnKeys.length; i++) {
+      await createCustomColumnMutation.mutateAsync({ relativeToColumnKey: targetColumnKey, direction, columnType });
+    }
+  };
+
+  // Compact row of 4 type-icon buttons, shared by both the cell-body menu's
+  // own "Add Column To Left/Right" entries and the header menu's copies of
+  // the same two actions - a customRender block (not plain ContextMenuItems)
+  // so a click creates the column directly instead of the menu's default
+  // auto-close-then-callback behavior getting in the way.
+  const renderColumnTypePicker = (direction: 'Left' | 'Right'): React.ReactNode => (
+    <div
+      className="px-2.5 py-1.5 flex items-center gap-1"
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      {[
+        { type: CustomColumnTypeEnumModel.Text, icon: <TypeIcon className="w-3.5 h-3.5" />, title: 'Text' },
+        { type: CustomColumnTypeEnumModel.Number, icon: <Hash className="w-3.5 h-3.5" />, title: 'Number' },
+        { type: CustomColumnTypeEnumModel.Date, icon: <Calendar className="w-3.5 h-3.5" />, title: 'Date' },
+        { type: CustomColumnTypeEnumModel.Dropdown, icon: <List className="w-3.5 h-3.5" />, title: 'Dropdown' },
+      ].map(({ type, icon, title }) => (
+        <button
+          key={type}
+          type="button"
+          title={title}
+          onClick={() => handleAddColumn(direction, type)}
+          className="flex-1 flex items-center justify-center py-1.5 rounded-md border text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-100 dark:hover:bg-zinc-800 border-slate-200/60 dark:border-zinc-800 transition-colors cursor-pointer"
+        >
+          {icon}
+        </button>
+      ))}
+    </div>
+  );
+
+  const customColumnHeaderMenuItems = (customColumn: EnvironmentOverviewCustomColumnInterfaceModel): ContextMenuItem[] => [
+    {
+      id: 'rename-column',
+      label: 'Rename Column Header',
+      icon: <Pencil className="w-3.5 h-3.5" />,
+      onClick: () => handleStartRenameCustomColumn(customColumn),
+    },
+    {
+      id: 'delete-column',
+      label: 'Delete Column',
+      icon: <Trash2 className="w-3.5 h-3.5" />,
+      isDestructive: true,
+      onClick: () => setDeletingCustomColumn(customColumn),
+      divider: true,
+    },
+    {
+      id: 'add-column-left-label',
+      label: 'Add Column To Left',
+      customRender: () => (
+        <div className="px-2.5 pt-1.5 text-[11px] font-medium text-slate-500 dark:text-zinc-400">Add Column To Left</div>
+      ),
+    },
+    { id: 'add-column-left-picker', label: '', customRender: () => renderColumnTypePicker('Left') },
+    {
+      id: 'add-column-right-label',
+      label: 'Add Column To Right',
+      customRender: () => (
+        <div className="px-2.5 pt-1.5 text-[11px] font-medium text-slate-500 dark:text-zinc-400">Add Column To Right</div>
+      ),
+    },
+    { id: 'add-column-right-picker', label: '', customRender: () => renderColumnTypePicker('Right') },
+  ];
 
   const contextMenuItems: ContextMenuItem[] = [
     {
@@ -875,14 +1137,51 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         </div>
       ),
     },
-  ];
-
-  const createMutation = TanstackQueryClientService.current.environmentOverview.useCreateEnvironmentOverviewMutation({
-    onSuccess: () => {
-      setDraftRow(null);
-      setIsDraftInvalid(false);
+    {
+      id: 'add-row-above',
+      label: 'Add Row Above',
+      icon: <ArrowUpToLine className="w-3.5 h-3.5" />,
+      onClick: () => void handleAddRow('Above'),
+      divider: true,
     },
-  });
+    {
+      id: 'add-row-below',
+      label: 'Add Row Below',
+      icon: <ArrowDownToLine className="w-3.5 h-3.5" />,
+      onClick: () => void handleAddRow('Below'),
+    },
+    {
+      id: 'add-column-left-label',
+      label: 'Add Column To Left',
+      customRender: () => (
+        <div className="px-2.5 pt-2.5 pb-0.5 border-t border-slate-100 dark:border-zinc-800/80 text-[11px] font-medium text-slate-500 dark:text-zinc-400">
+          Add Column To Left
+        </div>
+      ),
+    },
+    {
+      id: 'add-column-left-picker',
+      label: '',
+      // Disabled (no picker rendered) when every selected column includes
+      // Environment - it must always stay the leftmost column.
+      customRender: () =>
+        getSelectedColumnKeys().includes('environment') ? (
+          <div className="px-2.5 pb-1.5 text-[11px] text-slate-400 dark:text-zinc-500 italic">
+            Not available for Environment
+          </div>
+        ) : (
+          renderColumnTypePicker('Left')
+        ),
+    },
+    {
+      id: 'add-column-right-label',
+      label: 'Add Column To Right',
+      customRender: () => (
+        <div className="px-2.5 pt-1.5 text-[11px] font-medium text-slate-500 dark:text-zinc-400">Add Column To Right</div>
+      ),
+    },
+    { id: 'add-column-right-picker', label: '', customRender: () => renderColumnTypePicker('Right') },
+  ];
 
   const updateStatusMutation = TanstackQueryClientService.current.environmentOverview.useUpdateEnvironmentStatusMutation({
     onSuccess: () => {
@@ -1236,101 +1535,42 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     return { visibleLines, hasMore: false };
   };
 
-  // Scrolls to and focuses the draft row the moment it's added - keyed on a
-  // boolean (not the draft object itself), since the object gets a new
-  // reference on every keystroke and re-scrolling/re-focusing mid-typing
-  // would be disruptive. Works in both bounded Table Height modes (scrolls
-  // the table's own container) and Extended mode (scrolls the page via
-  // scrollIntoView), without needing to know which mode is active.
-  //
-  // The table-container scroll above only guarantees the new ROW itself is
-  // visible (inside the bounded card's own scroll area, if any) - it says
-  // nothing about the Cancel/Done button bar, which is a sibling rendered
-  // AFTER (outside) that same container in the page's normal flow. A second,
-  // unconditional scroll of the whole page to its true bottom (not just to
-  // the button bar's own edge, which would stop short of the page's reserved
-  // scroll-pill padding) is what actually guarantees the buttons end up
-  // fully on-screen, regardless of which Table Height mode is active.
-  const hasDraftRow = draftRow !== null;
-  useEffect(() => {
-    if (!hasDraftRow) return;
-    const container = tableSelection.containerRef.current;
-    if (container) {
-      if (container.scrollHeight > container.clientHeight) {
-        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-      } else {
-        container.scrollIntoView({ block: 'end', behavior: 'smooth' });
-      }
-    }
-    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-    // preventScroll: true - a plain focus() on an off-screen element
-    // triggers the browser's OWN native "scroll into view", which is
-    // instant and fires immediately, snapping straight to the end position
-    // and visually cutting off the smooth scroll started just above before
-    // it gets a chance to animate at all.
-    environmentInputRef.current?.focus({ preventScroll: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasDraftRow]);
+  // Every row-insertion entry point (the toolbar's "Add Environment" button,
+  // and the right-click "Add Row Above/Below" actions) funnels through this
+  // one mutation - each creates a REAL, immediately-persisted row with an
+  // auto-generated placeholder Environment name, rather than the old
+  // unsaved-draft-you-must-fill-in flow. relativeToId null + "Below" is the
+  // toolbar button's own "append to the end" behavior.
+  const insertRowMutation = TanstackQueryClientService.current.environmentOverview.useInsertRowMutation({
+    onSuccess: (data) => setPendingFocusRowId(data.id),
+  });
 
   const handleAddEnvironmentClick = (): void => {
-    // A second click while a draft is already pending just refocuses it
-    // rather than creating a second one.
-    if (draftRow) {
-      environmentInputRef.current?.focus();
-      return;
+    // Unlike the right-click "Add Row Above/Below" actions (already only
+    // reachable in Edit Mode), this toolbar button is visible in View Mode
+    // too - the new row's Environment cell only renders as an editable
+    // textarea in Edit Mode, so switching here is what makes "immediately
+    // editable" actually true regardless of which mode the user started in.
+    setEditMode(ViewEditModeCON.EDIT);
+    insertRowMutation.mutate({ relativeToId: null, direction: 'Below' });
+  };
+
+  // Scrolls the newly-inserted row into view and focuses its Environment
+  // cell for immediate renaming - reuses the same editableTextareaRefs map
+  // every other editable text cell already registers itself into, keyed
+  // "<rowId>:environment", rather than a dedicated ref.
+  useEffect(() => {
+    if (!pendingFocusRowId) return;
+    const rowElement = tableWrapperRef.current?.querySelector(`[data-row-id="${pendingFocusRowId}"]`);
+    rowElement?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+    const textarea = editableTextareaRefs.current.get(`${pendingFocusRowId}:environment`);
+    if (textarea) {
+      textarea.focus({ preventScroll: true });
+      textarea.select();
     }
-    setDraftRow(EnvironmentOverviewCON.EMPTY_DRAFT_ROW);
-  };
-
-  const handleDraftFieldChange = (field: keyof DraftEnvironmentOverviewRowInterfaceModel, value: string): void => {
-    setDraftRow((previous) => (previous ? { ...previous, [field]: value } : previous));
-    if (field === 'environment' && isDraftInvalid) setIsDraftInvalid(false);
-  };
-
-  const handleDiscardDraft = (): void => {
-    setDraftRow(null);
-    setIsDraftInvalid(false);
-  };
-
-  const handleSaveDraft = (): void => {
-    if (!draftRow) return;
-    if (!draftRow.environment.trim()) {
-      setIsDraftInvalid(true);
-      environmentInputRef.current?.focus();
-      return;
-    }
-
-    const request: CreateEnvironmentOverviewRequestInterfaceModel = {
-      environment: draftRow.environment.trim(),
-      purpose: draftRow.purpose || null,
-      sponsor: draftRow.sponsor || null,
-      currentUptimeSchedule: draftRow.currentUptimeSchedule || null,
-      priority1: draftRow.priority1 || null,
-      priority2: draftRow.priority2 || null,
-      priority3: draftRow.priority3 || null,
-      actionItemsUpdates: draftRow.actionItemsUpdates || null,
-      configurationCustomisationVersion: draftRow.configurationCustomisationVersion || null,
-      dnsurl: draftRow.dnsurl || null,
-    };
-    createMutation.mutate(request);
-  };
-
-  // Escape discards the draft; Ctrl/Cmd+Enter saves it. stopPropagation on
-  // both stops them from also reaching TableSelectionService's own document-
-  // level Escape handler (which would just clear the table selection - a
-  // harmless no-op here, but there's no reason to let it fire at all while
-  // editing a draft field).
-  const handleDraftKeyDown = (event: React.KeyboardEvent): void => {
-    if (event.key === 'Escape') {
-      event.stopPropagation();
-      handleDiscardDraft();
-      return;
-    }
-    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-      event.stopPropagation();
-      handleSaveDraft();
-    }
-  };
+    setPendingFocusRowId(null);
+  }, [pendingFocusRowId]);
 
   // A thin drag handle straddling a header's right border - the hit zone is
   // deliberately much wider (16px, 8 on each side of the true border) than
@@ -2073,61 +2313,145 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     );
   };
 
-  const renderDraftTextCell = (column: EnvironmentOverviewColumnDef): React.ReactNode => {
-    const columnWidth = columnWidths.getColumnWidth(column.key);
-    const isEnvironmentColumn = column.key === 'environment';
-    const fieldKey = column.key as keyof DraftEnvironmentOverviewRowInterfaceModel;
+  // Custom columns (Text/Number/Date/Dropdown) render through this single
+  // function regardless of type - unlike the fixed columns' own bespoke
+  // per-column renderers (Sponsor's picker, Current Uptime Schedule's
+  // modal, etc.), every custom column behaves uniformly: plain read-only
+  // text in View Mode, a type-appropriate input in Edit Mode.
+  const renderCustomColumnCell = (
+    environment: EnvironmentOverviewInterfaceModel,
+    customColumn: EnvironmentOverviewCustomColumnInterfaceModel,
+    rowIndex: number,
+    colIndex: number
+  ): React.ReactNode => {
+    const columnWidth = columnWidths.getColumnWidth(customColumn.id);
+    const currentValue = environment.customCellValues[customColumn.id] ?? '';
+    const cellHandlers = tableSelection.getCellHandlers(rowIndex, colIndex);
+    const onCellContextMenu = (event: React.MouseEvent): void => handleCellContextMenu(event, rowIndex, colIndex);
+
+    const format = cellFormatByKey.get(`${environment.id}:${customColumn.id}`);
+    const formatClassName = format
+      ? `${format.isBold ? 'font-bold' : ''} ${format.isItalic ? 'italic' : ''} ${format.isUnderline ? 'underline underline-offset-2' : ''} ${CellFormatHelper.current.getCellClassName(format.backgroundColorKey)}`
+      : '';
+    const formatStyle = {
+      ...CellFormatHelper.current.getCellStyle(format?.backgroundColorKey, format?.backgroundOpacity),
+      ...CellFormatHelper.current.getTextStyle(format?.textColorKey),
+    };
+
+    const commitValue = (value: string): void => {
+      const normalized = value.trim();
+      if (normalized === currentValue) return;
+      updateCustomCellValueMutation.mutate({
+        id: environment.id,
+        customColumnId: customColumn.id,
+        request: { value: normalized === '' ? null : normalized },
+      });
+    };
+
+    if (!isEditMode) {
+      return (
+        <CopyableTableCellSharedComponent
+          key={customColumn.id}
+          value={currentValue}
+          ariaLabel={`Copy ${customColumn.headerName}: ${currentValue}`}
+          className={`${EnvironmentOverviewCON.CELL_CLASS_NAME} ${formatClassName}`}
+          buttonStyle={formatStyle}
+          selectionBoxShadow={tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex)}
+          onCellMouseDown={cellHandlers.onMouseDown}
+          onCellMouseEnter={cellHandlers.onMouseEnter}
+          onCellContextMenu={onCellContextMenu}
+          verticalAlign="top"
+          width={columnWidth}
+        >
+          {currentValue || <span className="text-slate-300 dark:text-zinc-700">—</span>}
+        </CopyableTableCellSharedComponent>
+      );
+    }
+
+    // key is deliberately NOT part of this object - React warns against
+    // spreading a "key" prop (it must be passed directly to the JSX
+    // element, not via {...spread}), so every call site below passes
+    // key={customColumn.id} itself alongside {...sharedTdProps}.
+    const sharedTdProps = {
+      style: { boxShadow: tableSelection.getCellSelectionBoxShadow(rowIndex, colIndex), width: columnWidth, ...formatStyle },
+      onMouseDown: cellHandlers.onMouseDown,
+      onMouseEnter: cellHandlers.onMouseEnter,
+      onContextMenu: onCellContextMenu,
+      className: `px-3 py-2 align-top ${formatClassName}`,
+    };
+
+    if (customColumn.columnType === CustomColumnTypeEnumModel.Dropdown) {
+      return (
+        <td key={customColumn.id} {...sharedTdProps}>
+          <CustomSelectSharedComponent
+            value={currentValue}
+            options={customColumn.options.map((option) => ({ value: option, label: option }))}
+            onChange={(value) => {
+              // enableCustomValue just hands back whatever text the user
+              // typed, with no idea whether it's a brand-new option - that
+              // decision (grow the column's own option list, or just reuse
+              // an existing one) happens here.
+              if (!customColumn.options.includes(value)) {
+                addCustomColumnOptionMutation.mutate({ id: customColumn.id, request: { value } });
+              }
+              commitValue(value);
+            }}
+            searchable
+            enableCustomValue
+            size="sm"
+          />
+        </td>
+      );
+    }
+
+    if (customColumn.columnType === CustomColumnTypeEnumModel.Date) {
+      return (
+        <td key={customColumn.id} {...sharedTdProps}>
+          <input
+            type="date"
+            defaultValue={currentValue}
+            aria-label={customColumn.headerName}
+            onMouseDown={(event) => event.stopPropagation()}
+            onBlur={(event) => commitValue(event.target.value)}
+            className={`${EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME} ${formatClassName}`}
+          />
+        </td>
+      );
+    }
+
+    if (customColumn.columnType === CustomColumnTypeEnumModel.Number) {
+      return (
+        <td key={customColumn.id} {...sharedTdProps}>
+          <input
+            type="number"
+            defaultValue={currentValue}
+            aria-label={customColumn.headerName}
+            onMouseDown={(event) => event.stopPropagation()}
+            onBlur={(event) => commitValue(event.target.value)}
+            className={`${EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME} ${formatClassName}`}
+          />
+        </td>
+      );
+    }
 
     return (
-      <td key={column.key} style={{ width: columnWidth }} className="px-3 py-2 align-top">
-        <input
-          ref={isEnvironmentColumn ? environmentInputRef : undefined}
-          type="text"
-          name={`draft-${fieldKey}`}
-          aria-label={column.label}
-          value={draftRow?.[fieldKey] ?? ''}
-          onChange={(event) => handleDraftFieldChange(fieldKey, event.target.value)}
-          onKeyDown={handleDraftKeyDown}
-          placeholder={isEnvironmentColumn ? 'Environment name…' : '—'}
-          className={`${EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME} ${
-            isEnvironmentColumn && isDraftInvalid ? '!border-red-400 dark:!border-red-500' : ''
-          }`}
+      <td key={customColumn.id} {...sharedTdProps}>
+        <textarea
+          ref={(el) => {
+            const cellKey = `${environment.id}:${customColumn.id}`;
+            if (el) editableTextareaRefs.current.set(cellKey, el);
+            else editableTextareaRefs.current.delete(cellKey);
+          }}
+          defaultValue={currentValue}
+          rows={2}
+          aria-label={customColumn.headerName}
+          onMouseDown={(event) => event.stopPropagation()}
+          onBlur={(event) => commitValue(event.target.value)}
+          className={`${EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME} ${formatClassName}`}
         />
       </td>
     );
   };
-
-  const renderDraftActionItemsCell = (): React.ReactNode => (
-    <td
-      key="actionItemsUpdates"
-      style={{ width: columnWidths.getColumnWidth('actionItemsUpdates') }}
-      className="px-3 py-2 align-top"
-    >
-      <textarea
-        name="draft-actionItemsUpdates"
-        aria-label="Action Items / Updates"
-        value={draftRow?.actionItemsUpdates ?? ''}
-        onChange={(event) => handleDraftFieldChange('actionItemsUpdates', event.target.value)}
-        onKeyDown={handleDraftKeyDown}
-        placeholder="—"
-        rows={3}
-        className={`${EnvironmentOverviewCON.DRAFT_INPUT_CLASS_NAME} resize-y text-[11px] leading-relaxed`}
-      />
-    </td>
-  );
-
-  const renderDraftStatusCell = (): React.ReactNode => (
-    <td
-      key="status"
-      style={{ width: columnWidths.getColumnWidth('status') }}
-      className="px-3 py-2 align-top font-mono text-[11px]"
-    >
-      <span className="inline-flex items-center gap-1.5 text-slate-700 dark:text-zinc-300">
-        <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500" />
-        Live
-      </span>
-    </td>
-  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -2178,7 +2502,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             <ColumnVisibilityDropdownSharedComponent
               isOpen={isColumnDropdownOpen}
               onClose={handleCloseColumnDropdown}
-              columns={EnvironmentOverviewCON.COLUMNS}
+              columns={mergedColumns}
               visibleColumnKeys={visibleColumnKeys}
               onToggleColumn={handleToggleColumn}
               onClearAll={handleClearAllColumns}
@@ -2188,7 +2512,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         </div>
       </div>
 
-      {(environments.length > 0 || hasDraftRow) && (
+      {environments.length > 0 && (
         <div ref={tableWrapperRef}>
           <DataTableContainerSharedComponent ref={tableSelection.containerRef}>
           {/* table-fixed is load-bearing, not cosmetic: under the default
@@ -2209,10 +2533,41 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                 {visibleColumns.map((column, colIndex) => (
                   <TableHeaderCellSharedComponent
                     key={column.key}
+                    dataColumnKey={column.key}
                     style={{ width: columnWidths.getColumnWidth(column.key), position: 'relative' }}
                     {...tableSelection.getColumnHeaderHandlers(colIndex)}
+                    onContextMenu={
+                      column.isCustom && isEditMode
+                        ? (event) => handleCustomColumnHeaderContextMenu(event, column.customColumn!)
+                        : undefined
+                    }
+                    onDoubleClick={
+                      column.isCustom && isEditMode ? () => handleStartRenameCustomColumn(column.customColumn!) : undefined
+                    }
                   >
-                    {column.label}
+                    {column.isCustom && renamingColumnId === column.key ? (
+                      <input
+                        ref={(el) => {
+                          if (el) renameColumnInputRefs.current.set(column.key, el);
+                          else renameColumnInputRefs.current.delete(column.key);
+                        }}
+                        type="text"
+                        defaultValue={column.label}
+                        onMouseDown={(event) => event.stopPropagation()}
+                        onClick={(event) => event.stopPropagation()}
+                        onBlur={(event) => handleCommitRenameCustomColumn(column.customColumn!, event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.currentTarget.blur();
+                          } else if (event.key === 'Escape') {
+                            setRenamingColumnId(null);
+                          }
+                        }}
+                        className="w-full bg-white/10 text-white placeholder:text-white/50 rounded px-1 py-0.5 outline-none ring-1 ring-white/40 font-mono uppercase tracking-wider text-[10px]"
+                      />
+                    ) : (
+                      column.label
+                    )}
                     {renderResizeHandle(column.key)}
                   </TableHeaderCellSharedComponent>
                 ))}
@@ -2253,65 +2608,21 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                     ) : (
                       rowIndex + 1
                     )}
-                    {renderRowResizeHandle(environment.id, !draftRow && rowIndex === filteredEnvironments.length - 1)}
+                    {renderRowResizeHandle(environment.id, rowIndex === filteredEnvironments.length - 1)}
                   </td>
                   {visibleColumns.map((column, colIndex) => {
+                    if (column.isCustom) return renderCustomColumnCell(environment, column.customColumn!, rowIndex, colIndex);
                     if (column.key === 'actionItemsUpdates') return renderActionItemsCell(environment, rowIndex, colIndex);
                     if (column.key === 'status') return renderStatusCell(environment, rowIndex, colIndex);
-                    return renderTextCell(environment, column, rowIndex, colIndex);
+                    return renderTextCell(environment, column as EnvironmentOverviewColumnDef, rowIndex, colIndex);
                   })}
                 </tr>
               ))}
-              {draftRow && (
-                <tr
-                  style={
-                    rowHeights.getRowHeight('draft')
-                      ? { height: `${rowHeights.getRowHeight('draft')}px` }
-                      : undefined
-                  }
-                  className="divide-x divide-slate-200 dark:divide-zinc-800 bg-blue-50/50 dark:bg-blue-500/10"
-                >
-                  <td
-                    style={{ width: 48, minWidth: 48, maxWidth: 48 }}
-                    className="relative w-12 whitespace-nowrap px-3 py-2 font-mono text-slate-300 dark:text-zinc-700 text-center align-top"
-                  >
-                    –
-                    {renderRowResizeHandle('draft', true)}
-                  </td>
-                  {visibleColumns.map((column) => {
-                    if (column.key === 'actionItemsUpdates') return renderDraftActionItemsCell();
-                    if (column.key === 'status') return renderDraftStatusCell();
-                    return renderDraftTextCell(column);
-                  })}
-                </tr>
-              )}
             </tbody>
           </table>
         </DataTableContainerSharedComponent>
       </div>
     )}
-
-      {draftRow && (
-        <div className="flex items-center justify-between px-1 -mt-2">
-          <span className="text-[11px] font-mono">
-            {isDraftInvalid ? (
-              <span className="text-red-500 dark:text-red-400">Environment name is required.</span>
-            ) : (
-              <span className="text-slate-400 dark:text-zinc-500">Ctrl+Enter to save · Esc to discard</span>
-            )}
-          </span>
-          <div className="flex items-center gap-2">
-            <ButtonSharedComponent variant="ghost" size="sm" onClick={handleDiscardDraft}>
-              Cancel
-            </ButtonSharedComponent>
-            <PrimaryActionButtonSharedComponent
-              label="Done"
-              onClick={handleSaveDraft}
-              isLoading={createMutation.isPending}
-            />
-          </div>
-        </div>
-      )}
 
       {environments.length > 0 && filteredEnvironments.length === 0 && (
         <EmptyStateSharedComponent
@@ -2321,7 +2632,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         />
       )}
 
-      {!isLoading && environments.length === 0 && !hasDraftRow && (
+      {!isLoading && environments.length === 0 && (
         <EmptyStateSharedComponent
           icon={<ServerOff className="w-6 h-6" />}
           title="No Environments yet"
@@ -2401,6 +2712,37 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         onClose={handleCloseContextMenu}
         items={contextMenuItems}
         minWidth={216}
+      />
+
+      <ContextMenuSharedComponent
+        isOpen={customColumnHeaderMenu.isOpen}
+        x={customColumnHeaderMenu.x}
+        y={customColumnHeaderMenu.y}
+        onClose={handleCloseCustomColumnHeaderMenu}
+        items={customColumnHeaderMenu.customColumn ? customColumnHeaderMenuItems(customColumnHeaderMenu.customColumn) : []}
+        minWidth={200}
+      />
+
+      <ConfirmationModalSharedComponent
+        isOpen={deletingCustomColumn !== null}
+        onClose={() => setDeletingCustomColumn(null)}
+        onConfirm={() => {
+          if (deletingCustomColumn) deleteCustomColumnMutation.mutate(deletingCustomColumn.id);
+        }}
+        title="Delete Column"
+        description={
+          deletingCustomColumn && (
+            <>
+              <p>This will remove "{deletingCustomColumn.headerName}" from the table.</p>
+              <p className="mt-2">This cannot be undone.</p>
+            </>
+          )
+        }
+        confirmText="Delete Column"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={deleteCustomColumnMutation.isPending}
+        maxWidth="md"
       />
 
       <AddCustomColorModalController

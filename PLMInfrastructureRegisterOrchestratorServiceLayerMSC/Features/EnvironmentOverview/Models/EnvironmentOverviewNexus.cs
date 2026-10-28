@@ -14,7 +14,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         // retrieval order without an explicit ORDER BY, and the source order
         // reflects a deliberate grouping (live environments, then
         // decommissioned ones) worth keeping.
-        public int DisplayOrder { get; set; }
+        //
+        // double, not int: inserting a row "above" or "below" a specific
+        // existing row (see EnvironmentOverviewService.InsertRowAsynchronous)
+        // computes the midpoint between that row's DisplayOrder and its new
+        // neighbor's, rather than shifting every subsequent row's value by
+        // one - no other row is ever touched by an insert, so two concurrent
+        // inserts near the same spot can never race against each other.
+        public double DisplayOrder { get; set; }
 
         public string Environment { get; set; } = string.Empty;
 

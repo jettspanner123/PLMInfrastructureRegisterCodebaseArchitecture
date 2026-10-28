@@ -137,6 +137,78 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.ToTable("IG_EnvironmentOverviewCellFormatTBL", (string)null);
                 });
 
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewCustomCellValueNexus", b =>
+                {
+                    b.Property<Guid>("EnvironmentOverviewId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomColumnId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("EnvironmentOverviewId", "CustomColumnId");
+
+                    b.HasIndex("CustomColumnId");
+
+                    b.ToTable("IG_EnvironmentOverviewCustomCellValueTBL", (string)null);
+                });
+
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewCustomColumnNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ColumnType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("HeaderName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("Position")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IG_EnvironmentOverviewCustomColumnTBL", (string)null);
+                });
+
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewCustomColumnOptionNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomColumnId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomColumnId");
+
+                    b.ToTable("IG_EnvironmentOverviewCustomColumnOptionTBL", (string)null);
+                });
+
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewNexus", b =>
                 {
                     b.Property<Guid>("Id")
@@ -158,8 +230,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                    b.Property<double>("DisplayOrder")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Environment")
                         .IsRequired()

@@ -66,7 +66,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     throw new ValidationException("Every cell must have a valid EnvironmentOverviewId.");
                 }
 
-                if (string.IsNullOrWhiteSpace(cell.ColumnKey) || !EnvironmentOverviewColumnKeys.Contains(cell.ColumnKey))
+                // A custom column's key is its Id (a Guid) rather than a
+                // fixed property name - accepted here on shape alone (no
+                // live existence check) since ColumnKey has never been a
+                // real foreign key for this sidecar table, only ever a
+                // plain string identifying which column formatting applies
+                // to. A bogus Guid just produces a harmless orphan row.
+                bool isRecognizedFixedColumn = !string.IsNullOrWhiteSpace(cell.ColumnKey) && EnvironmentOverviewColumnKeys.Contains(cell.ColumnKey);
+                bool isPlausibleCustomColumn = !string.IsNullOrWhiteSpace(cell.ColumnKey) && Guid.TryParse(cell.ColumnKey, out _);
+
+                if (!isRecognizedFixedColumn && !isPlausibleCustomColumn)
                 {
                     throw new ValidationException($"'{cell.ColumnKey}' is not a recognized column.");
                 }
@@ -170,6 +179,94 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             if (request is null)
             {
                 throw new ValidationException("A request body must be provided.");
+            }
+        }
+
+        private static readonly HashSet<string> AllowedInsertDirections = new(StringComparer.Ordinal) { "Above", "Below" };
+
+        public void AssertInsertRowRequest(InsertRowRequestDTO? request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.Direction))
+            {
+                throw new ValidationException("A Direction must be provided.");
+            }
+
+            if (!AllowedInsertDirections.Contains(request.Direction))
+            {
+                throw new ValidationException("Direction must be 'Above' or 'Below'.");
+            }
+        }
+
+        private static readonly HashSet<string> AllowedColumnInsertDirections = new(StringComparer.Ordinal) { "Left", "Right" };
+
+        public void AssertCreateCustomColumnRequest(CreateCustomColumnRequestDTO? request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.RelativeToColumnKey))
+            {
+                throw new ValidationException("A RelativeToColumnKey must be provided.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Direction) || !AllowedColumnInsertDirections.Contains(request.Direction))
+            {
+                throw new ValidationException("Direction must be 'Left' or 'Right'.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.ColumnType) || !Enum.TryParse<CustomColumnTypeEnum>(request.ColumnType, out _))
+            {
+                throw new ValidationException("ColumnType must be one of Text, Number, Date, or Dropdown.");
+            }
+        }
+
+        // A blank HeaderName is allowed through here (not rejected) - the
+        // service falls back to a placeholder like "New Column" rather than
+        // leaving a column with no label at all, matching how a blank
+        // auto-placeholder row name is handled too.
+        public void AssertUpdateCustomColumnHeaderRequest(UpdateCustomColumnHeaderRequestDTO? request)
+        {
+            if (request is null)
+            {
+                throw new ValidationException("A request body must be provided.");
+            }
+        }
+
+        public void AssertAddCustomColumnOptionRequest(AddCustomColumnOptionRequestDTO? request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.Value))
+            {
+                throw new ValidationException("A Value must be provided.");
+            }
+        }
+
+        // columnType is supplied by the caller (looked up from the live
+        // column row), not the request itself - the same value is never
+        // client-supplied twice, so there's nothing to cross-check it
+        // against here beyond using it to validate Value's shape.
+        public void AssertUpsertCustomCellValueRequest(UpsertCustomCellValueRequestDTO? request, CustomColumnTypeEnum columnType)
+        {
+            if (request is null)
+            {
+                throw new ValidationException("A request body must be provided.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Value))
+            {
+                return;
+            }
+
+            switch (columnType)
+            {
+                case CustomColumnTypeEnum.Number:
+                    if (!double.TryParse(request.Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _))
+                    {
+                        throw new ValidationException("That value is not a valid number.");
+                    }
+                    break;
+                case CustomColumnTypeEnum.Date:
+                    if (!DateOnly.TryParse(request.Value, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out _))
+                    {
+                        throw new ValidationException("That value is not a valid date.");
+                    }
+                    break;
             }
         }
     }

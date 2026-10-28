@@ -32,6 +32,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<EnvironmentOverviewCellFormatNexus> EnvironmentOverviewCellFormats =>
             Set<EnvironmentOverviewCellFormatNexus>();
 
+        public DbSet<EnvironmentOverviewCustomColumnNexus> EnvironmentOverviewCustomColumns =>
+            Set<EnvironmentOverviewCustomColumnNexus>();
+
+        public DbSet<EnvironmentOverviewCustomColumnOptionNexus> EnvironmentOverviewCustomColumnOptions =>
+            Set<EnvironmentOverviewCustomColumnOptionNexus>();
+
+        public DbSet<EnvironmentOverviewCustomCellValueNexus> EnvironmentOverviewCustomCellValues =>
+            Set<EnvironmentOverviewCustomCellValueNexus>();
+
         public DbSet<ChatConversationNexus> ChatConversations => Set<ChatConversationNexus>();
 
         public DbSet<ChatMessageNexus> ChatMessages => Set<ChatMessageNexus>();
@@ -172,6 +181,30 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 // sets IsDeleted instead of removing the row) - nothing
                 // reading EnvironmentOverviews needs its own IsDeleted check.
                 entity.HasQueryFilter(environment => !environment.IsDeleted);
+            });
+
+            modelBuilder.Entity<EnvironmentOverviewCustomColumnNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentOverviewCustomColumnTBL");
+                entity.HasKey(customColumn => customColumn.Id);
+                entity.Property(customColumn => customColumn.ColumnType).HasConversion<string>();
+                entity.HasQueryFilter(customColumn => !customColumn.IsDeleted);
+            });
+
+            modelBuilder.Entity<EnvironmentOverviewCustomColumnOptionNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentOverviewCustomColumnOptionTBL");
+                entity.HasKey(option => option.Id);
+                entity.HasIndex(option => option.CustomColumnId);
+            });
+
+            modelBuilder.Entity<EnvironmentOverviewCustomCellValueNexus>(entity =>
+            {
+                entity.ToTable("IG_EnvironmentOverviewCustomCellValueTBL");
+                // Composite key - a row only ever has one value per custom
+                // column, so there's no separate surrogate Id to manage.
+                entity.HasKey(cellValue => new { cellValue.EnvironmentOverviewId, cellValue.CustomColumnId });
+                entity.HasIndex(cellValue => cellValue.CustomColumnId);
             });
 
             modelBuilder.Entity<EnvironmentOverviewStatusHistoryNexus>(entity =>

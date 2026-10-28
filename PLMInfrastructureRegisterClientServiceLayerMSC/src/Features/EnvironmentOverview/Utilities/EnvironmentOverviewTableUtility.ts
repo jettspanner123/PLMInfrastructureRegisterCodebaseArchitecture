@@ -1,5 +1,5 @@
 import type EnvironmentOverviewInterfaceModel from '../../../Models/EnvironmentOverviewInterfaceModel';
-import type { EnvironmentOverviewColumnDef } from '../Constants/EnvironmentOverviewCON';
+import type { MergedEnvironmentOverviewColumnDef } from '../Constants/EnvironmentOverviewCON';
 
 // Mirrors ResourceTableUtility exactly (see that file's own comment for the
 // pattern this follows) - kept as its own copy, one per feature, rather than
@@ -21,11 +21,16 @@ export default class EnvironmentOverviewTableUtility {
   // a column via the Columns dropdown also stops searching it.
   public matchesSearchQuery(
     environment: EnvironmentOverviewInterfaceModel,
-    columns: EnvironmentOverviewColumnDef[],
+    columns: MergedEnvironmentOverviewColumnDef[],
     lowerCaseQuery: string
   ): boolean {
     return columns.some((column) => {
-      const displayValue = this.getDisplayValue(environment, column.key);
+      // A custom column's value lives in customCellValues (keyed by its own
+      // Guid id), never as a top-level property on environment the way
+      // every fixed column's value is.
+      const displayValue = column.isCustom
+        ? environment.customCellValues[column.key] ?? null
+        : this.getDisplayValue(environment, column.key);
       return displayValue !== null && displayValue.toLowerCase().includes(lowerCaseQuery);
     });
   }

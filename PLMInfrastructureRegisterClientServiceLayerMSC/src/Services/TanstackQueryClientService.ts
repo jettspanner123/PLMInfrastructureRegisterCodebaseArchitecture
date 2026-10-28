@@ -8,7 +8,6 @@ import ConfigurationConstantsService from './ConfigurationConstantsService';
 import type ConfiguredSubscriptionInterfaceModel from '../Models/ConfiguredSubscriptionInterfaceModel';
 import type SubscriptionDeletionResultInterfaceModel from '../Models/SubscriptionDeletionResultInterfaceModel';
 import type EnvironmentOverviewInterfaceModel from '../Models/EnvironmentOverviewInterfaceModel';
-import type CreateEnvironmentOverviewRequestInterfaceModel from '../Models/CreateEnvironmentOverviewRequestInterfaceModel';
 import type UpdateEnvironmentOverviewStatusRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewStatusRequestInterfaceModel';
 import type AddConfigurationConstantOptionRequestInterfaceModel from '../Models/AddConfigurationConstantOptionRequestInterfaceModel';
 import type AddActionItemRequestInterfaceModel from '../Models/AddActionItemRequestInterfaceModel';
@@ -25,6 +24,12 @@ import type AddLegendEntryRequestInterfaceModel from '../Models/AddLegendEntryRe
 import type UpdateLegendEntryRequestInterfaceModel from '../Models/UpdateLegendEntryRequestInterfaceModel';
 import type EnvironmentOverviewCellFormatInterfaceModel from '../Models/EnvironmentOverviewCellFormatInterfaceModel';
 import type UpdateEnvironmentOverviewCellFormatRequestInterfaceModel from '../Models/UpdateEnvironmentOverviewCellFormatRequestInterfaceModel';
+import type InsertRowRequestInterfaceModel from '../Models/InsertRowRequestInterfaceModel';
+import type EnvironmentOverviewCustomColumnInterfaceModel from '../Models/EnvironmentOverviewCustomColumnInterfaceModel';
+import type CreateCustomColumnRequestInterfaceModel from '../Models/CreateCustomColumnRequestInterfaceModel';
+import type UpdateCustomColumnHeaderRequestInterfaceModel from '../Models/UpdateCustomColumnHeaderRequestInterfaceModel';
+import type AddCustomColumnOptionRequestInterfaceModel from '../Models/AddCustomColumnOptionRequestInterfaceModel';
+import type UpsertCustomCellValueRequestInterfaceModel from '../Models/UpsertCustomCellValueRequestInterfaceModel';
 import type AskQuestionRequestInterfaceModel from '../Models/AskQuestionRequestInterfaceModel';
 import type AskQuestionResponseInterfaceModel from '../Models/AskQuestionResponseInterfaceModel';
 import type AnswerQuestionRequestInterfaceModel from '../Models/AnswerQuestionRequestInterfaceModel';
@@ -293,20 +298,6 @@ export default class TanstackQueryClientService {
       });
     },
 
-    useCreateEnvironmentOverviewMutation: (options?: {
-      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
-    }) => {
-      const queryClient = useQueryClient();
-      return useMutation({
-        mutationFn: (request: CreateEnvironmentOverviewRequestInterfaceModel) =>
-          EnvironmentOverviewService.current.createEnvironmentOverview(request),
-        onSuccess: async (data) => {
-          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
-          options?.onSuccess?.(data);
-        },
-      });
-    },
-
     useUpdateEnvironmentStatusMutation: (options?: {
       onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
       onError?: (error: Error) => void;
@@ -494,6 +485,139 @@ export default class TanstackQueryClientService {
           });
 
           options?.onError?.(error instanceof Error ? error : new Error('Failed to update the cell format.'));
+        },
+      });
+    },
+
+    // Backs both the right-click "Add Row Above/Below" actions and the
+    // unified "Add Environment" toolbar button.
+    useInsertRowMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: InsertRowRequestInterfaceModel) => EnvironmentOverviewService.current.insertRow(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          toast.error('Failed to insert the row', {
+            description: error instanceof Error ? error.message : 'Please check your connection and try again.',
+          });
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to insert the row.'));
+        },
+      });
+    },
+
+    useCustomColumnsQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS,
+        queryFn: () => EnvironmentOverviewService.current.getCustomColumns(),
+        staleTime: 1000 * 60 * 2,
+      });
+    },
+
+    useCreateCustomColumnMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewCustomColumnInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: CreateCustomColumnRequestInterfaceModel) =>
+          EnvironmentOverviewService.current.createCustomColumn(request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          toast.error('Failed to add the column', {
+            description: error instanceof Error ? error.message : 'Please check your connection and try again.',
+          });
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to create the column.'));
+        },
+      });
+    },
+
+    useUpdateCustomColumnHeaderMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewCustomColumnInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateCustomColumnHeaderRequestInterfaceModel }) =>
+          EnvironmentOverviewService.current.updateCustomColumnHeader(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to rename the column.'));
+        },
+      });
+    },
+
+    useDeleteCustomColumnMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => EnvironmentOverviewService.current.deleteCustomColumn(id),
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS });
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.();
+        },
+        onError: (error) => {
+          toast.error('Failed to delete the column', {
+            description: error instanceof Error ? error.message : 'Please check your connection and try again.',
+          });
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to delete the column.'));
+        },
+      });
+    },
+
+    useAddCustomColumnOptionMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewCustomColumnInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: AddCustomColumnOptionRequestInterfaceModel }) =>
+          EnvironmentOverviewService.current.addCustomColumnOption(id, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to add the option.'));
+        },
+      });
+    },
+
+    useUpdateCustomCellValueMutation: (options?: {
+      onSuccess?: (data: EnvironmentOverviewInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({
+          id,
+          customColumnId,
+          request,
+        }: {
+          id: string;
+          customColumnId: string;
+          request: UpsertCustomCellValueRequestInterfaceModel;
+        }) => EnvironmentOverviewService.current.updateCustomCellValue(id, customColumnId, request),
+        onSuccess: async (data) => {
+          await queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_OVERVIEWS });
+          options?.onSuccess?.(data);
+        },
+        onError: (error) => {
+          options?.onError?.(error instanceof Error ? error : new Error('Failed to update the cell.'));
         },
       });
     },

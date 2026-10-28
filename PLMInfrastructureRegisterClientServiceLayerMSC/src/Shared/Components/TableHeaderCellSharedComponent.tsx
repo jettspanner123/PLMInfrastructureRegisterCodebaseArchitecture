@@ -13,6 +13,15 @@ export interface TableHeaderCellSharedComponentProps {
   // header still extends a column selection either way.
   onMouseDown?: (event: React.MouseEvent) => void;
   onMouseEnter?: () => void;
+  // Opt-in passthrough for a header that needs its own right-click menu or
+  // double-click-to-rename behavior (e.g. a custom column's header on
+  // Environment Overview) - inert (undefined) for every other caller.
+  onContextMenu?: (event: React.MouseEvent) => void;
+  onDoubleClick?: () => void;
+  // Lets a caller later find this exact header element (e.g. to scroll a
+  // freshly created column into view) without threading its own refs
+  // through every column.
+  dataColumnKey?: string;
   // Escape hatch for a dynamic per-render value Tailwind's JIT can't see at
   // build time (e.g. a user-dragged column width in px) — inert for every
   // caller that doesn't pass it. Also the only reliable way to set
@@ -42,12 +51,18 @@ export default function TableHeaderCellSharedComponent({
   className = '',
   onMouseDown,
   onMouseEnter,
+  onContextMenu,
+  onDoubleClick,
+  dataColumnKey,
   style,
 }: TableHeaderCellSharedComponentProps): React.JSX.Element {
   return (
     <th
       onMouseDown={onMouseDown}
       onMouseEnter={onMouseEnter}
+      onContextMenu={onContextMenu}
+      onDoubleClick={onDoubleClick}
+      data-column-key={dataColumnKey}
       style={style}
       className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
         align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'

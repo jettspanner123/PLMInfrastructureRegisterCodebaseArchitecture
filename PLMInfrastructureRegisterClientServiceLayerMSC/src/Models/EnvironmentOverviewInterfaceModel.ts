@@ -21,4 +21,7 @@ export default interface EnvironmentOverviewInterfaceModel {
   configurationCustomisationVersion: string | null;
   dnsurl: string | null;
   status: string;
+  // Keyed by custom column Id - only columns with a non-null value for this
+  // row are present; a missing key means "blank".
+  customCellValues: Record<string, string | null>;
 }

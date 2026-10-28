@@ -125,6 +125,24 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             public const string GetCellFormats = "CellFormats";
 
             public const string UpdateCellFormat = "CellFormats";
+
+            // Backs both the right-click "Add Row Above/Below" actions and
+            // the unified "Add Environment" toolbar button - see
+            // InsertRowRequestDTO for how RelativeToId/Direction combine.
+            public const string InsertRow = "InsertRow";
+
+            public const string GetCustomColumns = "CustomColumns";
+
+            public const string CreateCustomColumn = "CustomColumns";
+
+            public const string UpdateCustomColumnHeader = "CustomColumns/{id}/Header";
+
+            // Soft delete - see EnvironmentOverviewCustomColumnNexus.IsDeleted.
+            public const string DeleteCustomColumn = "CustomColumns/{id}";
+
+            public const string AddCustomColumnOption = "CustomColumns/{id}/Options";
+
+            public const string UpdateCustomCellValue = "{id}/CustomCells/{customColumnId}";
         }
 
         public static class ConfigurationConstantsRoutes

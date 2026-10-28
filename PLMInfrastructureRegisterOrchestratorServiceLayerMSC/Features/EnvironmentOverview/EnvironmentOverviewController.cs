@@ -449,5 +449,284 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                         500));
             }
         }
+
+        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.InsertRow)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> InsertRowAsynchronous(
+            [FromBody] InsertRowRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertInsertRowRequest(request);
+
+                EnvironmentOverviewDTO createdEnvironment = await _environmentOverviewService.InsertRowAsynchronous(request!);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        createdEnvironment,
+                        "Row inserted successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Insert row validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Insert row not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while inserting a row.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while inserting the row.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpGet(ApplicationRouteFactory.EnvironmentOverviewRoutes.GetCustomColumns)]
+        public async Task<ActionResult<APIResponse<List<EnvironmentOverviewCustomColumnDTO>>>> GetCustomColumnsAsynchronous()
+        {
+            try
+            {
+                List<EnvironmentOverviewCustomColumnDTO> customColumns = await _environmentOverviewService.GetCustomColumnsAsynchronous();
+
+                return Ok(
+                    APIResponse<List<EnvironmentOverviewCustomColumnDTO>>.Succeeded(
+                        customColumns,
+                        "Custom columns retrieved successfully.",
+                        200));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while retrieving custom columns.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<List<EnvironmentOverviewCustomColumnDTO>>.Failed(
+                        "An unexpected error occurred while retrieving custom columns.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.CreateCustomColumn)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewCustomColumnDTO>>> CreateCustomColumnAsynchronous(
+            [FromBody] CreateCustomColumnRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertCreateCustomColumnRequest(request);
+
+                EnvironmentOverviewCustomColumnDTO createdColumn = await _environmentOverviewService.CreateCustomColumnAsynchronous(request!);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Succeeded(
+                        createdColumn,
+                        "Column created successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Create custom column validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Create custom column not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while creating a custom column.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(
+                        "An unexpected error occurred while creating the column.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateCustomColumnHeader)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewCustomColumnDTO>>> UpdateCustomColumnHeaderAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateCustomColumnHeaderRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertUpdateCustomColumnHeaderRequest(request);
+
+                EnvironmentOverviewCustomColumnDTO updatedColumn =
+                    await _environmentOverviewService.UpdateCustomColumnHeaderAsynchronous(id, request!.HeaderName);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Succeeded(
+                        updatedColumn,
+                        "Column renamed successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update custom column header validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update custom column header not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while renaming a custom column.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(
+                        "An unexpected error occurred while renaming the column.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpDelete(ApplicationRouteFactory.EnvironmentOverviewRoutes.DeleteCustomColumn)]
+        public async Task<ActionResult<APIResponse<bool>>> DeleteCustomColumnAsynchronous([FromRoute] Guid id)
+        {
+            try
+            {
+                await _environmentOverviewService.DeleteCustomColumnAsynchronous(id);
+
+                return Ok(
+                    APIResponse<bool>.Succeeded(
+                        true,
+                        "Column deleted successfully.",
+                        200));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Delete custom column not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<bool>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while deleting a custom column.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<bool>.Failed(
+                        "An unexpected error occurred while deleting the column.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPost(ApplicationRouteFactory.EnvironmentOverviewRoutes.AddCustomColumnOption)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewCustomColumnDTO>>> AddCustomColumnOptionAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] AddCustomColumnOptionRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewAssertion.Current.AssertAddCustomColumnOptionRequest(request);
+
+                EnvironmentOverviewCustomColumnDTO updatedColumn =
+                    await _environmentOverviewService.AddCustomColumnOptionAsynchronous(id, request!.Value!);
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Succeeded(
+                        updatedColumn,
+                        "Option added successfully.",
+                        201));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Add custom column option validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Add custom column option not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while adding a custom column option.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewCustomColumnDTO>.Failed(
+                        "An unexpected error occurred while adding the option.",
+                        new List<string>(),
+                        500));
+            }
+        }
+
+        [HttpPut(ApplicationRouteFactory.EnvironmentOverviewRoutes.UpdateCustomCellValue)]
+        public async Task<ActionResult<APIResponse<EnvironmentOverviewDTO>>> UpdateCustomCellValueAsynchronous(
+            [FromRoute] Guid id,
+            [FromRoute] Guid customColumnId,
+            [FromBody] UpsertCustomCellValueRequestDTO? request)
+        {
+            try
+            {
+                EnvironmentOverviewDTO updatedEnvironment =
+                    await _environmentOverviewService.UpsertCustomCellValueAsynchronous(id, customColumnId, request ?? new UpsertCustomCellValueRequestDTO());
+
+                return Ok(
+                    APIResponse<EnvironmentOverviewDTO>.Succeeded(
+                        updatedEnvironment,
+                        "Cell updated successfully.",
+                        200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Update custom cell value validation failed: {Message}", valEx.Message);
+
+                return BadRequest(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Update custom cell value not found: {Message}", notFoundEx.Message);
+
+                return NotFound(
+                    APIResponse<EnvironmentOverviewDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating a custom cell value.");
+
+                return StatusCode(
+                    500,
+                    APIResponse<EnvironmentOverviewDTO>.Failed(
+                        "An unexpected error occurred while updating the cell.",
+                        new List<string>(),
+                        500));
+            }
+        }
     }
 }

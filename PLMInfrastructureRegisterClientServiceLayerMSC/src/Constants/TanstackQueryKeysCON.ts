@@ -7,6 +7,7 @@ export default class TanstackQueryKeysCON {
   public static readonly AVAILABLE_AZURE_SUBSCRIPTIONS: readonly string[] = ['available-azure-subscriptions'];
   public static readonly ENVIRONMENT_OVERVIEWS: readonly string[] = ['environment-overviews'];
   public static readonly ENVIRONMENT_OVERVIEW_CELL_FORMATS: readonly string[] = ['environment-overview-cell-formats'];
+  public static readonly ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS: readonly string[] = ['environment-overview-custom-columns'];
   public static readonly FEATURE_REQUESTS: readonly string[] = ['feature-requests'];
   public static readonly ENVIRONMENT_UPTIME_REQUESTS: readonly string[] = ['environment-uptime-requests'];
   // Parameterized rather than one static key per field - Status, Sponsor,

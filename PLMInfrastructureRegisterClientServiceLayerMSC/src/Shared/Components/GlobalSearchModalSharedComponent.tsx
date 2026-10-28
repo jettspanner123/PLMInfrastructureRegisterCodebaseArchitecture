@@ -132,7 +132,14 @@ export default function GlobalSearchModalSharedComponent(): React.JSX.Element | 
       saved,
       EnvironmentOverviewCON.LOCKED_COLUMN_KEYS
     );
-    return EnvironmentOverviewCON.COLUMNS.filter((column) => visibleKeys.has(column.key));
+    // Global search (Ctrl/Cmd+K) only ever searches the fixed columns, not
+    // live custom ones - this modal has no access to that query, and the
+    // in-table search bar already covers custom columns on the page itself.
+    return EnvironmentOverviewCON.COLUMNS.filter((column) => visibleKeys.has(column.key)).map((column) => ({
+      ...column,
+      isCustom: false,
+      position: 0,
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
