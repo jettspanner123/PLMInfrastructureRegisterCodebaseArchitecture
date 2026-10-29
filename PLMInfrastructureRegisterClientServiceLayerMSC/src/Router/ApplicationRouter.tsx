@@ -9,6 +9,7 @@ import {
   useLocation,
 } from '@tanstack/react-router';
 import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
+import TanstackQueryClientService from '../Services/TanstackQueryClientService';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import ApplicationTableHeightUtility from '../Utilities/ApplicationTableHeightUtility';
@@ -43,6 +44,14 @@ function RootLayout(): React.JSX.Element {
   // is kept here rather than inside NavigationController itself, so that
   // component stays agnostic about any particular screen.
   const isSettingsRoute = location.pathname.startsWith(ApplicationRouteCON.SETTINGS);
+
+  // Prefetch Feature Requests / Uptime Requests as soon as the app shell
+  // mounts (right after splash dismisses), so both pages' lists are already
+  // cached by the time the user navigates to them - mirrors the same
+  // prefetch-via-hook pattern SplashScreenController uses for Resources/
+  // Environment Overview/Legends, just triggered post-splash instead.
+  TanstackQueryClientService.current.featureRequests.useFeatureRequestsQuery();
+  TanstackQueryClientService.current.environmentUptimeRequests.useEnvironmentUptimeRequestsQuery();
 
   const [currentTheme, setCurrentTheme] = useState<string>(() => {
     const saved = ApplicationThemeUtility.current.getSavedTheme();
