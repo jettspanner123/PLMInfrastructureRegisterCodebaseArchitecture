@@ -58,6 +58,20 @@ export default function ProfileSettingsSharedComponent({
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState<boolean>(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(() => AdminIdentityUtility.current.isLoggedInAsAdmin());
+
+  // Falls back to the static generic identity whenever not logged in as
+  // admin - same fallback shape this whole block already had before admin
+  // login existed.
+  const displayName = isAdmin
+    ? AdminIdentityUtility.current.getAdminFullName() ?? NavigationCON.PROFILE_DISPLAY_NAME
+    : NavigationCON.PROFILE_DISPLAY_NAME;
+  const displayEmail = isAdmin
+    ? AdminIdentityUtility.current.getAdminDisplayIdentity() ?? NavigationCON.PROFILE_DISPLAY_EMAIL
+    : NavigationCON.PROFILE_DISPLAY_EMAIL;
+  const displayInitials = isAdmin
+    ? AdminIdentityUtility.current.getAdminInitials() ?? NavigationCON.PROFILE_INITIALS
+    : NavigationCON.PROFILE_INITIALS;
+
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerRectRef = useRef<SimpleRect | null>(null);
   const [panelScope, animatePanel] = useAnimate();
@@ -208,13 +222,13 @@ export default function ProfileSettingsSharedComponent({
               measureTriggerRect();
               setIsOpen(true);
             }}
-            title={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
+            title={`${displayName} - Profile & Settings`}
             aria-haspopup="dialog"
-            aria-label={`${NavigationCON.PROFILE_DISPLAY_NAME} - Profile & Settings`}
+            aria-label={`${displayName} - Profile & Settings`}
             className="h-10 w-10 sm:h-9 sm:w-9 rounded-xl sm:rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 hairline-border hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer relative flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
           >
             <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs sm:text-[10px] font-mono">
-              {NavigationCON.PROFILE_INITIALS}
+              {displayInitials}
             </div>
           </motion.button>
         )}
@@ -260,18 +274,18 @@ export default function ProfileSettingsSharedComponent({
                   {/* 1. Header: User Identity (Full Width) */}
                   <div className="flex items-center gap-3 pb-3.5 pr-10 border-b border-slate-100 dark:border-zinc-800/80">
                     <div className="w-10 h-10 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold font-serif-headline text-sm shadow-xs shrink-0">
-                      {NavigationCON.PROFILE_INITIALS}
+                      {displayInitials}
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="font-bold text-slate-900 dark:text-white font-serif-headline text-sm truncate leading-tight">
-                        {NavigationCON.PROFILE_DISPLAY_NAME}
+                        {displayName}
                       </h3>
                       <p className="text-[11px] text-slate-400 dark:text-zinc-500 truncate mt-0.5 font-mono">
                         {isAdmin ? NavigationCON.PROFILE_DISPLAY_ROLE_ADMIN : NavigationCON.PROFILE_DISPLAY_ROLE}
                       </p>
                       <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-zinc-400 font-mono mt-0.5 truncate">
                         <Mail className="w-3 h-3 shrink-0 text-slate-400" />
-                        <span className="truncate">{NavigationCON.PROFILE_DISPLAY_EMAIL}</span>
+                        <span className="truncate">{displayEmail}</span>
                       </div>
                     </div>
                   </div>

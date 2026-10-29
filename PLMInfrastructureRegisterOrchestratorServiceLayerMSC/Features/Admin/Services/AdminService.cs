@@ -66,7 +66,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Se
 
             _failedAttemptsByEmail.TryRemove(normalizedEmail, out _);
 
-            string token = IssueJwt(account!.Email);
+            string token = IssueJwt(account!.Email, account.FirstName, account.LastName);
 
             return new AdminLoginResponseDTO { Token = token };
         }
@@ -82,7 +82,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Se
                         : (1, DateTime.UtcNow));
         }
 
-        private static string IssueJwt(string email)
+        private static string IssueJwt(string email, string firstName, string lastName)
         {
             string signingKey = ENValidatorHelper.Current.GetEnvKeyValue("JWT_SIGNING_KEY");
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
@@ -99,6 +99,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Se
                     // PRD_ADMIN_EMAIL_PASSWORD_LOGIN.md); a future authorization
                     // phase decides its own exact claim-type mapping then.
                     new Claim("role", "Admin"),
+                    // Self-contained with the rest of the token - the frontend's
+                    // AdminIdentityUtility decodes these alongside sub/exp to
+                    // populate the profile card, so the displayed name always
+                    // matches whichever token is currently stored and expires
+                    // together with it (no separate storage key to go stale).
+                    new Claim("firstName", firstName),
+                    new Claim("lastName", lastName),
                 },
                 expires: DateTime.UtcNow.Add(TokenLifetime),
                 signingCredentials: credentials);

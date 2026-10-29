@@ -4,6 +4,8 @@ import ApplicationUserPreferenceUtility from './ApplicationUserPreferenceUtility
 interface DecodedAdminJwtPayload {
   sub?: string;
   exp?: number;
+  firstName?: string;
+  lastName?: string;
 }
 
 function decodeJwtPayload(token: string): DecodedAdminJwtPayload | null {
@@ -47,6 +49,26 @@ export default class AdminIdentityUtility {
     if (!token) return null;
 
     return decodeJwtPayload(token)?.sub ?? null;
+  }
+
+  public getAdminFullName(): string | null {
+    const token = this.getAdminToken();
+    if (!token) return null;
+
+    const payload = decodeJwtPayload(token);
+    if (!payload?.firstName || !payload.lastName) return null;
+
+    return `${payload.firstName} ${payload.lastName}`;
+  }
+
+  public getAdminInitials(): string | null {
+    const token = this.getAdminToken();
+    if (!token) return null;
+
+    const payload = decodeJwtPayload(token);
+    if (!payload?.firstName || !payload.lastName) return null;
+
+    return `${payload.firstName[0]}${payload.lastName[0]}`.toUpperCase();
   }
 
   public clearAdminToken(): void {
