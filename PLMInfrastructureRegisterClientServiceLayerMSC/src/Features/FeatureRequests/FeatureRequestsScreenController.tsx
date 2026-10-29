@@ -26,8 +26,15 @@ export default function FeatureRequestsScreenController(): React.JSX.Element {
   // State for delete confirmation modal
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  const handleCreateSubmit = (input: CreateFeatureRequestInputInterfaceModel): void => {
-    createMutation.mutate(input);
+  const handleCreateSubmit = (
+    input: CreateFeatureRequestInputInterfaceModel,
+    onSuccess?: () => void
+  ): void => {
+    createMutation.mutate(input, {
+      onSuccess: () => {
+        onSuccess?.();
+      },
+    });
   };
 
   const handleStatusChange = (id: string, status: FeatureRequestStatusEnumModel): void => {
@@ -60,9 +67,9 @@ export default function FeatureRequestsScreenController(): React.JSX.Element {
       </div>
 
       {/* 50:50 Side-by-Side Layout Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start flex-1">
-        {/* Left 50% Pane: Submission Form */}
-        <div className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
+        {/* Left 50% Pane: Submission Form (Sticky on desktop, natural content height) */}
+        <div className="w-full lg:sticky lg:top-20 h-fit">
           <FeatureRequestFormStaticComponent
             onSubmit={handleCreateSubmit}
             isSubmitting={createMutation.isPending}

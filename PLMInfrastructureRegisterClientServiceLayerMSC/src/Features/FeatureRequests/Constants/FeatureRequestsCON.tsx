@@ -1,3 +1,18 @@
+import {
+  Database,
+  Globe,
+  Bot,
+  Sliders,
+  ArrowDown,
+  Minus,
+  ArrowUp,
+  Flame,
+  Clock,
+  Calendar,
+  Play,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react';
 import { FeatureRequestCategoryEnumModel } from '../../../Models/FeatureRequestCategoryEnumModel';
 import { FeatureRequestPriorityEnumModel } from '../../../Models/FeatureRequestPriorityEnumModel';
 import { FeatureRequestStatusEnumModel } from '../../../Models/FeatureRequestStatusEnumModel';
@@ -38,21 +53,25 @@ export default class FeatureRequestsCON {
       value: FeatureRequestCategoryEnumModel.InfrastructureRegister,
       label: 'Infrastructure Register',
       sublabel: 'Core resource grid & Azure sync',
+      icon: <Database className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 shrink-0" />,
     },
     {
       value: FeatureRequestCategoryEnumModel.EnvironmentOverview,
       label: 'Environment Overview',
       sublabel: 'Environment statuses & uptime schedules',
+      icon: <Globe className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" />,
     },
     {
       value: FeatureRequestCategoryEnumModel.ChatAssistant,
       label: 'Chat Assistant',
       sublabel: 'AI copilot & register intelligence',
+      icon: <Bot className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400 shrink-0" />,
     },
     {
       value: FeatureRequestCategoryEnumModel.General,
       label: 'General / UI / Settings',
       sublabel: 'Theme, layouts, controls, subscriptions',
+      icon: <Sliders className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />,
     },
   ];
 
@@ -61,21 +80,25 @@ export default class FeatureRequestsCON {
       value: FeatureRequestPriorityEnumModel.Low,
       label: 'Low',
       sublabel: 'Nice to have, minor quality of life improvement',
+      icon: <ArrowDown className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />,
     },
     {
       value: FeatureRequestPriorityEnumModel.Medium,
       label: 'Medium',
       sublabel: 'Helpful enhancement for regular workflow',
+      icon: <Minus className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />,
     },
     {
       value: FeatureRequestPriorityEnumModel.High,
       label: 'High',
       sublabel: 'Important capability needed for active tasks',
+      icon: <ArrowUp className="w-3.5 h-3.5 text-orange-500 dark:text-orange-400 shrink-0" />,
     },
     {
       value: FeatureRequestPriorityEnumModel.Critical,
       label: 'Critical',
       sublabel: 'Urgent requirement affecting key deliverables',
+      icon: <Flame className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0" />,
     },
   ];
 
@@ -84,26 +107,31 @@ export default class FeatureRequestsCON {
       value: FeatureRequestStatusEnumModel.UnderReview,
       label: 'Under Review',
       sublabel: 'Received and awaiting evaluation',
+      icon: <Clock className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />,
     },
     {
       value: FeatureRequestStatusEnumModel.Planned,
       label: 'Planned',
       sublabel: 'Approved and scheduled for implementation',
+      icon: <Calendar className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />,
     },
     {
       value: FeatureRequestStatusEnumModel.InProgress,
       label: 'In Progress',
       sublabel: 'Actively being designed or built',
+      icon: <Play className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 shrink-0" />,
     },
     {
       value: FeatureRequestStatusEnumModel.Completed,
       label: 'Completed',
       sublabel: 'Implemented and live in InfraGrid',
+      icon: <CheckCircle className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" />,
     },
     {
       value: FeatureRequestStatusEnumModel.Declined,
       label: 'Declined',
       sublabel: 'Not currently feasible or out of scope',
+      icon: <XCircle className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0" />,
     },
   ];
 

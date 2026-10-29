@@ -11,7 +11,7 @@ import { FeatureRequestPriorityEnumModel } from '../../../Models/FeatureRequestP
 import type CreateFeatureRequestInputInterfaceModel from '../../../Models/CreateFeatureRequestInputInterfaceModel';
 
 export interface FeatureRequestFormStaticComponentProps {
-  onSubmit: (data: CreateFeatureRequestInputInterfaceModel) => void;
+  onSubmit: (data: CreateFeatureRequestInputInterfaceModel, onSuccess?: () => void) => void;
   isSubmitting?: boolean;
 }
 
@@ -54,23 +54,6 @@ export default function FeatureRequestFormStaticComponent({
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = (e?: React.FormEvent): void => {
-    if (e) {
-      e.preventDefault();
-    }
-    if (!validate()) {
-      return;
-    }
-
-    onSubmit({
-      title: title.trim(),
-      category: category as FeatureRequestCategoryEnumModel,
-      priority: priority as FeatureRequestPriorityEnumModel,
-      requesterName: requesterName.trim(),
-      description: description.trim(),
-    });
-  };
-
   const handleReset = (): void => {
     setTitle('');
     setCategory(FeatureRequestCategoryEnumModel.InfrastructureRegister);
@@ -80,8 +63,30 @@ export default function FeatureRequestFormStaticComponent({
     setErrors({});
   };
 
+  const handleSubmit = (e?: React.FormEvent): void => {
+    if (e) {
+      e.preventDefault();
+    }
+    if (!validate()) {
+      return;
+    }
+
+    onSubmit(
+      {
+        title: title.trim(),
+        category: category as FeatureRequestCategoryEnumModel,
+        priority: priority as FeatureRequestPriorityEnumModel,
+        requesterName: requesterName.trim(),
+        description: description.trim(),
+      },
+      () => {
+        handleReset();
+      }
+    );
+  };
+
   return (
-    <CardSharedComponent variant="elevated" className="h-full flex flex-col justify-between">
+    <CardSharedComponent variant="elevated">
       <div>
         {/* Form Header */}
         <div className="flex items-center gap-2.5 pb-4 mb-5 border-b border-slate-200/80 dark:border-zinc-800">

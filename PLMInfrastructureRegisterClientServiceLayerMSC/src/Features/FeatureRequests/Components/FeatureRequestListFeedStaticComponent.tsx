@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Search, Inbox } from 'lucide-react';
+import { Search, Inbox, Layers } from 'lucide-react';
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import BadgeSharedComponent from '../../../Shared/Components/BadgeSharedComponent';
@@ -28,12 +28,20 @@ export default function FeatureRequestListFeedStaticComponent({
 
   // Filter options with "All" prepended
   const categoryFilterOptions: SelectOption[] = useMemo(() => [
-    { value: FeatureRequestsCON.FILTER_ALL_CATEGORIES, label: 'All Modules' },
+    {
+      value: FeatureRequestsCON.FILTER_ALL_CATEGORIES,
+      label: 'All Modules',
+      icon: <Layers className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400 shrink-0" />,
+    },
     ...FeatureRequestsCON.CATEGORY_OPTIONS,
   ], []);
 
   const statusFilterOptions: SelectOption[] = useMemo(() => [
-    { value: FeatureRequestsCON.FILTER_ALL_STATUSES, label: 'All Statuses' },
+    {
+      value: FeatureRequestsCON.FILTER_ALL_STATUSES,
+      label: 'All Statuses',
+      icon: <Layers className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400 shrink-0" />,
+    },
     ...FeatureRequestsCON.STATUS_OPTIONS,
   ], []);
 
