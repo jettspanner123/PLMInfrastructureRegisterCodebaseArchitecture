@@ -1,17 +1,44 @@
 import React, { useMemo, useState } from 'react';
-import { Search, CalendarX2 } from 'lucide-react';
+import {
+  Search,
+  CalendarX2,
+  Layers,
+  Clock,
+  CheckCircle2,
+  CheckCircle,
+  XCircle,
+  Ban,
+} from 'lucide-react';
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import BadgeSharedComponent from '../../../Shared/Components/BadgeSharedComponent';
 import EmptyStateSharedComponent from '../../../Shared/Components/EmptyStateSharedComponent';
 import EnvironmentUptimeRequestCardStaticComponent from './EnvironmentUptimeRequestCardStaticComponent';
 import EnvironmentUptimeRequestsCON from '../Constants/EnvironmentUptimeRequestsCON';
+import { EnvironmentUptimeRequestStatusEnumModel } from '../../../Models/EnvironmentUptimeRequestStatusEnumModel';
 import type EnvironmentUptimeRequestInterfaceModel from '../../../Models/EnvironmentUptimeRequestInterfaceModel';
 
 export interface EnvironmentUptimeRequestListFeedStaticComponentProps {
   requests: EnvironmentUptimeRequestInterfaceModel[];
   isLoading?: boolean;
   onDeleteRequest: (id: string) => void;
+}
+
+function getStatusOptionIcon(statusValue: string): React.ReactNode {
+  switch (statusValue) {
+    case EnvironmentUptimeRequestStatusEnumModel.Pending:
+      return <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />;
+    case EnvironmentUptimeRequestStatusEnumModel.Approved:
+      return <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 shrink-0" />;
+    case EnvironmentUptimeRequestStatusEnumModel.Completed:
+      return <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />;
+    case EnvironmentUptimeRequestStatusEnumModel.Rejected:
+      return <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" />;
+    case EnvironmentUptimeRequestStatusEnumModel.Cancelled:
+      return <Ban className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />;
+    default:
+      return <Layers className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400 shrink-0" />;
+  }
 }
 
 export default function EnvironmentUptimeRequestListFeedStaticComponent({
@@ -24,8 +51,15 @@ export default function EnvironmentUptimeRequestListFeedStaticComponent({
 
   const statusFilterOptions: SelectOption[] = useMemo(
     () => [
-      { value: EnvironmentUptimeRequestsCON.FILTER_ALL_STATUSES, label: 'All Statuses' },
-      ...EnvironmentUptimeRequestsCON.STATUS_OPTIONS,
+      {
+        value: EnvironmentUptimeRequestsCON.FILTER_ALL_STATUSES,
+        label: 'All Statuses',
+        icon: <Layers className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400 shrink-0" />,
+      },
+      ...EnvironmentUptimeRequestsCON.STATUS_OPTIONS.map((opt) => ({
+        ...opt,
+        icon: getStatusOptionIcon(opt.value),
+      })),
     ],
     []
   );

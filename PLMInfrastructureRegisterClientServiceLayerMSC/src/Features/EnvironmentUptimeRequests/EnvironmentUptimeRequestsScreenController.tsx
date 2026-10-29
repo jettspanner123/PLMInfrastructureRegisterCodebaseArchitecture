@@ -14,14 +14,7 @@ export default function EnvironmentUptimeRequestsScreenController(): React.JSX.E
   } = TanstackQueryClientService.current.environmentUptimeRequests.useEnvironmentUptimeRequestsQuery();
 
   // Mutations
-  const createMutation = TanstackQueryClientService.current.environmentUptimeRequests.useCreateEnvironmentUptimeRequestMutation({
-    onSuccess: () => {
-      // Force the (uncontrolled-from-here) form to remount with blank
-      // fields after a successful submission, instead of leaving the
-      // just-submitted values sitting in the inputs.
-      setFormResetKey((key) => key + 1);
-    },
-  });
+  const createMutation = TanstackQueryClientService.current.environmentUptimeRequests.useCreateEnvironmentUptimeRequestMutation();
   const deleteMutation = TanstackQueryClientService.current.environmentUptimeRequests.useDeleteEnvironmentUptimeRequestMutation({
     onSuccess: () => {
       setDeleteTargetId(null);
@@ -31,12 +24,15 @@ export default function EnvironmentUptimeRequestsScreenController(): React.JSX.E
   // State for delete confirmation modal
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  // Bumped on a successful create to remount EnvironmentUptimeRequestFormStaticComponent,
-  // clearing its internal field state.
-  const [formResetKey, setFormResetKey] = useState(0);
-
-  const handleCreateSubmit = (input: CreateEnvironmentUptimeRequestInputInterfaceModel): void => {
-    createMutation.mutate(input);
+  const handleCreateSubmit = (
+    input: CreateEnvironmentUptimeRequestInputInterfaceModel,
+    onSuccess?: () => void
+  ): void => {
+    createMutation.mutate(input, {
+      onSuccess: () => {
+        onSuccess?.();
+      },
+    });
   };
 
   const handleDeleteRequest = (id: string): void => {
@@ -65,11 +61,10 @@ export default function EnvironmentUptimeRequestsScreenController(): React.JSX.E
       </div>
 
       {/* 50:50 Side-by-Side Layout Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start flex-1">
-        {/* Left 50% Pane: Submission Form */}
-        <div className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
+        {/* Left 50% Pane: Submission Form (Sticky on desktop, natural content height) */}
+        <div className="w-full lg:sticky lg:top-20 h-fit">
           <EnvironmentUptimeRequestFormStaticComponent
-            key={formResetKey}
             onSubmit={handleCreateSubmit}
             isSubmitting={createMutation.isPending}
           />

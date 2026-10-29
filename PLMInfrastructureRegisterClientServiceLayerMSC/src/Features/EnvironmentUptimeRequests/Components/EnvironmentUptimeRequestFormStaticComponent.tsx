@@ -1,7 +1,17 @@
 import React, { useMemo, useState } from 'react';
-import { Send, RotateCcw, CalendarClock } from 'lucide-react';
+import {
+  Send,
+  RotateCcw,
+  CalendarClock,
+  Server,
+  FlaskConical,
+  Code2,
+  Box,
+  GraduationCap,
+  Cpu,
+} from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
-import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
+import CustomDateTimePickerSharedComponent from '../../../Shared/Components/CustomDateTimePickerSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
@@ -11,8 +21,28 @@ import EnvironmentUptimeRequestsCON from '../Constants/EnvironmentUptimeRequests
 import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../../../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
 
 export interface EnvironmentUptimeRequestFormStaticComponentProps {
-  onSubmit: (data: CreateEnvironmentUptimeRequestInputInterfaceModel) => void;
+  onSubmit: (data: CreateEnvironmentUptimeRequestInputInterfaceModel, onSuccess?: () => void) => void;
   isSubmitting?: boolean;
+}
+
+function getEnvironmentOptionIcon(envName: string): React.ReactNode {
+  const lower = envName.toLowerCase();
+  if (lower.includes('prod')) {
+    return <Server className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0" />;
+  }
+  if (lower.includes('qa') || lower.includes('test') || lower.includes('staging')) {
+    return <FlaskConical className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />;
+  }
+  if (lower.includes('dev') || lower.includes('migrat') || lower.includes('implement')) {
+    return <Code2 className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />;
+  }
+  if (lower.includes('sandbox')) {
+    return <Box className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400 shrink-0" />;
+  }
+  if (lower.includes('train')) {
+    return <GraduationCap className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" />;
+  }
+  return <Cpu className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />;
 }
 
 export default function EnvironmentUptimeRequestFormStaticComponent({
@@ -28,7 +58,11 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
     () =>
       EnvironmentNameListUtility.current
         .splitToIndividualEnvironmentNames(environmentOverviews.map((row) => row.environment))
-        .map((name) => ({ value: name, label: name })),
+        .map((name) => ({
+          value: name,
+          label: name,
+          icon: getEnvironmentOptionIcon(name),
+        })),
     [environmentOverviews]
   );
 
@@ -69,22 +103,6 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = (e?: React.FormEvent): void => {
-    if (e) {
-      e.preventDefault();
-    }
-    if (!validate()) {
-      return;
-    }
-
-    onSubmit({
-      environment: environment.trim(),
-      fromAt,
-      toAt,
-      message: message.trim() ? message.trim() : undefined,
-    });
-  };
-
   const handleReset = (): void => {
     setEnvironment('');
     setFromAt('');
@@ -93,8 +111,29 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
     setErrors({});
   };
 
+  const handleSubmit = (e?: React.FormEvent): void => {
+    if (e) {
+      e.preventDefault();
+    }
+    if (!validate()) {
+      return;
+    }
+
+    onSubmit(
+      {
+        environment: environment.trim(),
+        fromAt,
+        toAt,
+        message: message.trim() ? message.trim() : undefined,
+      },
+      () => {
+        handleReset();
+      }
+    );
+  };
+
   return (
-    <CardSharedComponent variant="elevated" className="h-full flex flex-col justify-between">
+    <CardSharedComponent variant="elevated">
       <div>
         {/* Form Header */}
         <div className="flex items-center gap-2.5 pb-4 mb-5 border-b border-slate-200/80 dark:border-zinc-800">
@@ -134,24 +173,23 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
 
           {/* From & To Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <InputSharedComponent
+            <CustomDateTimePickerSharedComponent
               label={EnvironmentUptimeRequestsCON.FIELD_FROM_LABEL}
-              type="datetime-local"
               value={fromAt}
-              onChange={(e) => {
-                setFromAt(e.target.value);
+              onChange={(val) => {
+                setFromAt(val);
                 if (errors.fromAt) setErrors((prev) => ({ ...prev, fromAt: undefined }));
               }}
               error={errors.fromAt}
               required
             />
 
-            <InputSharedComponent
+            <CustomDateTimePickerSharedComponent
               label={EnvironmentUptimeRequestsCON.FIELD_TO_LABEL}
-              type="datetime-local"
               value={toAt}
-              onChange={(e) => {
-                setToAt(e.target.value);
+              minDate={fromAt ? fromAt.split('T')[0] : undefined}
+              onChange={(val) => {
+                setToAt(val);
                 if (errors.toAt) setErrors((prev) => ({ ...prev, toAt: undefined }));
               }}
               error={errors.toAt}
