@@ -96,4 +96,6 @@ export default class ApplicationUserPreferenceKeyCON {
   // A per-browser random id, not a real user identity - this app has no
   // authentication system yet. See AnonymousClientIdentityUtility.ts.
   public static readonly ANONYMOUS_CLIENT_ID: string = 'ANONYMOUS_CLIENT_ID';
+  // The signed JWT issued by POST /Api/V1/Admin/Login. See AdminIdentityUtility.ts.
+  public static readonly ADMIN_JWT_TOKEN: string = 'ADMIN_JWT_TOKEN';
 }

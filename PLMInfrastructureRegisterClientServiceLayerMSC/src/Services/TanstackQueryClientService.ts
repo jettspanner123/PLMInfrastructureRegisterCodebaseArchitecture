@@ -43,6 +43,9 @@ import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssista
 import FeatureRequestsService from '../Features/FeatureRequests/Services/FeatureRequestsService';
 import EnvironmentUptimeRequestsService from '../Features/EnvironmentUptimeRequests/Services/EnvironmentUptimeRequestsService';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
+import AdminService from './AdminService';
+import AdminIdentityUtility from '../Utilities/AdminIdentityUtility';
+import type AdminLoginRequestInterfaceModel from '../Models/AdminLoginRequestInterfaceModel';
 
 export default class TanstackQueryClientService {
   public static current: TanstackQueryClientService = new TanstackQueryClientService();
@@ -896,6 +899,25 @@ export default class TanstackQueryClientService {
           toast.error('Failed to delete uptime request', {
             description: error.message || 'Please check your connection and try again.',
           });
+          options?.onError?.(error);
+        },
+      });
+    },
+  };
+
+  public readonly admin = {
+    useAdminLoginMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      return useMutation({
+        mutationFn: (request: AdminLoginRequestInterfaceModel) => AdminService.current.login(request),
+        onSuccess: (data) => {
+          AdminIdentityUtility.current.storeAdminToken(data.token);
+          toast.success('Logged in as Admin');
+          options?.onSuccess?.();
+        },
+        onError: (error: Error) => {
           options?.onError?.(error);
         },
       });

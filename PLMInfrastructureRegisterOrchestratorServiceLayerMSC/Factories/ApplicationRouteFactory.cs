@@ -188,5 +188,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             // FeatureRequestsRoutes.DeleteFeatureRequest.
             public const string DeleteEnvironmentUptimeRequest = "{id}";
         }
+
+        public static class AdminRoutes
+        {
+            public const string ControllerURL = "/Api/V1/Admin";
+
+            public const string Login = "Login";
+        }
     }
 }

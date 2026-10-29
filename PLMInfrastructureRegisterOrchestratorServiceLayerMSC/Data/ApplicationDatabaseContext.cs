@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
@@ -48,6 +49,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<FeatureRequestNexus> FeatureRequests => Set<FeatureRequestNexus>();
 
         public DbSet<EnvironmentUptimeRequestNexus> EnvironmentUptimeRequests => Set<EnvironmentUptimeRequestNexus>();
+
+        public DbSet<AdminAccountNexus> AdminAccounts => Set<AdminAccountNexus>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -263,6 +266,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 // so services never need to repeat `!request.IsDeleted` by
                 // hand.
                 entity.HasQueryFilter(request => !request.IsDeleted);
+            });
+
+            modelBuilder.Entity<AdminAccountNexus>(entity =>
+            {
+                entity.ToTable("IG_AdminAccountTBL");
+                entity.HasKey(account => account.Id);
+                entity.HasIndex(account => account.Email).IsUnique();
             });
         }
     }

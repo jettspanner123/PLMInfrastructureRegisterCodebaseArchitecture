@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
-import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff } from 'lucide-react';
+import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck } from 'lucide-react';
+import AdminIdentityUtility from '../../Utilities/AdminIdentityUtility';
+import AdminLoginModalController from './AdminLoginModalController';
 import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../Constants/ApplicationLayoutWidthCON';
 import ApplicationTableDensityCON from '../../Constants/ApplicationTableDensityCON';
@@ -54,6 +56,8 @@ export default function ProfileSettingsSharedComponent({
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState<boolean>(false);
+  const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => AdminIdentityUtility.current.isLoggedInAsAdmin());
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerRectRef = useRef<SimpleRect | null>(null);
   const [panelScope, animatePanel] = useAnimate();
@@ -169,7 +173,23 @@ export default function ProfileSettingsSharedComponent({
     navigate({ to: ApplicationRouteCON.SETTINGS_SUBSCRIPTIONS });
   };
 
+  const handleOpenAdminLogin = (): void => {
+    handleClose();
+    setIsAdminLoginModalOpen(true);
+  };
+
+  const handleCloseAdminLoginModal = (): void => {
+    setIsAdminLoginModalOpen(false);
+    // Re-checked on every close (success or cancel) rather than passed a
+    // dedicated "login succeeded" callback - harmless to re-check on cancel
+    // too, and keeps AdminLoginModalController itself unaware of this
+    // panel's own isAdmin state.
+    setIsAdmin(AdminIdentityUtility.current.isLoggedInAsAdmin());
+  };
+
   const handleConfirmSignOut = (): void => {
+    AdminIdentityUtility.current.clearAdminToken();
+    setIsAdmin(false);
     setIsSignOutModalOpen(false);
   };
 
@@ -247,7 +267,7 @@ export default function ProfileSettingsSharedComponent({
                         {NavigationCON.PROFILE_DISPLAY_NAME}
                       </h3>
                       <p className="text-[11px] text-slate-400 dark:text-zinc-500 truncate mt-0.5 font-mono">
-                        {NavigationCON.PROFILE_DISPLAY_ROLE}
+                        {isAdmin ? NavigationCON.PROFILE_DISPLAY_ROLE_ADMIN : NavigationCON.PROFILE_DISPLAY_ROLE}
                       </p>
                       <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-zinc-400 font-mono mt-0.5 truncate">
                         <Mail className="w-3 h-3 shrink-0 text-slate-400" />
@@ -296,6 +316,16 @@ export default function ProfileSettingsSharedComponent({
                       />
 
                       <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
+                        <button
+                          type="button"
+                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                          onClick={handleOpenAdminLogin}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                        >
+                          <ShieldCheck className="w-4 h-4" />
+                          <span>Admin Login</span>
+                        </button>
+
                         <button
                           type="button"
                           onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
@@ -396,6 +426,11 @@ export default function ProfileSettingsSharedComponent({
         </AnimatePresence>,
         document.body
       )}
+
+      <AdminLoginModalController
+        isOpen={isAdminLoginModalOpen}
+        onClose={handleCloseAdminLoginModal}
+      />
 
       <ConfirmationModalSharedComponent
         isOpen={isSignOutModalOpen}

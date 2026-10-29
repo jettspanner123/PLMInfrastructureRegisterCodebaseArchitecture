@@ -29,6 +29,7 @@ export default class NavigationCON {
   public static readonly PROFILE_DISPLAY_NAME: string = 'Enterprise User';
   public static readonly PROFILE_DISPLAY_EMAIL: string = 'user@theweplm.com';
   public static readonly PROFILE_DISPLAY_ROLE: string = 'USER';
+  public static readonly PROFILE_DISPLAY_ROLE_ADMIN: string = 'Administrator';
 
   public static readonly SIGN_OUT_TITLE: string = 'Sign Out of InfraGrid';
   public static readonly SIGN_OUT_SUBTITLE: string = 'Enterprise Session Termination';
