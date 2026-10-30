@@ -104,7 +104,7 @@ export default function FeatureRequestFormStaticComponent({
       <div>
         {/* Form Header */}
         <div className="flex items-center gap-2.5 pb-4 mb-5 border-b border-slate-200/80 dark:border-zinc-800">
-          <div className="w-8 h-8 rounded-lg bg-[#0C2086]/10 text-[#0C2086] dark:bg-sky-500/20 dark:text-sky-400 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-[#0D2086] text-white flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
