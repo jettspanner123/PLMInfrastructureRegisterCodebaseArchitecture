@@ -21,6 +21,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string Environment { get; set; } = string.Empty;
 
+        public string RequesterName { get; set; } = string.Empty;
+
         // Stored as UTC. Entered by the user as fixed CET (UTC+1, never DST-
         // shifted) wall-clock time on a <input type="datetime-local"> field
         // and converted server-side - see CETTimeZoneUtility.

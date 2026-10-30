@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ModalSharedComponent from '../../../Shared/Components/ModalSharedComponent';
-import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
-import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
-import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
+import ModalSharedComponent from './ModalSharedComponent';
+import ButtonSharedComponent from './ButtonSharedComponent';
+import PrimaryActionButtonSharedComponent from './PrimaryActionButtonSharedComponent';
+import TanstackQueryClientService from '../../Services/TanstackQueryClientService';
 
 export interface CreateOptionModalControllerProps {
   isOpen: boolean;

@@ -42,6 +42,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     TicketNumber = request.TicketNumber,
                     TicketId = request.TicketId,
                     Environment = request.Environment,
+                    RequesterName = request.RequesterName,
                     FromAt = request.FromAt,
                     ToAt = request.ToAt,
                     Message = request.Message,
@@ -63,6 +64,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             {
                 Id = Guid.NewGuid(),
                 Environment = request.Environment.Trim(),
+                RequesterName = request.RequesterName.Trim(),
                 FromAt = CETTimeZoneUtility.ToUtc(parsedFromAt),
                 ToAt = CETTimeZoneUtility.ToUtc(parsedToAt),
                 Message = string.IsNullOrWhiteSpace(request.Message) ? null : request.Message.Trim(),
@@ -98,6 +100,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 TicketNumber = nexus.TicketNumber,
                 TicketId = nexus.TicketId,
                 Environment = nexus.Environment,
+                RequesterName = nexus.RequesterName,
                 FromAt = nexus.FromAt,
                 ToAt = nexus.ToAt,
                 Message = nexus.Message,

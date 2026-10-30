@@ -31,7 +31,7 @@ import UptimeScheduleModalController from './Components/UptimeScheduleModalContr
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import ColumnVisibilityDropdownSharedComponent from '../../Shared/Components/ColumnVisibilityDropdownSharedComponent';
 import ContextMenuSharedComponent, { type ContextMenuItem } from '../../Shared/Components/ContextMenuSharedComponent';
-import CreateOptionModalController from './Components/CreateOptionModalController';
+import CreateOptionModalController from '../../Shared/Components/CreateOptionModalController';
 import AddCustomColorModalController from '../Resources/Components/AddCustomColorModalController';
 import TableSelectionService from '../../Services/TableSelectionService';
 import TanstackQueryClientService from '../../Services/TanstackQueryClientService';

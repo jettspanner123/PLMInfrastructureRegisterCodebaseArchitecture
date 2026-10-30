@@ -10,6 +10,12 @@ export default class EnvironmentUptimeRequestsCON {
   public static readonly FORM_HEADER_DESCRIPTION: string =
     'Request a planned uptime or downtime window for one of your environments.';
 
+  // Sourced from the same shared, growable Sponsor options list Environment
+  // Overview's own Sponsor dropdown uses (ConfigurationConstants fieldName
+  // "Sponsor") - not a separate options list of its own.
+  public static readonly FIELD_REQUESTER_LABEL: string = 'Requester Name';
+  public static readonly FIELD_REQUESTER_PLACEHOLDER: string = 'Search or select a requester...';
+
   public static readonly FIELD_ENVIRONMENT_LABEL: string = 'Environment';
   public static readonly FIELD_ENVIRONMENT_PLACEHOLDER: string = 'Select an environment...';
 

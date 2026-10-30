@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Send, RotateCcw, Sparkles } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Send, RotateCcw, Sparkles, Plus } from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
-import CustomSelectSharedComponent from '../../../Shared/Components/CustomSelectSharedComponent';
+import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
+import CreateOptionModalController from '../../../Shared/Components/CreateOptionModalController';
+import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
 import FeatureRequestsCON from '../Constants/FeatureRequestsCON';
 import { FeatureRequestCategoryEnumModel } from '../../../Models/FeatureRequestCategoryEnumModel';
 import { FeatureRequestPriorityEnumModel } from '../../../Models/FeatureRequestPriorityEnumModel';
@@ -22,8 +24,19 @@ export default function FeatureRequestFormStaticComponent({
   const [title, setTitle] = useState<string>('');
   const [category, setCategory] = useState<string>(FeatureRequestCategoryEnumModel.InfrastructureRegister);
   const [priority, setPriority] = useState<string>(FeatureRequestPriorityEnumModel.Medium);
-  const [requesterName, setRequesterName] = useState<string>(FeatureRequestsCON.DEFAULT_REQUESTER_NAME);
+  const [requesterName, setRequesterName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [isCreateSponsorModalOpen, setIsCreateSponsorModalOpen] = useState<boolean>(false);
+
+  // Requester Name is sourced from the same shared, growable Sponsor options
+  // list Environment Overview's own Sponsor dropdown uses - not a separate
+  // options list of its own.
+  const { data: sponsorOptions = [] } =
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('Sponsor');
+  const sponsorSelectOptions: SelectOption[] = useMemo(
+    () => sponsorOptions.map((name) => ({ value: name, label: name })),
+    [sponsorOptions]
+  );
 
   const [errors, setErrors] = useState<{
     title?: string;
@@ -58,7 +71,7 @@ export default function FeatureRequestFormStaticComponent({
     setTitle('');
     setCategory(FeatureRequestCategoryEnumModel.InfrastructureRegister);
     setPriority(FeatureRequestPriorityEnumModel.Medium);
-    setRequesterName(FeatureRequestsCON.DEFAULT_REQUESTER_NAME);
+    setRequesterName('');
     setDescription('');
     setErrors({});
   };
@@ -86,6 +99,7 @@ export default function FeatureRequestFormStaticComponent({
   };
 
   return (
+    <React.Fragment>
     <CardSharedComponent variant="card">
       <div>
         {/* Form Header */}
@@ -104,6 +118,31 @@ export default function FeatureRequestFormStaticComponent({
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Requester Name */}
+          <div>
+            <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5 block">
+              {FeatureRequestsCON.FIELD_REQUESTER_LABEL}
+            </label>
+            <CustomSelectSharedComponent
+              value={requesterName}
+              options={sponsorSelectOptions}
+              onChange={(val) => {
+                setRequesterName(val);
+                if (errors.requesterName) setErrors((prev) => ({ ...prev, requesterName: undefined }));
+              }}
+              placeholder={FeatureRequestsCON.FIELD_REQUESTER_PLACEHOLDER}
+              searchable
+              footerAction={{
+                label: 'Add New Sponsor',
+                icon: <Plus className="w-3.5 h-3.5" />,
+                onClick: () => setIsCreateSponsorModalOpen(true),
+              }}
+            />
+            {errors.requesterName && (
+              <span className="text-xs text-rose-500 mt-1 block">{errors.requesterName}</span>
+            )}
+          </div>
+
           {/* Title */}
           <InputSharedComponent
             label={FeatureRequestsCON.FIELD_TITLE_LABEL}
@@ -141,19 +180,6 @@ export default function FeatureRequestFormStaticComponent({
               />
             </div>
           </div>
-
-          {/* Requester Name */}
-          <InputSharedComponent
-            label={FeatureRequestsCON.FIELD_REQUESTER_LABEL}
-            placeholder={FeatureRequestsCON.FIELD_REQUESTER_PLACEHOLDER}
-            value={requesterName}
-            onChange={(e) => {
-              setRequesterName(e.target.value);
-              if (errors.requesterName) setErrors((prev) => ({ ...prev, requesterName: undefined }));
-            }}
-            error={errors.requesterName}
-            required
-          />
 
           {/* Description Textarea */}
           <div className="flex flex-col gap-1.5">
@@ -203,5 +229,17 @@ export default function FeatureRequestFormStaticComponent({
         />
       </div>
     </CardSharedComponent>
+
+    <CreateOptionModalController
+      isOpen={isCreateSponsorModalOpen}
+      onClose={() => setIsCreateSponsorModalOpen(false)}
+      fieldName="Sponsor"
+      title="Create Sponsor"
+      subtitle="Adds a new option to the shared Sponsor list, also used by Environment Overview."
+      inputLabel="Sponsor Name"
+      inputPlaceholder="e.g. Jane Doe"
+      onCreated={(newValue) => setRequesterName(newValue)}
+    />
+    </React.Fragment>
   );
 }

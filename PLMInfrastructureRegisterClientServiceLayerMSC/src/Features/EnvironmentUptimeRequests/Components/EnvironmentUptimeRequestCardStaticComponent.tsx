@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { Trash2, Clock, CalendarClock, ArrowRight, Copy, Check, Server, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, Clock, CalendarClock, ArrowRight, Copy, Check, Server, ChevronDown, ChevronUp, User } from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
 import BadgeSharedComponent, { type BadgeSharedComponentProps } from '../../../Shared/Components/BadgeSharedComponent';
 import ApplicationRouteCON from '../../../Constants/ApplicationRouteCON';
@@ -175,11 +175,18 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
         </div>
       )}
 
-      {/* Footer: Submission metadata & Delete action */}
+      {/* Footer: Requester, Submission metadata & Delete action */}
       <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-zinc-800/80 text-xs">
-        <div className="flex items-center gap-1 text-slate-400 dark:text-zinc-500">
-          <Clock className="w-3.5 h-3.5" />
-          <span>Submitted {formattedSubmittedAt}</span>
+        <div className="flex items-center gap-3 text-slate-500 dark:text-zinc-400 flex-wrap">
+          <span className="flex items-center gap-1.5">
+            <User className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+            <span className="font-medium text-slate-700 dark:text-zinc-300">{request.requesterName}</span>
+          </span>
+          <span>•</span>
+          <span className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+            <span>Submitted {formattedSubmittedAt}</span>
+          </span>
         </div>
 
         <button

@@ -27,6 +27,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 throw new ValidationException("Environment is required.");
             }
 
+            if (string.IsNullOrWhiteSpace(request.RequesterName))
+            {
+                throw new ValidationException("Requester name is required.");
+            }
+
             if (!DateTime.TryParse(
                     request.FromAt,
                     CultureInfo.InvariantCulture,

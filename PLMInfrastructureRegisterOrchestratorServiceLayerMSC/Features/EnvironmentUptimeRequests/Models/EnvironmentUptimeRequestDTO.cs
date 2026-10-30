@@ -12,6 +12,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string Environment { get; set; } = string.Empty;
 
+        public string RequesterName { get; set; } = string.Empty;
+
         public DateTime FromAt { get; set; }
 
         public DateTime ToAt { get; set; }

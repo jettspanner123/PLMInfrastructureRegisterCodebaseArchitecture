@@ -359,6 +359,10 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("text");
 
+                    b.Property<string>("RequesterName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");

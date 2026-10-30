@@ -4,6 +4,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
     {
         public string Environment { get; set; } = string.Empty;
 
+        public string RequesterName { get; set; } = string.Empty;
+
         // Naive local-time strings straight off a <input type="datetime-local">
         // field (e.g. "2026-03-15T14:30") - interpreted as fixed CET (UTC+1,
         // never DST-shifted) wall-clock time server-side, never as UTC and

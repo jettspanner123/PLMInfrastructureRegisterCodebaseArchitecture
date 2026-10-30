@@ -7,6 +7,7 @@ export default interface EnvironmentUptimeRequestInterfaceModel {
   ticketNumber: number;
   ticketId: string;
   environment: string;
+  requesterName: string;
   fromAt: string;
   toAt: string;
   message: string | null;

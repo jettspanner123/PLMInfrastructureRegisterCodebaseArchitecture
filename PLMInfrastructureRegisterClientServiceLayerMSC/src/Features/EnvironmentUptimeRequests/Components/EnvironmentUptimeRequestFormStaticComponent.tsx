@@ -9,12 +9,14 @@ import {
   Box,
   GraduationCap,
   Cpu,
+  Plus,
 } from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
 import CustomDateTimePickerSharedComponent from '../../../Shared/Components/CustomDateTimePickerSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
+import CreateOptionModalController from '../../../Shared/Components/CreateOptionModalController';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
 import EnvironmentNameListUtility from '../../../Utilities/EnvironmentNameListUtility';
 import EnvironmentUptimeRequestsCON from '../Constants/EnvironmentUptimeRequestsCON';
@@ -66,12 +68,25 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
     [environmentOverviews]
   );
 
+  // Requester Name is sourced from the same shared, growable Sponsor options
+  // list Environment Overview's own Sponsor dropdown uses - not a separate
+  // options list of its own.
+  const { data: sponsorOptions = [] } =
+    TanstackQueryClientService.current.configurationConstants.useOptionsQuery('Sponsor');
+  const sponsorSelectOptions: SelectOption[] = useMemo(
+    () => sponsorOptions.map((name) => ({ value: name, label: name })),
+    [sponsorOptions]
+  );
+  const [isCreateSponsorModalOpen, setIsCreateSponsorModalOpen] = useState<boolean>(false);
+
+  const [requesterName, setRequesterName] = useState<string>('');
   const [environment, setEnvironment] = useState<string>('');
   const [fromAt, setFromAt] = useState<string>('');
   const [toAt, setToAt] = useState<string>('');
   const [message, setMessage] = useState<string>('');
 
   const [errors, setErrors] = useState<{
+    requesterName?: string;
     environment?: string;
     fromAt?: string;
     toAt?: string;
@@ -80,6 +95,10 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
 
   const validate = (): boolean => {
     const nextErrors: typeof errors = {};
+
+    if (!requesterName.trim()) {
+      nextErrors.requesterName = 'Requester name is required';
+    }
 
     if (!environment.trim()) {
       nextErrors.environment = 'Environment is required';
@@ -104,6 +123,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
   };
 
   const handleReset = (): void => {
+    setRequesterName('');
     setEnvironment('');
     setFromAt('');
     setToAt('');
@@ -121,6 +141,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
 
     onSubmit(
       {
+        requesterName: requesterName.trim(),
         environment: environment.trim(),
         fromAt,
         toAt,
@@ -133,6 +154,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
   };
 
   return (
+    <React.Fragment>
     <CardSharedComponent variant="card">
       <div>
         {/* Form Header */}
@@ -151,6 +173,31 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Requester Name */}
+          <div>
+            <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5 block">
+              {EnvironmentUptimeRequestsCON.FIELD_REQUESTER_LABEL}
+            </label>
+            <CustomSelectSharedComponent
+              value={requesterName}
+              options={sponsorSelectOptions}
+              onChange={(val) => {
+                setRequesterName(val);
+                if (errors.requesterName) setErrors((prev) => ({ ...prev, requesterName: undefined }));
+              }}
+              placeholder={EnvironmentUptimeRequestsCON.FIELD_REQUESTER_PLACEHOLDER}
+              searchable
+              footerAction={{
+                label: 'Add New Sponsor',
+                icon: <Plus className="w-3.5 h-3.5" />,
+                onClick: () => setIsCreateSponsorModalOpen(true),
+              }}
+            />
+            {errors.requesterName && (
+              <span className="text-xs text-rose-500 mt-1 block">{errors.requesterName}</span>
+            )}
+          </div>
+
           {/* Environment */}
           <div>
             <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5 block">
@@ -245,5 +292,17 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
         />
       </div>
     </CardSharedComponent>
+
+    <CreateOptionModalController
+      isOpen={isCreateSponsorModalOpen}
+      onClose={() => setIsCreateSponsorModalOpen(false)}
+      fieldName="Sponsor"
+      title="Create Sponsor"
+      subtitle="Adds a new option to the shared Sponsor list, also used by Environment Overview."
+      inputLabel="Sponsor Name"
+      inputPlaceholder="e.g. Jane Doe"
+      onCreated={(newValue) => setRequesterName(newValue)}
+    />
+    </React.Fragment>
   );
 }

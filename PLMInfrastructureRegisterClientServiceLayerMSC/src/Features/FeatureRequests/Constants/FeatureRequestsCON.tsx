@@ -31,9 +31,11 @@ export default class FeatureRequestsCON {
   public static readonly FIELD_CATEGORY_LABEL: string = 'Target Module / Area';
   public static readonly FIELD_PRIORITY_LABEL: string = 'Urgency / Priority';
 
+  // Sourced from the same shared, growable Sponsor options list Environment
+  // Overview's own Sponsor dropdown uses (ConfigurationConstants fieldName
+  // "Sponsor") - not a separate options list of its own.
   public static readonly FIELD_REQUESTER_LABEL: string = 'Requester Name';
-  public static readonly FIELD_REQUESTER_PLACEHOLDER: string = 'e.g. Enterprise User';
-  public static readonly DEFAULT_REQUESTER_NAME: string = 'Enterprise User';
+  public static readonly FIELD_REQUESTER_PLACEHOLDER: string = 'Search or select a requester...';
 
   public static readonly FIELD_DESCRIPTION_LABEL: string = 'Detailed Description & Use Case';
   public static readonly FIELD_DESCRIPTION_PLACEHOLDER: string =
