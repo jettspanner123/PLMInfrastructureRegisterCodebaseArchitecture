@@ -100,6 +100,31 @@ body {
   border-radius: 9999px;
 }
 
+/* Same scoped-exception reasoning as .action-items-scroll-area above, but
+   for CustomSelectSharedComponent's options list - now that its search box
+   and footer action render outside this scroll area (so they stay fixed
+   while only the list itself scrolls), a hint that more options exist below
+   is worth a scrollbar here too. Thinner than .action-items-scroll-area -
+   "barely visible" is the point, just enough to notice scrolling is possible. */
+.custom-select-options-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-stone) transparent;
+}
+
+.custom-select-options-scroll-area::-webkit-scrollbar {
+  display: block;
+  width: 4px;
+}
+
+.custom-select-options-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-select-options-scroll-area::-webkit-scrollbar-thumb {
+  background-color: var(--color-stone);
+  border-radius: 9999px;
+}
+
 .font-serif-headline {
   font-family: var(--font-serif);
 }

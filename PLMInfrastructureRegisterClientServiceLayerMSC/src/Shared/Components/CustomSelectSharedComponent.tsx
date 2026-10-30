@@ -232,10 +232,10 @@ export default function CustomSelectSharedComponent({
             usePortal
               ? ''
               : `absolute ${dropdownAnchor === 'right' ? 'right-0' : 'left-0 right-0'} top-full mt-1.5`
-          } min-w-[200px] z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs space-y-1 sm:space-y-0.5 max-h-80 sm:max-h-72 overflow-y-auto ${dropdownClassName || ''}`}
+          } min-w-[200px] z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs flex flex-col max-h-80 sm:max-h-72 overflow-hidden ${dropdownClassName || ''}`}
         >
             {isSearchActive && (
-              <div className="p-2 sm:p-1.5 border-b border-slate-100 dark:border-zinc-800/80 mb-1">
+              <div className="shrink-0 p-2 sm:p-1.5 border-b border-slate-100 dark:border-zinc-800/80 mb-1">
                 <div className="relative flex items-center">
                   <Search className="w-4 h-4 sm:w-3.5 sm:h-3.5 absolute left-3 sm:left-2.5 text-slate-400 dark:text-zinc-500 pointer-events-none" />
                   <input
@@ -269,6 +269,7 @@ export default function CustomSelectSharedComponent({
               </div>
             )}
 
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-1 sm:space-y-0.5 custom-select-options-scroll-area">
             {multiple && !searchTerm.trim() && (
               <button
                 type="button"
@@ -342,9 +343,10 @@ export default function CustomSelectSharedComponent({
                 );
               })
             )}
+            </div>
 
             {footerAction && (
-              <div className="pt-1.5 sm:pt-1 mt-1 border-t border-slate-100 dark:border-zinc-800/80">
+              <div className="shrink-0 pt-1.5 sm:pt-1 mt-1 border-t border-slate-100 dark:border-zinc-800/80">
                 <button
                   type="button"
                   onClick={(e) => {
