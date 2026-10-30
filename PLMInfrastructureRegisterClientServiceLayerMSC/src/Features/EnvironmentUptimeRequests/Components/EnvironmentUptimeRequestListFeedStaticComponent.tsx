@@ -70,8 +70,9 @@ export default function EnvironmentUptimeRequestListFeedStaticComponent({
       if (query) {
         const matchesTicketId = req.ticketId.toLowerCase().includes(query);
         const matchesEnvironment = req.environment.toLowerCase().includes(query);
+        const matchesRequester = req.requesterName.toLowerCase().includes(query);
         const matchesMessage = (req.message ?? '').toLowerCase().includes(query);
-        if (!matchesTicketId && !matchesEnvironment && !matchesMessage) {
+        if (!matchesTicketId && !matchesEnvironment && !matchesRequester && !matchesMessage) {
           return false;
         }
       }
