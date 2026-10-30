@@ -75,6 +75,37 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             }
         }
 
+        [HttpPut(ApplicationRouteFactory.EnvironmentUptimeRequestsRoutes.UpdateStatus)]
+        public async Task<ActionResult<APIResponse<EnvironmentUptimeRequestDTO>>> UpdateStatusAsynchronous(
+            [FromRoute] Guid id,
+            [FromBody] UpdateEnvironmentUptimeRequestStatusDTO? request)
+        {
+            try
+            {
+                EnvironmentUptimeRequestDTO updated =
+                    await _environmentUptimeRequestsService.UpdateStatusAsynchronous(id, request);
+
+                return Ok(APIResponse<EnvironmentUptimeRequestDTO>.Succeeded(
+                    updated, "Uptime request updated successfully.", 200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Uptime request status update validation failed: {Message}", valEx.Message);
+                return BadRequest(APIResponse<EnvironmentUptimeRequestDTO>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                _logger.LogWarning("Uptime request not found: {Message}", notFoundEx.Message);
+                return NotFound(APIResponse<EnvironmentUptimeRequestDTO>.Failed(notFoundEx.Message, new List<string>(), 404));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while updating uptime request status.");
+                return StatusCode(500, APIResponse<EnvironmentUptimeRequestDTO>.Failed(
+                    "An unexpected error occurred while updating the uptime request.", new List<string>(), 500));
+            }
+        }
+
         [HttpDelete(ApplicationRouteFactory.EnvironmentUptimeRequestsRoutes.DeleteEnvironmentUptimeRequest)]
         public async Task<ActionResult<APIResponse<bool>>> DeleteEnvironmentUptimeRequestAsynchronous([FromRoute] Guid id)
         {

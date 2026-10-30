@@ -68,5 +68,23 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 throw new ValidationException("A valid non-empty Uptime Request ID is required.");
             }
         }
+
+        public void AssertUpdateStatusRequest(UpdateEnvironmentUptimeRequestStatusDTO? request)
+        {
+            if (request is null)
+            {
+                throw new ValidationException("Status update payload cannot be null.");
+            }
+
+            if (!Enum.IsDefined(typeof(EnvironmentUptimeRequestStatusEnum), request.Status))
+            {
+                throw new ValidationException("Status is not a recognized value.");
+            }
+
+            if (request.AdminMessage is not null && request.AdminMessage.Trim().Length > 4000)
+            {
+                throw new ValidationException("Admin message cannot exceed 4000 characters.");
+            }
+        }
     }
 }

@@ -47,6 +47,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     ToAt = request.ToAt,
                     Message = request.Message,
                     Status = request.Status,
+                    AdminMessage = request.AdminMessage,
                     CreatedAt = request.CreatedAt,
                 })
                 .ToListAsync();
@@ -105,6 +106,43 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 ToAt = nexus.ToAt,
                 Message = nexus.Message,
                 Status = nexus.Status,
+                AdminMessage = nexus.AdminMessage,
+                CreatedAt = nexus.CreatedAt,
+            };
+        }
+
+        public async Task<EnvironmentUptimeRequestDTO> UpdateStatusAsynchronous(Guid id, UpdateEnvironmentUptimeRequestStatusDTO? request)
+        {
+            EnvironmentUptimeRequestsAssertion.Current.AssertValidId(id);
+            EnvironmentUptimeRequestsAssertion.Current.AssertUpdateStatusRequest(request);
+
+            EnvironmentUptimeRequestNexus? nexus = await _dbContext.EnvironmentUptimeRequests
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (nexus is null)
+            {
+                throw new NotFoundException($"Uptime Request with ID '{id}' was not found.");
+            }
+
+            nexus.Status = request!.Status;
+            nexus.AdminMessage = string.IsNullOrWhiteSpace(request.AdminMessage) ? null : request.AdminMessage.Trim();
+
+            await _dbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Updated status of Uptime Request '{TicketId}' to {Status}.", nexus.TicketId, nexus.Status);
+
+            return new EnvironmentUptimeRequestDTO
+            {
+                Id = nexus.Id,
+                TicketNumber = nexus.TicketNumber,
+                TicketId = nexus.TicketId,
+                Environment = nexus.Environment,
+                RequesterName = nexus.RequesterName,
+                FromAt = nexus.FromAt,
+                ToAt = nexus.ToAt,
+                Message = nexus.Message,
+                Status = nexus.Status,
+                AdminMessage = nexus.AdminMessage,
                 CreatedAt = nexus.CreatedAt,
             };
         }

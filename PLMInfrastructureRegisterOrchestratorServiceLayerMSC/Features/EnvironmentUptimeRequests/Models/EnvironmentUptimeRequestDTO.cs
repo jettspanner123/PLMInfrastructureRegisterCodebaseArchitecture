@@ -22,6 +22,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public EnvironmentUptimeRequestStatusEnum Status { get; set; }
 
+        public string? AdminMessage { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }

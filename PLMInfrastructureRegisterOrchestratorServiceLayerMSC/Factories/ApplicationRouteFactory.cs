@@ -187,6 +187,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             // EnvironmentOverviewRoutes.DeleteEnvironmentOverview and
             // FeatureRequestsRoutes.DeleteFeatureRequest.
             public const string DeleteEnvironmentUptimeRequest = "{id}";
+
+            // Admin-only (enforced client-side only for now, matching this
+            // app's existing admin-gating convention - see
+            // ADMIN_GATED_ROW_DELETION_AND_EDIT_MODE_TODO.md).
+            public const string UpdateStatus = "{id}/Status";
         }
 
         public static class AdminRoutes

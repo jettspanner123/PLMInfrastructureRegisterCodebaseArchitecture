@@ -34,6 +34,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public EnvironmentUptimeRequestStatusEnum Status { get; set; }
 
+        // Admin-only, free-text, single current note - overwritten (not
+        // appended/history-tracked) every time an admin saves a status
+        // change. Visible to every viewer of this ticket, editable only by
+        // an admin - see AdminController-gated frontend controls.
+        public string? AdminMessage { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public bool IsDeleted { get; set; }

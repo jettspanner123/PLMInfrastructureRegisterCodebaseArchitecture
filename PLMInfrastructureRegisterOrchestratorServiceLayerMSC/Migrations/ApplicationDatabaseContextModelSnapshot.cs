@@ -340,6 +340,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AdminMessage")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
