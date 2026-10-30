@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type GlobalSearchEntityType = 'resource' | 'environmentOverview';
 
@@ -54,13 +54,18 @@ export function useGlobalSearchRowJump<T>(
   onClearFilters: () => void
 ): { highlightedId: string | null } {
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
-  const pendingIdRef = useRef<string | null>(null);
+  // State, not a ref - setting it must trigger a re-render so the effect
+  // below re-checks `items` right away. A ref doesn't, so when the clicked
+  // row was already visible (no active filter actually needed clearing),
+  // `items` never changed and the scroll silently never fired - the
+  // intermittent "sometimes it doesn't jump" bug.
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
   useEffect(() => {
     const tryConsume = (): void => {
       const id = GlobalSearchNavigationService.consumePendingTarget(entityType);
       if (id) {
-        pendingIdRef.current = id;
+        setPendingId(id);
         onClearFilters();
       }
     };
@@ -72,10 +77,10 @@ export function useGlobalSearchRowJump<T>(
   }, [entityType]);
 
   useEffect(() => {
-    const id = pendingIdRef.current;
-    if (!id) return;
-    if (!items.some((item) => getId(item) === id)) return; // not visible in the list yet - filters may still be clearing
-    pendingIdRef.current = null;
+    if (!pendingId) return;
+    if (!items.some((item) => getId(item) === pendingId)) return; // not visible in the list yet - filters may still be clearing
+    const id = pendingId;
+    setPendingId(null);
 
     requestAnimationFrame(() => {
       const rowElement = document.querySelector(`[data-row-id="${id}"]`);
@@ -84,7 +89,7 @@ export function useGlobalSearchRowJump<T>(
       setTimeout(() => setHighlightedId(null), HIGHLIGHT_FLASH_DURATION_MS);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items]);
+  }, [items, pendingId]);
 
   return { highlightedId };
 }
