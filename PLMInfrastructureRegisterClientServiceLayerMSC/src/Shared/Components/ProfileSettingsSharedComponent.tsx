@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck } from 'lucide-react';
 import AdminIdentityUtility, { useIsAdmin } from '../../Utilities/AdminIdentityUtility';
 import AdminLoginModalController from './AdminLoginModalController';
@@ -198,6 +199,7 @@ export default function ProfileSettingsSharedComponent({
 
   const handleConfirmSignOut = (): void => {
     AdminIdentityUtility.current.clearAdminToken();
+    toast.success('Signed out of Admin');
     setIsSignOutModalOpen(false);
   };
 
@@ -324,6 +326,7 @@ export default function ProfileSettingsSharedComponent({
                       />
 
                       <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
+                        {!isAdmin && (
                         <button
                           type="button"
                           onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
@@ -333,6 +336,7 @@ export default function ProfileSettingsSharedComponent({
                           <ShieldCheck className="w-4 h-4" />
                           <span>Admin Login</span>
                         </button>
+                        )}
 
                         <button
                           type="button"
@@ -414,6 +418,7 @@ export default function ProfileSettingsSharedComponent({
                         ]}
                       />
 
+                      {isAdmin && (
                       <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
                         <button
                           type="button"
@@ -425,6 +430,7 @@ export default function ProfileSettingsSharedComponent({
                           <span>Sign Out</span>
                         </button>
                       </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>

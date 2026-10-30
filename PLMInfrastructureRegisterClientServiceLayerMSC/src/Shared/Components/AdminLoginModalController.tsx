@@ -45,6 +45,13 @@ export default function AdminLoginModalController({
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent): void => {
+    if (event.key === 'Enter' && email.trim() && password) {
+      event.preventDefault();
+      void handleLogin();
+    }
+  };
+
   return (
     <ModalSharedComponent
       isOpen={isOpen}
@@ -66,7 +73,7 @@ export default function AdminLoginModalController({
         </div>
       }
     >
-      <div className="space-y-4">
+      <div className="space-y-4" onKeyDown={handleKeyDown}>
         <InputSharedComponent
           label="Email"
           placeholder="you@example.com"

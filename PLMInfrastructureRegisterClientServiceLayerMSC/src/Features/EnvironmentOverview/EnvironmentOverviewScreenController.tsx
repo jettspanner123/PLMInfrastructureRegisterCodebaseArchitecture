@@ -2482,7 +2482,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             placeholder="Search environments…"
             ariaLabel="Search Environment Overview"
           />
-          <PrimaryActionButtonSharedComponent label="Add Environment" onClick={handleAddEnvironmentClick} />
+          {isAdmin && (
+            <PrimaryActionButtonSharedComponent label="Add Environment" onClick={handleAddEnvironmentClick} />
+          )}
 
           <div className="relative shrink-0">
             <button
