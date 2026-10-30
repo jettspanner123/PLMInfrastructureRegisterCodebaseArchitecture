@@ -325,7 +325,7 @@ export default function ProfileSettingsSharedComponent({
                         ]}
                       />
 
-                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-0.5">
+                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-2">
                         {!isAdmin && (
                         <button
                           type="button"
