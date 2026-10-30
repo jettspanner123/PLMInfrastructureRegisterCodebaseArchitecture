@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck } from 'lucide-react';
+import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck, History } from 'lucide-react';
 import AdminIdentityUtility, { useIsAdmin } from '../../Utilities/AdminIdentityUtility';
 import AdminLoginModalController from './AdminLoginModalController';
 import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
@@ -331,10 +331,21 @@ export default function ProfileSettingsSharedComponent({
                           type="button"
                           onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
                           onClick={handleOpenAdminLogin}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
                         >
                           <ShieldCheck className="w-4 h-4" />
                           <span>Admin Login</span>
+                        </button>
+                        )}
+
+                        {isAdmin && (
+                        <button
+                          type="button"
+                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                        >
+                          <History className="w-4 h-4" />
+                          <span>Edit History</span>
                         </button>
                         )}
 
@@ -342,7 +353,7 @@ export default function ProfileSettingsSharedComponent({
                           type="button"
                           onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
                           onClick={handleNavigateToSettings}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
                         >
                           <Settings className="w-4 h-4" />
                           <span>Settings</span>
