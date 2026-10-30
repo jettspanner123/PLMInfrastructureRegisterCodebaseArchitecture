@@ -120,17 +120,15 @@ export default function FeatureRequestListFeedStaticComponent({
             Loading feature requests...
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="my-auto">
-            <EmptyStateSharedComponent
-              title={requests.length === 0 ? 'No Feature Requests Yet' : 'No Matching Requests'}
-              description={
-                requests.length === 0
-                  ? 'Be the first to submit a suggestion or new requirement using the form on the left.'
-                  : 'Try adjusting your search query or filter options to find what you are looking for.'
-              }
-              icon={<Inbox className="w-8 h-8 text-slate-400" />}
-            />
-          </div>
+          <EmptyStateSharedComponent
+            title={requests.length === 0 ? 'No Feature Requests Yet' : 'No Matching Requests'}
+            description={
+              requests.length === 0
+                ? 'Be the first to submit a suggestion or new requirement using the form on the left.'
+                : 'Try adjusting your search query or filter options to find what you are looking for.'
+            }
+            icon={<Inbox className="w-8 h-8 text-slate-400" />}
+          />
         ) : (
           filteredRequests.map((req) => (
             <FeatureRequestCardStaticComponent

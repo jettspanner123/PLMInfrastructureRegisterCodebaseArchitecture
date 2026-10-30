@@ -123,17 +123,15 @@ export default function EnvironmentUptimeRequestListFeedStaticComponent({
             Loading uptime requests...
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="my-auto">
-            <EmptyStateSharedComponent
-              title={requests.length === 0 ? 'No Uptime Requests Yet' : 'No Matching Requests'}
-              description={
-                requests.length === 0
-                  ? 'Submit your first planned uptime or downtime window using the form on the left.'
-                  : 'Try adjusting your search query or filter to find what you are looking for.'
-              }
-              icon={<CalendarX2 className="w-8 h-8 text-slate-400" />}
-            />
-          </div>
+          <EmptyStateSharedComponent
+            title={requests.length === 0 ? 'No Uptime Requests Yet' : 'No Matching Requests'}
+            description={
+              requests.length === 0
+                ? 'Submit your first planned uptime or downtime window using the form on the left.'
+                : 'Try adjusting your search query or filter to find what you are looking for.'
+            }
+            icon={<CalendarX2 className="w-8 h-8 text-slate-400" />}
+          />
         ) : (
           filteredRequests.map((req) => (
             <EnvironmentUptimeRequestCardStaticComponent

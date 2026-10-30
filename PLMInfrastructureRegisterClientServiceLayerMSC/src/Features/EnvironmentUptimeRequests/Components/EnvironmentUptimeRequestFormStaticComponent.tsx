@@ -133,7 +133,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
   };
 
   return (
-    <CardSharedComponent variant="elevated">
+    <CardSharedComponent variant="card">
       <div>
         {/* Form Header */}
         <div className="flex items-center gap-2.5 pb-4 mb-5 border-b border-slate-200/80 dark:border-zinc-800">
