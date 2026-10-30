@@ -12,5 +12,6 @@ export default interface EnvironmentUptimeRequestInterfaceModel {
   toAt: string;
   message: string | null;
   status: EnvironmentUptimeRequestStatusEnumModel;
+  adminMessage: string | null;
   createdAt: string;
 }

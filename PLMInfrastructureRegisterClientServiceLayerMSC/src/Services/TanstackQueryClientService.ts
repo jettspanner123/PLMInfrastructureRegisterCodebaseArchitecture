@@ -39,6 +39,7 @@ import type CreateFeatureRequestInputInterfaceModel from '../Models/CreateFeatur
 import type UpdateFeatureRequestStatusInputInterfaceModel from '../Models/UpdateFeatureRequestStatusInputInterfaceModel';
 import type EnvironmentUptimeRequestInterfaceModel from '../Models/EnvironmentUptimeRequestInterfaceModel';
 import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
+import type UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel from '../Models/UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel';
 import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssistantService';
 import FeatureRequestsService from '../Features/FeatureRequests/Services/FeatureRequestsService';
 import EnvironmentUptimeRequestsService from '../Features/EnvironmentUptimeRequests/Services/EnvironmentUptimeRequestsService';
@@ -897,6 +898,28 @@ export default class TanstackQueryClientService {
         },
         onError: (error: Error) => {
           toast.error('Failed to delete uptime request', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useUpdateEnvironmentUptimeRequestStatusMutation: (options?: {
+      onSuccess?: (data: EnvironmentUptimeRequestInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel }) =>
+          EnvironmentUptimeRequestsService.current.updateStatus(id, request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ENVIRONMENT_UPTIME_REQUESTS });
+          toast.success('Uptime request updated');
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to update uptime request', {
             description: error.message || 'Please check your connection and try again.',
           });
           options?.onError?.(error);

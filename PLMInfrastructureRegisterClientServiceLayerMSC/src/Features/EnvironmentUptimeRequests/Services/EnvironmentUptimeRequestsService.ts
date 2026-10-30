@@ -2,6 +2,7 @@ import ApplicationNetworkAPIConfiguration from '../../../Constants/ApplicationNe
 import type APIResponseInterfaceModel from '../../../Models/APIResponseInterfaceModel';
 import type EnvironmentUptimeRequestInterfaceModel from '../../../Models/EnvironmentUptimeRequestInterfaceModel';
 import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../../../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
+import type UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel from '../../../Models/UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel';
 
 export default class EnvironmentUptimeRequestsService {
   public static current: EnvironmentUptimeRequestsService = new EnvironmentUptimeRequestsService();
@@ -31,6 +32,25 @@ export default class EnvironmentUptimeRequestsService {
 
     if (!response.ok || !payload.status) {
       throw new Error(payload.message || 'Failed to submit uptime request.');
+    }
+
+    return payload.data;
+  }
+
+  public async updateStatus(
+    id: string,
+    request: UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel
+  ): Promise<EnvironmentUptimeRequestInterfaceModel> {
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentUptimeRequests/${id}/Status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const payload: APIResponseInterfaceModel<EnvironmentUptimeRequestInterfaceModel> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to update the uptime request.');
     }
 
     return payload.data;
