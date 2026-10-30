@@ -6,6 +6,7 @@ import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedC
 import CustomSelectSharedComponent, { type SelectOption } from '../../Shared/Components/CustomSelectSharedComponent';
 import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
 import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
+import { useIsAdmin } from '../../Utilities/AdminIdentityUtility';
 import ChatAssistantSharedComponent from '../../Shared/Components/ChatAssistantSharedComponent';
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import ContextMenuSharedComponent, { type ContextMenuItem } from '../../Shared/Components/ContextMenuSharedComponent';
@@ -29,6 +30,7 @@ import AddLegendModalController from './Components/AddLegendModalController';
 import type LegendEntryInterfaceModel from '../../Models/LegendEntryInterfaceModel';
 
 export default function ResourcesScreenController(): React.JSX.Element {
+  const isAdmin = useIsAdmin();
   const { data: resources = [], isLoading } = TanstackQueryClientService.current.resources.useResourcesQuery();
 
   // Lifted (not self-contained) specifically because right-click cell
@@ -722,7 +724,9 @@ export default function ResourcesScreenController(): React.JSX.Element {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <ViewEditModeToggleSharedComponent value={editMode} onChange={setEditMode} />
+          {isAdmin && (
+            <ViewEditModeToggleSharedComponent value={editMode} onChange={setEditMode} />
+          )}
 
           <ExpandableSearchSharedComponent
             value={searchQuery}

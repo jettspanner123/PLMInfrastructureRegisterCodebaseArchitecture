@@ -1,5 +1,13 @@
+import { useEffect, useState } from 'react';
 import ApplicationUserPreferenceKeyCON from '../Constants/ApplicationUserPreferenceKeyCON';
 import ApplicationUserPreferenceUtility from './ApplicationUserPreferenceUtility';
+
+// Storage changes alone don't trigger a React re-render in sibling
+// components (e.g. logging in via the profile card doesn't re-render
+// ResourcesScreenController, a totally separate part of the tree) - this
+// event is how useIsAdmin() below finds out something changed without
+// needing a page reload.
+const ADMIN_STATUS_CHANGED_EVENT = 'admin-status-changed';
 
 interface DecodedAdminJwtPayload {
   sub?: string;
@@ -28,6 +36,7 @@ export default class AdminIdentityUtility {
 
   public storeAdminToken(token: string): void {
     ApplicationUserPreferenceUtility.current.setPreference(ApplicationUserPreferenceKeyCON.ADMIN_JWT_TOKEN, token);
+    window.dispatchEvent(new Event(ADMIN_STATUS_CHANGED_EVENT));
   }
 
   public getAdminToken(): string | null {
@@ -73,5 +82,26 @@ export default class AdminIdentityUtility {
 
   public clearAdminToken(): void {
     ApplicationUserPreferenceUtility.current.setPreference(ApplicationUserPreferenceKeyCON.ADMIN_JWT_TOKEN, '');
+    window.dispatchEvent(new Event(ADMIN_STATUS_CHANGED_EVENT));
   }
+}
+
+// Reactive read of admin status - re-renders the calling component whenever
+// storeAdminToken/clearAdminToken fire anywhere in the app (login, sign out),
+// not just on this component's own mount. Every place that needs to hide/show
+// something based on admin status (profile card, Mode toggles, future gates)
+// should use this instead of calling AdminIdentityUtility directly.
+export function useIsAdmin(): boolean {
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => AdminIdentityUtility.current.isLoggedInAsAdmin());
+
+  useEffect(() => {
+    const handleAdminStatusChanged = (): void => {
+      setIsAdmin(AdminIdentityUtility.current.isLoggedInAsAdmin());
+    };
+
+    window.addEventListener(ADMIN_STATUS_CHANGED_EVENT, handleAdminStatusChanged);
+    return () => window.removeEventListener(ADMIN_STATUS_CHANGED_EVENT, handleAdminStatusChanged);
+  }, []);
+
+  return isAdmin;
 }

@@ -24,6 +24,7 @@ import EmptyStateSharedComponent from '../../Shared/Components/EmptyStateSharedC
 import ExpandableSearchSharedComponent from '../../Shared/Components/ExpandableSearchSharedComponent';
 import CopyableTableCellSharedComponent from '../../Shared/Components/CopyableTableCellSharedComponent';
 import ViewEditModeToggleSharedComponent from '../../Shared/Components/ViewEditModeToggleSharedComponent';
+import { useIsAdmin } from '../../Utilities/AdminIdentityUtility';
 import PrimaryActionButtonSharedComponent from '../../Shared/Components/PrimaryActionButtonSharedComponent';
 import CustomSelectSharedComponent from '../../Shared/Components/CustomSelectSharedComponent';
 import UptimeScheduleModalController from './Components/UptimeScheduleModalController';
@@ -92,6 +93,7 @@ const CREATE_OPTION_MODAL_COPY_BY_FIELD_NAME: Record<
 };
 
 export default function EnvironmentOverviewScreenController(): React.JSX.Element {
+  const isAdmin = useIsAdmin();
   const { data: environments = [], isLoading } =
     TanstackQueryClientService.current.environmentOverview.useEnvironmentOverviewsQuery();
 
@@ -2470,7 +2472,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <ViewEditModeToggleSharedComponent value={editMode} onChange={handleModeChange} />
+          {isAdmin && (
+            <ViewEditModeToggleSharedComponent value={editMode} onChange={handleModeChange} />
+          )}
 
           <ExpandableSearchSharedComponent
             value={searchQuery}

@@ -27,9 +27,15 @@ export interface ViewEditModeToggleSharedComponentProps {
 // and this guard is what skips our own handler in exactly that situation,
 // so the two never actually compete.
 //
-// Edit Mode itself still has no admin-only gate - see
-// ADMIN_GATED_ROW_DELETION_AND_EDIT_MODE_TODO.md for why, and what's
-// expected to change once there's an authentication system to gate it with.
+// Both call sites (Resources, Environment Overview) now only mount this
+// component at all when AdminIdentityUtility.current.isLoggedInAsAdmin()
+// is true - a non-admin never sees the toggle and never registers its
+// Ctrl/Cmd+E listener either, since the whole component (hook included)
+// simply isn't in the tree. This is frontend-only: the backend endpoints
+// Edit Mode drives (UpdateStatus, AddOption/GetOptions, cell formatting,
+// row insert/delete, custom columns) still have zero server-side
+// enforcement - see ADMIN_GATED_ROW_DELETION_AND_EDIT_MODE_TODO.md for
+// that remaining gap and what's expected to close it.
 export default function ViewEditModeToggleSharedComponent({
   value,
   onChange,

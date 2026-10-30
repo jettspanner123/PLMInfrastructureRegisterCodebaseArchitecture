@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
 import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck } from 'lucide-react';
-import AdminIdentityUtility from '../../Utilities/AdminIdentityUtility';
+import AdminIdentityUtility, { useIsAdmin } from '../../Utilities/AdminIdentityUtility';
 import AdminLoginModalController from './AdminLoginModalController';
 import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../Constants/ApplicationLayoutWidthCON';
@@ -57,7 +57,7 @@ export default function ProfileSettingsSharedComponent({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState<boolean>(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(() => AdminIdentityUtility.current.isLoggedInAsAdmin());
+  const isAdmin = useIsAdmin();
 
   // Falls back to the static generic identity whenever not logged in as
   // admin - same fallback shape this whole block already had before admin
@@ -194,16 +194,10 @@ export default function ProfileSettingsSharedComponent({
 
   const handleCloseAdminLoginModal = (): void => {
     setIsAdminLoginModalOpen(false);
-    // Re-checked on every close (success or cancel) rather than passed a
-    // dedicated "login succeeded" callback - harmless to re-check on cancel
-    // too, and keeps AdminLoginModalController itself unaware of this
-    // panel's own isAdmin state.
-    setIsAdmin(AdminIdentityUtility.current.isLoggedInAsAdmin());
   };
 
   const handleConfirmSignOut = (): void => {
     AdminIdentityUtility.current.clearAdminToken();
-    setIsAdmin(false);
     setIsSignOutModalOpen(false);
   };
 
