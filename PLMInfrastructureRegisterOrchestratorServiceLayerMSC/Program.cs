@@ -52,13 +52,17 @@ builder.Services.AddScoped<AdminService>();
 const string FrontendOriginPolicy = "FrontendOriginPolicy";
 
 // Local dev's origin is always allowed; FRONTEND_PRODUCTION_ORIGIN (e.g. the
-// deployed Vercel URL) is optional - only set in deployed environments, so
+// deployed Vercel URL(s)) is optional - only set in deployed environments, so
 // this reads it via TryGetEnvKeyValue rather than the throwing
-// GetEnvKeyValue local dev never configures.
+// GetEnvKeyValue local dev never configures. Comma-separated so this one
+// shared backend can serve multiple production frontends at once (e.g. this
+// project's own frontend plus a rebranded fork's) without needing a second
+// env var per additional frontend.
 List<string> allowedFrontendOrigins = new() { "http://localhost:4637" };
-if (ENValidatorHelper.Current.TryGetEnvKeyValue("FRONTEND_PRODUCTION_ORIGIN", out string? productionOrigin))
+if (ENValidatorHelper.Current.TryGetEnvKeyValue("FRONTEND_PRODUCTION_ORIGIN", out string? productionOrigins))
 {
-    allowedFrontendOrigins.Add(productionOrigin!);
+    allowedFrontendOrigins.AddRange(
+        productionOrigins!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 }
 
 builder.Services.AddCors(options =>
