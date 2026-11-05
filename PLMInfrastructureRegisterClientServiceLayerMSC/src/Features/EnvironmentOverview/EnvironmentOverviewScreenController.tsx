@@ -2053,7 +2053,9 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               else actionItemsScrollRefs.current.delete(environment.id);
             }}
             style={CellFormatHelper.current.getTextStyle(format?.textColorKey)}
-            className="action-items-scroll-area max-h-40 overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1"
+            className={`action-items-scroll-area overflow-y-auto space-y-2 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 pr-1 ${
+              isExpanded ? 'max-h-[28rem]' : 'max-h-56'
+            }`}
           >
             {isEditMode && renderActionItemDraftOrButton(environment.id)}
             {visibleLines.map((line, lineIndex) => renderActionItemsLine(environment.id, line, lineIndex))}
