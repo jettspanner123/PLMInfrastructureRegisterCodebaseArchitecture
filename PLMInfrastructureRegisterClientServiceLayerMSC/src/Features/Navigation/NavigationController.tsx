@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import ProfileSettingsSharedComponent from '../../Shared/Components/ProfileSettingsSharedComponent';
 import SegmentedControlSharedComponent from '../../Shared/Components/SegmentedControlSharedComponent';
+import NavigationThemeToggleSharedComponent from '../../Shared/Components/NavigationThemeToggleSharedComponent';
 import NavigationCON from './Constants/NavigationCON';
 import ApplicationRouteCON from '../../Constants/ApplicationRouteCON';
 import weplmLogo from '../../Assets/weplm.jpeg';
@@ -96,9 +97,12 @@ export default function NavigationController({
               }))}
             />
 
-            <ProfileSettingsSharedComponent
+            <NavigationThemeToggleSharedComponent
               currentTheme={currentTheme}
               onToggleTheme={onToggleTheme}
+            />
+
+            <ProfileSettingsSharedComponent
               layoutWidth={layoutWidth}
               onToggleLayoutWidth={onToggleLayoutWidth}
             />
