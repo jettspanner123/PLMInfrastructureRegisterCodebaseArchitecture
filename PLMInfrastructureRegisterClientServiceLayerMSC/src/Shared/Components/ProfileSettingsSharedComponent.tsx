@@ -3,10 +3,11 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useAnimate } from 'motion/react';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { Settings, Mail, Sun, Moon, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck, History } from 'lucide-react';
+import { Settings, Mail, LogOut, Maximize2, Minimize2, Rows3, Rows4, X, MoveHorizontal, EyeOff, Pin, PinOff, ShieldCheck, History, Megaphone, ListChecks } from 'lucide-react';
+import DowntimeAnnouncementFormModalController from '../../Features/DowntimeAnnouncements/Components/DowntimeAnnouncementFormModalController';
+import DowntimeAnnouncementHistoryModalController from '../../Features/DowntimeAnnouncements/Components/DowntimeAnnouncementHistoryModalController';
 import AdminIdentityUtility, { useIsAdmin } from '../../Utilities/AdminIdentityUtility';
 import AdminLoginModalController from './AdminLoginModalController';
-import ApplicationThemeCON from '../../Constants/ApplicationThemeCON';
 import ApplicationLayoutWidthCON from '../../Constants/ApplicationLayoutWidthCON';
 import ApplicationTableDensityCON from '../../Constants/ApplicationTableDensityCON';
 import ApplicationStickyHeaderCON from '../../Constants/ApplicationStickyHeaderCON';
@@ -23,8 +24,6 @@ import ConfirmationModalSharedComponent from './ConfirmationModalSharedComponent
 import ControllBlockSharedComponent from './ControllBlockSharedComponent';
 
 export interface ProfileSettingsSharedComponentProps {
-  currentTheme: string;
-  onToggleTheme: () => void;
   layoutWidth: string;
   onToggleLayoutWidth: () => void;
 }
@@ -49,8 +48,6 @@ const PROFILE_SETTINGS_LAYOUT_ID = 'profile-settings-panel';
 const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
 export default function ProfileSettingsSharedComponent({
-  currentTheme,
-  onToggleTheme,
   layoutWidth,
   onToggleLayoutWidth,
 }: ProfileSettingsSharedComponentProps): React.JSX.Element {
@@ -58,6 +55,8 @@ export default function ProfileSettingsSharedComponent({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState<boolean>(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState<boolean>(false);
+  const [isCreateDowntimeAnnouncementModalOpen, setIsCreateDowntimeAnnouncementModalOpen] = useState<boolean>(false);
+  const [isDowntimeAnnouncementHistoryModalOpen, setIsDowntimeAnnouncementHistoryModalOpen] = useState<boolean>(false);
   const isAdmin = useIsAdmin();
 
   // Falls back to the static generic identity whenever not logged in as
@@ -193,6 +192,16 @@ export default function ProfileSettingsSharedComponent({
     setIsAdminLoginModalOpen(true);
   };
 
+  const handleOpenCreateDowntimeAnnouncement = (): void => {
+    handleClose();
+    setIsCreateDowntimeAnnouncementModalOpen(true);
+  };
+
+  const handleOpenDowntimeAnnouncementHistory = (): void => {
+    handleClose();
+    setIsDowntimeAnnouncementHistoryModalOpen(true);
+  };
+
   const handleCloseAdminLoginModal = (): void => {
     setIsAdminLoginModalOpen(false);
   };
@@ -295,17 +304,6 @@ export default function ProfileSettingsSharedComponent({
                       </span>
 
                       <ControllBlockSharedComponent
-                        label="Theme Mode"
-                        layoutId="themeModeControlPill"
-                        value={currentTheme}
-                        onChange={() => onToggleTheme()}
-                        options={[
-                          { value: ApplicationThemeCON.LIGHT, label: 'Light Mode', icon: <Sun className="w-3.5 h-3.5" /> },
-                          { value: ApplicationThemeCON.DARK, label: 'Dark Mode', icon: <Moon className="w-3.5 h-3.5" /> },
-                        ]}
-                      />
-
-                      <ControllBlockSharedComponent
                         label="Table Width"
                         layoutId="layoutWidthControlPill"
                         value={layoutWidth}
@@ -349,6 +347,34 @@ export default function ProfileSettingsSharedComponent({
                         </button>
                         )}
 
+                        {isAdmin && (
+                        <div className="space-y-1.5 mt-3">
+                          <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
+                            Downtime Announcement
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                              onClick={handleOpenCreateDowntimeAnnouncement}
+                              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                            >
+                              <Megaphone className="w-4 h-4" />
+                              <span>Create Announcement</span>
+                            </button>
+                            <button
+                              type="button"
+                              onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                              onClick={handleOpenDowntimeAnnouncementHistory}
+                              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                            >
+                              <ListChecks className="w-4 h-4" />
+                              <span>View Announcements</span>
+                            </button>
+                          </div>
+                        </div>
+                        )}
+
                         <button
                           type="button"
                           onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
@@ -363,10 +389,6 @@ export default function ProfileSettingsSharedComponent({
 
                     {/* Column 2: Table Controls & Session */}
                     <div className="space-y-3 pt-4 sm:pt-0 sm:pl-6">
-                      <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
-                        Table Controls & Session
-                      </span>
-
                       <TableHeightControlStaticComponent />
 
                       <ControllBlockSharedComponent
@@ -468,6 +490,16 @@ export default function ProfileSettingsSharedComponent({
         cancelText="Cancel"
         variant="danger"
         maxWidth="md"
+      />
+
+      <DowntimeAnnouncementFormModalController
+        isOpen={isCreateDowntimeAnnouncementModalOpen}
+        onClose={() => setIsCreateDowntimeAnnouncementModalOpen(false)}
+      />
+
+      <DowntimeAnnouncementHistoryModalController
+        isOpen={isDowntimeAnnouncementHistoryModalOpen}
+        onClose={() => setIsDowntimeAnnouncementHistoryModalOpen(false)}
       />
     </React.Fragment>
   );
