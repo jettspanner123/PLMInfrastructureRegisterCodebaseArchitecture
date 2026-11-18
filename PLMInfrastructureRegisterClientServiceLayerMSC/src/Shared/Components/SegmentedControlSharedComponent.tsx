@@ -7,6 +7,9 @@ export interface SegmentedControlOption<T extends string> {
   label: string;
   icon?: React.ReactNode;
   disabled?: boolean;
+  // Screen-reader name to use instead of `label` when `iconOnly` hides the
+  // visible label text (e.g. "Switch to light mode" instead of "Light Mode").
+  ariaLabel?: string;
 }
 
 export interface SegmentedControlSharedComponentProps<T extends string> {
@@ -25,6 +28,9 @@ export interface SegmentedControlSharedComponentProps<T extends string> {
   desktopOnly?: boolean;
   activeTextClassName?: string;
   inactiveTextClassName?: string;
+  // Hides the visible label text, leaving only the icon; the label still
+  // drives the native hover tooltip and the default aria-label.
+  iconOnly?: boolean;
 }
 
 export default function SegmentedControlSharedComponent<T extends string>({
@@ -39,6 +45,7 @@ export default function SegmentedControlSharedComponent<T extends string>({
   desktopOnly = false,
   activeTextClassName = 'text-slate-900 dark:text-white font-bold',
   inactiveTextClassName = 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white',
+  iconOnly = false,
 }: SegmentedControlSharedComponentProps<T>): React.JSX.Element {
   const displayClassName = desktopOnly ? 'hidden md:flex' : 'flex';
 
@@ -70,6 +77,7 @@ export default function SegmentedControlSharedComponent<T extends string>({
             }
             onClick={option.disabled ? undefined : () => onChange(option.value)}
             title={option.label}
+            aria-label={option.ariaLabel ?? option.label}
             className={`${buttonClassName} ${
               option.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
             }`}
@@ -91,7 +99,7 @@ export default function SegmentedControlSharedComponent<T extends string>({
               }`}
             >
               {option.icon}
-              <span>{option.label}</span>
+              {!iconOnly && <span>{option.label}</span>}
             </span>
           </button>
         );
