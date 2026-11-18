@@ -200,5 +200,32 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string Login = "Login";
         }
+
+        public static class DowntimeAnnouncementsRoutes
+        {
+            public const string ControllerURL = "/Api/V1/DowntimeAnnouncements";
+
+            public const string CreateDowntimeAnnouncement = "";
+
+            public const string GetActiveDowntimeAnnouncement = "Active";
+
+            // Admin-only - enforced server-side via [Authorize(Policy = "RequireAdmin")],
+            // unlike every other "admin-only" route in this app today (see
+            // Program.cs's new JWT-bearer wiring).
+            public const string EndDowntimeAnnouncementEarly = "{id}/EndEarly";
+
+            // Same empty route as Create - differentiated by HTTP verb
+            // (GET vs POST), same pattern as EnvironmentUptimeRequestsRoutes'
+            // GetAllEnvironmentUptimeRequests/CreateEnvironmentUptimeRequest.
+            // Admin-only (FR-013).
+            public const string GetAllDowntimeAnnouncement = "";
+
+            // Admin-only (FR-016/FR-018).
+            public const string UpdateDowntimeAnnouncement = "{id}";
+
+            // Same route as Update - differentiated by HTTP verb (DELETE vs
+            // PUT). Admin-only (FR-017).
+            public const string DeleteDowntimeAnnouncement = "{id}";
+        }
     }
 }
