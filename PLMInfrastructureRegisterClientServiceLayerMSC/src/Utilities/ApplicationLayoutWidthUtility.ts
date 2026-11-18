@@ -15,7 +15,7 @@ export default class ApplicationLayoutWidthUtility {
     if (saved === ApplicationLayoutWidthCON.CONSTRAINED || saved === ApplicationLayoutWidthCON.FULL_WIDTH) {
       return saved;
     }
-    return ApplicationLayoutWidthCON.CONSTRAINED; // Default to the current constrained width
+    return ApplicationLayoutWidthCON.FULL_WIDTH; // Default to Max Width
   }
 
   public applyPreference(value: string): void {
