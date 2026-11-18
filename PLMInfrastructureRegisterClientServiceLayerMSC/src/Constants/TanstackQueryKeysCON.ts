@@ -10,6 +10,8 @@ export default class TanstackQueryKeysCON {
   public static readonly ENVIRONMENT_OVERVIEW_CUSTOM_COLUMNS: readonly string[] = ['environment-overview-custom-columns'];
   public static readonly FEATURE_REQUESTS: readonly string[] = ['feature-requests'];
   public static readonly ENVIRONMENT_UPTIME_REQUESTS: readonly string[] = ['environment-uptime-requests'];
+  public static readonly ACTIVE_DOWNTIME_ANNOUNCEMENT: readonly string[] = ['active-downtime-announcement'];
+  public static readonly ALL_DOWNTIME_ANNOUNCEMENTS: readonly string[] = ['all-downtime-announcements'];
   // Parameterized rather than one static key per field - Status, Sponsor,
   // Infrastructure Register's custom colors, and any future growable-
   // dropdown field across the whole app each get their own independently
