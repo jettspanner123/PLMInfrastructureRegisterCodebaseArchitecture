@@ -1,9 +1,13 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ConfigurationConstants.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Services;
@@ -48,6 +52,41 @@ builder.Services.AddHttpClient<ChatAssistantService>();
 builder.Services.AddScoped<FeatureRequestsService>();
 builder.Services.AddScoped<EnvironmentUptimeRequestsService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<DowntimeAnnouncementsService>();
+
+// First real server-side admin check in this backend - every other
+// "admin-only" action up to now is enforced client-side only (see
+// AdminIdentityUtility.ts's own comment to that effect). AdminService
+// already signs a JWT on login with a short "role" claim; this just
+// starts actually validating it. No iss/aud claims exist on that token,
+// so those checks stay off - turning them on would break every admin
+// token already issued and stored in a browser today.
+string jwtSigningKey = ENValidatorHelper.Current.GetEnvKeyValue("JWT_SIGNING_KEY");
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        // Without this, JwtSecurityTokenHandler remaps the token's short
+        // "role" claim to the long ClaimTypes.Role URI on the way in, so
+        // RequireClaim("role", "Admin") below would never match it.
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey)),
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdmin", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("role", "Admin");
+    });
+});
 
 const string FrontendOriginPolicy = "FrontendOriginPolicy";
 
@@ -71,7 +110,11 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(allowedFrontendOrigins.ToArray())
             .WithMethods("GET", "POST", "PUT", "DELETE")
-            .WithHeaders("Content-Type");
+            // Authorization added for the Downtime Announcements feature -
+            // the first fetch calls in this app to actually send the admin
+            // JWT (see DowntimeAnnouncementsService.ts); without it here,
+            // the browser's CORS preflight blocks the request entirely.
+            .WithHeaders("Content-Type", "Authorization");
     });
 });
 
@@ -93,6 +136,9 @@ if (string.IsNullOrWhiteSpace(renderAssignedPort))
 }
 
 app.UseCors(FrontendOriginPolicy);
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
