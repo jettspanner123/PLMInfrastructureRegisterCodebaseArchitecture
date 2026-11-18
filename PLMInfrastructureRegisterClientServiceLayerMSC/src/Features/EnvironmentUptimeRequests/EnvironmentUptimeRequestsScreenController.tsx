@@ -3,6 +3,7 @@ import TanstackQueryClientService from '../../Services/TanstackQueryClientServic
 import ConfirmationModalSharedComponent from '../../Shared/Components/ConfirmationModalSharedComponent';
 import EnvironmentUptimeRequestFormStaticComponent from './Components/EnvironmentUptimeRequestFormStaticComponent';
 import EnvironmentUptimeRequestListFeedStaticComponent from './Components/EnvironmentUptimeRequestListFeedStaticComponent';
+import DowntimeAnnouncementBannerSharedComponent from '../DowntimeAnnouncements/Components/DowntimeAnnouncementBannerSharedComponent';
 import EnvironmentUptimeRequestsCON from './Constants/EnvironmentUptimeRequestsCON';
 import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
 
@@ -59,6 +60,8 @@ export default function EnvironmentUptimeRequestsScreenController(): React.JSX.E
           </p>
         </div>
       </div>
+
+      <DowntimeAnnouncementBannerSharedComponent />
 
       {/* 50:50 Side-by-Side Layout Container */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
