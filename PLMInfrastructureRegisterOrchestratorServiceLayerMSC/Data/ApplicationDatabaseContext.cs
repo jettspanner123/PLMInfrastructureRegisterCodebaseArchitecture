@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Models;
@@ -51,6 +52,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<EnvironmentUptimeRequestNexus> EnvironmentUptimeRequests => Set<EnvironmentUptimeRequestNexus>();
 
         public DbSet<AdminAccountNexus> AdminAccounts => Set<AdminAccountNexus>();
+
+        public DbSet<DowntimeAnnouncementNexus> DowntimeAnnouncements => Set<DowntimeAnnouncementNexus>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -273,6 +276,13 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 entity.ToTable("IG_AdminAccountTBL");
                 entity.HasKey(account => account.Id);
                 entity.HasIndex(account => account.Email).IsUnique();
+            });
+
+            modelBuilder.Entity<DowntimeAnnouncementNexus>(entity =>
+            {
+                entity.ToTable("IG_DowntimeAnnouncementTBL");
+                entity.HasKey(announcement => announcement.Id);
+                entity.HasQueryFilter(announcement => !announcement.IsDeleted);
             });
         }
     }

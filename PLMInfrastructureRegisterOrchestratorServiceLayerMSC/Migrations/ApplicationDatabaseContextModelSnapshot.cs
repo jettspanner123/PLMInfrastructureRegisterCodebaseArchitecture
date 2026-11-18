@@ -128,6 +128,47 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.ToTable("IG_ChatMessageTBL", (string)null);
                 });
 
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Models.DowntimeAnnouncementNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("EndedEarlyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Environments")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Heading")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IG_DowntimeAnnouncementTBL", (string)null);
+                });
+
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models.EnvironmentOverviewCellFormatNexus", b =>
                 {
                     b.Property<Guid>("Id")
