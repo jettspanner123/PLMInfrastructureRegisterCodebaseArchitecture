@@ -11,6 +11,10 @@ obj/
 *.user
 *.suo
 
+# Python bytecode cache (.specify's own scripts)
+__pycache__/
+*.pyc
+
 # Contains real internal infrastructure data (hostnames, private IPs, support
 # contacts) — kept locally for reference, not tracked in version control.
 PLMInfrastructureRegisterAgentDocumentationNMSC/PLM_Infrastructure_Register_Infrastructure_Register.csv
