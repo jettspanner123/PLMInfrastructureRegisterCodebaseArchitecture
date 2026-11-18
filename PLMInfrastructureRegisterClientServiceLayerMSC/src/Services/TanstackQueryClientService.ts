@@ -43,6 +43,10 @@ import type UpdateEnvironmentUptimeRequestStatusRequestInterfaceModel from '../M
 import ChatAssistantService from '../Features/ChatAssistant/Services/ChatAssistantService';
 import FeatureRequestsService from '../Features/FeatureRequests/Services/FeatureRequestsService';
 import EnvironmentUptimeRequestsService from '../Features/EnvironmentUptimeRequests/Services/EnvironmentUptimeRequestsService';
+import DowntimeAnnouncementsService from '../Features/DowntimeAnnouncements/Services/DowntimeAnnouncementsService';
+import type DowntimeAnnouncementInterfaceModel from '../Models/DowntimeAnnouncementInterfaceModel';
+import type CreateDowntimeAnnouncementInputInterfaceModel from '../Models/CreateDowntimeAnnouncementInputInterfaceModel';
+import type UpdateDowntimeAnnouncementInputInterfaceModel from '../Models/UpdateDowntimeAnnouncementInputInterfaceModel';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
 import AdminService from './AdminService';
 import AdminIdentityUtility from '../Utilities/AdminIdentityUtility';
@@ -920,6 +924,117 @@ export default class TanstackQueryClientService {
         },
         onError: (error: Error) => {
           toast.error('Failed to update uptime request', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+  };
+
+  public readonly downtimeAnnouncements = {
+    // Short staleTime (not the 60s most queries in this app use) so expiry
+    // and an admin's "End Now" are both reflected promptly for every viewer.
+    useActiveDowntimeAnnouncementQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ACTIVE_DOWNTIME_ANNOUNCEMENT,
+        queryFn: () => DowntimeAnnouncementsService.current.getActiveDowntimeAnnouncement(),
+        staleTime: 1000 * 30,
+      });
+    },
+
+    useCreateDowntimeAnnouncementMutation: (options?: {
+      onSuccess?: (data: DowntimeAnnouncementInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: CreateDowntimeAnnouncementInputInterfaceModel) =>
+          DowntimeAnnouncementsService.current.createDowntimeAnnouncement(request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ACTIVE_DOWNTIME_ANNOUNCEMENT });
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ALL_DOWNTIME_ANNOUNCEMENTS });
+          toast.success('Downtime announcement created');
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to create downtime announcement', {
+            description: error.message || 'Please check your inputs and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useEndDowntimeAnnouncementEarlyMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => DowntimeAnnouncementsService.current.endDowntimeAnnouncementEarly(id),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ACTIVE_DOWNTIME_ANNOUNCEMENT });
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ALL_DOWNTIME_ANNOUNCEMENTS });
+          toast.success('Downtime announcement ended');
+          options?.onSuccess?.();
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to end downtime announcement', {
+            description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useAllDowntimeAnnouncementsQuery: (enabled: boolean = true) => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ALL_DOWNTIME_ANNOUNCEMENTS,
+        queryFn: () => DowntimeAnnouncementsService.current.getAllDowntimeAnnouncements(),
+        staleTime: 1000 * 30,
+        enabled,
+      });
+    },
+
+    useUpdateDowntimeAnnouncementMutation: (options?: {
+      onSuccess?: (data: DowntimeAnnouncementInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: ({ id, request }: { id: string; request: UpdateDowntimeAnnouncementInputInterfaceModel }) =>
+          DowntimeAnnouncementsService.current.updateDowntimeAnnouncement(id, request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ACTIVE_DOWNTIME_ANNOUNCEMENT });
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ALL_DOWNTIME_ANNOUNCEMENTS });
+          toast.success('Downtime announcement updated');
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to update downtime announcement', {
+            description: error.message || 'Please check your inputs and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+
+    useDeleteDowntimeAnnouncementMutation: (options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (id: string) => DowntimeAnnouncementsService.current.deleteDowntimeAnnouncement(id),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ACTIVE_DOWNTIME_ANNOUNCEMENT });
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.ALL_DOWNTIME_ANNOUNCEMENTS });
+          toast.success('Downtime announcement deleted');
+          options?.onSuccess?.();
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to delete downtime announcement', {
             description: error.message || 'Please check your connection and try again.',
           });
           options?.onError?.(error);
