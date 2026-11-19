@@ -10,6 +10,8 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Assertion;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Jira.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Jira.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Utilities;
 
 namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Services
@@ -18,13 +20,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
     {
         private readonly ApplicationDatabaseContext _dbContext;
         private readonly ILogger<EnvironmentUptimeRequestsService> _logger;
+        private readonly JiraService _jiraService;
 
         public EnvironmentUptimeRequestsService(
             ApplicationDatabaseContext dbContext,
-            ILogger<EnvironmentUptimeRequestsService> logger)
+            ILogger<EnvironmentUptimeRequestsService> logger,
+            JiraService jiraService)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _jiraService = jiraService;
         }
 
         // IMPORTANT: this projects directly inside .Select() (not via a
@@ -43,16 +48,31 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     TicketId = request.TicketId,
                     Environment = request.Environment,
                     RequesterName = request.RequesterName,
+                    RequesterEmail = request.RequesterEmail,
                     FromAt = request.FromAt,
                     ToAt = request.ToAt,
                     Message = request.Message,
                     Status = request.Status,
                     AdminMessage = request.AdminMessage,
                     CreatedAt = request.CreatedAt,
+                    JiraTicketKey = request.JiraTicketKey,
+                    JiraTicketUrl = request.JiraTicketUrl,
                 })
                 .ToListAsync();
         }
 
+        // Jira ticket creation happens IN BETWEEN two saves, not before the
+        // first one - see research.md §4 in specs/002-jira-ticket-creation.
+        // The Uptime Request's own generated TicketId (a Postgres IDENTITY +
+        // generated-stored-column value) doesn't exist until a row is
+        // actually inserted, but the Jira ticket's Description is required
+        // to contain that real TicketId - so the row is inserted first,
+        // Jira is called with the now-known TicketId, and on failure the
+        // row is hard-deleted again before returning an error. Net effect
+        // from any OTHER request's point of view: a failed attempt never
+        // leaves a visible row behind, exactly as if Jira had been called
+        // first - just sequenced to avoid a second Jira call to patch the
+        // ticket ID in afterward.
         public async Task<EnvironmentUptimeRequestDTO> CreateEnvironmentUptimeRequestAsynchronous(
             CreateEnvironmentUptimeRequestDTO request)
         {
@@ -66,6 +86,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 Id = Guid.NewGuid(),
                 Environment = request.Environment.Trim(),
                 RequesterName = request.RequesterName.Trim(),
+                RequesterEmail = request.RequesterEmail.Trim(),
                 FromAt = CETTimeZoneUtility.ToUtc(parsedFromAt),
                 ToAt = CETTimeZoneUtility.ToUtc(parsedToAt),
                 Message = string.IsNullOrWhiteSpace(request.Message) ? null : request.Message.Trim(),
@@ -90,10 +111,86 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                     "Uptime Request ticket numbering has reached its maximum (UPTM-99999). Contact an administrator.");
             }
 
-            _logger.LogInformation(
-                "Created new Uptime Request '{TicketId}' for environment '{Environment}'.",
+            JiraTicketCreationResultModel jiraResult = await _jiraService.CreateUptimeRequestTicketAsynchronous(
                 nexus.TicketId,
-                nexus.Environment);
+                nexus.Environment,
+                nexus.RequesterName,
+                nexus.RequesterEmail,
+                nexus.FromAt,
+                nexus.ToAt,
+                nexus.Message);
+
+            if (!jiraResult.IsSuccess)
+            {
+                _logger.LogWarning(
+                    "Jira ticket creation failed for attempted Uptime Request '{TicketId}': {FailureReason}",
+                    nexus.TicketId,
+                    jiraResult.FailureReason);
+
+                _dbContext.TicketCreationErrors.Add(new JiraTicketCreationErrorNexus
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedAt = DateTime.UtcNow,
+                    AttemptedTicketId = nexus.TicketId,
+                    Environment = nexus.Environment,
+                    RequesterName = nexus.RequesterName,
+                    RequesterEmail = nexus.RequesterEmail,
+                    FromAt = nexus.FromAt,
+                    ToAt = nexus.ToAt,
+                    Message = nexus.Message,
+                    AttemptedSummary = jiraResult.AttemptedSummary,
+                    AttemptedDescription = jiraResult.AttemptedDescription,
+                    FailureReason = jiraResult.FailureReason ?? "Unknown failure.",
+                    JiraStatusCode = jiraResult.StatusCode,
+                    JiraResponseBody = jiraResult.ResponseBody,
+                });
+
+                _dbContext.EnvironmentUptimeRequests.Remove(nexus);
+
+                await _dbContext.SaveChangesAsync();
+
+                throw new ExternalServiceException(
+                    "Couldn't create the Jira ticket for this request — please try again or contact an admin.");
+            }
+
+            nexus.JiraTicketKey = jiraResult.TicketKey;
+            nexus.JiraTicketUrl = jiraResult.TicketUrl;
+
+            foreach (JiraEnrichmentFailureModel enrichmentFailure in jiraResult.EnrichmentFailures)
+            {
+                _logger.LogWarning(
+                    "Jira field '{FieldName}' could not be set on ticket '{JiraTicketKey}' for Uptime Request '{TicketId}': {FailureReason}",
+                    enrichmentFailure.FieldName,
+                    nexus.JiraTicketKey,
+                    nexus.TicketId,
+                    enrichmentFailure.FailureReason);
+
+                _dbContext.TicketCreationErrors.Add(new JiraTicketCreationErrorNexus
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedAt = DateTime.UtcNow,
+                    AttemptedTicketId = nexus.TicketId,
+                    Environment = nexus.Environment,
+                    RequesterName = nexus.RequesterName,
+                    RequesterEmail = nexus.RequesterEmail,
+                    FromAt = nexus.FromAt,
+                    ToAt = nexus.ToAt,
+                    Message = nexus.Message,
+                    AttemptedSummary = jiraResult.AttemptedSummary,
+                    AttemptedDescription = jiraResult.AttemptedDescription,
+                    FailureReason = $"[{enrichmentFailure.FieldName}] {enrichmentFailure.FailureReason}",
+                    JiraStatusCode = enrichmentFailure.StatusCode,
+                    JiraResponseBody = enrichmentFailure.ResponseBody,
+                });
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Created new Uptime Request '{TicketId}' for environment '{Environment}' with Jira ticket '{JiraTicketKey}'.",
+                nexus.TicketId,
+                nexus.Environment,
+                nexus.JiraTicketKey);
 
             return new EnvironmentUptimeRequestDTO
             {
@@ -102,12 +199,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 TicketId = nexus.TicketId,
                 Environment = nexus.Environment,
                 RequesterName = nexus.RequesterName,
+                RequesterEmail = nexus.RequesterEmail,
                 FromAt = nexus.FromAt,
                 ToAt = nexus.ToAt,
                 Message = nexus.Message,
                 Status = nexus.Status,
                 AdminMessage = nexus.AdminMessage,
                 CreatedAt = nexus.CreatedAt,
+                JiraTicketKey = nexus.JiraTicketKey,
+                JiraTicketUrl = nexus.JiraTicketUrl,
             };
         }
 
@@ -138,12 +238,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 TicketId = nexus.TicketId,
                 Environment = nexus.Environment,
                 RequesterName = nexus.RequesterName,
+                RequesterEmail = nexus.RequesterEmail,
                 FromAt = nexus.FromAt,
                 ToAt = nexus.ToAt,
                 Message = nexus.Message,
                 Status = nexus.Status,
                 AdminMessage = nexus.AdminMessage,
                 CreatedAt = nexus.CreatedAt,
+                JiraTicketKey = nexus.JiraTicketKey,
+                JiraTicketUrl = nexus.JiraTicketUrl,
             };
         }
 

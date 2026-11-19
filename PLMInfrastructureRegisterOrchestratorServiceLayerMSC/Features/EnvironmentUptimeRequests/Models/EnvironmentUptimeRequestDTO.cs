@@ -14,6 +14,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string RequesterName { get; set; } = string.Empty;
 
+        public string RequesterEmail { get; set; } = string.Empty;
+
         public DateTime FromAt { get; set; }
 
         public DateTime ToAt { get; set; }
@@ -25,5 +27,9 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         public string? AdminMessage { get; set; }
 
         public DateTime CreatedAt { get; set; }
+
+        public string? JiraTicketKey { get; set; }
+
+        public string? JiraTicketUrl { get; set; }
     }
 }

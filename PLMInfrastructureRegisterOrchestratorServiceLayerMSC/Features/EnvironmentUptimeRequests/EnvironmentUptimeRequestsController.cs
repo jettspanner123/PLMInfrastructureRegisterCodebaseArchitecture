@@ -67,6 +67,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
                 _logger.LogWarning("Uptime request conflict: {Message}", conflictEx.Message);
                 return Conflict(APIResponse<EnvironmentUptimeRequestDTO>.Failed(conflictEx.Message, new List<string>(), 409));
             }
+            catch (ExternalServiceException externalServiceEx)
+            {
+                _logger.LogWarning("Uptime request external service failure: {Message}", externalServiceEx.Message);
+                return StatusCode(502, APIResponse<EnvironmentUptimeRequestDTO>.Failed(externalServiceEx.Message, new List<string>(), 502));
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error while creating uptime request.");

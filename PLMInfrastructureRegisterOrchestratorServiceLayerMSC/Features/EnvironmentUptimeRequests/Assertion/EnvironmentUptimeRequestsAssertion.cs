@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
 
@@ -10,6 +11,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         private static readonly EnvironmentUptimeRequestsAssertion _current = new EnvironmentUptimeRequestsAssertion();
 
         public static EnvironmentUptimeRequestsAssertion Current => _current;
+
+        // Plausible-shape check only (not full RFC 5322) - same scope as
+        // every browser's own <input type="email"> validation, matching
+        // this codebase's existing HexColorPattern-style convention for
+        // format checks (see EnvironmentOverviewAssertion).
+        private static readonly Regex EmailPattern = new(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", RegexOptions.Compiled);
 
         private EnvironmentUptimeRequestsAssertion()
         {
@@ -30,6 +37,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             if (string.IsNullOrWhiteSpace(request.RequesterName))
             {
                 throw new ValidationException("Requester name is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.RequesterEmail))
+            {
+                throw new ValidationException("Requester email is required.");
+            }
+
+            if (!EmailPattern.IsMatch(request.RequesterEmail.Trim()))
+            {
+                throw new ValidationException("Requester email is not a valid email address.");
             }
 
             if (!DateTime.TryParse(
