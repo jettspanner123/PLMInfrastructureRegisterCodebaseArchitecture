@@ -7,6 +7,10 @@ export interface EmptyStateSharedComponentProps {
   description: string;
   actionButton?: React.ReactNode;
   className?: string;
+  // true: no card surface (no bg/border/shadow) - for use inside a
+  // container that's already its own surface (e.g. a modal body), so the
+  // empty state doesn't render as a nested card-on-a-card.
+  bare?: boolean;
 }
 
 export default function EmptyStateSharedComponent({
@@ -15,13 +19,18 @@ export default function EmptyStateSharedComponent({
   description,
   actionButton,
   className = '',
+  bare = false,
 }: EmptyStateSharedComponentProps): React.JSX.Element {
+  const surfaceClass = bare
+    ? ''
+    : 'bg-white dark:bg-[#171717] border border-slate-300/90 dark:border-zinc-800 shadow-sm dark:shadow-2xs';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className={`py-12 px-6 rounded-xl bg-white dark:bg-[#171717] border border-slate-300/90 dark:border-zinc-800 shadow-sm dark:shadow-2xs text-center flex flex-col items-center justify-center select-none ${className}`}
+      className={`py-12 px-6 rounded-xl ${surfaceClass} text-center flex flex-col items-center justify-center select-none ${className}`}
     >
       <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-200/80 dark:border-zinc-700/60 shadow-2xs flex items-center justify-center mb-3 text-slate-400 dark:text-zinc-500 shrink-0">
         {icon}
