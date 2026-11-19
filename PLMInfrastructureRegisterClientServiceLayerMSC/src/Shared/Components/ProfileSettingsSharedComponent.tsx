@@ -264,14 +264,14 @@ export default function ProfileSettingsSharedComponent({
                   aria-label="Profile and preferences"
                   tabIndex={-1}
                   transition={SPRING_TRANSITION}
-                  className="pointer-events-auto relative w-full max-w-4xl max-h-[90dvh] overflow-y-auto bg-white dark:bg-[#0c0c0e] hairline-border-strong rounded-2xl shadow-2xl p-5 sm:p-6 text-xs space-y-4 focus:outline-none"
+                  className="pointer-events-auto relative w-full max-w-4xl max-h-[90dvh] overflow-y-auto bg-white dark:bg-[#171717] hairline-border-strong rounded-2xl shadow-2xl p-5 sm:p-6 text-xs space-y-4 focus:outline-none"
                 >
                   {/* Floating close button */}
                   <button
                     type="button"
                     onClick={handleClose}
                     aria-label="Close Profile and Settings"
-                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white dark:bg-[#0c0c0e] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white dark:bg-[#171717] shadow-md text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
