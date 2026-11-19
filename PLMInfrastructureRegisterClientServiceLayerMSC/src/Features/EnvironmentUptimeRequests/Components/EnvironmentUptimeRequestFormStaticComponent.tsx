@@ -187,6 +187,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
               }}
               placeholder={EnvironmentUptimeRequestsCON.FIELD_REQUESTER_PLACEHOLDER}
               searchable
+              surface="onCard"
               footerAction={{
                 label: 'Add New Sponsor',
                 icon: <Plus className="w-3.5 h-3.5" />,
@@ -212,6 +213,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
               }}
               placeholder={EnvironmentUptimeRequestsCON.FIELD_ENVIRONMENT_PLACEHOLDER}
               searchable
+              surface="onCard"
             />
             {errors.environment && (
               <span className="text-xs text-rose-500 mt-1 block">{errors.environment}</span>
@@ -229,6 +231,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
               }}
               error={errors.fromAt}
               required
+              surface="onCard"
             />
 
             <CustomDateTimePickerSharedComponent
@@ -241,6 +244,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
               }}
               error={errors.toAt}
               required
+              surface="onCard"
             />
           </div>
 
@@ -258,7 +262,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
               placeholder={EnvironmentUptimeRequestsCON.FIELD_MESSAGE_PLACEHOLDER}
               rows={5}
               maxLength={EnvironmentUptimeRequestsCON.FIELD_MESSAGE_MAX_LENGTH}
-              className={`w-full text-sm px-3 py-2.5 rounded-md bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors resize-y leading-relaxed ${
+              className={`w-full text-sm px-3 py-2.5 rounded-md bg-white dark:bg-[#202020] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors resize-y leading-relaxed ${
                 errors.message ? 'border-red-500 dark:border-red-500' : ''
               }`}
             />
