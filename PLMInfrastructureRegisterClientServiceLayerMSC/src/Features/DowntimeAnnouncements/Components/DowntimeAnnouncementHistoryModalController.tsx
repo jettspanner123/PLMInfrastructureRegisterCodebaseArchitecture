@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Pencil, Trash2, Inbox, Search, Layers } from 'lucide-react';
 import ModalSharedComponent from '../../../Shared/Components/ModalSharedComponent';
 import ConfirmationModalSharedComponent from '../../../Shared/Components/ConfirmationModalSharedComponent';
+import EmptyStateSharedComponent from '../../../Shared/Components/EmptyStateSharedComponent';
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import DowntimeAnnouncementFormModalController from './DowntimeAnnouncementFormModalController';
@@ -93,25 +94,23 @@ export default function DowntimeAnnouncementHistoryModalController({
               value={selectedStatus}
               options={STATUS_FILTER_OPTIONS}
               onChange={(val) => setSelectedStatus(val)}
-              size="sm"
             />
           </div>
         </div>
 
         {isLoading && <p className="text-sm text-slate-500 dark:text-zinc-400">Loading…</p>}
 
-        {!isLoading && announcements.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-2 py-10 text-slate-400 dark:text-zinc-500">
-            <Inbox className="w-8 h-8" />
-            <p className="text-sm">No downtime announcements have been created yet.</p>
-          </div>
-        )}
-
-        {!isLoading && announcements.length > 0 && filteredAnnouncements.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-2 py-10 text-slate-400 dark:text-zinc-500">
-            <Inbox className="w-8 h-8" />
-            <p className="text-sm">No announcements match your search or filter.</p>
-          </div>
+        {!isLoading && filteredAnnouncements.length === 0 && (
+          <EmptyStateSharedComponent
+            icon={<Inbox className="w-8 h-8 text-slate-400" />}
+            title={announcements.length === 0 ? 'No Downtime Announcements Yet' : 'No Matching Announcements'}
+            description={
+              announcements.length === 0
+                ? 'Create your first announcement using the button above.'
+                : 'Try adjusting your search query or filter to find what you are looking for.'
+            }
+            bare
+          />
         )}
 
         {!isLoading && filteredAnnouncements.length > 0 && (
