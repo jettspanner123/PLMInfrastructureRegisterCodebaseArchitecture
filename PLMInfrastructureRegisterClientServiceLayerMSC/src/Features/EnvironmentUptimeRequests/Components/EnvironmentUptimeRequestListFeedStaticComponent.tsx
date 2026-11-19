@@ -106,6 +106,7 @@ export default function EnvironmentUptimeRequestListFeedStaticComponent({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           icon={<Search className="w-4 h-4" />}
+          surface="onCard"
         />
 
         {/* Status Filter */}
@@ -114,6 +115,7 @@ export default function EnvironmentUptimeRequestListFeedStaticComponent({
           options={statusFilterOptions}
           onChange={(val) => setSelectedStatus(val)}
           size="sm"
+          surface="onCard"
         />
       </div>
 
