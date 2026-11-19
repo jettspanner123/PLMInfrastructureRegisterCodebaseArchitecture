@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { Trash2, Clock, CalendarClock, ArrowRight, Copy, Check, Server, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Trash2, Clock, CalendarClock, ArrowRight, Copy, Check, Server, ChevronDown, ChevronUp, User, ExternalLink } from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
 import BadgeSharedComponent, { type BadgeSharedComponentProps } from '../../../Shared/Components/BadgeSharedComponent';
 import ApplicationRouteCON from '../../../Constants/ApplicationRouteCON';
@@ -124,6 +124,18 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
           <BadgeSharedComponent variant={statusVariant} size="sm" showDot>
             {request.status}
           </BadgeSharedComponent>
+          {request.jiraTicketKey && request.jiraTicketUrl && (
+            <a
+              href={request.jiraTicketUrl}
+              target="_blank"
+              rel="noreferrer"
+              title={`Open ${request.jiraTicketKey} in Jira`}
+              className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/90 text-[#0C2086] dark:text-sky-400 px-2 py-0.5 rounded text-xs font-mono font-semibold border border-slate-200/70 dark:border-zinc-700/60 hover:underline"
+            >
+              <ExternalLink className="w-3 h-3" />
+              {request.jiraTicketKey}
+            </a>
+          )}
         </div>
       </div>
 

@@ -12,6 +12,7 @@ import {
   Plus,
 } from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
+import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
 import CustomDateTimePickerSharedComponent from '../../../Shared/Components/CustomDateTimePickerSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
@@ -21,6 +22,11 @@ import TanstackQueryClientService from '../../../Services/TanstackQueryClientSer
 import EnvironmentNameListUtility from '../../../Utilities/EnvironmentNameListUtility';
 import EnvironmentUptimeRequestsCON from '../Constants/EnvironmentUptimeRequestsCON';
 import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../../../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
+
+// Plausible-shape check only, mirroring the backend's own EmailPattern in
+// EnvironmentUptimeRequestsAssertion - not full RFC 5322, same scope as a
+// native <input type="email">.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface EnvironmentUptimeRequestFormStaticComponentProps {
   onSubmit: (data: CreateEnvironmentUptimeRequestInputInterfaceModel, onSuccess?: () => void) => void;
@@ -80,6 +86,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
   const [isCreateSponsorModalOpen, setIsCreateSponsorModalOpen] = useState<boolean>(false);
 
   const [requesterName, setRequesterName] = useState<string>('');
+  const [requesterEmail, setRequesterEmail] = useState<string>('');
   const [environment, setEnvironment] = useState<string>('');
   const [fromAt, setFromAt] = useState<string>('');
   const [toAt, setToAt] = useState<string>('');
@@ -87,6 +94,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
 
   const [errors, setErrors] = useState<{
     requesterName?: string;
+    requesterEmail?: string;
     environment?: string;
     fromAt?: string;
     toAt?: string;
@@ -98,6 +106,12 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
 
     if (!requesterName.trim()) {
       nextErrors.requesterName = 'Requester name is required';
+    }
+
+    if (!requesterEmail.trim()) {
+      nextErrors.requesterEmail = 'Requester email is required';
+    } else if (!EMAIL_PATTERN.test(requesterEmail.trim())) {
+      nextErrors.requesterEmail = 'Enter a valid email address';
     }
 
     if (!environment.trim()) {
@@ -124,6 +138,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
 
   const handleReset = (): void => {
     setRequesterName('');
+    setRequesterEmail('');
     setEnvironment('');
     setFromAt('');
     setToAt('');
@@ -142,6 +157,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
     onSubmit(
       {
         requesterName: requesterName.trim(),
+        requesterEmail: requesterEmail.trim(),
         environment: environment.trim(),
         fromAt,
         toAt,
@@ -198,6 +214,21 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
               <span className="text-xs text-rose-500 mt-1 block">{errors.requesterName}</span>
             )}
           </div>
+
+          {/* Requester Email */}
+          <InputSharedComponent
+            label={EnvironmentUptimeRequestsCON.FIELD_REQUESTER_EMAIL_LABEL}
+            placeholder={EnvironmentUptimeRequestsCON.FIELD_REQUESTER_EMAIL_PLACEHOLDER}
+            type="email"
+            value={requesterEmail}
+            onChange={(event) => {
+              setRequesterEmail(event.target.value);
+              if (errors.requesterEmail) setErrors((prev) => ({ ...prev, requesterEmail: undefined }));
+            }}
+            error={errors.requesterEmail}
+            required
+            surface="onCard"
+          />
 
           {/* Environment */}
           <div>

@@ -16,6 +16,9 @@ export default class EnvironmentUptimeRequestsCON {
   public static readonly FIELD_REQUESTER_LABEL: string = 'Requester Name';
   public static readonly FIELD_REQUESTER_PLACEHOLDER: string = 'Search or select a requester...';
 
+  public static readonly FIELD_REQUESTER_EMAIL_LABEL: string = 'Requester Email';
+  public static readonly FIELD_REQUESTER_EMAIL_PLACEHOLDER: string = 'e.g. jane.doe@company.com';
+
   public static readonly FIELD_ENVIRONMENT_LABEL: string = 'Environment';
   public static readonly FIELD_ENVIRONMENT_PLACEHOLDER: string = 'Select an environment...';
 

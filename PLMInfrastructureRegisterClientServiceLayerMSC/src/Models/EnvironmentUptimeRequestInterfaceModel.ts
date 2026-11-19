@@ -8,10 +8,13 @@ export default interface EnvironmentUptimeRequestInterfaceModel {
   ticketId: string;
   environment: string;
   requesterName: string;
+  requesterEmail: string;
   fromAt: string;
   toAt: string;
   message: string | null;
   status: EnvironmentUptimeRequestStatusEnumModel;
   adminMessage: string | null;
   createdAt: string;
+  jiraTicketKey: string | null;
+  jiraTicketUrl: string | null;
 }
