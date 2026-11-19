@@ -77,7 +77,7 @@ export default function DowntimeAnnouncementHistoryModalController({
         onClose={onClose}
         title="Downtime Announcements"
         subtitle="Every announcement, active and historical."
-        maxWidth="2xl"
+        maxWidth="3xl"
       >
         <div className="flex flex-col sm:flex-row items-stretch gap-2 mb-4">
           <div className="flex-1">
