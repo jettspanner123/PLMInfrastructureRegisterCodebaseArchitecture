@@ -237,7 +237,7 @@ export default function ModalSharedComponent({
             initial="initial"
             animate="animate"
             exit="exit"
-            className={`relative w-[100dvw] sm:w-full ${widthClass} bg-white dark:bg-[#0a0a0c] hairline-border-strong rounded-t-2xl rounded-b-none sm:rounded-2xl shadow-2xl z-10 my-0 sm:my-8 flex flex-col shrink-0 max-h-[92dvh] ${
+            className={`relative w-[100dvw] sm:w-full ${widthClass} bg-white dark:bg-[#171717] hairline-border-strong rounded-t-2xl rounded-b-none sm:rounded-2xl shadow-2xl z-10 my-0 sm:my-8 flex flex-col shrink-0 max-h-[92dvh] ${
               heightMode === 'full' ? 'sm:max-h-none' : 'sm:max-h-[90vh]'
             }`}
           >
@@ -285,7 +285,7 @@ export default function ModalSharedComponent({
 
             {footer && (
               <div
-                className="px-5 sm:px-6 py-3.5 sm:py-4 border-t border-slate-200 dark:border-zinc-800/80 bg-slate-50/50 dark:bg-[#08080a] shrink-0 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:pb-4"
+                className="px-5 sm:px-6 py-3.5 sm:py-4 border-t border-slate-200 dark:border-zinc-800/80 bg-slate-50/50 dark:bg-[#171717] shrink-0 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:pb-4"
               >
                 {footer}
               </div>
