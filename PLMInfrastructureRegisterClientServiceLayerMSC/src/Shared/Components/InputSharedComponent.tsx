@@ -16,6 +16,11 @@ export interface InputSharedComponentProps {
   required?: boolean;
   disabled?: boolean;
   name?: string;
+  // 'default' (unchanged): the usual near-black surface. 'onCard': a
+  // lighter dark-mode background for an input sitting on top of a card
+  // whose own background is now lighter than the page - so the element
+  // closest to the (implied overhead) light source reads lightest.
+  surface?: 'default' | 'onCard';
 }
 
 export default function InputSharedComponent({
@@ -34,8 +39,10 @@ export default function InputSharedComponent({
   required = false,
   disabled = false,
   name,
+  surface = 'default',
 }: InputSharedComponentProps): React.JSX.Element {
   const widthStyle = fullWidth ? 'w-full' : '';
+  const surfaceBg = surface === 'onCard' ? 'dark:bg-[#202020]' : 'dark:bg-[#0a0a0c]';
 
   return (
     <div className={`flex flex-col gap-1.5 ${widthStyle}`}>
@@ -61,7 +68,7 @@ export default function InputSharedComponent({
           step={step}
           required={required}
           disabled={disabled}
-          className={`h-10 text-sm px-3 py-2 rounded-md bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors duration-200 ${
+          className={`h-10 text-sm px-3 py-2 rounded-md bg-white ${surfaceBg} text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors duration-200 ${
             icon ? 'pl-9' : ''
           } ${error ? 'border-red-500 dark:border-red-500' : ''} ${className} ${widthStyle}`}
         />
