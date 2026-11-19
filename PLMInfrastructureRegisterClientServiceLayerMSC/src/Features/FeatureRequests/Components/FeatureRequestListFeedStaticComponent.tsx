@@ -94,6 +94,7 @@ export default function FeatureRequestListFeedStaticComponent({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           icon={<Search className="w-4 h-4" />}
+          surface="onCard"
         />
 
         {/* Filters Grid */}
@@ -103,12 +104,14 @@ export default function FeatureRequestListFeedStaticComponent({
             options={categoryFilterOptions}
             onChange={(val) => setSelectedCategory(val)}
             size="sm"
+            surface="onCard"
           />
           <CustomSelectSharedComponent
             value={selectedStatus}
             options={statusFilterOptions}
             onChange={(val) => setSelectedStatus(val)}
             size="sm"
+            surface="onCard"
           />
         </div>
       </div>
