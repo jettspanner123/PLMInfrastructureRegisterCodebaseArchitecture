@@ -197,6 +197,7 @@ export default function AddLegendModalController({
             onChange={(event) => setNameInput(event.target.value)}
             placeholder="e.g. Pending migration"
             required
+            surface="onCard"
           />
           {isNameTaken && trimmedName.length > 0 && (
             <p className="text-xs text-rose-500">A legend named &quot;{trimmedName}&quot; already exists.</p>
