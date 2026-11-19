@@ -82,6 +82,7 @@ export default function AddSubscriptionModalController({
           options={pickerOptions}
           placeholder={isLoadingAvailable ? 'Loading subscriptions…' : 'Select a subscription…'}
           searchable
+          surface="onCard"
         />
 
         {!isLoadingAvailable && pickerOptions.length === 0 && (
