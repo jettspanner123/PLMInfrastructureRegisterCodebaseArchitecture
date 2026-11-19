@@ -133,7 +133,7 @@ export default function DowntimeAnnouncementFormModalController({
       onClose={onClose}
       title={isEditing ? 'Edit Downtime Announcement' : 'Create Downtime Announcement'}
       subtitle="Shown to every user on the Uptime Request page while it's active."
-      maxWidth="xl"
+      maxWidth="3xl"
       footer={
         <div className="flex items-center justify-end gap-3">
           <ButtonSharedComponent variant="outline" onClick={onClose} disabled={isPending}>
