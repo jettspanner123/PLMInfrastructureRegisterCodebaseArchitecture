@@ -23,6 +23,11 @@ export interface CustomDateTimePickerSharedComponentProps {
   dropdownClassName?: string;
   usePortal?: boolean;
   dropdownAnchor?: 'left' | 'right';
+  // 'default' (unchanged): the usual near-black surface for both the
+  // closed trigger and the opened calendar/time popover. 'onCard': lighter
+  // dark-mode backgrounds for both, matching CustomSelectSharedComponent's
+  // own 'onCard' treatment for a picker sitting on top of a lighter card.
+  surface?: 'default' | 'onCard';
 }
 
 function formatTwoDigits(num: number): string {
@@ -79,7 +84,11 @@ export default function CustomDateTimePickerSharedComponent({
   dropdownClassName = '',
   usePortal = false,
   dropdownAnchor = 'left',
+  surface = 'default',
 }: CustomDateTimePickerSharedComponentProps): React.JSX.Element {
+  const isOnCard = surface === 'onCard';
+  const surfaceBg = isOnCard ? 'dark:bg-[#202020]' : 'dark:bg-[#0a0a0c]';
+  const panelBg = isOnCard ? 'dark:bg-[#202020]' : 'dark:bg-[#0c0c0e]';
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeMobileTab, setActiveMobileTab] = useState<'date' | 'time'>('date');
   const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
@@ -238,7 +247,7 @@ export default function CustomDateTimePickerSharedComponent({
             usePortal
               ? ''
               : `absolute ${dropdownAnchor === 'right' ? 'right-0' : 'left-0'} top-full mt-1.5`
-          } z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-2 text-xs select-none max-w-[calc(100vw-24px)] ${dropdownClassName}`}
+          } z-50 bg-white ${panelBg} border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-2 text-xs select-none max-w-[calc(100vw-24px)] ${dropdownClassName}`}
         >
           {/* Mobile Tabbed Segmented Control (when in datetime mode on small screens) */}
           {mode === 'datetime' && (
@@ -355,7 +364,7 @@ export default function CustomDateTimePickerSharedComponent({
             setIsOpen((prev) => !prev);
           }
         }}
-        className={`w-full flex items-center justify-between rounded-md bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors duration-200 select-none group text-left ${heightClass} ${
+        className={`w-full flex items-center justify-between rounded-md bg-white ${surfaceBg} text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors duration-200 select-none group text-left ${heightClass} ${
           error ? 'border-red-500 dark:border-red-500' : ''
         } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer'} ${triggerClassName}`}
       >
