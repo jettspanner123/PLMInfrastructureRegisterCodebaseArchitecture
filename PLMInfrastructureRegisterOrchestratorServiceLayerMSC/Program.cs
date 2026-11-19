@@ -11,6 +11,7 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnno
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Jira.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Sync.Services;
@@ -53,6 +54,7 @@ builder.Services.AddScoped<FeatureRequestsService>();
 builder.Services.AddScoped<EnvironmentUptimeRequestsService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<DowntimeAnnouncementsService>();
+builder.Services.AddHttpClient<JiraService>();
 
 // First real server-side admin check in this backend - every other
 // "admin-only" action up to now is enforced client-side only (see
