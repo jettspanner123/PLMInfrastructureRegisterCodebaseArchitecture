@@ -76,6 +76,7 @@ export default function EditSubscriptionDisplayNameModalController({
           label="Display Name"
           value={displayName}
           onChange={(event) => setDisplayName(event.target.value)}
+          surface="onCard"
         />
         <p className="text-xs text-slate-400 dark:text-zinc-500">
           This only renames the label on this page — it won't touch the Subscription column on already-synced
