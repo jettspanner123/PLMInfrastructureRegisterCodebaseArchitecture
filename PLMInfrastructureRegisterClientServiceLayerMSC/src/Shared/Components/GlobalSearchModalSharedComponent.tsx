@@ -231,7 +231,7 @@ export default function GlobalSearchModalSharedComponent(): React.JSX.Element | 
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="mx-auto mt-24 w-full max-w-xl"
             >
-              <div className="flex items-center gap-3 h-12 px-4 rounded-xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-2xl">
+              <div className="flex items-center gap-3 h-12 px-4 rounded-xl bg-white dark:bg-[#171717] hairline-border-strong shadow-2xl">
                 <Search className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
                 <input
                   ref={inputRef}
@@ -273,7 +273,7 @@ export default function GlobalSearchModalSharedComponent(): React.JSX.Element | 
                   {sections.map((section) => (
                     <div
                       key={section.entityType}
-                      className="rounded-xl bg-white dark:bg-[#0c0c0e] hairline-border-strong shadow-xl overflow-hidden"
+                      className="rounded-xl bg-white dark:bg-[#171717] hairline-border-strong shadow-xl overflow-hidden"
                     >
                       <div className="px-4 py-2.5 border-b border-slate-200 dark:border-zinc-800/80 flex items-center justify-between">
                         <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300">{section.label}</span>
@@ -305,7 +305,7 @@ export default function GlobalSearchModalSharedComponent(): React.JSX.Element | 
                                   <tr
                                     key={row.id}
                                     onClick={() => handleResultClick(section, row.id)}
-                                    className="divide-x divide-slate-100 dark:divide-zinc-800/80 cursor-pointer hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors"
+                                    className="divide-x divide-slate-100 dark:divide-zinc-800/80 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-colors"
                                   >
                                     {section.columns.map((column) => (
                                       <td
