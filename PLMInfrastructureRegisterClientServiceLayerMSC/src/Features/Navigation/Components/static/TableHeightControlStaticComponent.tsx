@@ -77,6 +77,7 @@ export default function TableHeightControlStaticComponent(): React.JSX.Element {
             icon: <SlidersHorizontal className="w-3.5 h-3.5" />,
           },
         ]}
+        surface="onCard"
       />
 
       {mode === ApplicationTableHeightCON.CUSTOM && (
@@ -87,6 +88,7 @@ export default function TableHeightControlStaticComponent(): React.JSX.Element {
             min={minCustomHeightPx}
             onChange={handleChangeCustomHeightPx}
             className="h-8 text-xs"
+            surface="onCard"
           />
           <span className="text-[11px] text-slate-400 dark:text-zinc-500 shrink-0">px</span>
         </div>
