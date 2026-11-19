@@ -162,6 +162,7 @@ export default function DowntimeAnnouncementFormModalController({
             }}
             error={errors.heading}
             required
+            surface="onCard"
           />
 
           <div className="flex flex-col gap-1.5 flex-1">
@@ -174,7 +175,7 @@ export default function DowntimeAnnouncementFormModalController({
               }}
               placeholder="What's happening, and why."
               maxLength={4000}
-              className={`w-full flex-1 min-h-[7rem] text-sm px-3 py-2.5 rounded-md bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors resize-y leading-relaxed ${
+              className={`w-full flex-1 min-h-[7rem] text-sm px-3 py-2.5 rounded-md bg-white dark:bg-[#202020] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors resize-y leading-relaxed ${
                 errors.description ? 'border-red-500 dark:border-red-500' : ''
               }`}
             />
@@ -193,6 +194,7 @@ export default function DowntimeAnnouncementFormModalController({
                 if (errors.startAt) setErrors((previous) => ({ ...previous, startAt: undefined }));
               }}
               required
+              surface="onCard"
             />
             {errors.startAt && <span className="text-xs text-rose-500 mt-0.5 block">{errors.startAt}</span>}
           </div>
@@ -207,6 +209,7 @@ export default function DowntimeAnnouncementFormModalController({
                 if (errors.endAt) setErrors((previous) => ({ ...previous, endAt: undefined }));
               }}
               required
+              surface="onCard"
             />
             {errors.endAt && <span className="text-xs text-rose-500 mt-0.5 block">{errors.endAt}</span>}
           </div>
@@ -223,6 +226,7 @@ export default function DowntimeAnnouncementFormModalController({
               options={environmentOptions}
               placeholder="Select environments"
               searchable
+              surface="onCard"
             />
             {errors.environments && <span className="text-xs text-rose-500 mt-0.5 block">{errors.environments}</span>}
           </div>
