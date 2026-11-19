@@ -81,6 +81,7 @@ export default function AdminLoginModalController({
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           required
+          surface="onCard"
         />
 
         <InputSharedComponent
@@ -90,6 +91,7 @@ export default function AdminLoginModalController({
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           required
+          surface="onCard"
         />
 
         {errorMessage && <p className="text-xs text-rose-500">{errorMessage}</p>}
