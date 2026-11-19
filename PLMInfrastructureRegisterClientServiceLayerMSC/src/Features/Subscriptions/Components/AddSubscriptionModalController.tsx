@@ -18,7 +18,7 @@ export default function AddSubscriptionModalController({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { data: availableSubscriptions = [], isLoading: isLoadingAvailable } =
-    TanstackQueryClientService.current.subscriptions.useAvailableAzureSubscriptionsQuery(isOpen);
+    TanstackQueryClientService.current.subscriptions.useAvailableAzureSubscriptionsQuery();
 
   const addSubscriptionMutation = TanstackQueryClientService.current.subscriptions.useAddSubscriptionMutation({
     onSuccess: () => {
