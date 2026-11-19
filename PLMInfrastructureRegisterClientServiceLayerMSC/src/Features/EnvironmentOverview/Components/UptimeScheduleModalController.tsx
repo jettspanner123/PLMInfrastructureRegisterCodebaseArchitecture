@@ -104,6 +104,7 @@ export default function UptimeScheduleModalController({
             searchable
             size="sm"
             placeholder="Select a mode"
+            surface="onCard"
             footerAction={{
               label: 'Add New Type',
               icon: <Plus className="w-3.5 h-3.5" />,
@@ -124,6 +125,7 @@ export default function UptimeScheduleModalController({
               searchable
               size="sm"
               placeholder="Select a status"
+              surface="onCard"
               footerAction={{
                 label: 'Add New Status',
                 icon: <Plus className="w-3.5 h-3.5" />,
@@ -142,7 +144,7 @@ export default function UptimeScheduleModalController({
             onChange={(event) => onNotesChange(event.target.value)}
             placeholder="Optional - shown alongside the schedule above"
             rows={3}
-            className="w-full px-2.5 py-2 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 resize-none"
+            className="w-full px-2.5 py-2 text-xs bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 resize-none"
           />
         </div>
 
@@ -181,7 +183,7 @@ export default function UptimeScheduleModalController({
                 type="time"
                 value={startTime}
                 onChange={(event) => onStartTimeChange(event.target.value)}
-                className="w-full h-9 px-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50"
+                className="w-full h-9 px-2.5 text-xs bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50"
               />
             </div>
             <div className="flex-1 space-y-1">
@@ -192,7 +194,7 @@ export default function UptimeScheduleModalController({
                 type="time"
                 value={endTime}
                 onChange={(event) => onEndTimeChange(event.target.value)}
-                className="w-full h-9 px-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50"
+                className="w-full h-9 px-2.5 text-xs bg-slate-50 dark:bg-[#202020] border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50"
               />
             </div>
           </div>
