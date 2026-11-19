@@ -323,32 +323,9 @@ export default function ProfileSettingsSharedComponent({
                         ]}
                       />
 
-                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-2">
-                        {!isAdmin && (
-                        <button
-                          type="button"
-                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-                          onClick={handleOpenAdminLogin}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
-                        >
-                          <ShieldCheck className="w-4 h-4" />
-                          <span>Admin Login</span>
-                        </button>
-                        )}
-
+                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-3">
                         {isAdmin && (
-                        <button
-                          type="button"
-                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
-                        >
-                          <History className="w-4 h-4" />
-                          <span>Edit History</span>
-                        </button>
-                        )}
-
-                        {isAdmin && (
-                        <div className="space-y-1.5 mt-3">
+                        <div className="space-y-1.5 mt-6">
                           <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
                             Downtime Announcement
                           </span>
@@ -375,15 +352,45 @@ export default function ProfileSettingsSharedComponent({
                         </div>
                         )}
 
-                        <button
-                          type="button"
-                          onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
-                          onClick={handleNavigateToSettings}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
-                        >
-                          <Settings className="w-4 h-4" />
-                          <span>Settings</span>
-                        </button>
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
+                            Account
+                          </span>
+                          <div className="space-y-2">
+                            {!isAdmin && (
+                            <button
+                              type="button"
+                              onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                              onClick={handleOpenAdminLogin}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                            >
+                              <ShieldCheck className="w-4 h-4" />
+                              <span>Admin Login</span>
+                            </button>
+                            )}
+
+                            {isAdmin && (
+                            <button
+                              type="button"
+                              onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                            >
+                              <History className="w-4 h-4" />
+                              <span>Edit History</span>
+                            </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onPointerDown={() => ApplicationHapticsUtility.current.triggerHapticFeedback(12)}
+                              onClick={handleNavigateToSettings}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800/40 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer font-bold text-xs"
+                            >
+                              <Settings className="w-4 h-4" />
+                              <span>Settings</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
