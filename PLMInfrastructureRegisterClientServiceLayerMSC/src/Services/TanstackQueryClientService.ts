@@ -640,13 +640,14 @@ export default class TanstackQueryClientService {
       });
     },
 
-    // Only fetched while the Add-subscription picker is actually open — it's
-    // a live, read-only Azure call, not something to poll in the background.
-    useAvailableAzureSubscriptionsQuery: (enabled: boolean) => {
+    // Prefetched as soon as the user lands on the Settings route (see
+    // SettingsScreenController) so the Add-subscription picker never shows
+    // its own loading state - same prefetch-via-hook pattern RootLayout uses
+    // for Feature Requests/Uptime Requests.
+    useAvailableAzureSubscriptionsQuery: () => {
       return useQuery({
         queryKey: TanstackQueryKeysCON.AVAILABLE_AZURE_SUBSCRIPTIONS,
         queryFn: () => SubscriptionsService.current.getAvailableAzureSubscriptions(),
-        enabled,
         staleTime: 0,
       });
     },
