@@ -59,6 +59,12 @@ export interface CustomSelectSharedComponentProps {
   dropdownAnchor?: 'left' | 'right';
   usePortal?: boolean;
   initialOpen?: boolean;
+  // 'default' (unchanged): the usual near-black surface for both the
+  // closed trigger and the opened dropdown panel. 'onCard': lighter
+  // dark-mode backgrounds throughout (trigger, panel, and the option-hover/
+  // selected states) for a select sitting on top of a card whose own
+  // background is now lighter than the page.
+  surface?: 'default' | 'onCard';
 }
 
 export default function CustomSelectSharedComponent({
@@ -85,7 +91,13 @@ export default function CustomSelectSharedComponent({
   dropdownAnchor = 'left',
   usePortal = false,
   initialOpen = false,
+  surface = 'default',
 }: CustomSelectSharedComponentProps): React.JSX.Element {
+  const isOnCard = surface === 'onCard';
+  const surfaceBg = isOnCard ? 'dark:bg-[#202020]' : 'dark:bg-[#0a0a0c]';
+  const panelBg = isOnCard ? 'dark:bg-[#202020]' : 'dark:bg-[#0c0c0e]';
+  const optionHoverBg = isOnCard ? 'dark:hover:bg-[#2d2d2d]' : 'dark:hover:bg-zinc-900/60';
+  const optionSelectedBg = isOnCard ? 'dark:bg-[#343434]' : 'dark:bg-zinc-800/90';
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [searchTerm, setSearchTerm] = useState('');
   const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
@@ -232,7 +244,7 @@ export default function CustomSelectSharedComponent({
             usePortal
               ? ''
               : `absolute ${dropdownAnchor === 'right' ? 'right-0' : 'left-0 right-0'} top-full mt-1.5`
-          } min-w-[200px] z-50 bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs flex flex-col max-h-80 sm:max-h-72 overflow-hidden ${dropdownClassName || ''}`}
+          } min-w-[200px] z-50 bg-white ${panelBg} border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs flex flex-col max-h-80 sm:max-h-72 overflow-hidden ${dropdownClassName || ''}`}
         >
             {isSearchActive && (
               <div className="shrink-0 p-2 sm:p-1.5 border-b border-slate-100 dark:border-zinc-800/80 mb-1">
@@ -276,8 +288,8 @@ export default function CustomSelectSharedComponent({
                 onClick={() => onChangeMultiple?.([])}
                 className={`w-full min-h-[48px] sm:min-h-0 flex items-center justify-between px-3.5 sm:px-3 py-3 sm:py-2 rounded-xl sm:rounded-lg transition-colors cursor-pointer text-left mb-1 ${
                   values.length === 0
-                    ? 'bg-slate-100 dark:bg-zinc-800/90 text-slate-900 dark:text-white font-bold'
-                    : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60'
+                    ? `bg-slate-100 ${optionSelectedBg} text-slate-900 dark:text-white font-bold`
+                    : `text-slate-700 dark:text-zinc-300 hover:bg-slate-50 ${optionHoverBg}`
                 }`}
               >
                 <span className="font-medium truncate text-sm sm:text-xs leading-snug">{placeholder}</span>
@@ -321,8 +333,8 @@ export default function CustomSelectSharedComponent({
                     }}
                     className={`w-full min-h-[48px] sm:min-h-0 flex items-center justify-between px-3.5 sm:px-3 py-3 sm:py-2 rounded-xl sm:rounded-lg transition-colors cursor-pointer text-left ${
                       isSelected
-                        ? 'bg-slate-100 dark:bg-zinc-800/90 text-slate-900 dark:text-white font-bold'
-                        : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-900/60'
+                        ? `bg-slate-100 ${optionSelectedBg} text-slate-900 dark:text-white font-bold`
+                        : `text-slate-700 dark:text-zinc-300 hover:bg-slate-50 ${optionHoverBg}`
                     }`}
                   >
                     <div className="flex items-center gap-2.5 sm:gap-2 min-w-0 flex-1 pr-2">
@@ -391,7 +403,7 @@ export default function CustomSelectSharedComponent({
           }
           setIsOpen(!isOpen);
         }}
-        className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 select-none ${
+        className={`${className.includes('w-') ? 'w-full' : ''} ${heightClass} rounded-xl sm:rounded-lg bg-white ${surfaceBg} text-slate-900 dark:text-zinc-100 border border-slate-200/80 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors focus:outline-none flex items-center justify-between gap-2 select-none ${
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
         } ${triggerClassName || ''}`}
       >
