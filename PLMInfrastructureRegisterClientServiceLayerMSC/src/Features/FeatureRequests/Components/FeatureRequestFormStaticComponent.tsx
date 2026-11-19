@@ -132,6 +132,7 @@ export default function FeatureRequestFormStaticComponent({
               }}
               placeholder={FeatureRequestsCON.FIELD_REQUESTER_PLACEHOLDER}
               searchable
+              surface="onCard"
               footerAction={{
                 label: 'Add New Sponsor',
                 icon: <Plus className="w-3.5 h-3.5" />,
@@ -154,6 +155,7 @@ export default function FeatureRequestFormStaticComponent({
             }}
             error={errors.title}
             required
+            surface="onCard"
           />
 
           {/* Category & Priority Grid */}
@@ -166,6 +168,7 @@ export default function FeatureRequestFormStaticComponent({
                 value={category}
                 options={FeatureRequestsCON.CATEGORY_OPTIONS}
                 onChange={(val) => setCategory(val)}
+                surface="onCard"
               />
             </div>
 
@@ -177,6 +180,7 @@ export default function FeatureRequestFormStaticComponent({
                 value={priority}
                 options={FeatureRequestsCON.PRIORITY_OPTIONS}
                 onChange={(val) => setPriority(val)}
+                surface="onCard"
               />
             </div>
           </div>
@@ -195,7 +199,7 @@ export default function FeatureRequestFormStaticComponent({
               placeholder={FeatureRequestsCON.FIELD_DESCRIPTION_PLACEHOLDER}
               rows={5}
               required
-              className={`w-full text-sm px-3 py-2.5 rounded-md bg-white dark:bg-[#0a0a0c] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors resize-y leading-relaxed ${
+              className={`w-full text-sm px-3 py-2.5 rounded-md bg-white dark:bg-[#202020] text-slate-900 dark:text-zinc-100 hairline-border-strong focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-colors resize-y leading-relaxed ${
                 errors.description ? 'border-red-500 dark:border-red-500' : ''
               }`}
             />
