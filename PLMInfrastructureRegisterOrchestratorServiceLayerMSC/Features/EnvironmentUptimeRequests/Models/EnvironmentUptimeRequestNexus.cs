@@ -23,6 +23,11 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
 
         public string RequesterName { get; set; } = string.Empty;
 
+        // Required at submission time - the only place Jira ticket content
+        // gets a requester email from (see JiraService). Write-once, same
+        // as JiraTicketKey/JiraTicketUrl below.
+        public string RequesterEmail { get; set; } = string.Empty;
+
         // Stored as UTC. Entered by the user as fixed CET (UTC+1, never DST-
         // shifted) wall-clock time on a <input type="datetime-local"> field
         // and converted server-side - see CETTimeZoneUtility.
@@ -31,6 +36,15 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         public DateTime ToAt { get; set; }
 
         public string? Message { get; set; }
+
+        // Set once, immediately after the Jira ticket is created
+        // successfully (never null by the time this row is actually
+        // visible to any other request - see EnvironmentUptimeRequestsService
+        // and research.md §4 in specs/002-jira-ticket-creation). Never
+        // updated again afterward - this integration is create-once.
+        public string? JiraTicketKey { get; set; }
+
+        public string? JiraTicketUrl { get; set; }
 
         public EnvironmentUptimeRequestStatusEnum Status { get; set; }
 

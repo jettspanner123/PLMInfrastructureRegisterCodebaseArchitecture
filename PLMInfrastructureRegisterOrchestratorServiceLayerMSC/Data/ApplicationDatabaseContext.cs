@@ -5,6 +5,7 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnno
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Jira.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Subscriptions.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models.Classes;
@@ -54,6 +55,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<AdminAccountNexus> AdminAccounts => Set<AdminAccountNexus>();
 
         public DbSet<DowntimeAnnouncementNexus> DowntimeAnnouncements => Set<DowntimeAnnouncementNexus>();
+
+        public DbSet<JiraTicketCreationErrorNexus> TicketCreationErrors => Set<JiraTicketCreationErrorNexus>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -283,6 +286,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 entity.ToTable("IG_DowntimeAnnouncementTBL");
                 entity.HasKey(announcement => announcement.Id);
                 entity.HasQueryFilter(announcement => !announcement.IsDeleted);
+            });
+
+            // Insert-only audit log - no query filter needed, nothing in
+            // this app ever reads these rows back (spec FR-013). No
+            // foreign key to EnvironmentUptimeRequestNexus - see
+            // JiraTicketCreationErrorNexus's own top comment for why.
+            modelBuilder.Entity<JiraTicketCreationErrorNexus>(entity =>
+            {
+                entity.ToTable("IG_TicketCreationErrorTBL");
+                entity.HasKey(error => error.Id);
             });
         }
     }

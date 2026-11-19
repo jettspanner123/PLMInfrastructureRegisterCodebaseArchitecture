@@ -400,7 +400,17 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("JiraTicketKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("JiraTicketUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequesterEmail")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RequesterName")
@@ -479,6 +489,62 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IG_FeatureRequestsTBL", (string)null);
+                });
+
+            modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Jira.Models.JiraTicketCreationErrorNexus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AttemptedDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AttemptedSummary")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AttemptedTicketId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Environment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FailureReason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FromAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("JiraResponseBody")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("JiraStatusCode")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequesterEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequesterName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ToAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IG_TicketCreationErrorTBL", (string)null);
                 });
 
             modelBuilder.Entity("PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Resources.Models.ResourceCellFormatNexus", b =>
