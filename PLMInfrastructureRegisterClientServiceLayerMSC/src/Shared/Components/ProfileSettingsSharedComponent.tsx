@@ -325,7 +325,7 @@ export default function ProfileSettingsSharedComponent({
 
                       <div className="pt-2 border-t border-slate-100 dark:border-zinc-800/80 space-y-3">
                         {isAdmin && (
-                        <div className="space-y-1.5 mt-6">
+                        <div className="space-y-1.5 mt-2">
                           <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
                             Downtime Announcement
                           </span>
@@ -352,7 +352,7 @@ export default function ProfileSettingsSharedComponent({
                         </div>
                         )}
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-1.5 mt-6">
                           <span className="text-[10px] uppercase font-mono font-semibold tracking-wider text-slate-400 dark:text-zinc-500 block px-1">
                             Account
                           </span>
