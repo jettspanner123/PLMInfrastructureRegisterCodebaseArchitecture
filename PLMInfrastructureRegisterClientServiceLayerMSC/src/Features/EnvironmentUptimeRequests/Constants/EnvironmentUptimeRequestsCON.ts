@@ -59,4 +59,15 @@ export default class EnvironmentUptimeRequestsCON {
   public static readonly DETAIL_NOT_FOUND_TITLE: string = 'Uptime Request Not Found';
   public static readonly DETAIL_NOT_FOUND_DESCRIPTION: string =
     'This ticket does not exist, or it has since been deleted.';
+
+  // Admin-only Dashboard/Form segmented control - spec 003-uptime-request-dashboard.
+  public static readonly VIEW_MODE_DASHBOARD_LABEL: string = 'Dashboard';
+  public static readonly VIEW_MODE_FORM_LABEL: string = 'Form';
+
+  public static readonly DASHBOARD_CARD_TOTAL_LABEL: string = 'Total Requests';
+  public static readonly DASHBOARD_CARD_PENDING_LABEL: string = 'Pending';
+
+  public static readonly DASHBOARD_DOWNTIME_LIST_TITLE: string = 'Active & Upcoming Downtime';
+  public static readonly DASHBOARD_DOWNTIME_LIST_EMPTY_STATE: string =
+    'No active or upcoming downtime announcements.';
 }
