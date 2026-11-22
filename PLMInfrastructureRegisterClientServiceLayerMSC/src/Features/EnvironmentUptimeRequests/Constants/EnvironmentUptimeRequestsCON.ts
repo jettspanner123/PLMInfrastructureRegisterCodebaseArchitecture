@@ -25,6 +25,11 @@ export default class EnvironmentUptimeRequestsCON {
   public static readonly FIELD_FROM_LABEL: string = 'From (CET)';
   public static readonly FIELD_TO_LABEL: string = 'To (CET)';
 
+  // Replaces the two separate From/To dropdown fields - spec 005-uptime-availability-calendar.
+  public static readonly FIELD_SELECT_DATES_LABEL: string = 'Select Dates';
+  public static readonly FIELD_SELECT_DATES_PLACEHOLDER: string = 'Select dates...';
+  public static readonly FIELD_SELECT_DATES_DISABLED_HINT: string = 'Select an environment first';
+
   public static readonly FIELD_MESSAGE_LABEL: string = 'Message (Optional)';
   public static readonly FIELD_MESSAGE_PLACEHOLDER: string =
     'Add any additional context for this uptime window...';
