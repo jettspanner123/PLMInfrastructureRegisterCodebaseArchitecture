@@ -3,6 +3,7 @@ import {
   Send,
   RotateCcw,
   CalendarClock,
+  CalendarRange,
   Server,
   FlaskConical,
   Code2,
@@ -13,15 +14,31 @@ import {
 } from 'lucide-react';
 import CardSharedComponent from '../../../Shared/Components/CardSharedComponent';
 import InputSharedComponent from '../../../Shared/Components/InputSharedComponent';
-import CustomDateTimePickerSharedComponent from '../../../Shared/Components/CustomDateTimePickerSharedComponent';
 import CustomSelectSharedComponent, { type SelectOption } from '../../../Shared/Components/CustomSelectSharedComponent';
 import ButtonSharedComponent from '../../../Shared/Components/ButtonSharedComponent';
 import PrimaryActionButtonSharedComponent from '../../../Shared/Components/PrimaryActionButtonSharedComponent';
 import CreateOptionModalController from '../../../Shared/Components/CreateOptionModalController';
+import EnvironmentUptimeRequestAvailabilityModalController from './EnvironmentUptimeRequestAvailabilityModalController';
 import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
 import EnvironmentNameListUtility from '../../../Utilities/EnvironmentNameListUtility';
 import EnvironmentUptimeRequestsCON from '../Constants/EnvironmentUptimeRequestsCON';
 import type CreateEnvironmentUptimeRequestInputInterfaceModel from '../../../Models/CreateEnvironmentUptimeRequestInputInterfaceModel';
+
+// fromAt/toAt are naive 'YYYY-MM-DDTHH:mm' CET wall-clock strings (not UTC
+// instants) while the form is in progress - this mirrors
+// CustomDateTimePickerSharedComponent's own getFormattedDisplay technique
+// (construct a Date from numeric Y/M/D parts, never parse the ISO string
+// directly) rather than CETDateTimeFormatUtility, which expects a real UTC
+// instant from the backend and would double-convert a value that's
+// already CET.
+function formatSelectedDateTime(value: string): string {
+  const [datePart, timePart] = value.split('T');
+  const parts = datePart.split('-');
+  if (parts.length !== 3) return value;
+  const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  const formattedDate = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  return timePart ? `${formattedDate}, ${timePart}` : formattedDate;
+}
 
 // Plausible-shape check only, mirroring the backend's own EmailPattern in
 // EnvironmentUptimeRequestsAssertion - not full RFC 5322, same scope as a
@@ -84,6 +101,7 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
     [sponsorOptions]
   );
   const [isCreateSponsorModalOpen, setIsCreateSponsorModalOpen] = useState<boolean>(false);
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState<boolean>(false);
 
   const [requesterName, setRequesterName] = useState<string>('');
   const [requesterEmail, setRequesterEmail] = useState<string>('');
@@ -251,32 +269,36 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
             )}
           </div>
 
-          {/* From & To Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <CustomDateTimePickerSharedComponent
-              label={EnvironmentUptimeRequestsCON.FIELD_FROM_LABEL}
-              value={fromAt}
-              onChange={(val) => {
-                setFromAt(val);
-                if (errors.fromAt) setErrors((prev) => ({ ...prev, fromAt: undefined }));
-              }}
-              error={errors.fromAt}
-              required
-              surface="onCard"
-            />
-
-            <CustomDateTimePickerSharedComponent
-              label={EnvironmentUptimeRequestsCON.FIELD_TO_LABEL}
-              value={toAt}
-              minDate={fromAt ? fromAt.split('T')[0] : undefined}
-              onChange={(val) => {
-                setToAt(val);
-                if (errors.toAt) setErrors((prev) => ({ ...prev, toAt: undefined }));
-              }}
-              error={errors.toAt}
-              required
-              surface="onCard"
-            />
+          {/* Select Dates trigger - replaces the old separate From/To
+              dropdown fields; opens EnvironmentUptimeRequestAvailabilityModalController
+              where the actual From/To values are set (spec 005-uptime-availability-calendar). */}
+          <div>
+            <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5 block">
+              {EnvironmentUptimeRequestsCON.FIELD_SELECT_DATES_LABEL}
+            </label>
+            <button
+              type="button"
+              disabled={!environment}
+              onClick={() => setIsAvailabilityModalOpen(true)}
+              title={!environment ? EnvironmentUptimeRequestsCON.FIELD_SELECT_DATES_DISABLED_HINT : undefined}
+              className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-md bg-white dark:bg-[#202020] text-sm hairline-border-strong transition-colors text-left ${
+                !environment
+                  ? 'opacity-50 cursor-not-allowed text-slate-400 dark:text-zinc-600'
+                  : 'cursor-pointer text-slate-900 dark:text-zinc-100 hover:border-zinc-400 dark:hover:border-zinc-600'
+              } ${errors.fromAt || errors.toAt ? 'border-red-500 dark:border-red-500' : ''}`}
+            >
+              <CalendarRange className="w-4 h-4 shrink-0 text-slate-400 dark:text-zinc-500" />
+              <span className="truncate">
+                {fromAt && toAt
+                  ? `${formatSelectedDateTime(fromAt)} → ${formatSelectedDateTime(toAt)}`
+                  : !environment
+                  ? EnvironmentUptimeRequestsCON.FIELD_SELECT_DATES_DISABLED_HINT
+                  : EnvironmentUptimeRequestsCON.FIELD_SELECT_DATES_PLACEHOLDER}
+              </span>
+            </button>
+            {(errors.fromAt || errors.toAt) && (
+              <span className="text-xs text-rose-500 mt-1 block">{errors.fromAt ?? errors.toAt}</span>
+            )}
           </div>
 
           {/* Message Textarea */}
@@ -337,6 +359,24 @@ export default function EnvironmentUptimeRequestFormStaticComponent({
       inputLabel="Sponsor Name"
       inputPlaceholder="e.g. Jane Doe"
       onCreated={(newValue) => setRequesterName(newValue)}
+    />
+
+    <EnvironmentUptimeRequestAvailabilityModalController
+      isOpen={isAvailabilityModalOpen}
+      onClose={() => setIsAvailabilityModalOpen(false)}
+      environment={environment}
+      fromAt={fromAt}
+      toAt={toAt}
+      onFromChange={(val) => {
+        setFromAt(val);
+        if (errors.fromAt) setErrors((prev) => ({ ...prev, fromAt: undefined }));
+      }}
+      onToChange={(val) => {
+        setToAt(val);
+        if (errors.toAt) setErrors((prev) => ({ ...prev, toAt: undefined }));
+      }}
+      fromError={errors.fromAt}
+      toError={errors.toAt}
     />
     </React.Fragment>
   );
