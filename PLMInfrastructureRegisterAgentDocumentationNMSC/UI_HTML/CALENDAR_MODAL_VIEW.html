@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Microsoft Teams - Calendar</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            teams: {
+              bg: '#141414',
+              surface: '#1f1f1f',
+              surfaceHover: '#292929',
+              border: '#2b2b2b',
+              gridBorder: '#2e2e2e',
+              borderLight: '#383838',
+              accent: '#5b5fc7',
+              accentHover: '#4f52b2',
+              purpleBadge: '#464775',
+              eventBg: '#3d3e78',
+              eventBorder: '#7b83eb',
+              textMuted: '#979797',
+              textSecondary: '#c8c8c8',
+              highlightWeek: '#2f2b4a',
+              iconOffice: '#7070b8'
+            }
+          },
+          fontFamily: {
+            sans: ['"Segoe UI"', '-apple-system', 'BlinkMacSystemFont', 'Roboto', '"Helvetica Neue"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for Diagonal Stripes & Precise Fluent styling -->
+<style data-purpose="custom-patterns">
+    .striped-left-border {
+      background: repeating-linear-gradient(
+        -45deg,
+        #7b83eb,
+        #7b83eb 3px,
+        #2a2b4d 3px,
+        #2a2b4d 6px
+      );
+    }
+    
+    /* Scrollbar styles to match Teams dark UI */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #141414;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333333;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #444444;
+    }
+  </style>
+<style data-purpose="slot-booking-animations">
+    .calendar-slot {
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .calendar-slot:hover {
+      background-color: rgba(91, 95, 199, 0.12);
+    }
+    @keyframes slotPulse {
+      0%, 100% {
+        box-shadow: inset 0 0 0 1.5px rgba(123, 131, 235, 0.85), 0 0 0 0 rgba(91, 95, 199, 0.35);
+      }
+      50% {
+        box-shadow: inset 0 0 0 1.5px rgba(123, 131, 235, 1), 0 0 12px 1px rgba(91, 95, 199, 0.3);
+      }
+    }
+    .slot-start-active {
+      background-color: rgba(91, 95, 199, 0.28) !important;
+      animation: slotPulse 1.8s ease-in-out infinite;
+      z-index: 5;
+    }
+    .slot-range-preview {
+      background-color: rgba(91, 95, 199, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(123, 131, 235, 0.45);
+      transition: background-color 0.14s ease, box-shadow 0.14s ease;
+    }
+    .slot-start-badge {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      background-color: #5b5fc7;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+    @keyframes eventPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .booked-event-card {
+      animation: eventPopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="bg-teams-bg text-[#f5f5f5] font-sans antialiased h-full flex flex-col overflow-hidden select-none">
+<!-- BEGIN: ApplicationLayout -->
+<div class="flex h-screen w-screen overflow-hidden">
+<!-- BEGIN: LeftSidebar -->
+<aside class="w-[260px] flex-shrink-0 bg-teams-bg border-r border-teams-border flex flex-col justify-between overflow-y-auto" data-purpose="calendar-sidebar">
+<div>
+<!-- Calendar Title Header -->
+<div class="px-5 pt-4 pb-3">
+<h1 class="text-xl font-bold text-white tracking-tight">Calendar</h1>
+</div>
+<!-- Mini Calendar Navigation -->
+<div class="px-5 py-2">
+<div class="flex items-center justify-between mb-3 text-xs text-teams-textSecondary">
+<div class="flex items-center space-x-1.5 cursor-pointer hover:text-white transition-colors">
+<svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="font-semibold text-sm text-[#e1dfdd]">2026 November</span>
+</div>
+<div class="flex items-center space-x-2 text-gray-400">
+<button aria-label="Previous month" class="hover:text-white p-0.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+<button aria-label="Next month" class="hover:text-white p-0.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- Mini Calendar Days Grid -->
+<div class="text-[11px] grid grid-cols-7 gap-y-1 text-center font-normal text-teams-textMuted mb-1">
+<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+</div>
+<!-- Mini Calendar Dates -->
+<div class="grid grid-cols-7 text-[11px] text-center font-normal text-[#d6d6d6] relative">
+<!-- Row 1 -->
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">1</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">2</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">3</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">4</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">5</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">6</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">7</span>
+<!-- Row 2 -->
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">8</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">9</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">10</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">11</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">12</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">13</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">14</span>
+<!-- Row 3 -->
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">15</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">16</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">17</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">18</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">19</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">20</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">21</span>
+<!-- Row 4: Highlighted Current Week (22-28) -->
+<div class="col-span-7 grid grid-cols-7 bg-[#28273b] rounded-full my-0.5 py-0 items-center">
+<span class="h-6 flex items-center justify-center bg-teams-accent text-white font-medium rounded-full cursor-pointer">22</span>
+<span class="h-6 flex items-center justify-center text-white cursor-pointer">23</span>
+<span class="h-6 flex items-center justify-center text-white cursor-pointer">24</span>
+<span class="h-6 flex items-center justify-center text-white cursor-pointer">25</span>
+<span class="h-6 flex items-center justify-center text-white cursor-pointer">26</span>
+<span class="h-6 flex items-center justify-center text-white cursor-pointer">27</span>
+<span class="h-6 flex items-center justify-center text-white cursor-pointer">28</span>
+</div>
+<!-- Row 5 -->
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">29</span>
+<span class="h-6 flex items-center justify-center cursor-pointer hover:bg-teams-surfaceHover rounded">30</span>
+<span class="h-6 flex items-center justify-center text-teams-textMuted cursor-pointer hover:bg-teams-surfaceHover rounded">1</span>
+<span class="h-6 flex items-center justify-center text-teams-textMuted cursor-pointer hover:bg-teams-surfaceHover rounded">2</span>
+<span class="h-6 flex items-center justify-center text-teams-textMuted cursor-pointer hover:bg-teams-surfaceHover rounded">3</span>
+<span class="h-6 flex items-center justify-center text-teams-textMuted cursor-pointer hover:bg-teams-surfaceHover rounded">4</span>
+<span class="h-6 flex items-center justify-center text-teams-textMuted cursor-pointer hover:bg-teams-surfaceHover rounded">5</span>
+</div>
+<!-- Bottom subtle chevron divider -->
+<div class="flex justify-center mt-2 mb-1">
+<svg class="w-3.5 h-3.5 text-gray-500 cursor-pointer hover:text-gray-300" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="h-px bg-teams-border mx-3 my-1"></div>
+<!-- Add Calendar Button -->
+<!-- My Calendars Section -->
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- BEGIN: MainContentArea -->
+<main class="flex-1 flex flex-col h-full bg-teams-bg overflow-hidden" data-purpose="main-calendar-workspace">
+<!-- BEGIN: TopActionBar -->
+<header class="h-12 border-b border-teams-border flex items-center justify-between px-3 text-xs text-teams-textSecondary">
+<!-- Left Action Controls -->
+<div class="flex items-center space-x-2">
+<!-- Sidebar Toggle Button -->
+<button class="p-1.5 rounded hover:bg-teams-surfaceHover text-gray-300 hover:text-white transition-colors" title="Toggle sidebar">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+<rect fill="none" height="16" rx="2" stroke-width="1.8" width="18" x="3" y="4"></rect>
+<line stroke-width="1.8" x1="9" x2="9" y1="4" y2="20"></line>
+</svg>
+</button>
+<!-- Today Button -->
+<button class="flex items-center space-x-1.5 px-2.5 py-1 rounded border border-teams-border hover:bg-teams-surfaceHover text-[#e1dfdd] transition-colors">
+<svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<rect height="18" rx="2" stroke-width="2" width="18" x="3" y="4"></rect>
+<line stroke-width="2" x1="16" x2="16" y1="2" y2="6"></line>
+<line stroke-width="2" x1="8" x2="8" y1="2" y2="6"></line>
+<line stroke-width="2" x1="3" x2="21" y1="10" y2="10"></line>
+</svg>
+<span class="font-normal text-xs">Today</span>
+</button>
+<!-- Navigation Arrow Buttons -->
+<div class="flex items-center space-x-0.5">
+<button aria-label="Previous week" class="p-1.5 rounded hover:bg-teams-surfaceHover text-gray-400 hover:text-white">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button aria-label="Next week" class="p-1.5 rounded hover:bg-teams-surfaceHover text-gray-400 hover:text-white">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Date Range Selector -->
+<div class="flex items-center space-x-1 pl-1 cursor-pointer hover:bg-teams-surfaceHover py-1 px-2 rounded">
+<span class="font-semibold text-white text-xs">23–27 November, 2026</span>
+<svg class="w-3.5 h-3.5 text-gray-400 ml-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Right Action Controls -->
+</header>
+<!-- END: TopActionBar -->
+<!-- BEGIN: CalendarGridContainer -->
+<div class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative bg-[#141414]" data-purpose="calendar-scroll-area">
+<!-- Column Headers (Days of Work Week) -->
+<div class="flex border-b border-teams-border sticky top-0 bg-[#141414] z-20">
+<!-- Time column spacer -->
+<div class="w-12 flex-shrink-0 border-r border-teams-border"></div>
+<!-- Mon 23 -->
+<div class="flex-1 min-w-0 border-r border-teams-border px-3 py-2 flex items-center justify-between">
+<div class="flex items-baseline space-x-1.5">
+<span class="text-xl font-normal text-[#5b9bd5]">23</span>
+<span class="text-xs text-teams-textMuted">Mon</span>
+</div>
+<!-- Building / Workplace location icon -->
+<svg class="w-3.5 h-3.5 text-teams-iconOffice" fill="currentColor" viewbox="0 0 20 20">
+<path d="M4 3a2 2 0 00-2 2v12a1 1 0 001 1h14a1 1 0 001-1V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H4zm2 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V7zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6-4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z"></path>
+</svg>
+</div>
+<!-- Tue 24 -->
+<div class="flex-1 min-w-0 border-r border-teams-border px-3 py-2 flex items-center justify-between">
+<div class="flex items-baseline space-x-1.5">
+<span class="text-xl font-normal text-[#5b9bd5]">24</span>
+<span class="text-xs text-teams-textMuted">Tue</span>
+</div>
+<svg class="w-3.5 h-3.5 text-teams-iconOffice" fill="currentColor" viewbox="0 0 20 20">
+<path d="M4 3a2 2 0 00-2 2v12a1 1 0 001 1h14a1 1 0 001-1V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H4zm2 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V7zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6-4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z"></path>
+</svg>
+</div>
+<!-- Wed 25 -->
+<div class="flex-1 min-w-0 border-r border-teams-border px-3 py-2 flex items-center justify-between">
+<div class="flex items-baseline space-x-1.5">
+<span class="text-xl font-normal text-[#5b9bd5]">25</span>
+<span class="text-xs text-teams-textMuted">Wed</span>
+</div>
+<svg class="w-3.5 h-3.5 text-teams-iconOffice" fill="currentColor" viewbox="0 0 20 20">
+<path d="M4 3a2 2 0 00-2 2v12a1 1 0 001 1h14a1 1 0 001-1V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H4zm2 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V7zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6-4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z"></path>
+</svg>
+</div>
+<!-- Thu 26 -->
+<div class="flex-1 min-w-0 border-r border-teams-border px-3 py-2 flex items-center justify-between">
+<div class="flex items-baseline space-x-1.5">
+<span class="text-xl font-normal text-[#5b9bd5]">26</span>
+<span class="text-xs text-teams-textMuted">Thu</span>
+</div>
+<svg class="w-3.5 h-3.5 text-teams-iconOffice" fill="currentColor" viewbox="0 0 20 20">
+<path d="M4 3a2 2 0 00-2 2v12a1 1 0 001 1h14a1 1 0 001-1V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H4zm2 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V7zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6-4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z"></path>
+</svg>
+</div>
+<!-- Fri 27 -->
+<div class="flex-1 min-w-0 border-r border-teams-border px-3 py-2 flex items-center justify-between">
+<div class="flex items-baseline space-x-1.5">
+<span class="text-xl font-normal text-[#5b9bd5]">27</span>
+<span class="text-xs text-teams-textMuted">Fri</span>
+</div>
+<svg class="w-3.5 h-3.5 text-teams-iconOffice" fill="currentColor" viewbox="0 0 20 20">
+<path d="M4 3a2 2 0 00-2 2v12a1 1 0 001 1h14a1 1 0 001-1V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H4zm2 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V7zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6-4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z"></path>
+</svg>
+</div>
+</div>
+<!-- Hourly Timetable Body -->
+<div class="flex flex-1 relative min-h-[960px]">
+<!-- Vertical Time Numbers Column -->
+<div class="w-12 flex-shrink-0 flex flex-col text-right text-[11px] text-teams-textMuted border-r border-teams-border select-none">
+<!-- 8 AM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">8</div>
+<!-- 9 AM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">9</div>
+<!-- 10 AM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">10</div>
+<!-- 11 AM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">11</div>
+<!-- 12 PM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">12</div>
+<!-- 13 PM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">13</div>
+<!-- 14 PM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">14</div>
+<!-- 15 PM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">15</div>
+<!-- 16 PM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">16</div>
+<!-- 17 PM -->
+<div class="h-24 pr-2 pt-1 border-b border-teams-border">17</div>
+</div>
+<!-- Day 1: Monday Column (23) -->
+<div class="flex-1 border-r border-teams-border relative" data-day-col="0">
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="8"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="9"></div>
+<!-- 10:00 - 11:00 Event Slot -->
+<div class="h-24 border-b border-teams-border relative calendar-slot" data-day="0" data-hour="10"><!-- Event Card: One-to-One --><div class="absolute inset-x-1 inset-y-1 bg-[#3d375a] border border-[#5b5fc7]/50 rounded cursor-pointer overflow-hidden flex shadow-sm hover:brightness-110 transition-all z-10"><div class="w-1 bg-[#7b83eb] flex-shrink-0"></div><div class="flex-1 p-2 flex flex-col justify-between overflow-hidden"><div class="flex items-start justify-between gap-1"><span class="text-xs font-semibold text-white truncate leading-tight">One-to-One</span><svg class="w-3.5 h-3.5 text-[#c8c8c8] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></div><div class="flex items-center text-[11px] text-[#c8c8c8] truncate leading-tight"><span class="truncate">Microsoft Teams</span></div></div></div></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="11"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="12"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="13"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="14"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="15"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="16"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="0" data-hour="17"></div>
+</div>
+<!-- Day 2: Tuesday Column (24) -->
+<div class="flex-1 border-r border-teams-border relative" data-day-col="1">
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="8"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="9"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="10"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="11"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="12"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="13"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="14"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="15"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="16"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="1" data-hour="17"></div>
+</div>
+<!-- Day 3: Wednesday Column (25) -->
+<div class="flex-1 border-r border-teams-border relative" data-day-col="2">
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="8"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="9"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="10"></div>
+<!-- 11:00 - 12:00 Event Slot -->
+<div class="h-24 border-b border-teams-border relative calendar-slot" data-day="2" data-hour="11">
+<!-- Event Card: Infra Team Weekly Sync -->
+</div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="12"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="13"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="14"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="15"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="16"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="2" data-hour="17"></div>
+</div>
+<!-- Day 4: Thursday Column (26) -->
+<div class="flex-1 border-r border-teams-border relative" data-day-col="3">
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="8"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="9"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="10"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="11"></div>
+<!-- 12:00 - 13:00 Event Slot -->
+<div class="h-24 border-b border-teams-border relative calendar-slot" data-day="3" data-hour="12">
+<!-- Event Card: Infra Meeting PPT update (with diagonal striped status stripe) -->
+</div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="13"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="14"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="15"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="16"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="3" data-hour="17"></div>
+</div>
+<!-- Day 5: Friday Column (27) -->
+<div class="flex-1 border-r border-teams-border relative" data-day-col="4">
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="8"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="9"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="10"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="11"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="12"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="13"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="14"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="15"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="16"></div>
+<div class="h-24 border-b border-teams-border calendar-slot" data-day="4" data-hour="17"></div>
+</div>
+</div>
+<!-- END: Hourly Timetable Body -->
+</div>
+<!-- END: CalendarGridContainer -->
+</main>
+<!-- END: MainContentArea -->
+</div>
+<!-- END: ApplicationLayout -->
+<script data-purpose="interactive-slot-booking">
+  (function () {
+    const HOURS_START = 8;
+    const HOURS_END = 17;
+    const HOURS_COUNT = HOURS_END - HOURS_START + 1; // 10
+    const SLOT_HEIGHT_PX = 96; // h-24 = 6rem = 96px
+
+    const slots = Array.from(document.querySelectorAll('.calendar-slot'));
+    let startSlot = null; // { day, hour, index, el }
+
+    function getSlotIndex(day, hour) {
+      return day * HOURS_COUNT + (hour - HOURS_START);
+    }
+
+    function formatHour(hour) {
+      return `${String(hour).padStart(2, '0')}:00`;
+    }
+
+    function clearPreview() {
+      slots.forEach((el) => {
+        el.classList.remove('slot-start-active', 'slot-range-preview');
+        const badge = el.querySelector('.slot-start-badge');
+        if (badge) badge.remove();
+      });
+    }
+
+    function cancelSelection() {
+      startSlot = null;
+      clearPreview();
+    }
+
+    function highlightRange(hoverIndex) {
+      if (!startSlot) return;
+      const minIdx = Math.min(startSlot.index, hoverIndex);
+      const maxIdx = Math.max(startSlot.index, hoverIndex);
+
+      slots.forEach((el) => {
+        const day = Number(el.dataset.day);
+        const hour = Number(el.dataset.hour);
+        const idx = getSlotIndex(day, hour);
+        if (idx >= minIdx && idx <= maxIdx && idx !== startSlot.index) {
+          el.classList.add('slot-range-preview');
+        } else {
+          el.classList.remove('slot-range-preview');
+        }
+      });
+    }
+
+    function createBookedEvent(day, startHour, endHour) {
+      const col = document.querySelector(`[data-day-col="${day}"]`);
+      if (!col) return;
+
+      const topPx = (startHour - HOURS_START) * SLOT_HEIGHT_PX + 4;
+      const spanHours = endHour - startHour + 1;
+      const heightPx = spanHours * SLOT_HEIGHT_PX - 8;
+
+      const card = document.createElement('div');
+      card.className = 'booked-event-card absolute inset-x-1 bg-[#3d375a] border border-[#5b5fc7]/60 rounded cursor-pointer overflow-hidden flex shadow-md hover:brightness-110 transition-all z-10';
+      card.style.top = `${topPx}px`;
+      card.style.height = `${heightPx}px`;
+
+      card.innerHTML = `
+        <div class="w-1 bg-[#7b83eb] flex-shrink-0"></div>
+        <div class="flex-1 p-2 flex flex-col justify-between overflow-hidden">
+          <div class="flex items-start justify-between gap-1">
+            <span class="text-xs font-semibold text-white truncate leading-tight">Booked Meeting</span>
+            <span class="text-[10px] font-medium text-[#c8c8c8] bg-[#464775] px-1.5 py-0.5 rounded flex-shrink-0">${formatHour(startHour)} – ${formatHour(endHour + 1)}</span>
+          </div>
+          <div class="flex items-center text-[11px] text-[#c8c8c8] truncate leading-tight">
+            <span class="truncate">Microsoft Teams</span>
+          </div>
+        </div>
+      `;
+
+      col.appendChild(card);
+    }
+
+    function finalizeBooking(endDay, endHour) {
+      const endIndex = getSlotIndex(endDay, endHour);
+      const minIdx = Math.min(startSlot.index, endIndex);
+      const maxIdx = Math.max(startSlot.index, endIndex);
+
+      const firstDay = Math.floor(minIdx / HOURS_COUNT);
+      const lastDay = Math.floor(maxIdx / HOURS_COUNT);
+
+      for (let d = firstDay; d <= lastDay; d++) {
+        const dayStartHour = d === firstDay ? HOURS_START + (minIdx % HOURS_COUNT) : HOURS_START;
+        const dayEndHour = d === lastDay ? HOURS_START + (maxIdx % HOURS_COUNT) : HOURS_END;
+        createBookedEvent(d, dayStartHour, dayEndHour);
+      }
+
+      cancelSelection();
+    }
+
+    slots.forEach((el) => {
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.booked-event-card')) return;
+
+        const day = Number(el.dataset.day);
+        const hour = Number(el.dataset.hour);
+        const index = getSlotIndex(day, hour);
+
+        if (!startSlot) {
+          startSlot = { day, hour, index, el };
+          el.classList.add('slot-start-active');
+          const badge = document.createElement('span');
+          badge.className = 'slot-start-badge';
+          badge.textContent = 'Start';
+          el.appendChild(badge);
+          return;
+        }
+
+        if (startSlot.index === index) {
+          cancelSelection();
+          return;
+        }
+
+        finalizeBooking(day, hour);
+      });
+
+      el.addEventListener('mouseenter', () => {
+        if (!startSlot) return;
+        const day = Number(el.dataset.day);
+        const hour = Number(el.dataset.hour);
+        highlightRange(getSlotIndex(day, hour));
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && startSlot) {
+        cancelSelection();
+      }
+    });
+  })();
+</script>
+</body></html>
