@@ -28,6 +28,13 @@ export interface ModalSharedComponentProps {
    * 'capped' keeps a ~90dvh dialog cap with an internally-scrolling body instead - opt into this
    * only for a modal whose content is unbounded/very tall and genuinely needs its own scroll. */
   heightMode?: 'capped' | 'full';
+  /** 'tiered' (default) sizes the dialog from `maxWidth`/`heightMode` as usual - every existing
+   * modal keeps this. 'adaptive' ignores `maxWidth`/`heightMode` entirely: below the `sm`
+   * breakpoint it stays true full-screen (edge-to-edge, no gutter, matching this app's standard
+   * mobile dialog treatment); at `sm` and up it's near-full-screen with a uniform 1rem gutter on
+   * every side, at every size - no further breakpoint tiers. Opt into this only for a modal whose
+   * content genuinely needs a large canvas. */
+  sizeMode?: 'tiered' | 'adaptive';
   animationType?: 'scale' | 'slide-up';
   exitDirection?: 'down' | 'up';
   headerCloseDirection?: 'down' | 'up';
@@ -47,6 +54,7 @@ export default function ModalSharedComponent({
   minHeightPx,
   scrollMode = 'backdrop',
   heightMode = 'full',
+  sizeMode = 'tiered',
   animationType = 'slide-up',
   exitDirection: exitDirectionProp = 'down',
   headerCloseDirection = 'down',
@@ -169,6 +177,13 @@ export default function ModalSharedComponent({
   if (maxWidth === '6xl') widthClass = 'max-w-6xl';
   if (maxWidth === '7xl') widthClass = 'max-w-7xl';
 
+  const isAdaptive = sizeMode === 'adaptive';
+
+  // 'adaptive' bypasses maxWidth/heightMode's static tiers entirely - see the sizeMode doc above.
+  const dialogSizeClasses = isAdaptive
+    ? 'sm:w-full sm:max-w-none sm:h-[calc(100dvh-32px)] sm:max-h-[calc(100dvh-32px)]'
+    : `sm:w-full ${widthClass} sm:my-8 ${heightMode === 'full' ? 'sm:max-h-none' : 'sm:max-h-[90vh]'}`;
+
   const isSlideUp = animationType === 'slide-up';
   const activeExitDirection: 'down' | 'up' =
     exitDirectionProp === 'up' || internalExitDirection === 'up' ? 'up' : 'down';
@@ -214,7 +229,7 @@ export default function ModalSharedComponent({
           key="modal-portal-container"
           ref={scrollContainerRef}
           style={{ zIndex }}
-          className="fixed inset-0 flex items-end sm:items-start justify-center p-0 sm:p-6 overflow-y-auto overflow-x-hidden w-[100dvw] h-[100dvh]"
+          className={`fixed inset-0 flex items-end sm:items-start justify-center p-0 ${isAdaptive ? 'sm:p-4' : 'sm:p-6'} overflow-y-auto overflow-x-hidden w-[100dvw] h-[100dvh]`}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 1, transition: { duration: 0.55 } }}
@@ -237,9 +252,7 @@ export default function ModalSharedComponent({
             initial="initial"
             animate="animate"
             exit="exit"
-            className={`relative w-[100dvw] sm:w-full ${widthClass} bg-white dark:bg-[#171717] hairline-border-strong rounded-t-2xl rounded-b-none sm:rounded-2xl shadow-2xl z-10 my-0 sm:my-8 flex flex-col shrink-0 max-h-[92dvh] ${
-              heightMode === 'full' ? 'sm:max-h-none' : 'sm:max-h-[90vh]'
-            }`}
+            className={`relative w-[100dvw] bg-white dark:bg-[#171717] hairline-border-strong rounded-t-2xl rounded-b-none sm:rounded-2xl shadow-2xl z-10 my-0 flex flex-col shrink-0 max-h-[92dvh] ${dialogSizeClasses}`}
           >
             {(title || subtitle) && (
               <div className="border-b border-slate-200 dark:border-zinc-800/80 shrink-0">
@@ -276,8 +289,8 @@ export default function ModalSharedComponent({
 
             <div
               ref={bodyRef}
-              className={`p-5 sm:p-6 flex-1 overflow-y-auto max-h-[calc(92dvh-130px)] ${
-                heightMode === 'full' ? 'sm:max-h-none sm:overflow-visible' : 'sm:max-h-none'
+              className={`p-5 sm:p-6 flex-1 overflow-y-auto max-h-[calc(92dvh-130px)] sm:max-h-none ${
+                !isAdaptive && heightMode === 'full' ? 'sm:overflow-visible' : ''
               }`}
             >
               {children}
