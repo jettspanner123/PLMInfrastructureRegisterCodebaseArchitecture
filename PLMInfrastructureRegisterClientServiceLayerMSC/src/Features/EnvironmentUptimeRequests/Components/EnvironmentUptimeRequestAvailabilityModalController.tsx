@@ -203,7 +203,23 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
   };
 
   useEffect(() => {
-    if (!isOpen) cancelSelection();
+    if (!isOpen) {
+      cancelSelection();
+      return;
+    }
+
+    // Every time the modal opens, snap back to "now": today's week (and the mini-calendar's
+    // month, if different), then scroll the grid so the current hour is already in view - the
+    // same reset handleToday performs, minus the slide animation (this is the modal's very first
+    // paint, not a navigation the user should see animate).
+    const currentWeekSunday = getSundayOfWeek(todayYmd);
+    setSelectedWeekStart((prev) => (isSameYmd(prev, currentWeekSunday) ? prev : currentWeekSunday));
+    setViewYear(todayYmd.year);
+    setViewMonth(todayYmd.monthIndex);
+
+    const frame = requestAnimationFrame(() => scrollToCurrentHour());
+    return () => cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   useEffect(() => {
@@ -617,6 +633,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                   >
                     {weekDays.map((weekDay, dayIndex) => {
                       const dayEvents = events.filter((ev) => ev.day === dayIndex);
+                      const isToday = isSameYmd(weekDay, todayYmd);
                       return (
                         <div
                           key={dayIndex}
@@ -624,6 +641,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                         >
                           {HOUR_ROWS.map((hour) => {
                             const disabled = isSlotDisabled(dayIndex, hour);
+                            const isCurrentTimeCell = isToday && hour === currentHour;
                             const index = getSlotIndex(dayIndex, hour);
                             const isStart = !disabled && startSlot?.day === dayIndex && startSlot?.hour === hour;
                             const inPreview =
@@ -644,11 +662,18 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                               <div
                                 key={hour}
                                 className={slotClassName}
+                                title={disabled ? 'This time has already passed' : undefined}
                                 onClick={() => handleSlotClick(dayIndex, hour)}
                                 onMouseEnter={() => {
                                   if (!disabled) setHoverSlot({ day: dayIndex, hour });
                                 }}
                               >
+                                {isToday && (
+                                  <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.08)]" />
+                                )}
+                                {isCurrentTimeCell && (
+                                  <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.18)]" />
+                                )}
                                 {isStart && (
                                   <span className="absolute top-1 right-1.5 bg-[#5b5fc7] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded tracking-wide pointer-events-none shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
                                     Start
