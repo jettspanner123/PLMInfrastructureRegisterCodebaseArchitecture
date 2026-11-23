@@ -244,7 +244,7 @@ export default function CustomSelectSharedComponent({
             usePortal
               ? ''
               : `absolute ${dropdownAnchor === 'right' ? 'right-0' : 'left-0 right-0'} top-full mt-1.5`
-          } min-w-[200px] z-50 bg-white ${panelBg} border border-slate-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 sm:p-1 text-xs flex flex-col max-h-80 sm:max-h-72 overflow-hidden ${dropdownClassName || ''}`}
+          } min-w-[200px] z-50 bg-white ${panelBg} border border-slate-200 dark:border-zinc-700 rounded-xl shadow-xl dark:shadow-2xl p-1 sm:p-1 text-xs flex flex-col max-h-80 sm:max-h-72 overflow-hidden ${dropdownClassName || ''}`}
         >
             {isSearchActive && (
               <div className="shrink-0 p-2 sm:p-1.5 border-b border-slate-100 dark:border-zinc-800/80 mb-1">
