@@ -78,6 +78,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             }
         }
 
+        // Both fromAt/toAt or neither - a lone one has no well-defined filtering meaning
+        // (contracts/calendar-backend-endpoints.md §1 in specs/009-calendar-backend-integration).
+        public void AssertOptionalDateRangeQuery(DateTime? fromAt, DateTime? toAt)
+        {
+            if (fromAt.HasValue != toAt.HasValue)
+            {
+                throw new ValidationException("'fromAt' and 'toAt' must both be provided together, or neither.");
+            }
+        }
+
         public void AssertValidId(Guid id)
         {
             if (id == Guid.Empty)
