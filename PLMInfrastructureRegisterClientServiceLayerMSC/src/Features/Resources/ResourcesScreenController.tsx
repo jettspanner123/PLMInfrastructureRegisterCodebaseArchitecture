@@ -52,7 +52,7 @@ export default function ResourcesScreenController(): React.JSX.Element {
   const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
     const saved = ApplicationUserPreferenceUtility.current.getJSONPreference<string[]>(
       ApplicationUserPreferenceKeyCON.RESOURCE_TABLE_VISIBLE_COLUMNS,
-      ResourceColumnCON.ALL_COLUMN_KEYS
+      ResourceColumnCON.DEFAULT_VISIBLE_COLUMN_KEYS
     );
     // Locked columns (Hostname, Environment) are always included, even if an
     // older persisted preference somehow excluded them.
