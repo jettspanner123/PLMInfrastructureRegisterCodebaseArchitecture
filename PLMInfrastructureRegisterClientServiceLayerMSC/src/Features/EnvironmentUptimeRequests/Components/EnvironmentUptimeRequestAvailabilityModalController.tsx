@@ -47,6 +47,26 @@ const MONTH_NAMES = [
 const WEEK_COUNT = 5; // current week + 4 more (spec.md FR-001/FR-003)
 const DAY_COUNT = WEEK_COUNT * 7; // 35
 
+// Literal, non-interpolated classes only - Tailwind's JIT scanner can't see a
+// template-built `bg-[${hex}]` string (research.md §1, 010-calendar-status-colors).
+const BOOKING_STATUS_CARD_STYLES: Record<string, { card: string; stripe: string; pill: string }> = {
+  [EnvironmentUptimeRequestStatusEnumModel.Pending]: {
+    card: 'bg-[#ffa826] border border-[#ffa826]/50',
+    stripe: 'bg-[#ffcf88]',
+    pill: 'bg-[#8c5c15]',
+  },
+  [EnvironmentUptimeRequestStatusEnumModel.Approved]: {
+    card: 'bg-[#26acff] border border-[#26acff]/50',
+    stripe: 'bg-[#88d1ff]',
+    pill: 'bg-[#155f8c]',
+  },
+  [EnvironmentUptimeRequestStatusEnumModel.Completed]: {
+    card: 'bg-[#29d944] border border-[#29d944]/50',
+    stripe: 'bg-[#89ea98]',
+    pill: 'bg-[#177725]',
+  },
+};
+
 interface YearMonthDay {
   year: number;
   monthIndex: number; // 0-11
@@ -185,6 +205,9 @@ export interface TeamsCalendarEvent {
   justCreated?: boolean;
   source: CalendarEventSourceType;
   backendId?: string; // present only when source !== 'inProgress'
+  status?: EnvironmentUptimeRequestStatusEnumModel; // present only when source === 'uptimeRequest', populated from the originating request's own status
+  requesterName?: string; // present only when source === 'uptimeRequest', populated from the originating request's own requesterName
+  message?: string; // present only when source === 'uptimeRequest' and the originating request has a non-empty message
 }
 
 function OfficeBuildingIcon({ className }: { className: string }): React.JSX.Element {
@@ -312,7 +335,12 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
         request.environment,
         'uptimeRequest',
         request.id
-      )
+      ).map((event) => ({
+        ...event,
+        status: request.status,
+        requesterName: request.requesterName,
+        message: request.message ?? undefined,
+      }))
     );
 
   const realDowntimeEvents: TeamsCalendarEvent[] = (downtimeAnnouncementsInRangeQuery.data ?? [])
@@ -890,6 +918,10 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                           const heightPx = (ev.endHour - ev.startHour + 1) * SLOT_HEIGHT_PX - 8;
                           const isDowntime = ev.source === 'downtime';
                           const isRealBooking = ev.source === 'uptimeRequest' || ev.source === 'downtime';
+                          const cardColors = isDowntime
+                            ? { card: 'bg-[#5a2323] border border-[#e35b5b]/50', stripe: 'bg-[#e35b5b]', pill: 'bg-[#7a3232]' }
+                            : (ev.source === 'uptimeRequest' && ev.status && BOOKING_STATUS_CARD_STYLES[ev.status]) ||
+                              { card: 'bg-[#3d375a] border border-[#5b5fc7]/50', stripe: 'bg-[#7b83eb]', pill: 'bg-[#464775]' };
 
                           return (
                             <div
@@ -898,26 +930,31 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                               onClick={isRealBooking ? () => handleEventCardClick(ev) : undefined}
                               onContextMenu={ev.source === 'inProgress' ? handleInProgressEventContextMenu : handleRealEventContextMenu}
                               className={`absolute inset-x-1 rounded overflow-hidden flex shadow-sm hover:brightness-110 transition-all z-10 ${
-                                isDowntime
-                                  ? 'bg-[#5a2323] border border-[#e35b5b]/50'
-                                  : 'bg-[#3d375a] border border-[#5b5fc7]/50'
+                                cardColors.card
                               } ${isRealBooking ? 'cursor-pointer' : ''} ${ev.source === 'inProgress' ? 'ta-booked-event-card' : ''}`}
                             >
-                              <div className={`w-1 flex-shrink-0 ${isDowntime ? 'bg-[#e35b5b]' : 'bg-[#7b83eb]'}`} />
+                              <div className={`w-1 flex-shrink-0 ${cardColors.stripe}`} />
                               <div className="flex-1 p-2 flex flex-col justify-between overflow-hidden">
                                 <div className="flex items-start justify-between gap-1">
                                   <span className="text-xs font-semibold text-white truncate leading-tight">{ev.title}</span>
                                   <span
-                                    className={`text-[10px] font-medium text-[#c8c8c8] px-1.5 py-0.5 rounded flex-shrink-0 ${
-                                      isDowntime ? 'bg-[#7a3232]' : 'bg-[#464775]'
-                                    }`}
+                                    className={`text-[10px] font-medium text-[#c8c8c8] px-1.5 py-0.5 rounded flex-shrink-0 ${cardColors.pill}`}
                                   >
                                     {formatHourLabel12(ev.startHour)} – {formatHourLabel12(ev.endHour + 1)}
                                   </span>
                                 </div>
-                                <div className="flex items-center text-[11px] text-[#c8c8c8] truncate leading-tight">
-                                  <span className="truncate">{isDowntime ? 'Downtime' : 'Microsoft Teams'}</span>
-                                </div>
+                                {ev.source === 'uptimeRequest' && ev.message && (
+                                  <div className="text-[11px] text-[#c8c8c8] italic leading-tight line-clamp-2">
+                                    {ev.message}
+                                  </div>
+                                )}
+                                {(isDowntime || ev.requesterName) && (
+                                  <div className="flex items-center text-[11px] text-[#c8c8c8] truncate leading-tight">
+                                    <span className={`truncate ${isDowntime ? '' : 'text-white'}`}>
+                                      {isDowntime ? 'Downtime' : ev.requesterName}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
