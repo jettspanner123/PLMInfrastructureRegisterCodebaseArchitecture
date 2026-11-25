@@ -118,7 +118,7 @@ export default function DowntimeAnnouncementHistoryModalController({
             {filteredAnnouncements.map((announcement) => (
               <div
                 key={announcement.id}
-                className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#202020] border border-slate-100 dark:border-zinc-800/80"
+                className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#202020] border border-slate-100 dark:border-zinc-700"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-col items-start gap-1">
