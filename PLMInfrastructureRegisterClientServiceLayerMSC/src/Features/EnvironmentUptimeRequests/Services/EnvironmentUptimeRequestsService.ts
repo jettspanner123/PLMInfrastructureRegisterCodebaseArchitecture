@@ -19,6 +19,31 @@ export default class EnvironmentUptimeRequestsService {
     return payload.data;
   }
 
+  // environment/fromAt/toAt are all optional and independent - omitting all
+  // three is identical to getEnvironmentUptimeRequests() above (contracts/
+  // calendar-backend-endpoints.md §1 in specs/009-calendar-backend-integration).
+  public async getEnvironmentUptimeRequestsForEnvironment(
+    environment: string,
+    fromAt: Date,
+    toAt: Date
+  ): Promise<EnvironmentUptimeRequestInterfaceModel[]> {
+    const params = new URLSearchParams({
+      environment,
+      fromAt: fromAt.toISOString(),
+      toAt: toAt.toISOString(),
+    });
+
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/EnvironmentUptimeRequests?${params.toString()}`);
+
+    const payload: APIResponseInterfaceModel<EnvironmentUptimeRequestInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch uptime requests.');
+    }
+
+    return payload.data;
+  }
+
   public async createEnvironmentUptimeRequest(
     request: CreateEnvironmentUptimeRequestInputInterfaceModel
   ): Promise<EnvironmentUptimeRequestInterfaceModel> {
