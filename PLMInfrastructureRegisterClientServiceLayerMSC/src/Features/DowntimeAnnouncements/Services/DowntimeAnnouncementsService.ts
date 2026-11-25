@@ -48,6 +48,25 @@ export default class DowntimeAnnouncementsService {
     return payload.data;
   }
 
+  // Public (no admin auth header) - contracts/calendar-backend-endpoints.md
+  // §2 in specs/009-calendar-backend-integration. Both params required.
+  public async getDowntimeAnnouncementsInRange(fromAt: Date, toAt: Date): Promise<DowntimeAnnouncementInterfaceModel[]> {
+    const params = new URLSearchParams({
+      fromAt: fromAt.toISOString(),
+      toAt: toAt.toISOString(),
+    });
+
+    const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/DowntimeAnnouncements/InRange?${params.toString()}`);
+
+    const payload: APIResponseInterfaceModel<DowntimeAnnouncementInterfaceModel[]> = await response.json();
+
+    if (!response.ok || !payload.status) {
+      throw new Error(payload.message || 'Failed to fetch downtime announcements.');
+    }
+
+    return payload.data;
+  }
+
   public async endDowntimeAnnouncementEarly(id: string): Promise<DowntimeAnnouncementInterfaceModel> {
     const response = await fetch(`${ApplicationNetworkAPIConfiguration.API_BASE_URL}/Api/V1/DowntimeAnnouncements/${id}/EndEarly`, {
       method: 'PUT',
