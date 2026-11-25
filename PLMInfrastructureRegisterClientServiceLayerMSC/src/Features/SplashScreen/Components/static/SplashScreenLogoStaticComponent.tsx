@@ -1,33 +1,19 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
-import splashScreenAnimation from '../../../../Assets/SplashScreenAnimation.webm?url';
+import weplmLogo from '../../../../Assets/weplm.jpeg';
+import atlasCopcoLogo from '../../../../Assets/Images/AtlasCopcoLogo.webp';
+import { useFrontendDesignSchema } from '../../../../Utilities/FrontendDesignSchemaUtility';
 
 export interface SplashScreenLogoStaticComponentProps {
   className?: string;
-  isReadyToDismiss: boolean;
-  onLoopComplete: () => void;
 }
 
 export default function SplashScreenLogoStaticComponent({
   className = '',
-  isReadyToDismiss,
-  onLoopComplete,
 }: SplashScreenLogoStaticComponentProps): React.JSX.Element {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const handleVideoEnded = () => {
-    if (isReadyToDismiss) {
-      onLoopComplete();
-      return;
-    }
-    // Data/minimum-duration isn't ready yet — play the animation again from the
-    // start rather than cutting or freezing, and re-check once this loop ends too.
-    const video = videoRef.current;
-    if (video) {
-      video.currentTime = 0;
-      video.play().catch(() => {});
-    }
-  };
+  const frontendDesignSchema = useFrontendDesignSchema();
+  const logoSrc = frontendDesignSchema === 'AtlasCopco' ? atlasCopcoLogo : weplmLogo;
+  const logoAlt = frontendDesignSchema === 'AtlasCopco' ? 'Atlas Copco' : 'We.PLM';
 
   return (
     <motion.div
@@ -36,16 +22,11 @@ export default function SplashScreenLogoStaticComponent({
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className={`flex items-center justify-center select-none ${className}`}
     >
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        onEnded={handleVideoEnded}
+      <img
+        src={logoSrc}
+        alt={logoAlt}
         className="w-full max-w-xs sm:max-w-sm h-auto object-contain pointer-events-none"
-      >
-        <source src={splashScreenAnimation} type="video/webm" />
-      </video>
+      />
     </motion.div>
   );
 }

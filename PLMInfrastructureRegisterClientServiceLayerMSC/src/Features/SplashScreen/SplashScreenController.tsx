@@ -33,9 +33,8 @@ export default function SplashScreenController({
   const [isReadyToDismiss, setIsReadyToDismiss] = useState(false);
 
   useEffect(() => {
-    // When all queries settle (loaded or errored), wait out the minimum display duration,
-    // then signal the animation to dismiss at the end of its CURRENT loop rather than
-    // cutting it off mid-playback.
+    // When all queries settle (loaded or errored), wait out the minimum display duration
+    // before marking the splash screen ready to dismiss.
     if (allQueriesSettled) {
       const timer = setTimeout(() => {
         setIsReadyToDismiss(true);
@@ -44,6 +43,14 @@ export default function SplashScreenController({
       return () => clearTimeout(timer);
     }
   }, [allQueriesSettled]);
+
+  useEffect(() => {
+    // The splash screen's logo is now a static image under either design schema (no
+    // looping animation to wait out), so dismissal is driven directly by readiness.
+    if (isReadyToDismiss) {
+      onReady();
+    }
+  }, [isReadyToDismiss, onReady]);
 
   return (
     <AnimatePresence>
@@ -55,10 +62,7 @@ export default function SplashScreenController({
         transition={{ duration: 0.35, ease: 'easeInOut' }}
         className={`fixed inset-0 z-50 flex items-center justify-center min-h-screen w-screen overflow-hidden ${SplashScreenCON.BG_LIGHT} ${SplashScreenCON.BG_DARK}`}
       >
-        <SplashScreenLogoStaticComponent
-          isReadyToDismiss={isReadyToDismiss}
-          onLoopComplete={onReady}
-        />
+        <SplashScreenLogoStaticComponent />
       </motion.div>
     </AnimatePresence>
   );
