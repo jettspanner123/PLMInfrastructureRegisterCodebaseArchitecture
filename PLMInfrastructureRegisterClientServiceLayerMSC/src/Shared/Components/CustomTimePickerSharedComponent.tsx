@@ -77,7 +77,7 @@ export default function CustomTimePickerSharedComponent({
                   onClick={() => handleSelectHour(h)}
                   className={`w-full py-1 text-xs font-mono rounded transition-colors text-center cursor-pointer ${
                     isSelected
-                      ? '!bg-[#0C2086] text-white font-bold shadow-xs'
+                      ? '!bg-[var(--color-brand)] text-white font-bold shadow-xs'
                       : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-200/70 dark:hover:bg-zinc-800'
                   }`}
                 >
@@ -104,7 +104,7 @@ export default function CustomTimePickerSharedComponent({
                   onClick={() => handleSelectMinute(m)}
                   className={`w-full py-1 text-xs font-mono rounded transition-colors text-center cursor-pointer ${
                     isSelected
-                      ? '!bg-[#0C2086] text-white font-bold shadow-xs'
+                      ? '!bg-[var(--color-brand)] text-white font-bold shadow-xs'
                       : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-200/70 dark:hover:bg-zinc-800'
                   }`}
                 >

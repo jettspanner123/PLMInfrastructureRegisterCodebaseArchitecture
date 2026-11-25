@@ -108,7 +108,7 @@ export default function ExpandableSearchSharedComponent({
         onClick={handleExpand}
         aria-label={ariaLabel}
         aria-expanded={isExpanded}
-        className={`absolute left-0 top-0 h-9 w-9 flex items-center justify-center shrink-0 text-slate-700 dark:text-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${
+        className={`absolute left-0 top-0 h-9 w-9 flex items-center justify-center shrink-0 text-slate-700 dark:text-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] dark:focus-visible:ring-blue-400 ${
           isExpanded
             ? 'pointer-events-none'
             : 'cursor-pointer hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors rounded-lg'
@@ -116,7 +116,7 @@ export default function ExpandableSearchSharedComponent({
       >
         <Search className="w-3.5 h-3.5" />
         {hasActiveQuery && !isExpanded && (
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#0C2086] dark:bg-blue-400" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] dark:bg-blue-400" />
         )}
       </button>
 
@@ -149,7 +149,7 @@ export default function ExpandableSearchSharedComponent({
             handleCollapse();
           }}
           aria-label="Clear and close search"
-          className="absolute right-0 top-0 h-9 w-8 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 rounded-lg"
+          className="absolute right-0 top-0 h-9 w-8 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] dark:focus-visible:ring-blue-400 rounded-lg"
         >
           <X className="w-3.5 h-3.5" />
         </button>

@@ -64,7 +64,7 @@ export default function ConfirmationModalSharedComponent({
     if (variant === 'warning') {
       return '!bg-amber-600 hover:!bg-amber-700 active:!bg-amber-800 !text-white border-none shadow-sm font-semibold';
     }
-    return '!bg-[#0C2086] hover:!bg-[#081765] active:!bg-[#051047] !text-white border-none shadow-sm font-semibold';
+    return '!bg-[var(--color-brand)] hover:!bg-[var(--color-brand-hover)] active:!bg-[var(--color-brand-active)] !text-white border-none shadow-sm font-semibold';
   };
 
   return (

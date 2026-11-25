@@ -221,7 +221,7 @@ export default function EnvironmentUptimeRequestDetailScreenController(): React.
         <div className="flex flex-col gap-3 pb-6 border-b border-slate-200 dark:border-zinc-800 shrink-0">
           <Link
             to={ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUESTS}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-[#0C2086] dark:hover:text-sky-400 transition-colors w-fit"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-[var(--color-brand)] dark:hover:text-sky-400 transition-colors w-fit"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             {EnvironmentUptimeRequestsCON.DETAIL_BACK_LINK_LABEL}
@@ -308,7 +308,7 @@ export default function EnvironmentUptimeRequestDetailScreenController(): React.
         {/* Read-only for everyone (including admins) - a non-admin's only
             view of the admin's note, shown whenever one exists. */}
         {matchedRequest && matchedRequest.adminMessage && (
-          <div className="shrink-0 border-l-2 border-[#0C2086]/70 dark:border-sky-500/70 bg-slate-50/60 dark:bg-zinc-900/40 pl-3 pr-2.5 py-2.5 rounded-r-md">
+          <div className="shrink-0 border-l-2 border-[var(--color-brand)]/70 dark:border-sky-500/70 bg-slate-50/60 dark:bg-zinc-900/40 pl-3 pr-2.5 py-2.5 rounded-r-md">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-0.5">
               Note from Admin
             </div>

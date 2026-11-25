@@ -135,5 +135,5 @@ export default class EnvironmentOverviewCON {
   // cells, custom-column cells, and a freshly inserted row/column's own
   // rename input.
   public static readonly DRAFT_INPUT_CLASS_NAME: string =
-    'w-full bg-transparent border-b border-dashed border-[#0C2086]/30 dark:border-blue-400/40 focus:border-solid focus:border-[#0C2086] dark:focus:border-blue-400 focus:outline-none font-mono text-xs text-slate-700 dark:text-zinc-300 py-0.5 placeholder:text-slate-300 dark:placeholder:text-zinc-700';
+    'w-full bg-transparent border-b border-dashed border-[var(--color-brand)]/30 dark:border-blue-400/40 focus:border-solid focus:border-[var(--color-brand)] dark:focus:border-blue-400 focus:outline-none font-mono text-xs text-slate-700 dark:text-zinc-300 py-0.5 placeholder:text-slate-300 dark:placeholder:text-zinc-700';
 }

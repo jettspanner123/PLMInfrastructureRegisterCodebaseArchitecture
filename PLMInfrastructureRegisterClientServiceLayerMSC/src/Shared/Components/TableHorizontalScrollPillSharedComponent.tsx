@@ -206,7 +206,7 @@ export default function TableHorizontalScrollPillSharedComponent({
       }}
       aria-label="Table horizontal scroll controller"
       title="Hold and drag to scroll table horizontally"
-      className={`fixed bottom-4 z-40 h-8 px-1.5 rounded-full flex items-center gap-1 select-none bg-[#0c2086] border border-[#1e3ab8]/70 dark:border-white/15 shadow-lg shadow-[#0c2086]/30 dark:shadow-black/50 transition-transform duration-150 ${
+      className={`fixed bottom-4 z-40 h-8 px-1.5 rounded-full flex items-center gap-1 select-none bg-[var(--color-brand)] border border-[var(--color-brand-tint)]/70 dark:border-white/15 shadow-lg shadow-[var(--color-brand)]/30 dark:shadow-black/50 transition-transform duration-150 ${
         isDragging ? 'cursor-grabbing scale-105 ring-2 ring-white/40' : 'cursor-grab hover:scale-102'
       }`}
     >

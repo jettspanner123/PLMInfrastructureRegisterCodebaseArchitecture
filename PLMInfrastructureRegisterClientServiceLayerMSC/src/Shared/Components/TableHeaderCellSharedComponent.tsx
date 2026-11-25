@@ -37,7 +37,7 @@ export interface TableHeaderCellSharedComponentProps {
 }
 
 // The app-wide "iconic blue" table header treatment — same brand blue
-// (#0C2086, matching primary buttons/focus rings) in both light and dark
+// (var(--color-brand), matching primary buttons/focus rings) in both light and dark
 // mode, deliberately not theme-adjusted. Stickiness itself (position, top
 // offset, z-index) comes from the `.data-table-header-cell` class in
 // index.css, which reacts to the current Table Height preference: sticky to
@@ -64,7 +64,7 @@ export default function TableHeaderCellSharedComponent({
       onDoubleClick={onDoubleClick}
       data-column-key={dataColumnKey}
       style={style}
-      className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[#0C2086] ${
+      className={`data-table-header-cell whitespace-nowrap px-3 py-2.5 font-mono font-bold uppercase tracking-wider text-[10px] text-white bg-[var(--color-brand)] ${
         align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'
       } ${onMouseDown ? 'data-table-column-header-cell--selectable select-none' : ''} ${className}`}
     >

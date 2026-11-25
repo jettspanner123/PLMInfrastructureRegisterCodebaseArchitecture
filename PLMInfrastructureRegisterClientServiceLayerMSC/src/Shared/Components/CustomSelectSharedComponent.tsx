@@ -258,7 +258,7 @@ export default function CustomSelectSharedComponent({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={searchPlaceholder}
-                    className="w-full bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-lg pl-9 sm:pl-8 pr-3 sm:pr-2.5 py-2.5 sm:py-1.5 text-sm sm:text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-hidden focus:ring-1 focus:ring-[#0C2086] transition-all"
+                    className="w-full bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-lg pl-9 sm:pl-8 pr-3 sm:pr-2.5 py-2.5 sm:py-1.5 text-sm sm:text-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-hidden focus:ring-1 focus:ring-[var(--color-brand)] transition-all"
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -294,7 +294,7 @@ export default function CustomSelectSharedComponent({
               >
                 <span className="font-medium truncate text-sm sm:text-xs leading-snug">{placeholder}</span>
                 {values.length === 0 && (
-                  <Check className="w-4 h-4 text-[#0C2086] dark:text-blue-400 shrink-0" />
+                  <Check className="w-4 h-4 text-[var(--color-brand)] dark:text-blue-400 shrink-0" />
                 )}
               </button>
             )}
@@ -303,9 +303,9 @@ export default function CustomSelectSharedComponent({
               <button
                 type="button"
                 onClick={() => handleApplyCustom(searchTerm)}
-                className="w-full min-h-[44px] sm:min-h-0 flex items-center gap-2.5 sm:gap-2 px-3.5 sm:px-3 py-2.5 sm:py-2 rounded-xl sm:rounded-lg bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-800/50 text-[#0C2086] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer text-left font-medium mb-1 text-sm sm:text-xs"
+                className="w-full min-h-[44px] sm:min-h-0 flex items-center gap-2.5 sm:gap-2 px-3.5 sm:px-3 py-2.5 sm:py-2 rounded-xl sm:rounded-lg bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-800/50 text-[var(--color-brand)] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer text-left font-medium mb-1 text-sm sm:text-xs"
               >
-                <Sparkles className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0 text-[#0C2086] dark:text-blue-400" />
+                <Sparkles className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0 text-[var(--color-brand)] dark:text-blue-400" />
                 <span className="truncate">
                   Use custom: <span className="font-bold underline italic">"{searchTerm.trim()}"</span>
                 </span>
@@ -349,7 +349,7 @@ export default function CustomSelectSharedComponent({
                       </div>
                     </div>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-[#0C2086] dark:text-blue-400 shrink-0" />
+                      <Check className="w-4 h-4 text-[var(--color-brand)] dark:text-blue-400 shrink-0" />
                     )}
                   </button>
                 );
@@ -366,7 +366,7 @@ export default function CustomSelectSharedComponent({
                     setIsOpen(false);
                     footerAction.onClick();
                   }}
-                  className="w-full min-h-[44px] sm:min-h-0 flex items-center gap-2 px-3.5 sm:px-3 py-3 sm:py-1.5 rounded-xl sm:rounded-lg text-sm sm:text-xs font-semibold text-[#0C2086] dark:text-sky-400 hover:bg-blue-50 dark:hover:bg-sky-950/40 transition-colors cursor-pointer text-left"
+                  className="w-full min-h-[44px] sm:min-h-0 flex items-center gap-2 px-3.5 sm:px-3 py-3 sm:py-1.5 rounded-xl sm:rounded-lg text-sm sm:text-xs font-semibold text-[var(--color-brand)] dark:text-sky-400 hover:bg-blue-50 dark:hover:bg-sky-950/40 transition-colors cursor-pointer text-left"
                 >
                   {footerAction.icon}
                   <span className="truncate">{footerAction.label}</span>

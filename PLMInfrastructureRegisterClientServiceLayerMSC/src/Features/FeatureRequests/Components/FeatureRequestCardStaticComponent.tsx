@@ -110,7 +110,7 @@ export default function FeatureRequestCardStaticComponent({
       <div className="flex items-start justify-between gap-3">
         {/* Module Icon & Title */}
         <div className="flex items-start gap-3 min-w-0 flex-1">
-          <div className="w-8 h-8 rounded-lg bg-[#0C2086] text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+          <div className="w-8 h-8 rounded-lg bg-[var(--color-brand)] text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
             {getCategoryIcon(request.category)}
           </div>
           <div className="min-w-0 flex-1">
@@ -126,7 +126,7 @@ export default function FeatureRequestCardStaticComponent({
         {/* Right: Ticket ID with 1-click Copy + Priority + Status */}
         <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/90 text-slate-700 dark:text-zinc-300 px-2 py-0.5 rounded text-xs font-mono font-medium border border-slate-200/70 dark:border-zinc-700/60">
-            <span className="font-semibold text-[#0C2086] dark:text-sky-400">
+            <span className="font-semibold text-[var(--color-brand)] dark:text-sky-400">
               {displayTicketId}
             </span>
             <button
@@ -151,13 +151,13 @@ export default function FeatureRequestCardStaticComponent({
       </div>
 
       {/* Description Body: Inset with Accent Border */}
-      <div className="border-l-2 border-[#0C2086]/70 dark:border-sky-500/70 bg-slate-50/60 dark:bg-zinc-900/40 pl-3 pr-2.5 py-2.5 rounded-r-md text-xs sm:text-sm text-slate-700 dark:text-zinc-200 leading-relaxed whitespace-pre-line">
+      <div className="border-l-2 border-[var(--color-brand)]/70 dark:border-sky-500/70 bg-slate-50/60 dark:bg-zinc-900/40 pl-3 pr-2.5 py-2.5 rounded-r-md text-xs sm:text-sm text-slate-700 dark:text-zinc-200 leading-relaxed whitespace-pre-line">
         <div>{displayDescription}</div>
         {isLongDescription && (
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-xs font-semibold text-[#0C2086] dark:text-sky-400 hover:underline mt-1.5 flex items-center gap-1 cursor-pointer"
+            className="text-xs font-semibold text-[var(--color-brand)] dark:text-sky-400 hover:underline mt-1.5 flex items-center gap-1 cursor-pointer"
           >
             {isExpanded ? (
               <>

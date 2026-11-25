@@ -85,7 +85,7 @@ export default function EnvironmentUptimeRequestDetailModalController({
               to={ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUEST_DETAIL_PATTERN}
               params={{ ticketId: displayRequest.ticketId }}
               onClick={onClose}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0C2086] dark:text-sky-400 hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand)] dark:text-sky-400 hover:underline"
             >
               View full ticket / change status
               <ExternalLink className="w-3.5 h-3.5" />

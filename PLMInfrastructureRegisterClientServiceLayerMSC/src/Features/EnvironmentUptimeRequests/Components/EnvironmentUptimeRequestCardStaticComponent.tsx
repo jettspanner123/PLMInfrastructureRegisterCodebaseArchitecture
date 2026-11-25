@@ -91,7 +91,7 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
       <div className="flex items-start justify-between gap-3">
         {/* Environment Name Title */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <div className="w-8 h-8 rounded-lg bg-[#0C2086] text-white flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-[var(--color-brand)] text-white flex items-center justify-center shrink-0 shadow-xs">
             <Server className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">
@@ -107,7 +107,7 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
             <Link
               to={ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUEST_DETAIL_PATTERN}
               params={{ ticketId: request.ticketId }}
-              className="text-[#0C2086] dark:text-sky-400 hover:underline font-semibold"
+              className="text-[var(--color-brand)] dark:text-sky-400 hover:underline font-semibold"
             >
               {request.ticketId}
             </Link>
@@ -130,7 +130,7 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
               target="_blank"
               rel="noreferrer"
               title={`Open ${request.jiraTicketKey} in Jira`}
-              className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/90 text-[#0C2086] dark:text-sky-400 px-2 py-0.5 rounded text-xs font-mono font-semibold border border-slate-200/70 dark:border-zinc-700/60 hover:underline"
+              className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/90 text-[var(--color-brand)] dark:text-sky-400 px-2 py-0.5 rounded text-xs font-mono font-semibold border border-slate-200/70 dark:border-zinc-700/60 hover:underline"
             >
               <ExternalLink className="w-3 h-3" />
               {request.jiraTicketKey}
@@ -147,7 +147,7 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
             <span>Maintenance Window (CET)</span>
           </div>
           {durationLabel && (
-            <span className="font-mono text-[11px] font-semibold text-[#0C2086] dark:text-sky-400 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200/50 dark:border-blue-900/40">
+            <span className="font-mono text-[11px] font-semibold text-[var(--color-brand)] dark:text-sky-400 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200/50 dark:border-blue-900/40">
               {durationLabel}
             </span>
           )}
@@ -162,7 +162,7 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
 
       {/* Optional Context / Message */}
       {message && (
-        <div className="border-l-2 border-[#0C2086]/70 dark:border-sky-500/70 bg-slate-50/60 dark:bg-zinc-900/40 pl-3 pr-2.5 py-2 rounded-r-md text-xs sm:text-sm text-slate-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
+        <div className="border-l-2 border-[var(--color-brand)]/70 dark:border-sky-500/70 bg-slate-50/60 dark:bg-zinc-900/40 pl-3 pr-2.5 py-2 rounded-r-md text-xs sm:text-sm text-slate-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-0.5">
             Context / Notes
           </div>
@@ -171,7 +171,7 @@ export default function EnvironmentUptimeRequestCardStaticComponent({
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs font-semibold text-[#0C2086] dark:text-sky-400 hover:underline mt-1 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-[var(--color-brand)] dark:text-sky-400 hover:underline mt-1 flex items-center gap-1 cursor-pointer"
             >
               {isExpanded ? (
                 <>

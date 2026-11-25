@@ -122,7 +122,7 @@ export default function CopyableTableCellSharedComponent({
         }}
         className={`group relative w-full h-full flex ${
           verticalAlign === 'top' ? 'items-start' : 'items-center'
-        } text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 ${className}`}
+        } text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-brand)] dark:focus-visible:ring-blue-400 ${className}`}
       >
         <span className="pr-5">{children}</span>
         <span

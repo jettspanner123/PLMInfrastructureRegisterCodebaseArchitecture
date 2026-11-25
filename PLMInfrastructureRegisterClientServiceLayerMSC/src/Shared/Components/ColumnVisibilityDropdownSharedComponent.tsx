@@ -117,7 +117,7 @@ export default function ColumnVisibilityDropdownSharedComponent({
                     placeholder="Search columns..."
                     aria-label="Search columns"
                     autoComplete="off"
-                    className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086] transition-colors"
+                    className="w-full h-8 pl-8 pr-2.5 text-xs bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)]/50 focus:border-[var(--color-brand)] transition-colors"
                   />
                 </div>
               )}
@@ -159,7 +159,7 @@ export default function ColumnVisibilityDropdownSharedComponent({
                           onClose();
                         }
                       }}
-                      className="h-3.5 w-3.5 rounded accent-[#0C2086] cursor-pointer shrink-0 disabled:cursor-not-allowed"
+                      className="h-3.5 w-3.5 rounded accent-[var(--color-brand)] cursor-pointer shrink-0 disabled:cursor-not-allowed"
                     />
                     <span className="truncate text-slate-700 dark:text-zinc-300">{column.label}</span>
                   </label>

@@ -1081,7 +1081,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                   max="100"
                   value={currentOpacity}
                   onChange={(e) => handleOpacityChange(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[#0C2086] dark:accent-blue-500"
+                  className="w-full h-1.5 bg-slate-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[var(--color-brand)] dark:accent-blue-500"
                 />
               </div>
             ),
@@ -1833,7 +1833,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
     const dateTag = (
       <span
         className={`shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap ${
-          hasDate ? 'bg-[#0C2086] dark:bg-blue-600' : 'bg-slate-400 dark:bg-zinc-600'
+          hasDate ? 'bg-[var(--color-brand)] dark:bg-blue-600' : 'bg-slate-400 dark:bg-zinc-600'
         }`}
       >
         {hasDate ? (
@@ -1867,7 +1867,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               }}
               onKeyDown={handleActionItemEditKeyDown}
               rows={2}
-              className="w-full bg-transparent border-b border-dashed border-[#0C2086]/30 dark:border-blue-400/40 focus:border-solid focus:border-[#0C2086] dark:focus:border-blue-400 focus:outline-none resize-y whitespace-pre-wrap break-words"
+              className="w-full bg-transparent border-b border-dashed border-[var(--color-brand)]/30 dark:border-blue-400/40 focus:border-solid focus:border-[var(--color-brand)] dark:focus:border-blue-400 focus:outline-none resize-y whitespace-pre-wrap break-words"
             />
             <div className="flex items-center justify-between mt-0.5">
               <span className="text-[9px]">
@@ -1889,7 +1889,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                   type="button"
                   onClick={handleSaveActionItemEdit}
                   disabled={updateActionItemMutation.isPending || !editingActionItemText.trim()}
-                  className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="font-bold underline text-[var(--color-brand)] dark:text-blue-400 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {updateActionItemMutation.isPending ? 'Saving…' : 'Done'}
                 </button>
@@ -1922,7 +1922,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               type="button"
               onClick={() => handleOpenActionItemEdit(rowId, lineIndex, line)}
               aria-label="Edit this entry"
-              className="mt-px text-slate-300 dark:text-zinc-700 hover:text-[#0C2086] dark:hover:text-blue-400 cursor-pointer"
+              className="mt-px text-slate-300 dark:text-zinc-700 hover:text-[var(--color-brand)] dark:hover:text-blue-400 cursor-pointer"
             >
               <Pencil className="w-3 h-3" />
             </button>
@@ -1951,7 +1951,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
         <button
           type="button"
           onClick={() => handleOpenActionItemDraft(rowId)}
-          className="flex items-center gap-1 font-bold text-[#0C2086] dark:text-blue-400 hover:opacity-80 cursor-pointer"
+          className="flex items-center gap-1 font-bold text-[var(--color-brand)] dark:text-blue-400 hover:opacity-80 cursor-pointer"
         >
           <Plus className="w-3 h-3" />
           Add Entry
@@ -1961,7 +1961,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
 
     return (
       <div className="flex items-start gap-1.5">
-        <span className="shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full bg-[#0C2086] dark:bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap">
+        <span className="shrink-0 mt-px inline-flex items-center justify-center min-w-[72px] rounded-full bg-[var(--color-brand)] dark:bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap">
           {getTodayFormattedDate()}
         </span>
         <div className="flex-1 min-w-0">
@@ -1977,7 +1977,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
             onKeyDown={handleActionItemDraftKeyDown}
             placeholder="Type a note…"
             rows={2}
-            className="w-full bg-transparent border-b border-dashed border-[#0C2086]/30 dark:border-blue-400/40 focus:border-solid focus:border-[#0C2086] dark:focus:border-blue-400 focus:outline-none resize-y whitespace-pre-wrap break-words placeholder:text-slate-300 dark:placeholder:text-zinc-700"
+            className="w-full bg-transparent border-b border-dashed border-[var(--color-brand)]/30 dark:border-blue-400/40 focus:border-solid focus:border-[var(--color-brand)] dark:focus:border-blue-400 focus:outline-none resize-y whitespace-pre-wrap break-words placeholder:text-slate-300 dark:placeholder:text-zinc-700"
           />
           <div className="flex items-center justify-between mt-0.5">
             <span className="text-[9px]">
@@ -1999,7 +1999,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
                 type="button"
                 onClick={handleSaveActionItemDraft}
                 disabled={addActionItemMutation.isPending || !actionItemDraftText.trim()}
-                className="font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="font-bold underline text-[var(--color-brand)] dark:text-blue-400 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {addActionItemMutation.isPending ? 'Saving…' : 'Done'}
               </button>
@@ -2063,7 +2063,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               <button
                 type="button"
                 onClick={() => handleToggleActionItemsExpanded(environment.id)}
-                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 cursor-pointer"
+                className="block ml-auto font-bold underline text-[var(--color-brand)] dark:text-blue-400 hover:opacity-80 cursor-pointer"
               >
                 See All
               </button>
@@ -2072,7 +2072,7 @@ export default function EnvironmentOverviewScreenController(): React.JSX.Element
               <button
                 type="button"
                 onClick={() => handleToggleActionItemsExpanded(environment.id)}
-                className="block ml-auto font-bold underline text-[#0C2086] dark:text-blue-400 hover:opacity-80 cursor-pointer"
+                className="block ml-auto font-bold underline text-[var(--color-brand)] dark:text-blue-400 hover:opacity-80 cursor-pointer"
               >
                 Show Less
               </button>

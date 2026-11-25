@@ -125,7 +125,7 @@ export default function CreatableCustomSelectSharedComponent({
             {label} {required && <span className="text-rose-500 font-bold">*</span>}
           </span>
           {enableCustomCreation && value && !selectedOption && (
-            <span className="text-[10px] font-mono text-[#0C2086] dark:text-blue-400 flex items-center gap-1 font-semibold">
+            <span className="text-[10px] font-mono text-[var(--color-brand)] dark:text-blue-400 flex items-center gap-1 font-semibold">
               <Sparkles className="w-2.5 h-2.5" />
               Custom Value
             </span>
@@ -140,7 +140,7 @@ export default function CreatableCustomSelectSharedComponent({
           type="button"
           disabled={disabled}
           onClick={() => !disabled && setIsOpen(!isOpen)}
-          className={`w-full flex items-center justify-between text-xs rounded-xl bg-white dark:bg-zinc-900/80 border border-slate-300 dark:border-zinc-700/80 text-slate-900 dark:text-zinc-100 hover:border-slate-400 dark:hover:border-zinc-600 max-sm:active:bg-slate-100 dark:max-sm:active:bg-zinc-800 max-sm:active:opacity-80 transition-all shadow-2xs cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 ${
+          className={`w-full flex items-center justify-between text-xs rounded-xl bg-white dark:bg-zinc-900/80 border border-slate-300 dark:border-zinc-700/80 text-slate-900 dark:text-zinc-100 hover:border-slate-400 dark:hover:border-zinc-600 max-sm:active:bg-slate-100 dark:max-sm:active:bg-zinc-800 max-sm:active:opacity-80 transition-all shadow-2xs cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)]/50 ${
             disabled ? 'opacity-50 cursor-not-allowed' : ''
           } ${heightClass} ${triggerClassName || ''}`}
         >
@@ -154,7 +154,7 @@ export default function CreatableCustomSelectSharedComponent({
           </div>
           <ChevronDown
             className={`w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0 transition-transform duration-200 ${
-              isOpen ? 'rotate-180 text-[#0C2086] dark:text-blue-400' : ''
+              isOpen ? 'rotate-180 text-[var(--color-brand)] dark:text-blue-400' : ''
             }`}
           />
         </button>
@@ -192,7 +192,7 @@ export default function CreatableCustomSelectSharedComponent({
                       }
                     }}
                     placeholder={searchPlaceholder}
-                    className="w-full h-8 max-sm:!h-10 pl-8 pr-2.5 text-xs max-sm:!text-sm bg-slate-50 dark:bg-zinc-800/70 border border-slate-200 dark:border-zinc-700/60 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]/50 focus:border-[#0C2086]"
+                    className="w-full h-8 max-sm:!h-10 pl-8 pr-2.5 text-xs max-sm:!text-sm bg-slate-50 dark:bg-zinc-800/70 border border-slate-200 dark:border-zinc-700/60 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)]/50 focus:border-[var(--color-brand)]"
                   />
                 </div>
               </div>
@@ -205,15 +205,15 @@ export default function CreatableCustomSelectSharedComponent({
                 <button
                   type="button"
                   onClick={handleApplyCustomValue}
-                  className={`w-full flex items-center justify-between p-2 rounded-lg text-left text-xs bg-blue-50/80 dark:bg-blue-950/40 text-[#0C2086] dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 max-sm:active:bg-blue-200 dark:max-sm:active:bg-blue-900 border border-blue-200/60 dark:border-blue-800/40 transition-colors cursor-pointer mb-1 group ${optionClassName}`}
+                  className={`w-full flex items-center justify-between p-2 rounded-lg text-left text-xs bg-blue-50/80 dark:bg-blue-950/40 text-[var(--color-brand)] dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 max-sm:active:bg-blue-200 dark:max-sm:active:bg-blue-900 border border-blue-200/60 dark:border-blue-800/40 transition-colors cursor-pointer mb-1 group ${optionClassName}`}
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <Plus className="w-3.5 h-3.5 text-[#0C2086] dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
+                    <Plus className="w-3.5 h-3.5 text-[var(--color-brand)] dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
                     <span className="font-semibold truncate">
                       Use custom: <span className="underline italic">"{searchTerm.trim()}"</span>
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/80 text-[#0C2086] dark:text-blue-300 shrink-0">
+                  <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/80 text-[var(--color-brand)] dark:text-blue-300 shrink-0">
                     Enter ↵
                   </span>
                 </button>
@@ -245,7 +245,7 @@ export default function CreatableCustomSelectSharedComponent({
                         </div>
                       </div>
                       {isSelected && (
-                        <Check className="w-3.5 h-3.5 text-[#0C2086] dark:text-blue-400 shrink-0" />
+                        <Check className="w-3.5 h-3.5 text-[var(--color-brand)] dark:text-blue-400 shrink-0" />
                       )}
                     </button>
                   );

@@ -103,7 +103,7 @@ export default function CreateOptionModalController({
             }}
             placeholder={inputPlaceholder}
             autoFocus
-            className="w-full h-10 px-3 text-xs rounded-lg bg-white dark:bg-[#202020] border border-slate-200/80 dark:border-zinc-800 text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086]"
+            className="w-full h-10 px-3 text-xs rounded-lg bg-white dark:bg-[#202020] border border-slate-200/80 dark:border-zinc-800 text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)]"
           />
         </div>
 

@@ -217,7 +217,7 @@ export default function CustomDatePickerSharedComponent({
 
             let cellStyle = '';
             if (isSelected) {
-              cellStyle = '!bg-[#0C2086] text-white font-semibold shadow-xs';
+              cellStyle = '!bg-[var(--color-brand)] text-white font-semibold shadow-xs';
             } else if (item.isDisabled) {
               cellStyle = 'opacity-25 text-slate-300 dark:text-zinc-700 cursor-not-allowed pointer-events-none';
             } else if (isToday) {

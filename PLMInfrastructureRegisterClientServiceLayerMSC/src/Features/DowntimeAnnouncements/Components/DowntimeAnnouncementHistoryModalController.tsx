@@ -19,7 +19,7 @@ const STATUS_STYLES: Record<string, string> = {
   Active: 'bg-emerald-600 text-white',
   EndedEarly: 'bg-amber-600 text-white',
   Expired: 'bg-slate-600 text-white',
-  Scheduled: 'bg-[#0D2086] text-white',
+  Scheduled: 'bg-[var(--color-brand)] text-white',
 };
 
 const STATUS_LABELS: Record<string, string> = {

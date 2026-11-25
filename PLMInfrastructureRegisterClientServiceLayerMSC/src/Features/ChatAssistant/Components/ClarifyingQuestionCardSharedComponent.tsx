@@ -101,12 +101,12 @@ export default function ClarifyingQuestionCardSharedComponent({
                   onClick={() => handleOptionClick(option)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-sm text-left transition-colors ${
                     isChosen
-                      ? 'bg-[#0C2086]/5 dark:bg-blue-400/10 border-[#0C2086] dark:border-blue-400 text-slate-900 dark:text-zinc-100'
+                      ? 'bg-[var(--color-brand)]/5 dark:bg-blue-400/10 border-[var(--color-brand)] dark:border-blue-400 text-slate-900 dark:text-zinc-100'
                       : 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-300'
                   } ${isDimmed ? 'opacity-40' : ''} ${
                     isDisabled
                       ? 'cursor-not-allowed'
-                      : 'cursor-pointer hover:border-[#0C2086] dark:hover:border-blue-400'
+                      : 'cursor-pointer hover:border-[var(--color-brand)] dark:hover:border-blue-400'
                   }`}
                 >
                   <span
@@ -114,7 +114,7 @@ export default function ClarifyingQuestionCardSharedComponent({
                       question.allowMultiple ? 'rounded' : 'rounded-full'
                     } ${
                       isChosen
-                        ? 'bg-[#0C2086] border-[#0C2086] dark:bg-blue-400 dark:border-blue-400'
+                        ? 'bg-[var(--color-brand)] border-[var(--color-brand)] dark:bg-blue-400 dark:border-blue-400'
                         : 'border-slate-300 dark:border-zinc-600'
                     }`}
                   >
@@ -156,7 +156,7 @@ export default function ClarifyingQuestionCardSharedComponent({
               }
             }}
             placeholder="Type an answer…"
-            className="w-full h-10 px-3 text-sm rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#0C2086] disabled:opacity-60"
+            className="w-full h-10 px-3 text-sm rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)] disabled:opacity-60"
           />
         </div>
       )}
@@ -176,7 +176,7 @@ export default function ClarifyingQuestionCardSharedComponent({
             type="button"
             disabled={isDisabled || !canSend}
             onClick={handleSend}
-            className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-[#0C2086] text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-[var(--color-brand)] text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[var(--color-brand-hover)] transition-colors"
           >
             <Send className="w-3.5 h-3.5" />
             Send

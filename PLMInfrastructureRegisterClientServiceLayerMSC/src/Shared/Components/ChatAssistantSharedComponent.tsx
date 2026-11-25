@@ -497,7 +497,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
             }}
             aria-label="Open Assistant"
             aria-haspopup="dialog"
-            className="relative h-9 w-9 rounded-lg bg-slate-100 dark:bg-zinc-800/80 hairline-border flex items-center justify-center overflow-hidden hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400"
+            className="relative h-9 w-9 rounded-lg bg-slate-100 dark:bg-zinc-800/80 hairline-border flex items-center justify-center overflow-hidden hover:bg-slate-200 dark:hover:bg-zinc-700/80 transition-colors cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] dark:focus-visible:ring-blue-400"
           >
             <img
               src={dancingAIAgentMascotImage}
@@ -592,7 +592,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                               value={sidebarSearchQuery}
                               onChange={(event) => setSidebarSearchQuery(event.target.value)}
                               placeholder="Search"
-                              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-zinc-900 hairline-border text-xs text-slate-700 dark:text-zinc-300 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#0C2086] dark:focus:ring-blue-400"
+                              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-zinc-900 hairline-border text-xs text-slate-700 dark:text-zinc-300 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] dark:focus:ring-blue-400"
                             />
                           </div>
                           {/* Placeholder - no Knowledge Base feature exists
@@ -607,7 +607,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                           <button
                             type="button"
                             onClick={handleClearChat}
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#0C2086] text-white text-xs font-semibold hover:bg-[#081765] transition-colors cursor-pointer"
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[var(--color-brand)] text-white text-xs font-semibold hover:bg-[var(--color-brand-hover)] transition-colors cursor-pointer"
                           >
                             <Plus className="w-3.5 h-3.5" />
                             New Conversation
@@ -764,7 +764,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                                   layoutId={`chat-send-morph-${message.id}`}
                                   onLayoutAnimationComplete={() => setFlyingMessage(null)}
                                   transition={SEND_MORPH_SPRING}
-                                  style={{ backgroundColor: '#0C2086', color: '#ffffff', borderRadius: 16 }}
+                                  style={{ backgroundColor: 'var(--color-brand)', color: '#ffffff', borderRadius: 16 }}
                                   className="max-w-[80%] text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap"
                                 >
                                   {message.text}
@@ -780,7 +780,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
 
                           return (
                             <div key={message.id} className="flex flex-col items-end gap-1">
-                              <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[#0C2086] text-white text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap">
+                              <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[var(--color-brand)] text-white text-xs px-4 py-2.5 break-words shadow-sm leading-relaxed whitespace-pre-wrap">
                                 {message.text}
                               </div>
                               {message.timestamp && (
@@ -867,7 +867,7 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                     {/* Animated 3-dot typing indicator */}
                     {askQuestionMutation.isPending && (
                       <div className="flex items-start gap-2.5 max-w-[85%]">
-                        <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 hairline-border flex items-center justify-center text-[#0C2086] dark:text-blue-400 shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 hairline-border flex items-center justify-center text-[var(--color-brand)] dark:text-blue-400 shrink-0 mt-0.5">
                           <Bot className="w-3.5 h-3.5" />
                         </div>
                         <div className="rounded-2xl rounded-tl-sm bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-xs px-4 py-3 shadow-sm flex items-center gap-1.5">
@@ -960,14 +960,14 @@ export default function ChatAssistantSharedComponent(): React.JSX.Element {
                               : 'Message the assistant…'
                         }
                         style={{ maxHeight: MAX_TEXTAREA_HEIGHT_PX }}
-                        className="flex-1 min-h-10 py-2 px-3.5 rounded-3xl bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0C2086] dark:focus-visible:ring-blue-400 disabled:opacity-60 resize-none overflow-y-auto"
+                        className="flex-1 min-h-10 py-2 px-3.5 rounded-3xl bg-transparent text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] dark:focus-visible:ring-blue-400 disabled:opacity-60 resize-none overflow-y-auto"
                       />
                       <button
                         type="button"
                         onClick={handleSend}
                         disabled={!draftMessage.trim() || askQuestionMutation.isPending || isQuestionPending}
                         aria-label="Send message"
-                        className="h-10 w-10 shrink-0 rounded-full bg-[#0C2086] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[#081765] transition-colors"
+                        className="h-10 w-10 shrink-0 rounded-full bg-[var(--color-brand)] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-[var(--color-brand-hover)] transition-colors"
                       >
                         {askQuestionMutation.isPending ? (
                           <Loader2 className="w-4 h-4 animate-spin" />

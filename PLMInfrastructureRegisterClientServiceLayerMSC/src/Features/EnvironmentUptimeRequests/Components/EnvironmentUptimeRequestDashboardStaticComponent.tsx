@@ -18,7 +18,7 @@ export interface EnvironmentUptimeRequestDashboardStaticComponentProps {
 
 const DOWNTIME_STATUS_STYLES: Record<string, string> = {
   Active: 'bg-emerald-600 text-white',
-  Scheduled: 'bg-[#0D2086] text-white',
+  Scheduled: 'bg-[var(--color-brand)] text-white',
 };
 
 // Renders two pieces as direct children of the Dashboard view's shared

@@ -319,7 +319,7 @@ export default function CustomDateTimePickerSharedComponent({
             <button
               type="button"
               onClick={handleNowAction}
-              className="px-2.5 py-1 text-xs font-medium text-[#0C2086] dark:text-sky-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-md transition-colors cursor-pointer"
+              className="px-2.5 py-1 text-xs font-medium text-[var(--color-brand)] dark:text-sky-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-md transition-colors cursor-pointer"
             >
               Set to Now
             </button>
@@ -330,7 +330,7 @@ export default function CustomDateTimePickerSharedComponent({
                 ApplicationHapticsUtility.current.triggerHapticFeedback(12);
                 setIsOpen(false);
               }}
-              className="px-3 py-1 text-xs font-semibold bg-[#0C2086] text-white hover:bg-[#081765] rounded-md transition-colors cursor-pointer flex items-center gap-1 shadow-xs"
+              className="px-3 py-1 text-xs font-semibold bg-[var(--color-brand)] text-white hover:bg-[var(--color-brand-hover)] rounded-md transition-colors cursor-pointer flex items-center gap-1 shadow-xs"
             >
               <Check className="w-3.5 h-3.5" />
               Done

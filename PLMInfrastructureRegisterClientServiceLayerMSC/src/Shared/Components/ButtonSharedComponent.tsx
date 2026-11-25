@@ -50,7 +50,7 @@ export default function ButtonSharedComponent({
 
   let variantStyles = '';
   if (variant === 'primary') {
-    variantStyles = '!bg-[#0C2086] hover:!bg-[#081765] !text-white border-none shadow-sm font-semibold';
+    variantStyles = '!bg-[var(--color-brand)] hover:!bg-[var(--color-brand-hover)] !text-white border-none shadow-sm font-semibold';
   } else if (variant === 'ghost') {
     variantStyles =
       'bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 hairline-border';
