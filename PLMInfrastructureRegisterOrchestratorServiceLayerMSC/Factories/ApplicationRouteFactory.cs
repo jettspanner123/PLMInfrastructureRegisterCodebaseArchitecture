@@ -209,6 +209,12 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
 
             public const string GetActiveDowntimeAnnouncement = "Active";
 
+            // Public (no [Authorize]) - same tier as GetActiveDowntimeAnnouncement, since the
+            // calendar that calls this is never authenticated at all (specs/009-calendar-backend-
+            // integration/research.md §2). Returns every downtime announcement overlapping the
+            // given FromAt/ToAt range, across all environments.
+            public const string GetDowntimeAnnouncementsInRange = "InRange";
+
             // Admin-only - enforced server-side via [Authorize(Policy = "RequireAdmin")],
             // unlike every other "admin-only" route in this app today (see
             // Program.cs's new JWT-bearer wiring).
