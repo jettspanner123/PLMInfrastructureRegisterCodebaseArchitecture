@@ -4,7 +4,7 @@
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  --color-canvas: #ffffff;
+  --color-canvas: #f2f2f2;
   --color-surface-card: #f8fafc;
   --color-surface-elevated: #f1f5f9;
   --color-surface-deep: #f8fafc;
@@ -17,10 +17,19 @@
   --color-ash: #94a3b8;
   --color-stone: #cbd5e1;
 
+  /* The application's one deep navy brand color plus its hand-tuned
+     hover/active/tint derived shades, per specs/012-ui-polish-cleanup
+     research.md §6 — these values are today's existing literals, unchanged,
+     so WePLM's rendered output stays byte-for-byte identical. */
+  --color-brand: #0C2086;
+  --color-brand-hover: #081765;
+  --color-brand-active: #051047;
+  --color-brand-tint: #1e3ab8;
+
   /* Table selection perimeter border (TableSelectionService) — lighter blue
      in dark mode for contrast, same pairing as this app's existing
      dark:ring-blue-400 focus rings. */
-  --table-selection-border-color: #0c2086;
+  --table-selection-border-color: var(--color-brand);
 
   --font-serif: 'Playfair Display', serif;
   --font-sans: 'Inter', 'Plus Jakarta Sans', sans-serif;
@@ -49,6 +58,31 @@
   --color-stone: #464a4d;
 
   --table-selection-border-color: #60a5fa;
+}
+
+/* Retargets every rounded-{size} utility (rounded-sm through rounded-4xl) to
+   6px app-wide in one place, per specs/012-ui-polish-cleanup - these are
+   Tailwind v4's own theme variables, unlayered here so they win over
+   Tailwind's own @layer theme definitions by cascade-layer rules alone, the
+   same way .dark above already overrides Tailwind's generated tokens.
+   rounded-full (calc(infinity * 1px)) never reads a --radius-* variable, so
+   circular/pill elements are unaffected without any extra exclusion. */
+.schema-atlascopco {
+  --radius-xs: 6px;
+  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
+  --radius-2xl: 6px;
+  --radius-3xl: 6px;
+  --radius-4xl: 6px;
+
+  /* Brand navy re-theme, per specs/012-ui-polish-cleanup research.md §6. */
+  --color-brand: #008eb8;
+  --color-brand-hover: #006a89;
+  --color-brand-active: #004a60;
+  --color-brand-tint: #12b9ea;
+  --table-selection-border-color: #008eb8;
 }
 
 @layer base {
@@ -190,9 +224,17 @@ html.table-sticky-header .data-table-card {
 .data-table-sticky-header-container {
   position: static;
   overflow: hidden;
-  background-color: #0c2086;
+  background-color: var(--color-brand);
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
+}
+
+/* Hardcoded literal, not a rounded-xl utility class - the .schema-atlascopco
+   --radius-* override above can't reach this one on its own, per
+   specs/012-ui-polish-cleanup research.md §1. */
+.schema-atlascopco .data-table-sticky-header-container {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
 }
 
 html.table-sticky-header .data-table-sticky-header-container {
@@ -407,6 +449,15 @@ html.table-density-compact .data-table-scroll-area td > button {
   touch-action: pan-y pinch-zoom !important;
   user-select: none !important;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+}
+
+/* Hardcoded literal (and !important), not a rounded-xl utility class - the
+   .schema-atlascopco --radius-* override above can't reach this one on its
+   own, per specs/012-ui-polish-cleanup research.md §1. The toast's own
+   [data-close-button] pill (border-radius: 9999px !important, below) is
+   circular and stays untouched. */
+.schema-atlascopco [data-sonner-toast] {
+  border-radius: 6px !important;
 }
 
 [data-sonner-toast]:active {

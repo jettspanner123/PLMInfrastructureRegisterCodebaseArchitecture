@@ -11,6 +11,7 @@ import {
 import ApplicationRouteCON from '../Constants/ApplicationRouteCON';
 import TanstackQueryClientService from '../Services/TanstackQueryClientService';
 import ApplicationThemeUtility from '../Utilities/ApplicationThemeUtility';
+import { useFrontendDesignSchema } from '../Utilities/FrontendDesignSchemaUtility';
 import ApplicationLayoutWidthUtility from '../Utilities/ApplicationLayoutWidthUtility';
 import ApplicationTableHeightUtility from '../Utilities/ApplicationTableHeightUtility';
 import ApplicationTableDensityUtility from '../Utilities/ApplicationTableDensityUtility';
@@ -62,6 +63,19 @@ function RootLayout(): React.JSX.Element {
   useEffect(() => {
     ApplicationThemeUtility.current.applyTheme(currentTheme);
   }, [currentTheme]);
+
+  // Toggles the design schema's own CSS hook (index.css's 6px corner-radius
+  // override) on both elements, mirroring applyTheme's own .dark toggle
+  // exactly - present only under 'AtlasCopco', absent under 'WePLM' (see
+  // specs/012-ui-polish-cleanup). useFrontendDesignSchema() already resolves
+  // to 'AtlasCopco' before the backend read settles, so this starts present.
+  const frontendDesignSchema = useFrontendDesignSchema();
+
+  useEffect(() => {
+    const isAtlasCopco = frontendDesignSchema === 'AtlasCopco';
+    document.documentElement.classList.toggle('schema-atlascopco', isAtlasCopco);
+    document.body.classList.toggle('schema-atlascopco', isAtlasCopco);
+  }, [frontendDesignSchema]);
 
   // App-wide, not scoped to any one screen - the only context menu anywhere
   // in this app should ever be ContextMenuSharedComponent's own (currently
@@ -255,6 +269,16 @@ export default function ApplicationRouter(): React.JSX.Element {
   useState(() => {
     const saved = ApplicationThemeUtility.current.getSavedTheme();
     ApplicationThemeUtility.current.applyTheme(saved);
+  });
+
+  // Same reasoning as the theme bootstrap above, for the design schema's own
+  // CSS hook - applies the 'AtlasCopco' default unconditionally so the splash
+  // screen already has 6px corners in the common/default case; RootLayout's
+  // own effect (once mounted) reconciles this against the real backend value,
+  // flipping it off only in the rarer 'WePLM' case.
+  useState(() => {
+    document.documentElement.classList.add('schema-atlascopco');
+    document.body.classList.add('schema-atlascopco');
   });
 
   const [isSplashReady, setIsSplashReady] = useState<boolean>(false);
