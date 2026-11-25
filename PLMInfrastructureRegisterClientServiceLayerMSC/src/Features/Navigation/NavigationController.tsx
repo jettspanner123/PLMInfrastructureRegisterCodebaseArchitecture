@@ -5,6 +5,7 @@ import SegmentedControlSharedComponent from '../../Shared/Components/SegmentedCo
 import NavigationThemeToggleSharedComponent from '../../Shared/Components/NavigationThemeToggleSharedComponent';
 import NavigationCON from './Constants/NavigationCON';
 import ApplicationRouteCON from '../../Constants/ApplicationRouteCON';
+import { useFrontendDesignSchema } from '../../Utilities/FrontendDesignSchemaUtility';
 import weplmLogo from '../../Assets/weplm.jpeg';
 
 export interface NavigationControllerProps {
@@ -39,6 +40,14 @@ export default function NavigationController({
   // when the current route isn't one of them.
   const navigate = useNavigate();
   const location = useLocation();
+  const frontendDesignSchema = useFrontendDesignSchema();
+  // NavigationCON.PRIMARY_NAV_ITEMS itself stays schema-agnostic (plain data,
+  // unchanged) - this is the one render site that needs to know the schema,
+  // per specs/012-ui-polish-cleanup research.md §5.
+  const visibleNavItems =
+    frontendDesignSchema === 'AtlasCopco'
+      ? NavigationCON.PRIMARY_NAV_ITEMS.filter((item) => item.id !== 'feature-requests')
+      : NavigationCON.PRIMARY_NAV_ITEMS;
   const currentView =
     location.pathname === ApplicationRouteCON.ROOT
       ? 'infrastructure-register'
@@ -87,9 +96,9 @@ export default function NavigationController({
               }}
               layoutId="activeTopNavPill"
               desktopOnly
-              activeTextClassName="text-[#0C2086] dark:text-zinc-100 font-semibold"
+              activeTextClassName="text-[var(--color-brand)] dark:text-zinc-100 font-semibold"
               inactiveTextClassName="text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200"
-              options={NavigationCON.PRIMARY_NAV_ITEMS.map((item) => ({
+              options={visibleNavItems.map((item) => ({
                 value: item.id,
                 label: item.label,
                 icon: <item.icon className="w-3.5 h-3.5" />,
