@@ -88,6 +88,25 @@ export default class ResourceColumnCON {
     ResourceColumnCON.COLUMNS.filter((column) => column.locked).map((column) => column.key)
   );
 
+  // The columns a brand-new browser (nothing yet saved under
+  // RESOURCE_TABLE_VISIBLE_COLUMNS) sees checked by default - anyone who has
+  // already customized their own selection keeps it untouched, since this is
+  // only ever read as the getJSONPreference(...) fallback.
+  public static readonly DEFAULT_VISIBLE_COLUMN_KEYS: string[] = [
+    'hostname',
+    'environmentTag',
+    'function',
+    'status',
+    'privateIPAddress',
+    'subscription',
+    'resourceGroup',
+    'location',
+    'operatingSystem',
+    'size',
+    'cpuCores',
+    'ramGB',
+  ];
+
   // Columns whose values repeat often enough across resources that a
   // multi-select dropdown filter in the header is actually useful - everything
   // else here is either free-text/near-unique per row (hostname, IPs, URLs,
