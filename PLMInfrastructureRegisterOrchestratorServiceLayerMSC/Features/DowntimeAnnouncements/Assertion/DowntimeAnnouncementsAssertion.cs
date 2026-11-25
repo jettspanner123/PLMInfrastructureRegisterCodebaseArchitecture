@@ -131,6 +131,16 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Downtime
             }
         }
 
+        // Both required (unlike EnvironmentUptimeRequestsAssertion.AssertOptionalDateRangeQuery -
+        // this endpoint's range is always required, never optional).
+        public void AssertDateRangeQuery(DateTime fromAt, DateTime toAt)
+        {
+            if (toAt < fromAt)
+            {
+                throw new ValidationException("'toAt' must not be before 'fromAt'.");
+            }
+        }
+
         public void AssertValidId(Guid id)
         {
             if (id == Guid.Empty)
