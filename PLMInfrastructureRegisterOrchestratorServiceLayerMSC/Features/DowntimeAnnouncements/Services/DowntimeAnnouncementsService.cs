@@ -92,6 +92,23 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Downtime
             return MapToDTO(nexus, now);
         }
 
+        // Every announcement (any environment) whose [StartAt, EndAt] overlaps [fromAt, toAt] -
+        // past, active, and future-scheduled alike (specs/009-calendar-backend-integration/
+        // research.md §2). Not filtered by environment server-side - the frontend does that, since
+        // Environments is a single comma-joined column here, not a relational join.
+        public async Task<List<DowntimeAnnouncementDTO>> GetDowntimeAnnouncementsInRangeAsynchronous(DateTime fromAt, DateTime toAt)
+        {
+            DateTime now = DateTime.UtcNow;
+
+            List<DowntimeAnnouncementNexus> announcements = await _dbContext.DowntimeAnnouncements
+                .AsNoTracking()
+                .Where(announcement => announcement.StartAt <= toAt && announcement.EndAt >= fromAt)
+                .OrderByDescending(announcement => announcement.CreatedAt)
+                .ToListAsync();
+
+            return announcements.Select(announcement => MapToDTO(announcement, now)).ToList();
+        }
+
         public async Task<DowntimeAnnouncementDTO> EndDowntimeAnnouncementEarlyAsynchronous(Guid id)
         {
             DowntimeAnnouncementsAssertion.Current.AssertValidId(id);
