@@ -652,9 +652,12 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
       <div className="ta-teams-calendar-scope relative -m-5 sm:-m-6 h-[calc(100%+2.5rem)] sm:h-[calc(100%+3rem)] overflow-hidden rounded-2xl">
         <style>{`
           .ta-teams-calendar-scope ::-webkit-scrollbar { width: 6px; height: 6px; }
-          .ta-teams-calendar-scope ::-webkit-scrollbar-track { background: #141414; }
-          .ta-teams-calendar-scope ::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
-          .ta-teams-calendar-scope ::-webkit-scrollbar-thumb:hover { background: #444444; }
+          .ta-teams-calendar-scope ::-webkit-scrollbar-track { background: #f1f5f9; }
+          .ta-teams-calendar-scope ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+          .ta-teams-calendar-scope ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+          .dark .ta-teams-calendar-scope ::-webkit-scrollbar-track { background: #141414; }
+          .dark .ta-teams-calendar-scope ::-webkit-scrollbar-thumb { background: #333333; }
+          .dark .ta-teams-calendar-scope ::-webkit-scrollbar-thumb:hover { background: #444444; }
           @keyframes ta-slot-pulse {
             0%, 100% { box-shadow: inset 0 0 0 1.5px rgba(123, 131, 235, 0.85), 0 0 0 0 rgba(91, 95, 199, 0.35); }
             50% { box-shadow: inset 0 0 0 1.5px rgba(123, 131, 235, 1), 0 0 12px 1px rgba(91, 95, 199, 0.3); }
@@ -671,35 +674,35 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-2.5 right-2.5 z-30 p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-[#292929] transition-colors cursor-pointer"
+          className="absolute top-2.5 right-2.5 z-30 p-1.5 rounded-lg text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#292929] transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
 
-        <div className="flex h-full w-full overflow-hidden font-sans text-[#f5f5f5] select-none">
+        <div className="flex h-full w-full overflow-hidden font-sans text-slate-900 dark:text-[#f5f5f5] select-none">
           {/* BEGIN: LeftSidebar */}
-          <aside className="w-[260px] flex-shrink-0 bg-[#141414] border-r border-[#2b2b2b] flex flex-col justify-between overflow-y-auto">
+          <aside className="w-[260px] flex-shrink-0 bg-white dark:bg-[#141414] border-r border-slate-200 dark:border-[#2b2b2b] flex flex-col justify-between overflow-y-auto">
             <div>
               <div className="px-5 pt-4 pb-3">
-                <h1 className="text-xl font-bold text-white tracking-tight">Calendar</h1>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Calendar</h1>
               </div>
               <div className="px-5 py-2">
-                <div className="flex items-center justify-between mb-3 text-xs text-[#c8c8c8]">
-                  <div className="flex items-center space-x-1.5 cursor-pointer hover:text-white transition-colors">
+                <div className="flex items-center justify-between mb-3 text-xs text-slate-500 dark:text-[#c8c8c8]">
+                  <div className="flex items-center space-x-1.5 cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors">
                     <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
                     </svg>
-                    <SlidingLabel slideKey={monthKey} direction={monthSlideDirection} className="font-semibold text-sm text-[#e1dfdd]">
+                    <SlidingLabel slideKey={monthKey} direction={monthSlideDirection} className="font-semibold text-sm text-slate-700 dark:text-[#e1dfdd]">
                       {viewYear} {MONTH_NAMES[viewMonth]}
                     </SlidingLabel>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-400">
-                    <button type="button" onClick={handlePrevMonth} aria-label="Previous month" className="hover:text-white p-0.5 cursor-pointer">
+                    <button type="button" onClick={handlePrevMonth} aria-label="Previous month" className="hover:text-slate-900 dark:hover:text-white p-0.5 cursor-pointer">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path d="M5 15l7-7 7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
                       </svg>
                     </button>
-                    <button type="button" onClick={handleNextMonth} aria-label="Next month" className="hover:text-white p-0.5 cursor-pointer">
+                    <button type="button" onClick={handleNextMonth} aria-label="Next month" className="hover:text-slate-900 dark:hover:text-white p-0.5 cursor-pointer">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
                       </svg>
@@ -707,7 +710,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                   </div>
                 </div>
 
-                <div className="text-[11px] grid grid-cols-7 gap-y-1 text-center font-normal text-[#979797] mb-1">
+                <div className="text-[11px] grid grid-cols-7 gap-y-1 text-center font-normal text-slate-400 dark:text-[#979797] mb-1">
                   <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
                 </div>
 
@@ -729,12 +732,12 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                           <div
                             key={weekIndex}
                             onClick={() => handleSelectWeek(weekSunday)}
-                            className="relative grid grid-cols-7 text-[11px] text-center font-normal rounded-full my-0.5 cursor-pointer hover:bg-[#1c1c1c] transition-colors"
+                            className="relative grid grid-cols-7 text-[11px] text-center font-normal rounded-full my-0.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-[#1c1c1c] transition-colors"
                           >
                             {isSelectedWeek && (
                               <motion.div
                                 layoutId="ta-week-highlight-pill"
-                                className="absolute inset-0 bg-[#28273b] rounded-full"
+                                className="absolute inset-0 bg-indigo-50 dark:bg-[#28273b] rounded-full"
                                 transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                               />
                             )}
@@ -745,9 +748,9 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                                 ? 'bg-[#5b5fc7] text-white font-medium'
                                 : isCurrentMonth
                                 ? isSelectedWeek
-                                  ? 'text-white'
-                                  : 'text-[#d6d6d6]'
-                                : 'text-[#979797]';
+                                  ? 'text-slate-900 dark:text-white'
+                                  : 'text-slate-600 dark:text-[#d6d6d6]'
+                                : 'text-slate-400 dark:text-[#979797]';
                               return (
                                 <span
                                   key={dayIndex}
@@ -765,22 +768,22 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                 </div>
 
                 <div className="flex justify-center mt-2 mb-1">
-                  <svg className="w-3.5 h-3.5 text-gray-500 cursor-pointer hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 text-gray-500 cursor-pointer hover:text-slate-900 dark:hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
                   </svg>
                 </div>
               </div>
-              <div className="h-px bg-[#2b2b2b] mx-3 my-1" />
+              <div className="h-px bg-slate-200 dark:bg-[#2b2b2b] mx-3 my-1" />
             </div>
           </aside>
           {/* END: LeftSidebar */}
 
           {/* BEGIN: MainContentArea */}
-          <main className="flex-1 flex flex-col h-full bg-[#141414] overflow-hidden">
+          <main className="flex-1 flex flex-col h-full bg-white dark:bg-[#141414] overflow-hidden">
             {/* BEGIN: TopActionBar */}
-            <header className="h-12 border-b border-[#2b2b2b] flex items-center justify-between px-3 text-xs text-[#c8c8c8]">
+            <header className="h-12 border-b border-slate-200 dark:border-[#2b2b2b] flex items-center justify-between px-3 text-xs text-slate-500 dark:text-[#c8c8c8]">
               <div className="flex items-center space-x-2">
-                <button className="p-1.5 rounded hover:bg-[#292929] text-gray-300 hover:text-white transition-colors" title="Toggle sidebar">
+                <button className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-[#292929] text-gray-400 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white transition-colors" title="Toggle sidebar">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M4 6h16M4 12h16M4 18h7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
                     <rect fill="none" height="16" rx="2" strokeWidth="1.8" width="18" x="3" y="4" />
@@ -790,7 +793,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                 <button
                   type="button"
                   onClick={handleToday}
-                  className="flex items-center space-x-1.5 px-2.5 py-1 rounded border border-[#2b2b2b] hover:bg-[#292929] text-[#e1dfdd] transition-colors cursor-pointer"
+                  className="flex items-center space-x-1.5 px-2.5 py-1 rounded border border-slate-200 dark:border-[#2b2b2b] hover:bg-slate-100 dark:hover:bg-[#292929] text-slate-700 dark:text-[#e1dfdd] transition-colors cursor-pointer"
                 >
                   <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <rect height="18" rx="2" strokeWidth="2" width="18" x="3" y="4" />
@@ -801,19 +804,19 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                   <span className="font-normal text-xs">Today</span>
                 </button>
                 <div className="flex items-center space-x-0.5">
-                  <button type="button" onClick={handlePrevWeek} aria-label="Previous week" className="p-1.5 rounded hover:bg-[#292929] text-gray-400 hover:text-white cursor-pointer">
+                  <button type="button" onClick={handlePrevWeek} aria-label="Previous week" className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-[#292929] text-gray-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
                     </svg>
                   </button>
-                  <button type="button" onClick={handleNextWeek} aria-label="Next week" className="p-1.5 rounded hover:bg-[#292929] text-gray-400 hover:text-white cursor-pointer">
+                  <button type="button" onClick={handleNextWeek} aria-label="Next week" className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-[#292929] text-gray-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
                     </svg>
                   </button>
                 </div>
-                <div className="flex items-center space-x-1 pl-1 cursor-pointer hover:bg-[#292929] py-1 px-2 rounded">
-                  <SlidingLabel slideKey={weekKey} direction={weekSlideDirection} className="font-semibold text-white text-xs">
+                <div className="flex items-center space-x-1 pl-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-[#292929] py-1 px-2 rounded">
+                  <SlidingLabel slideKey={weekKey} direction={weekSlideDirection} className="font-semibold text-slate-900 dark:text-white text-xs">
                     {weekRangeLabel}
                   </SlidingLabel>
                   <svg className="w-3.5 h-3.5 text-gray-400 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -828,21 +831,21 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
             <div
               ref={gridScrollRef}
               onScroll={handleGridScroll}
-              className="flex-1 flex flex-col overflow-y-auto overflow-x-auto relative bg-[#141414]"
+              className="flex-1 flex flex-col overflow-y-auto overflow-x-auto relative bg-white dark:bg-[#141414]"
             >
-              <div className="flex border-b border-[#2b2b2b] sticky top-0 bg-[#141414] z-20">
-                <div className="w-12 flex-shrink-0 border-r border-[#2b2b2b] sticky left-0 bg-[#141414] z-30" />
+              <div className="flex border-b border-slate-200 dark:border-[#2b2b2b] sticky top-0 bg-white dark:bg-[#141414] z-20">
+                <div className="w-12 flex-shrink-0 border-r border-slate-200 dark:border-[#2b2b2b] sticky left-0 bg-white dark:bg-[#141414] z-30" />
                 <div className="flex flex-shrink-0 w-[500%]">
                   {allDays.map((day, dayIndex) => (
                     <div
                       key={dayIndex}
-                      className={`flex-1 min-w-0 border-r border-[#2b2b2b] px-3 py-2 flex items-center justify-between ${
-                        day.isWeekend ? 'bg-[#1a1a1a]' : ''
+                      className={`flex-1 min-w-0 border-r border-slate-200 dark:border-[#2b2b2b] px-3 py-2 flex items-center justify-between ${
+                        day.isWeekend ? 'bg-slate-50 dark:bg-[#1a1a1a]' : ''
                       }`}
                     >
                       <div className="flex items-baseline space-x-1.5">
                         <span className="text-xl font-normal text-[#5b9bd5]">{day.day}</span>
-                        <span className="text-xs text-[#979797]">{day.weekdayAbbreviation}</span>
+                        <span className="text-xs text-slate-400 dark:text-[#979797]">{day.weekdayAbbreviation}</span>
                       </div>
                       {!day.isWeekend && <OfficeBuildingIcon className="w-3.5 h-3.5 text-[#7070b8]" />}
                     </div>
@@ -851,9 +854,9 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
               </div>
 
               <div className="flex flex-1 relative min-h-[2304px]">
-                <div className="w-12 flex-shrink-0 flex flex-col text-right text-[11px] text-[#979797] border-r border-[#2b2b2b] select-none sticky left-0 bg-[#141414] z-20">
+                <div className="w-12 flex-shrink-0 flex flex-col text-right text-[11px] text-slate-400 dark:text-[#979797] border-r border-slate-200 dark:border-[#2b2b2b] select-none sticky left-0 bg-white dark:bg-[#141414] z-20">
                   {HOUR_ROWS.map((hour) => (
-                    <div key={hour} className="h-24 pr-2 pt-1 border-b border-[#2b2b2b]">{formatHourLabel12(hour)}</div>
+                    <div key={hour} className="h-24 pr-2 pt-1 border-b border-slate-200 dark:border-[#2b2b2b]">{formatHourLabel12(hour)}</div>
                   ))}
                 </div>
 
@@ -864,7 +867,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                     return (
                       <div
                         key={dayIndex}
-                        className={`flex-1 border-r border-[#2b2b2b] relative ${day.isWeekend ? 'bg-[#1a1a1a]' : ''}`}
+                        className={`flex-1 border-r border-slate-200 dark:border-[#2b2b2b] relative ${day.isWeekend ? 'bg-slate-50 dark:bg-[#1a1a1a]' : ''}`}
                       >
                         {HOUR_ROWS.map((hour) => {
                           const disabled = isSlotDisabled(dayIndex, hour);
@@ -874,9 +877,9 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                           const inPreview =
                             !disabled && !isStart && previewRange !== null && index >= previewRange.lo && index <= previewRange.hi;
 
-                          let slotClassName = 'h-24 border-b border-[#2b2b2b] relative transition-colors duration-150';
+                          let slotClassName = 'h-24 border-b border-slate-200 dark:border-[#2b2b2b] relative transition-colors duration-150';
                           if (disabled) {
-                            slotClassName += ' bg-[#101010] cursor-not-allowed';
+                            slotClassName += ' bg-slate-100 dark:bg-[#101010] cursor-not-allowed';
                           } else if (isStart) {
                             slotClassName += ' cursor-pointer bg-[rgba(91,95,199,0.28)] ta-slot-start-active z-[5]';
                           } else if (inPreview) {
@@ -902,7 +905,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                                 <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.18)]" />
                               )}
                               {disabled && (
-                                <Lock className="absolute inset-0 m-auto w-3 h-3 text-[#5c5c5c]/60 pointer-events-none" />
+                                <Lock className="absolute inset-0 m-auto w-3 h-3 text-slate-400/60 dark:text-[#5c5c5c]/60 pointer-events-none" />
                               )}
                               {isStart && (
                                 <span className="absolute top-1 right-1.5 bg-[#5b5fc7] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded tracking-wide pointer-events-none shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
@@ -921,7 +924,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                           const cardColors = isDowntime
                             ? { card: 'bg-[#5a2323] border border-[#e35b5b]/50', stripe: 'bg-[#e35b5b]', pill: 'bg-[#7a3232]' }
                             : (ev.source === 'uptimeRequest' && ev.status && BOOKING_STATUS_CARD_STYLES[ev.status]) ||
-                              { card: 'bg-[#3d375a] border border-[#5b5fc7]/50', stripe: 'bg-[#7b83eb]', pill: 'bg-[#464775]' };
+                              { card: 'bg-[#008eb8] border border-[#006a89]', stripe: 'bg-[#006a89]', pill: 'bg-[#004a60]' };
 
                           return (
                             <div
