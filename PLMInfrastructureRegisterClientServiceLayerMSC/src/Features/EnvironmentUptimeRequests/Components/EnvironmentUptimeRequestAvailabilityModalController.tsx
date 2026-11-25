@@ -1,7 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { Lock, Trash2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 import ModalSharedComponent from '../../../Shared/Components/ModalSharedComponent';
+import ContextMenuSharedComponent, { type ContextMenuItem } from '../../../Shared/Components/ContextMenuSharedComponent';
+import TanstackQueryClientService from '../../../Services/TanstackQueryClientService';
+import { EnvironmentUptimeRequestStatusEnumModel } from '../../../Models/EnvironmentUptimeRequestStatusEnumModel';
+import CalendarBookingConversionHelper from '../Helpers/CalendarBookingConversionHelper';
+import EnvironmentUptimeRequestDetailModalController from './EnvironmentUptimeRequestDetailModalController';
+import DowntimeAnnouncementDetailModalController from './DowntimeAnnouncementDetailModalController';
 
 export interface EnvironmentUptimeRequestAvailabilityModalControllerProps {
   isOpen: boolean;
@@ -15,11 +22,14 @@ export interface EnvironmentUptimeRequestAvailabilityModalControllerProps {
   toError?: string;
 }
 
-// Static 1:1 port of PLMInfrastructureRegisterAgentDocumentationNMSC/UI_HTML/CALENDAR_MODAL_VIEW.html
-// (a Microsoft Teams Calendar mockup), now with working navigation (week arrows, mini-calendar
-// row/month clicks, Today) and a past-date/time booking guard - still no backend/query wiring, no
-// connection to fromAt/toAt/onFromChange/onToChange yet. That reconnection is a deliberately
-// separate, later step.
+// Originally a static 1:1 port of PLMInfrastructureRegisterAgentDocumentationNMSC/UI_HTML/
+// CALENDAR_MODAL_VIEW.html (a Microsoft Teams Calendar mockup). Now: a continuously horizontally-
+// scrollable 5-week grid (current week through 4 weeks ahead), a mini-calendar synced live to
+// scroll position, working jump controls (arrows/row-clicks/Today), a past-date/time booking
+// guard, real existing uptime-request/downtime bookings rendered as event cards (polling every 15s
+// while open), click-for-details on those, a right-click "Delete" scoped to only the viewer's own
+// in-progress pick, and that pick fully controlled by the outer form's own fromAt/toAt/
+// onFromChange/onToChange props - see specs/009-calendar-backend-integration.
 
 const HOURS_START = 0;
 const HOURS_END = 23;
@@ -33,6 +43,9 @@ const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
+
+const WEEK_COUNT = 5; // current week + 4 more (spec.md FR-001/FR-003)
+const DAY_COUNT = WEEK_COUNT * 7; // 35
 
 interface YearMonthDay {
   year: number;
@@ -65,8 +78,10 @@ function getSundayOfWeek(ymd: YearMonthDay): YearMonthDay {
 }
 
 // 'forward' = the new content is later in time than the old (slides in from the right);
-// 'backward' = earlier (slides in from the left); null = no transition (e.g. re-selecting the
-// already-selected week) - see research.md §1/§4 and data-model.md's SlideDirection entity.
+// 'backward' = earlier (slides in from the left); null = no transition - see research.md
+// (008-calendar-scrollable-weeks) §7 for what this still drives now that the main grid itself no
+// longer slides (the mini-calendar's month-view and highlight-pill, and the header's date-range
+// label text, still do).
 type SlideDirection = 'forward' | 'backward' | null;
 
 function directionBetween(next: YearMonthDay, prev: YearMonthDay): SlideDirection {
@@ -77,7 +92,7 @@ function directionBetween(next: YearMonthDay, prev: YearMonthDay): SlideDirectio
 }
 
 // Shared directional slide recipe - same "custom direction drives initial/animate/exit" pattern
-// already used by ModalSharedComponent's own modalVariants (research.md §1).
+// already used by ModalSharedComponent's own modalVariants.
 const SLIDE_VARIANTS = {
   initial: (direction: SlideDirection) => ({
     x: direction === 'forward' ? 28 : direction === 'backward' ? -28 : 0,
@@ -125,7 +140,7 @@ function SlidingLabel({
   );
 }
 
-interface WeekDay extends YearMonthDay {
+export interface WeekDay extends YearMonthDay {
   weekdayAbbreviation: string;
   isWeekend: boolean;
 }
@@ -156,13 +171,20 @@ function getSlotIndex(day: number, hour: number): number {
   return day * HOURS_COUNT + (hour - HOURS_START);
 }
 
-interface TeamsCalendarEvent {
+// 'inProgress' = the viewer's own not-yet-submitted pick (derived from the
+// fromAt/toAt props, never stored locally - research.md §9); 'uptimeRequest'/
+// 'downtime' = real backend data (research.md §6).
+export type CalendarEventSourceType = 'inProgress' | 'uptimeRequest' | 'downtime';
+
+export interface TeamsCalendarEvent {
   id: string;
-  day: number;
+  day: number; // absolute index into AllDays (0-34), not a per-week index
   startHour: number;
   endHour: number; // inclusive
   title: string;
   justCreated?: boolean;
+  source: CalendarEventSourceType;
+  backendId?: string; // present only when source !== 'inProgress'
 }
 
 function OfficeBuildingIcon({ className }: { className: string }): React.JSX.Element {
@@ -176,30 +198,201 @@ function OfficeBuildingIcon({ className }: { className: string }): React.JSX.Ele
 export default function EnvironmentUptimeRequestAvailabilityModalController({
   isOpen,
   onClose,
+  environment,
+  fromAt,
+  toAt,
+  onFromChange,
+  onToChange,
 }: EnvironmentUptimeRequestAvailabilityModalControllerProps): React.JSX.Element {
-  // Recomputed fresh every render (not memoized once) - spec.md's Assumption is explicit that
-  // this re-evaluates "on render/interaction, not a live per-second timer", so a plain value here
-  // (refreshed on every open/interaction-driven re-render) is exactly right - memoizing with `[]`
-  // would go stale if the modal stayed mounted-but-closed across a day boundary.
+  // Recomputed fresh every render (not memoized once) - re-evaluates "on render/interaction, not a
+  // live per-second timer", so a plain value here (refreshed on every open/interaction-driven
+  // re-render) is exactly right - memoizing with `[]` would go stale if the modal stayed
+  // mounted-but-closed across a day boundary.
   const now = new Date();
   const todayYmd = toYmd(now);
   const currentHour = now.getHours();
 
+  // The fixed, always-fully-rendered 5-week range (data-model.md's AllDays) - index 0 is always
+  // the current week's Sunday, even when that's before today; nothing about what renders here
+  // ever changes while the modal is open, only which week is "leading" (below) does.
+  const allDays: WeekDay[] = Array.from({ length: DAY_COUNT }, (_, i) => {
+    const ymd = addDays(getSundayOfWeek(todayYmd), i);
+    const dayOfWeekIndex = i % 7;
+    return { ...ymd, weekdayAbbreviation: WEEKDAY_ABBREVIATIONS[dayOfWeekIndex], isWeekend: dayOfWeekIndex === 0 || dayOfWeekIndex === 6 };
+  });
+
   const [viewYear, setViewYear] = useState<number>(todayYmd.year);
   const [viewMonth, setViewMonth] = useState<number>(todayYmd.monthIndex);
-  const [selectedWeekStart, setSelectedWeekStart] = useState<YearMonthDay>(() => getSundayOfWeek(todayYmd));
+  // Which of the 5 weeks is currently "leading" (data-model.md's LeadingWeekIndex) - a derived
+  // display/sync concern now, not a rendering input: updated by scroll position (primarily) and by
+  // jump actions (whose own scrollTo calls the same scroll listener picks up).
+  const [leadingWeekIndex, setLeadingWeekIndex] = useState<number>(0);
   const [weekSlideDirection, setWeekSlideDirection] = useState<SlideDirection>(null);
   const [monthSlideDirection, setMonthSlideDirection] = useState<SlideDirection>(null);
 
   const [startSlot, setStartSlot] = useState<{ day: number; hour: number } | null>(null);
   const [hoverSlot, setHoverSlot] = useState<{ day: number; hour: number } | null>(null);
-  const [events, setEvents] = useState<TeamsCalendarEvent[]>([]);
-  const bookedEventCounterRef = useRef(0);
   const gridScrollRef = useRef<HTMLDivElement | null>(null);
 
   const cancelSelection = (): void => {
     setStartSlot(null);
     setHoverSlot(null);
+  };
+
+  // The calendar's own fixed 5-week visible range, as a real Date span for
+  // querying existing bookings/downtime - the day AFTER the last visible day
+  // so the entire last day is included, not just its midnight instant.
+  const visibleRangeStart = toDate(allDays[0]);
+  const visibleRangeEnd = toDate(addDays(allDays[allDays.length - 1], 1));
+
+  const environmentUptimeRequestsForEnvironmentQuery =
+    TanstackQueryClientService.current.environmentUptimeRequests.useEnvironmentUptimeRequestsForEnvironmentQuery(
+      environment,
+      visibleRangeStart,
+      visibleRangeEnd,
+      isOpen
+    );
+
+  const downtimeAnnouncementsInRangeQuery =
+    TanstackQueryClientService.current.downtimeAnnouncements.useDowntimeAnnouncementsInRangeQuery(
+      visibleRangeStart,
+      visibleRangeEnd,
+      isOpen
+    );
+
+  useEffect(() => {
+    if (environmentUptimeRequestsForEnvironmentQuery.isError) {
+      toast.error('Could not load existing uptime requests', {
+        description: "You can still pick a time for this ticket - existing bookings just might not all show.",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [environmentUptimeRequestsForEnvironmentQuery.isError]);
+
+  useEffect(() => {
+    if (downtimeAnnouncementsInRangeQuery.isError) {
+      toast.error('Could not load downtime announcements', {
+        description: "You can still pick a time for this ticket - scheduled downtime just might not all show.",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [downtimeAnnouncementsInRangeQuery.isError]);
+
+  // The in-progress pick is fully derived from the outer form's own
+  // fromAt/toAt props - never stored locally. This single mechanism covers
+  // showing a previously-picked span on reopen, reacting to the outer form's
+  // own reset after a successful submit, and reacting to the right-click
+  // "Delete" action below, all through the same one data flow (research.md
+  // §9 / data-model.md).
+  const parsedPickFromAt = fromAt ? CalendarBookingConversionHelper.current.parseNaiveDateTime(fromAt) : null;
+  const parsedPickToAt = toAt ? CalendarBookingConversionHelper.current.parseNaiveDateTime(toAt) : null;
+  const inProgressEvents: TeamsCalendarEvent[] =
+    parsedPickFromAt && parsedPickToAt
+      ? CalendarBookingConversionHelper.current.convertRangeToEvents(
+          parsedPickFromAt,
+          parsedPickToAt,
+          allDays,
+          'Booked Meeting',
+          'inProgress'
+        )
+      : [];
+
+  const realUptimeEvents: TeamsCalendarEvent[] = (environmentUptimeRequestsForEnvironmentQuery.data ?? [])
+    .filter(
+      (request) =>
+        request.status === EnvironmentUptimeRequestStatusEnumModel.Pending ||
+        request.status === EnvironmentUptimeRequestStatusEnumModel.Approved ||
+        request.status === EnvironmentUptimeRequestStatusEnumModel.Completed
+    )
+    .flatMap((request) =>
+      CalendarBookingConversionHelper.current.convertRangeToEvents(
+        CalendarBookingConversionHelper.current.convertUtcToCetWallClockDate(request.fromAt),
+        CalendarBookingConversionHelper.current.convertUtcToCetWallClockDate(request.toAt),
+        allDays,
+        request.environment,
+        'uptimeRequest',
+        request.id
+      )
+    );
+
+  const realDowntimeEvents: TeamsCalendarEvent[] = (downtimeAnnouncementsInRangeQuery.data ?? [])
+    .filter((announcement) => announcement.environments.includes(environment))
+    .flatMap((announcement) =>
+      CalendarBookingConversionHelper.current.convertRangeToEvents(
+        CalendarBookingConversionHelper.current.convertUtcToCetWallClockDate(announcement.startAt),
+        CalendarBookingConversionHelper.current.convertUtcToCetWallClockDate(announcement.endAt),
+        allDays,
+        announcement.heading,
+        'downtime',
+        announcement.id
+      )
+    );
+
+  const events: TeamsCalendarEvent[] = [...inProgressEvents, ...realUptimeEvents, ...realDowntimeEvents];
+
+  const [contextMenu, setContextMenu] = useState<{ isOpen: boolean; x: number; y: number }>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+  });
+
+  const handleCloseContextMenu = (): void => {
+    setContextMenu((previous) => ({ ...previous, isOpen: false }));
+  };
+
+  // Only the viewer's own in-progress pick ever offers this menu (FR-008/
+  // FR-010); choosing "Delete" clears the outer form's own fromAt/toAt
+  // (FR-016) - since the in-progress card is derived entirely from those
+  // props, clearing them is the complete removal, with no backend call
+  // (FR-009).
+  const handleInProgressEventContextMenu = (e: React.MouseEvent): void => {
+    e.preventDefault();
+    setContextMenu({ isOpen: true, x: e.clientX, y: e.clientY });
+  };
+
+  // Real, already-submitted cards never show the custom menu - just suppress
+  // the browser's own native one, which would otherwise look broken popping
+  // up inside this modal (research.md §5 / FR-010).
+  const handleRealEventContextMenu = (e: React.MouseEvent): void => {
+    e.preventDefault();
+  };
+
+  const handleDeleteInProgressPick = (): void => {
+    onFromChange('');
+    onToChange('');
+  };
+
+  const contextMenuItems: ContextMenuItem[] = [
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: <Trash2 className="w-3.5 h-3.5" />,
+      isDestructive: true,
+      onClick: handleDeleteInProgressPick,
+    },
+  ];
+
+  const [selectedUptimeRequestId, setSelectedUptimeRequestId] = useState<string | null>(null);
+  const [selectedDowntimeAnnouncementId, setSelectedDowntimeAnnouncementId] = useState<string | null>(null);
+
+  const selectedUptimeRequest = selectedUptimeRequestId
+    ? (environmentUptimeRequestsForEnvironmentQuery.data ?? []).find((request) => request.id === selectedUptimeRequestId) ?? null
+    : null;
+
+  const selectedDowntimeAnnouncement = selectedDowntimeAnnouncementId
+    ? (downtimeAnnouncementsInRangeQuery.data ?? []).find((announcement) => announcement.id === selectedDowntimeAnnouncementId) ?? null
+    : null;
+
+  // Only real, already-submitted cards open a details modal (FR-005/FR-007) -
+  // the in-progress pick has no backend record to show details for.
+  const handleEventCardClick = (ev: TeamsCalendarEvent): void => {
+    if (ev.source === 'uptimeRequest' && ev.backendId) setSelectedUptimeRequestId(ev.backendId);
+    if (ev.source === 'downtime' && ev.backendId) setSelectedDowntimeAnnouncementId(ev.backendId);
+  };
+
+  const computeCurrentHourScrollTop = (container: HTMLDivElement): number => {
+    const targetTop = currentHour * SLOT_HEIGHT_PX - container.clientHeight / 2 + SLOT_HEIGHT_PX / 2;
+    return Math.max(0, targetTop);
   };
 
   useEffect(() => {
@@ -208,16 +401,20 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
       return;
     }
 
-    // Every time the modal opens, snap back to "now": today's week (and the mini-calendar's
-    // month, if different), then scroll the grid so the current hour is already in view - the
-    // same reset handleToday performs, minus the slide animation (this is the modal's very first
-    // paint, not a navigation the user should see animate).
-    const currentWeekSunday = getSundayOfWeek(todayYmd);
-    setSelectedWeekStart((prev) => (isSameYmd(prev, currentWeekSunday) ? prev : currentWeekSunday));
+    // Every time the modal opens, snap back to "now": today's week index (0, always - the fixed
+    // range always starts there), the mini-calendar's month, then scroll both axes so the current
+    // week is flush left and the current hour is already in view - the same reset handleToday
+    // performs, minus the slide animation (this is the modal's very first paint, not a navigation
+    // the user should see animate).
     setViewYear(todayYmd.year);
     setViewMonth(todayYmd.monthIndex);
+    setLeadingWeekIndex(0);
 
-    const frame = requestAnimationFrame(() => scrollToCurrentHour());
+    const frame = requestAnimationFrame(() => {
+      const container = gridScrollRef.current;
+      if (!container) return;
+      container.scrollTo({ left: 0, top: computeCurrentHourScrollTop(container), behavior: 'smooth' });
+    });
     return () => cancelAnimationFrame(frame);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -231,11 +428,14 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, startSlot]);
 
-  // Mini-calendar follows the main grid's selected week across a month boundary (FR-009) - but
-  // deliberately does NOT depend on viewYear/viewMonth themselves, so the mini-calendar's own
-  // independent month browsing (FR-008) never gets fought/reset by this effect.
+  const leadingWeekDays = allDays.slice(leadingWeekIndex * 7, leadingWeekIndex * 7 + 7);
+
+  // Mini-calendar follows the main grid's leading week across a month boundary (FR-006) - but
+  // deliberately depends only on the numeric leadingWeekIndex (stable identity), not on the
+  // derived leadingWeekDays array (a fresh object every render) or viewYear/viewMonth themselves,
+  // so the mini-calendar's own independent month browsing (FR-009) never gets fought/reset by it.
   useEffect(() => {
-    const weekMonthYmd: YearMonthDay = { year: selectedWeekStart.year, monthIndex: selectedWeekStart.monthIndex, day: 1 };
+    const weekMonthYmd: YearMonthDay = { year: leadingWeekDays[0].year, monthIndex: leadingWeekDays[0].monthIndex, day: 1 };
     const currentViewYmd: YearMonthDay = { year: viewYear, monthIndex: viewMonth, day: 1 };
     if (!isSameYmd(weekMonthYmd, currentViewYmd)) {
       setMonthSlideDirection(directionBetween(weekMonthYmd, currentViewYmd));
@@ -243,7 +443,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
       setViewMonth(weekMonthYmd.monthIndex);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWeekStart]);
+  }, [leadingWeekIndex]);
 
   // Sunday-first month grid (matches this sidebar's S M T W T F S header), chunked into week-rows
   // so each row can be selected as a single unit - mirrors CustomDatePickerSharedComponent's own
@@ -278,17 +478,8 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
     return weeks;
   }, [viewYear, viewMonth]);
 
-  const weekDays: WeekDay[] = useMemo(
-    () =>
-      Array.from({ length: 7 }, (_, i) => {
-        const ymd = addDays(selectedWeekStart, i);
-        return { ...ymd, weekdayAbbreviation: WEEKDAY_ABBREVIATIONS[i], isWeekend: i === 0 || i === 6 };
-      }),
-    [selectedWeekStart]
-  );
-
-  const weekRangeLabel = useMemo(() => formatWeekRangeLabel(weekDays[0], weekDays[6]), [weekDays]);
-  const weekKey = `${selectedWeekStart.year}-${selectedWeekStart.monthIndex}-${selectedWeekStart.day}`;
+  const weekRangeLabel = useMemo(() => formatWeekRangeLabel(leadingWeekDays[0], leadingWeekDays[6]), [leadingWeekDays]);
+  const weekKey = `${leadingWeekDays[0].year}-${leadingWeekDays[0].monthIndex}-${leadingWeekDays[0].day}`;
   const monthKey = `${viewYear}-${viewMonth}`;
 
   const previewRange = useMemo(() => {
@@ -299,28 +490,46 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
   }, [startSlot, hoverSlot]);
 
   // A slot is unselectable when its day is before today, or it's today and at-or-before the
-  // current hour (the earliest selectable hour on today is `currentHour + 1`) - data-model.md's
-  // SlotSelectability rule.
+  // current hour (the earliest selectable hour on today is `currentHour + 1`) - unchanged rule,
+  // now indexed across the full 0-34 range instead of 0-6.
   const isSlotDisabled = (dayIndex: number, hour: number): boolean => {
-    const day = weekDays[dayIndex];
+    const day = allDays[dayIndex];
     const dayDiff = toDate(day).getTime() - toDate(todayYmd).getTime();
     if (dayDiff < 0) return true;
     if (dayDiff > 0) return false;
     return hour <= currentHour;
   };
 
-  const goToWeek = (next: YearMonthDay, direction: SlideDirection): void => {
-    setWeekSlideDirection(direction);
-    setSelectedWeekStart(next);
+  // Scrolls the shared container so the given week index (0-4) sits flush against the left edge -
+  // used by every jump control (research.md §5). Only ever sets `left`, leaving the current
+  // vertical scroll position untouched (matches the prior arrows' behavior of never touching
+  // vertical scroll).
+  const scrollToWeekIndex = (targetIndex: number): void => {
+    const container = gridScrollRef.current;
+    if (!container) return;
+    const clampedIndex = Math.max(0, Math.min(WEEK_COUNT - 1, targetIndex));
+    container.scrollTo({ left: clampedIndex * container.clientWidth, behavior: 'smooth' });
+  };
+
+  const handlePrevWeek = (): void => {
+    scrollToWeekIndex(leadingWeekIndex - 1);
     cancelSelection();
   };
 
-  const handlePrevWeek = (): void => goToWeek(addDays(selectedWeekStart, -7), 'backward');
-  const handleNextWeek = (): void => goToWeek(addDays(selectedWeekStart, 7), 'forward');
+  const handleNextWeek = (): void => {
+    scrollToWeekIndex(leadingWeekIndex + 1);
+    cancelSelection();
+  };
 
+  // A row click for a week outside the fixed 0-4 range (reachable only via the mini-calendar's own
+  // unrestricted past - or future-beyond-range - browsing) is a no-op on the main grid, since that
+  // week simply isn't part of its scrollable content (research.md §8).
   const handleSelectWeek = (weekSunday: YearMonthDay): void => {
-    if (isSameYmd(weekSunday, selectedWeekStart)) return;
-    goToWeek(weekSunday, directionBetween(weekSunday, selectedWeekStart));
+    const diffDays = Math.round((toDate(weekSunday).getTime() - toDate(allDays[0]).getTime()) / 86400000);
+    const targetIndex = diffDays / 7;
+    if (targetIndex < 0 || targetIndex > WEEK_COUNT - 1) return;
+    scrollToWeekIndex(targetIndex);
+    cancelSelection();
   };
 
   const goToMonth = (nextYear: number, nextMonth: number, direction: SlideDirection): void => {
@@ -339,30 +548,37 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
     else goToMonth(viewYear, viewMonth + 1, 'forward');
   };
 
-  const scrollToCurrentHour = (): void => {
+  // Computes the leading week (data-model.md's LeadingWeekIndex) from live scroll position -
+  // research.md §4: the smallest week index whose Sunday column still has any pixel on screen.
+  // Fires on every native scroll event (manual drag/wheel AND a jump's own programmatic smooth
+  // scroll alike), only updating state when the computed index actually changes.
+  const handleGridScroll = (): void => {
     const container = gridScrollRef.current;
     if (!container) return;
-    const targetTop = currentHour * SLOT_HEIGHT_PX - container.clientHeight / 2 + SLOT_HEIGHT_PX / 2;
-    container.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+    const containerWidth = container.clientWidth;
+    if (containerWidth <= 0) return;
+    const columnWidth = containerWidth / 7;
+    const scrollLeft = container.scrollLeft;
+
+    let nextIndex = WEEK_COUNT - 1;
+    for (let i = 0; i < WEEK_COUNT; i++) {
+      if (scrollLeft < i * containerWidth + columnWidth) {
+        nextIndex = i;
+        break;
+      }
+    }
+
+    if (nextIndex !== leadingWeekIndex) {
+      setWeekSlideDirection(nextIndex > leadingWeekIndex ? 'forward' : 'backward');
+      setLeadingWeekIndex(nextIndex);
+    }
   };
 
   const handleToday = (): void => {
-    const currentWeekSunday = getSundayOfWeek(todayYmd);
-    if (!isSameYmd(currentWeekSunday, selectedWeekStart)) {
-      setWeekSlideDirection(directionBetween(currentWeekSunday, selectedWeekStart));
-      setSelectedWeekStart(currentWeekSunday);
-    }
-
-    const currentMonthYmd: YearMonthDay = { year: todayYmd.year, monthIndex: todayYmd.monthIndex, day: 1 };
-    const viewMonthYmd: YearMonthDay = { year: viewYear, monthIndex: viewMonth, day: 1 };
-    if (!isSameYmd(currentMonthYmd, viewMonthYmd)) {
-      setMonthSlideDirection(directionBetween(currentMonthYmd, viewMonthYmd));
-      setViewYear(currentMonthYmd.year);
-      setViewMonth(currentMonthYmd.monthIndex);
-    }
-
     cancelSelection();
-    scrollToCurrentHour();
+    const container = gridScrollRef.current;
+    if (!container) return;
+    container.scrollTo({ left: 0, top: computeCurrentHourScrollTop(container), behavior: 'smooth' });
   };
 
   const handleSlotClick = (day: number, hour: number): void => {
@@ -385,23 +601,21 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
     const maxIndex = Math.max(startIndex, clickedIndex);
     const firstDay = Math.floor(minIndex / HOURS_COUNT);
     const lastDay = Math.floor(maxIndex / HOURS_COUNT);
+    const firstDayStartHour = HOURS_START + (minIndex % HOURS_COUNT);
+    const lastDayEndHour = HOURS_START + (maxIndex % HOURS_COUNT);
 
-    const newEvents: TeamsCalendarEvent[] = [];
-    for (let d = firstDay; d <= lastDay; d++) {
-      const dayStartHour = d === firstDay ? HOURS_START + (minIndex % HOURS_COUNT) : HOURS_START;
-      const dayEndHour = d === lastDay ? HOURS_START + (maxIndex % HOURS_COUNT) : HOURS_END;
-      bookedEventCounterRef.current += 1;
-      newEvents.push({
-        id: `booked-${bookedEventCounterRef.current}`,
-        day: d,
-        startHour: dayStartHour,
-        endHour: dayEndHour,
-        title: 'Booked Meeting',
-        justCreated: true,
-      });
-    }
-
-    setEvents((prev) => [...prev, ...newEvents]);
+    // Reports the completed span upward to the outer form (FR-014) instead of
+    // tracking it in any local state - the in-progress card then renders
+    // because it's derived from those same props (research.md §9).
+    const { fromAt: nextFromAt, toAt: nextToAt } = CalendarBookingConversionHelper.current.convertPickToDateTimeStrings(
+      firstDay,
+      firstDayStartHour,
+      lastDay,
+      lastDayEndHour,
+      allDays
+    );
+    onFromChange(nextFromAt);
+    onToChange(nextToAt);
     cancelSelection();
   };
 
@@ -482,7 +696,7 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                     >
                       {weeksMatrix.map((week, weekIndex) => {
                         const weekSunday = week[0];
-                        const isSelectedWeek = isSameYmd(weekSunday, selectedWeekStart);
+                        const isSelectedWeek = isSameYmd(weekSunday, leadingWeekDays[0]);
                         return (
                           <div
                             key={weekIndex}
@@ -583,136 +797,135 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
             {/* END: TopActionBar */}
 
             {/* BEGIN: CalendarGridContainer */}
-            <div ref={gridScrollRef} className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative bg-[#141414]">
+            <div
+              ref={gridScrollRef}
+              onScroll={handleGridScroll}
+              className="flex-1 flex flex-col overflow-y-auto overflow-x-auto relative bg-[#141414]"
+            >
               <div className="flex border-b border-[#2b2b2b] sticky top-0 bg-[#141414] z-20">
-                <div className="w-12 flex-shrink-0 border-r border-[#2b2b2b]" />
-                <AnimatePresence mode="wait" custom={weekSlideDirection} initial={false}>
-                  <motion.div
-                    key={weekKey}
-                    custom={weekSlideDirection}
-                    variants={SLIDE_VARIANTS}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="flex flex-1"
-                  >
-                    {weekDays.map((weekDay, dayIndex) => (
-                      <div
-                        key={dayIndex}
-                        className={`flex-1 min-w-0 border-r border-[#2b2b2b] px-3 py-2 flex items-center justify-between ${
-                          weekDay.isWeekend ? 'bg-[#1a1a1a]' : ''
-                        }`}
-                      >
-                        <div className="flex items-baseline space-x-1.5">
-                          <span className="text-xl font-normal text-[#5b9bd5]">{weekDay.day}</span>
-                          <span className="text-xs text-[#979797]">{weekDay.weekdayAbbreviation}</span>
-                        </div>
-                        {!weekDay.isWeekend && <OfficeBuildingIcon className="w-3.5 h-3.5 text-[#7070b8]" />}
+                <div className="w-12 flex-shrink-0 border-r border-[#2b2b2b] sticky left-0 bg-[#141414] z-30" />
+                <div className="flex flex-shrink-0 w-[500%]">
+                  {allDays.map((day, dayIndex) => (
+                    <div
+                      key={dayIndex}
+                      className={`flex-1 min-w-0 border-r border-[#2b2b2b] px-3 py-2 flex items-center justify-between ${
+                        day.isWeekend ? 'bg-[#1a1a1a]' : ''
+                      }`}
+                    >
+                      <div className="flex items-baseline space-x-1.5">
+                        <span className="text-xl font-normal text-[#5b9bd5]">{day.day}</span>
+                        <span className="text-xs text-[#979797]">{day.weekdayAbbreviation}</span>
                       </div>
-                    ))}
-                  </motion.div>
-                </AnimatePresence>
+                      {!day.isWeekend && <OfficeBuildingIcon className="w-3.5 h-3.5 text-[#7070b8]" />}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="flex flex-1 relative min-h-[2304px]">
-                <div className="w-12 flex-shrink-0 flex flex-col text-right text-[11px] text-[#979797] border-r border-[#2b2b2b] select-none">
+                <div className="w-12 flex-shrink-0 flex flex-col text-right text-[11px] text-[#979797] border-r border-[#2b2b2b] select-none sticky left-0 bg-[#141414] z-20">
                   {HOUR_ROWS.map((hour) => (
                     <div key={hour} className="h-24 pr-2 pt-1 border-b border-[#2b2b2b]">{formatHourLabel12(hour)}</div>
                   ))}
                 </div>
 
-                <AnimatePresence mode="wait" custom={weekSlideDirection} initial={false}>
-                  <motion.div
-                    key={weekKey}
-                    custom={weekSlideDirection}
-                    variants={SLIDE_VARIANTS}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="flex flex-1"
-                  >
-                    {weekDays.map((weekDay, dayIndex) => {
-                      const dayEvents = events.filter((ev) => ev.day === dayIndex);
-                      const isToday = isSameYmd(weekDay, todayYmd);
-                      return (
-                        <div
-                          key={dayIndex}
-                          className={`flex-1 border-r border-[#2b2b2b] relative ${weekDay.isWeekend ? 'bg-[#1a1a1a]' : ''}`}
-                        >
-                          {HOUR_ROWS.map((hour) => {
-                            const disabled = isSlotDisabled(dayIndex, hour);
-                            const isCurrentTimeCell = isToday && hour === currentHour;
-                            const index = getSlotIndex(dayIndex, hour);
-                            const isStart = !disabled && startSlot?.day === dayIndex && startSlot?.hour === hour;
-                            const inPreview =
-                              !disabled && !isStart && previewRange !== null && index >= previewRange.lo && index <= previewRange.hi;
+                <div className="flex flex-shrink-0 w-[500%]">
+                  {allDays.map((day, dayIndex) => {
+                    const dayEvents = events.filter((ev) => ev.day === dayIndex);
+                    const isToday = isSameYmd(day, todayYmd);
+                    return (
+                      <div
+                        key={dayIndex}
+                        className={`flex-1 border-r border-[#2b2b2b] relative ${day.isWeekend ? 'bg-[#1a1a1a]' : ''}`}
+                      >
+                        {HOUR_ROWS.map((hour) => {
+                          const disabled = isSlotDisabled(dayIndex, hour);
+                          const isCurrentTimeCell = isToday && hour === currentHour;
+                          const index = getSlotIndex(dayIndex, hour);
+                          const isStart = !disabled && startSlot?.day === dayIndex && startSlot?.hour === hour;
+                          const inPreview =
+                            !disabled && !isStart && previewRange !== null && index >= previewRange.lo && index <= previewRange.hi;
 
-                            let slotClassName = 'h-24 border-b border-[#2b2b2b] relative transition-colors duration-150';
-                            if (disabled) {
-                              slotClassName += ' bg-[#101010] cursor-not-allowed';
-                            } else if (isStart) {
-                              slotClassName += ' cursor-pointer bg-[rgba(91,95,199,0.28)] ta-slot-start-active z-[5]';
-                            } else if (inPreview) {
-                              slotClassName += ' cursor-pointer bg-[rgba(91,95,199,0.22)] shadow-[inset_0_0_0_1px_rgba(123,131,235,0.45)]';
-                            } else {
-                              slotClassName += ' cursor-pointer hover:bg-[rgba(91,95,199,0.12)]';
-                            }
+                          let slotClassName = 'h-24 border-b border-[#2b2b2b] relative transition-colors duration-150';
+                          if (disabled) {
+                            slotClassName += ' bg-[#101010] cursor-not-allowed';
+                          } else if (isStart) {
+                            slotClassName += ' cursor-pointer bg-[rgba(91,95,199,0.28)] ta-slot-start-active z-[5]';
+                          } else if (inPreview) {
+                            slotClassName += ' cursor-pointer bg-[rgba(91,95,199,0.22)] shadow-[inset_0_0_0_1px_rgba(123,131,235,0.45)]';
+                          } else {
+                            slotClassName += ' cursor-pointer hover:bg-[rgba(91,95,199,0.12)]';
+                          }
 
-                            return (
-                              <div
-                                key={hour}
-                                className={slotClassName}
-                                title={disabled ? 'This time has already passed' : undefined}
-                                onClick={() => handleSlotClick(dayIndex, hour)}
-                                onMouseEnter={() => {
-                                  if (!disabled) setHoverSlot({ day: dayIndex, hour });
-                                }}
-                              >
-                                {isToday && (
-                                  <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.08)]" />
-                                )}
-                                {isCurrentTimeCell && (
-                                  <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.18)]" />
-                                )}
-                                {isStart && (
-                                  <span className="absolute top-1 right-1.5 bg-[#5b5fc7] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded tracking-wide pointer-events-none shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
-                                    Start
+                          return (
+                            <div
+                              key={hour}
+                              className={slotClassName}
+                              title={disabled ? 'This time has already passed' : undefined}
+                              onClick={() => handleSlotClick(dayIndex, hour)}
+                              onMouseEnter={() => {
+                                if (!disabled) setHoverSlot({ day: dayIndex, hour });
+                              }}
+                            >
+                              {isToday && (
+                                <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.08)]" />
+                              )}
+                              {isCurrentTimeCell && (
+                                <div className="absolute inset-0 pointer-events-none bg-[rgba(91,95,199,0.18)]" />
+                              )}
+                              {disabled && (
+                                <Lock className="absolute inset-0 m-auto w-3 h-3 text-[#5c5c5c]/60 pointer-events-none" />
+                              )}
+                              {isStart && (
+                                <span className="absolute top-1 right-1.5 bg-[#5b5fc7] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded tracking-wide pointer-events-none shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
+                                  Start
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+
+                        {dayEvents.map((ev) => {
+                          const topPx = (ev.startHour - HOURS_START) * SLOT_HEIGHT_PX + 4;
+                          const heightPx = (ev.endHour - ev.startHour + 1) * SLOT_HEIGHT_PX - 8;
+                          const isDowntime = ev.source === 'downtime';
+                          const isRealBooking = ev.source === 'uptimeRequest' || ev.source === 'downtime';
+
+                          return (
+                            <div
+                              key={ev.id}
+                              style={{ top: topPx, height: heightPx }}
+                              onClick={isRealBooking ? () => handleEventCardClick(ev) : undefined}
+                              onContextMenu={ev.source === 'inProgress' ? handleInProgressEventContextMenu : handleRealEventContextMenu}
+                              className={`absolute inset-x-1 rounded overflow-hidden flex shadow-sm hover:brightness-110 transition-all z-10 ${
+                                isDowntime
+                                  ? 'bg-[#5a2323] border border-[#e35b5b]/50'
+                                  : 'bg-[#3d375a] border border-[#5b5fc7]/50'
+                              } ${isRealBooking ? 'cursor-pointer' : ''} ${ev.source === 'inProgress' ? 'ta-booked-event-card' : ''}`}
+                            >
+                              <div className={`w-1 flex-shrink-0 ${isDowntime ? 'bg-[#e35b5b]' : 'bg-[#7b83eb]'}`} />
+                              <div className="flex-1 p-2 flex flex-col justify-between overflow-hidden">
+                                <div className="flex items-start justify-between gap-1">
+                                  <span className="text-xs font-semibold text-white truncate leading-tight">{ev.title}</span>
+                                  <span
+                                    className={`text-[10px] font-medium text-[#c8c8c8] px-1.5 py-0.5 rounded flex-shrink-0 ${
+                                      isDowntime ? 'bg-[#7a3232]' : 'bg-[#464775]'
+                                    }`}
+                                  >
+                                    {formatHourLabel12(ev.startHour)} – {formatHourLabel12(ev.endHour + 1)}
                                   </span>
-                                )}
-                              </div>
-                            );
-                          })}
-
-                          {dayEvents.map((ev) => {
-                            const topPx = (ev.startHour - HOURS_START) * SLOT_HEIGHT_PX + 4;
-                            const heightPx = (ev.endHour - ev.startHour + 1) * SLOT_HEIGHT_PX - 8;
-
-                            return (
-                              <div
-                                key={ev.id}
-                                style={{ top: topPx, height: heightPx }}
-                                className={`absolute inset-x-1 bg-[#3d375a] border border-[#5b5fc7]/50 rounded cursor-pointer overflow-hidden flex shadow-sm hover:brightness-110 transition-all z-10 ${ev.justCreated ? 'ta-booked-event-card' : ''}`}
-                              >
-                                <div className="w-1 flex-shrink-0 bg-[#7b83eb]" />
-                                <div className="flex-1 p-2 flex flex-col justify-between overflow-hidden">
-                                  <div className="flex items-start justify-between gap-1">
-                                    <span className="text-xs font-semibold text-white truncate leading-tight">{ev.title}</span>
-                                    <span className="text-[10px] font-medium text-[#c8c8c8] bg-[#464775] px-1.5 py-0.5 rounded flex-shrink-0">
-                                      {formatHourLabel12(ev.startHour)} – {formatHourLabel12(ev.endHour + 1)}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center text-[11px] text-[#c8c8c8] truncate leading-tight">
-                                    <span className="truncate">Microsoft Teams</span>
-                                  </div>
+                                </div>
+                                <div className="flex items-center text-[11px] text-[#c8c8c8] truncate leading-tight">
+                                  <span className="truncate">{isDowntime ? 'Downtime' : 'Microsoft Teams'}</span>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })}
-                  </motion.div>
-                </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             {/* END: CalendarGridContainer */}
@@ -720,6 +933,26 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
           {/* END: MainContentArea */}
         </div>
       </div>
+
+      <ContextMenuSharedComponent
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onClose={handleCloseContextMenu}
+        items={contextMenuItems}
+      />
+
+      <EnvironmentUptimeRequestDetailModalController
+        isOpen={selectedUptimeRequestId !== null}
+        onClose={() => setSelectedUptimeRequestId(null)}
+        request={selectedUptimeRequest}
+      />
+
+      <DowntimeAnnouncementDetailModalController
+        isOpen={selectedDowntimeAnnouncementId !== null}
+        onClose={() => setSelectedDowntimeAnnouncementId(null)}
+        announcement={selectedDowntimeAnnouncement}
+      />
     </ModalSharedComponent>
   );
 }
