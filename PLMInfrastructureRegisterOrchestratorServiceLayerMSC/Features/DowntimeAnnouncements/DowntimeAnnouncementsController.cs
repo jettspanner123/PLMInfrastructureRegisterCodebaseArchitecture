@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Assertion;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models;
@@ -69,6 +70,38 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Downtime
                 _logger.LogError(ex, "Unexpected error while retrieving the active downtime announcement.");
                 return StatusCode(500, APIResponse<DowntimeAnnouncementDTO?>.Failed(
                     "An unexpected error occurred while retrieving the active downtime announcement.", new(), 500));
+            }
+        }
+
+        // Public (no [Authorize]) - the calendar that calls this is never authenticated at all in
+        // this app (specs/009-calendar-backend-integration/research.md §2). Returns every downtime
+        // announcement overlapping the given range, across all environments - not just the single
+        // one active right now.
+        [HttpGet(ApplicationRouteFactory.DowntimeAnnouncementsRoutes.GetDowntimeAnnouncementsInRange)]
+        public async Task<ActionResult<APIResponse<List<DowntimeAnnouncementDTO>>>> GetDowntimeAnnouncementsInRangeAsynchronous(
+            [FromQuery] DateTime fromAt,
+            [FromQuery] DateTime toAt)
+        {
+            try
+            {
+                DowntimeAnnouncementsAssertion.Current.AssertDateRangeQuery(fromAt, toAt);
+
+                List<DowntimeAnnouncementDTO> announcements =
+                    await _downtimeAnnouncementsService.GetDowntimeAnnouncementsInRangeAsynchronous(fromAt, toAt);
+
+                return Ok(APIResponse<List<DowntimeAnnouncementDTO>>.Succeeded(
+                    announcements, "Downtime announcements retrieved successfully.", 200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Downtime announcements range query validation failed: {Message}", valEx.Message);
+                return BadRequest(APIResponse<List<DowntimeAnnouncementDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while retrieving downtime announcements in range.");
+                return StatusCode(500, APIResponse<List<DowntimeAnnouncementDTO>>.Failed(
+                    "An unexpected error occurred while retrieving downtime announcements.", new(), 500));
             }
         }
 
