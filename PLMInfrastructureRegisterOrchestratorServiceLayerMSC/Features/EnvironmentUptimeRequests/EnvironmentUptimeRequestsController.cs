@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Exceptions;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Assertion;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Models;
@@ -26,16 +27,29 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
             _logger = logger;
         }
 
+        // Environment/FromAt/ToAt are all optional and independent - calling this endpoint with
+        // none of them MUST return the exact same unfiltered result as before this feature
+        // (contracts/calendar-backend-endpoints.md §1 in specs/009-calendar-backend-integration).
         [HttpGet(ApplicationRouteFactory.EnvironmentUptimeRequestsRoutes.GetAllEnvironmentUptimeRequests)]
-        public async Task<ActionResult<APIResponse<List<EnvironmentUptimeRequestDTO>>>> GetAllEnvironmentUptimeRequestsAsynchronous()
+        public async Task<ActionResult<APIResponse<List<EnvironmentUptimeRequestDTO>>>> GetAllEnvironmentUptimeRequestsAsynchronous(
+            [FromQuery] string? environment,
+            [FromQuery] DateTime? fromAt,
+            [FromQuery] DateTime? toAt)
         {
             try
             {
+                EnvironmentUptimeRequestsAssertion.Current.AssertOptionalDateRangeQuery(fromAt, toAt);
+
                 List<EnvironmentUptimeRequestDTO> requests =
-                    await _environmentUptimeRequestsService.GetAllEnvironmentUptimeRequestsAsynchronous();
+                    await _environmentUptimeRequestsService.GetAllEnvironmentUptimeRequestsAsynchronous(environment, fromAt, toAt);
 
                 return Ok(APIResponse<List<EnvironmentUptimeRequestDTO>>.Succeeded(
                     requests, "Uptime requests retrieved successfully.", 200));
+            }
+            catch (ValidationException valEx)
+            {
+                _logger.LogWarning("Uptime requests query validation failed: {Message}", valEx.Message);
+                return BadRequest(APIResponse<List<EnvironmentUptimeRequestDTO>>.Failed(valEx.Message, valEx.ValidationErrors, 400));
             }
             catch (Exception ex)
             {
