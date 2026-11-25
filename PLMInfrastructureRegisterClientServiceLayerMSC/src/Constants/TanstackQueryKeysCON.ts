@@ -12,6 +12,20 @@ export default class TanstackQueryKeysCON {
   public static readonly ENVIRONMENT_UPTIME_REQUESTS: readonly string[] = ['environment-uptime-requests'];
   public static readonly ACTIVE_DOWNTIME_ANNOUNCEMENT: readonly string[] = ['active-downtime-announcement'];
   public static readonly ALL_DOWNTIME_ANNOUNCEMENTS: readonly string[] = ['all-downtime-announcements'];
+
+  // Nested under the same 'environment-uptime-requests' prefix as
+  // ENVIRONMENT_UPTIME_REQUESTS above - TanStack Query's default partial-key
+  // invalidation means the existing create/update/delete mutations (which
+  // invalidate that base key) also refresh this scoped query, in addition to
+  // its own 15-second poll (specs/009-calendar-backend-integration/
+  // research.md §4).
+  public static ENVIRONMENT_UPTIME_REQUESTS_FOR_ENVIRONMENT(environment: string): readonly string[] {
+    return ['environment-uptime-requests', 'for-environment', environment];
+  }
+
+  public static DOWNTIME_ANNOUNCEMENTS_IN_RANGE(fromAt: string, toAt: string): readonly string[] {
+    return ['downtime-announcements-in-range', fromAt, toAt];
+  }
   // Parameterized rather than one static key per field - Status, Sponsor,
   // Infrastructure Register's custom colors, and any future growable-
   // dropdown field across the whole app each get their own independently
