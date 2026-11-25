@@ -66,8 +66,8 @@ export default class EnvironmentUptimeRequestsCON {
     'This ticket does not exist, or it has since been deleted.';
 
   // Admin-only Dashboard/Form segmented control - spec 003-uptime-request-dashboard.
-  public static readonly VIEW_MODE_DASHBOARD_LABEL: string = 'Dashboard';
-  public static readonly VIEW_MODE_FORM_LABEL: string = 'Form';
+  public static readonly VIEW_MODE_DASHBOARD_LABEL: string = 'Dashboard View Mode';
+  public static readonly VIEW_MODE_FORM_LABEL: string = 'Form View Mode';
 
   public static readonly DASHBOARD_CARD_TOTAL_LABEL: string = 'Total Requests';
   public static readonly DASHBOARD_CARD_PENDING_LABEL: string = 'Pending';
