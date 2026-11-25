@@ -30,6 +30,7 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Configur
             ["ResourceCellFormatColor"] = "RESOURCE_CELL_FORMAT_CUSTOM_COLORS",
             ["UptimeScheduleType"] = "ENVIRONMENT_OVERVIEW_UPTIME_SCHEDULE_TYPE_OPTIONS",
             ["OnDemandStatus"] = "ENVIRONMENT_OVERVIEW_ON_DEMAND_STATUS_OPTIONS",
+            ["FrontendDesignSchema"] = "FRONTEND_DESIGN_SCHEMA",
         };
 
         public string AssertOptionsFieldName(string? fieldName)
