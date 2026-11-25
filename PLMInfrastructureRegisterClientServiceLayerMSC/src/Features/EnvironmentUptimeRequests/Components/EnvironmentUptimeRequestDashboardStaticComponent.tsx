@@ -17,8 +17,8 @@ export interface EnvironmentUptimeRequestDashboardStaticComponentProps {
 }
 
 const DOWNTIME_STATUS_STYLES: Record<string, string> = {
-  Active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
-  Scheduled: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
+  Active: 'bg-emerald-600 text-white',
+  Scheduled: 'bg-[#0D2086] text-white',
 };
 
 // Renders two pieces as direct children of the Dashboard view's shared
@@ -92,18 +92,21 @@ export default function EnvironmentUptimeRequestDashboardStaticComponent({
             {activeAndScheduledAnnouncements.map((announcement) => (
               <div
                 key={announcement.id}
-                className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-100 dark:border-zinc-800/80"
+                className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#202020] border border-slate-100 dark:border-zinc-800/80"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm text-slate-900 dark:text-white">{announcement.heading}</span>
+                  <div className="flex flex-col items-start gap-1">
                     <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${DOWNTIME_STATUS_STYLES[announcement.status] ?? ''}`}>
                       {announcement.status}
                     </span>
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">{announcement.heading}</span>
                   </div>
                   <p className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono mt-1">
                     {CETDateTimeFormatUtility.current.formatDateTime(announcement.startAt)} →{' '}
                     {CETDateTimeFormatUtility.current.formatDateTime(announcement.endAt)}
+                  </p>
+                  <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5">
+                    {announcement.environments.join(', ')}
                   </p>
                 </div>
               </div>
