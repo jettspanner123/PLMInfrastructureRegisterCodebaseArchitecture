@@ -36,10 +36,28 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Environm
         // helper method) - EF Core can only translate expressions it can
         // itself read into SQL, not an opaque C# method call, so a mapping
         // helper here would fail at runtime ("could not be translated").
-        public async Task<List<EnvironmentUptimeRequestDTO>> GetAllEnvironmentUptimeRequestsAsynchronous()
+        //
+        // environment/fromAt/toAt are all optional and independent - calling this with every
+        // argument null MUST return the exact same unfiltered result as before this parameter set
+        // existed (contracts/calendar-backend-endpoints.md §1 in specs/009-calendar-backend-integration).
+        public async Task<List<EnvironmentUptimeRequestDTO>> GetAllEnvironmentUptimeRequestsAsynchronous(
+            string? environment = null,
+            DateTime? fromAt = null,
+            DateTime? toAt = null)
         {
-            return await _dbContext.EnvironmentUptimeRequests
-                .AsNoTracking()
+            IQueryable<EnvironmentUptimeRequestNexus> query = _dbContext.EnvironmentUptimeRequests.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                query = query.Where(request => request.Environment == environment);
+            }
+
+            if (fromAt.HasValue && toAt.HasValue)
+            {
+                query = query.Where(request => request.FromAt <= toAt.Value && request.ToAt >= fromAt.Value);
+            }
+
+            return await query
                 .OrderByDescending(request => request.CreatedAt)
                 .Select(request => new EnvironmentUptimeRequestDTO
                 {
