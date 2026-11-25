@@ -863,6 +863,19 @@ export default class TanstackQueryClientService {
       });
     },
 
+    // The calendar's own scoped read - enabled only while its modal is open,
+    // polling every 15s for cross-tab/cross-user freshness while it is (User
+    // Story 5, specs/009-calendar-backend-integration/research.md §4).
+    useEnvironmentUptimeRequestsForEnvironmentQuery: (environment: string, fromAt: Date, toAt: Date, enabled: boolean) => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.ENVIRONMENT_UPTIME_REQUESTS_FOR_ENVIRONMENT(environment),
+        queryFn: () => EnvironmentUptimeRequestsService.current.getEnvironmentUptimeRequestsForEnvironment(environment, fromAt, toAt),
+        staleTime: 1000 * 60,
+        refetchInterval: enabled ? 1000 * 15 : false,
+        enabled,
+      });
+    },
+
     useCreateEnvironmentUptimeRequestMutation: (options?: {
       onSuccess?: (data: EnvironmentUptimeRequestInterfaceModel) => void;
       onError?: (error: Error) => void;
@@ -941,6 +954,19 @@ export default class TanstackQueryClientService {
         queryKey: TanstackQueryKeysCON.ACTIVE_DOWNTIME_ANNOUNCEMENT,
         queryFn: () => DowntimeAnnouncementsService.current.getActiveDowntimeAnnouncement(),
         staleTime: 1000 * 30,
+      });
+    },
+
+    // The calendar's own ranged read - enabled only while its modal is open,
+    // polling every 15s for cross-tab/cross-user freshness while it is (User
+    // Story 5, specs/009-calendar-backend-integration/research.md §4).
+    useDowntimeAnnouncementsInRangeQuery: (fromAt: Date, toAt: Date, enabled: boolean) => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.DOWNTIME_ANNOUNCEMENTS_IN_RANGE(fromAt.toISOString(), toAt.toISOString()),
+        queryFn: () => DowntimeAnnouncementsService.current.getDowntimeAnnouncementsInRange(fromAt, toAt),
+        staleTime: 1000 * 30,
+        refetchInterval: enabled ? 1000 * 15 : false,
+        enabled,
       });
     },
 
