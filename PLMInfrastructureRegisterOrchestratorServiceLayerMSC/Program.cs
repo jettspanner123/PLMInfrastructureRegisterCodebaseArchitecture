@@ -8,6 +8,7 @@ using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Servic
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ConfigurationConstants.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Services;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.CalendarActivities.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Services;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Services;
@@ -54,6 +55,7 @@ builder.Services.AddScoped<FeatureRequestsService>();
 builder.Services.AddScoped<EnvironmentUptimeRequestsService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<DowntimeAnnouncementsService>();
+builder.Services.AddScoped<CalendarActivitiesService>();
 builder.Services.AddHttpClient<JiraService>();
 
 // First real server-side admin check in this backend - every other
