@@ -47,6 +47,9 @@ import DowntimeAnnouncementsService from '../Features/DowntimeAnnouncements/Serv
 import type DowntimeAnnouncementInterfaceModel from '../Models/DowntimeAnnouncementInterfaceModel';
 import type CreateDowntimeAnnouncementInputInterfaceModel from '../Models/CreateDowntimeAnnouncementInputInterfaceModel';
 import type UpdateDowntimeAnnouncementInputInterfaceModel from '../Models/UpdateDowntimeAnnouncementInputInterfaceModel';
+import CalendarActivitiesService from '../Features/YearlyCalendar/Services/CalendarActivitiesService';
+import type CalendarActivityInterfaceModel from '../Models/CalendarActivityInterfaceModel';
+import type CreateCalendarActivityInputInterfaceModel from '../Models/CreateCalendarActivityInputInterfaceModel';
 import CellFormatHelper from '../Utilities/CellFormatHelper';
 import AdminService from './AdminService';
 import AdminIdentityUtility from '../Utilities/AdminIdentityUtility';
@@ -1063,6 +1066,41 @@ export default class TanstackQueryClientService {
         onError: (error: Error) => {
           toast.error('Failed to delete downtime announcement', {
             description: error.message || 'Please check your connection and try again.',
+          });
+          options?.onError?.(error);
+        },
+      });
+    },
+  };
+
+  public readonly calendarActivities = {
+    // Public - every visitor can view activities (research.md §2).
+    useCalendarActivitiesQuery: () => {
+      return useQuery({
+        queryKey: TanstackQueryKeysCON.CALENDAR_ACTIVITIES,
+        queryFn: () => CalendarActivitiesService.current.getAllCalendarActivities(),
+        staleTime: 1000 * 30,
+      });
+    },
+
+    useCreateCalendarActivityMutation: (options?: {
+      onSuccess?: (data: CalendarActivityInterfaceModel) => void;
+      onError?: (error: Error) => void;
+    }) => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: (request: CreateCalendarActivityInputInterfaceModel) =>
+          CalendarActivitiesService.current.createCalendarActivity(request),
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: TanstackQueryKeysCON.CALENDAR_ACTIVITIES });
+          toast.success('Activity created', {
+            description: `"${data.title}" has been added to the calendar.`,
+          });
+          options?.onSuccess?.(data);
+        },
+        onError: (error: Error) => {
+          toast.error('Failed to create activity', {
+            description: error.message || 'Please check your inputs and try again.',
           });
           options?.onError?.(error);
         },
