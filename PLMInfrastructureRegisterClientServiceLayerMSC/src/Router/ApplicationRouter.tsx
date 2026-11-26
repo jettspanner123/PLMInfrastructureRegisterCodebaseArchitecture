@@ -23,6 +23,7 @@ import EnvironmentOverviewScreenRoute from '../Routes/EnvironmentOverviewScreenR
 import FeatureRequestsScreenRoute from '../Routes/FeatureRequestsScreenRoute';
 import EnvironmentUptimeRequestsScreenRoute from '../Routes/EnvironmentUptimeRequestsScreenRoute';
 import EnvironmentUptimeRequestDetailScreenRoute from '../Routes/EnvironmentUptimeRequestDetailScreenRoute';
+import YearlyCalendarScreenRoute from '../Routes/YearlyCalendarScreenRoute';
 import SplashScreenController from '../Features/SplashScreen/SplashScreenController';
 import SubscriptionsScreenController from '../Features/Subscriptions/SubscriptionsScreenController';
 import SettingsColorEditingScreenController from '../Features/Settings/SettingsColorEditingScreenController';
@@ -237,7 +238,16 @@ const environmentUptimeRequestDetailRoute = createRoute({
 });
 
 // ==========================================
-// 7. Router Tree
+// 7. Yearly Calendar Route
+// ==========================================
+const yearlyCalendarRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: ApplicationRouteCON.YEARLY_CALENDAR,
+  component: YearlyCalendarScreenRoute,
+});
+
+// ==========================================
+// 8. Router Tree
 // ==========================================
 const settingsRouteWithChildren = settingsRoute.addChildren([
   settingsIndexRoute,
@@ -252,6 +262,7 @@ const routeTree = rootRoute.addChildren([
   featureRequestsRoute,
   environmentUptimeRequestsRoute,
   environmentUptimeRequestDetailRoute,
+  yearlyCalendarRoute,
 ]);
 
 export const applicationRouter = createRouter({ routeTree });
