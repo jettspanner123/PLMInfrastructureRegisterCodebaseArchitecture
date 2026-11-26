@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import { Server, Globe, Lightbulb, CalendarClock } from 'lucide-react';
+import { Server, Globe, Lightbulb, CalendarClock, CalendarRange } from 'lucide-react';
 
 export interface NavItemDef {
   id: string;
@@ -20,6 +20,7 @@ export default class NavigationCON {
     { id: 'infrastructure-register', label: 'Infrastructure Register', icon: Server },
     { id: 'environment-overview', label: 'Environment Overview', icon: Globe },
     { id: 'uptime-request', label: 'Uptime Request', icon: CalendarClock },
+    { id: 'yearly-calendar', label: 'Yearly Calendar', icon: CalendarRange },
     { id: 'feature-requests', label: 'Feature Request', icon: Lightbulb },
   ];
 
