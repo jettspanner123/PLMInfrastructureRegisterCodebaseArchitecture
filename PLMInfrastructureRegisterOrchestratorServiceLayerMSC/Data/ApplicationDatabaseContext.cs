@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.Admin.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.ChatAssistant.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.DowntimeAnnouncements.Models;
+using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.CalendarActivities.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentOverview.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.EnvironmentUptimeRequests.Models;
 using PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Features.FeatureRequests.Models;
@@ -55,6 +56,8 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
         public DbSet<AdminAccountNexus> AdminAccounts => Set<AdminAccountNexus>();
 
         public DbSet<DowntimeAnnouncementNexus> DowntimeAnnouncements => Set<DowntimeAnnouncementNexus>();
+
+        public DbSet<CalendarActivityNexus> CalendarActivities => Set<CalendarActivityNexus>();
 
         public DbSet<JiraTicketCreationErrorNexus> TicketCreationErrors => Set<JiraTicketCreationErrorNexus>();
 
@@ -286,6 +289,14 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Data
                 entity.ToTable("IG_DowntimeAnnouncementTBL");
                 entity.HasKey(announcement => announcement.Id);
                 entity.HasQueryFilter(announcement => !announcement.IsDeleted);
+            });
+
+            // No soft-delete/query filter - this pass has no edit or delete
+            // capability at all (data-model.md's State transitions: none).
+            modelBuilder.Entity<CalendarActivityNexus>(entity =>
+            {
+                entity.ToTable("IG_CalendarActivityTBL");
+                entity.HasKey(activity => activity.Id);
             });
 
             // Insert-only audit log - no query filter needed, nothing in
