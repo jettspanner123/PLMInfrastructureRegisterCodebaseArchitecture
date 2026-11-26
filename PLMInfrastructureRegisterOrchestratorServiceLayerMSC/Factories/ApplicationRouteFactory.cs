@@ -233,5 +233,18 @@ namespace PLMInfrastructureRegisterOrchestratorServiceLayerMSC.Factories
             // PUT). Admin-only (FR-017).
             public const string DeleteDowntimeAnnouncement = "{id}";
         }
+
+        public static class CalendarActivitiesRoutes
+        {
+            public const string ControllerURL = "/Api/V1/CalendarActivities";
+
+            // Admin-only - enforced server-side via [Authorize(Policy = "RequireAdmin")]
+            // (spec FR-007).
+            public const string CreateCalendarActivity = "";
+
+            // Public (no [Authorize]) - any visitor can view activities, per
+            // spec User Stories 2/3 (research.md §2).
+            public const string GetAllCalendarActivities = "";
+        }
     }
 }
