@@ -7,6 +7,7 @@ export default class ApplicationRouteCON {
   // <Link to="..."> that navigates to one ticket's own page - not itself
   // interpolated, the ticketId is passed separately via `params`.
   public static readonly ENVIRONMENT_UPTIME_REQUEST_DETAIL_PATTERN: string = '/environment-uptime-requests/$ticketId';
+  public static readonly YEARLY_CALENDAR: string = '/yearly-calendar';
 
   // "Configure Subscriptions" used to be its own standalone route, reachable
   // only from the Profile Dropdown - that link now opens Settings'
