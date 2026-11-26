@@ -67,6 +67,17 @@ const BOOKING_STATUS_CARD_STYLES: Record<string, { card: string; stripe: string;
   },
 };
 
+// Sidebar legend (research.md / grill-me, same session as the solid teal in-progress
+// card recolor) - one row per distinct color shown on the grid, swatch = each type's own
+// card background, so it reads the same as what's painted on the events themselves.
+const CALENDAR_LEGEND_ITEMS: { label: string; swatchClassName: string }[] = [
+  { label: 'Pending', swatchClassName: 'bg-[#ffa826]' },
+  { label: 'Approved', swatchClassName: 'bg-[#26acff]' },
+  { label: 'Completed', swatchClassName: 'bg-[#29d944]' },
+  { label: 'Downtime', swatchClassName: 'bg-[#5a2323]' },
+  { label: 'Booked Meeting', swatchClassName: 'bg-[#008eb8]' },
+];
+
 interface YearMonthDay {
   year: number;
   monthIndex: number; // 0-11
@@ -774,6 +785,20 @@ export default function EnvironmentUptimeRequestAvailabilityModalController({
                 </div>
               </div>
               <div className="h-px bg-slate-200 dark:bg-[#2b2b2b] mx-3 my-1" />
+
+              <div className="px-5 py-3">
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-[#979797] mb-2">
+                  Legend
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  {CALENDAR_LEGEND_ITEMS.map((item) => (
+                    <div key={item.label} className="flex items-center space-x-2">
+                      <span className={`w-2.5 h-2.5 rounded-sm flex-shrink-0 ${item.swatchClassName}`} />
+                      <span className="text-xs text-slate-600 dark:text-[#c8c8c8]">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </aside>
           {/* END: LeftSidebar */}
