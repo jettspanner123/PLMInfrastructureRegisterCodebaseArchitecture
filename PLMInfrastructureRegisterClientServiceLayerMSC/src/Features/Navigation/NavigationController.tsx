@@ -57,7 +57,9 @@ export default function NavigationController({
           ? 'feature-requests'
           : location.pathname.startsWith(ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUESTS)
             ? 'uptime-request'
-            : '';
+            : location.pathname === ApplicationRouteCON.YEARLY_CALENDAR
+              ? 'yearly-calendar'
+              : '';
 
   return (
     <div className="min-h-screen bg-(--color-canvas) text-(--color-ink) flex flex-col">
@@ -92,6 +94,8 @@ export default function NavigationController({
                   navigate({ to: ApplicationRouteCON.FEATURE_REQUESTS });
                 } else if (next === 'uptime-request') {
                   navigate({ to: ApplicationRouteCON.ENVIRONMENT_UPTIME_REQUESTS });
+                } else if (next === 'yearly-calendar') {
+                  navigate({ to: ApplicationRouteCON.YEARLY_CALENDAR });
                 }
               }}
               layoutId="activeTopNavPill"
