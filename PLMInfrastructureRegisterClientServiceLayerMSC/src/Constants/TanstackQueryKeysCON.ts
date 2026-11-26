@@ -12,6 +12,7 @@ export default class TanstackQueryKeysCON {
   public static readonly ENVIRONMENT_UPTIME_REQUESTS: readonly string[] = ['environment-uptime-requests'];
   public static readonly ACTIVE_DOWNTIME_ANNOUNCEMENT: readonly string[] = ['active-downtime-announcement'];
   public static readonly ALL_DOWNTIME_ANNOUNCEMENTS: readonly string[] = ['all-downtime-announcements'];
+  public static readonly CALENDAR_ACTIVITIES: readonly string[] = ['calendar-activities'];
 
   // Nested under the same 'environment-uptime-requests' prefix as
   // ENVIRONMENT_UPTIME_REQUESTS above - TanStack Query's default partial-key
